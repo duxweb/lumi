@@ -1,0 +1,87 @@
+---
+title: "TreeSelect"
+description: "下拉面板是 Tree 的选择框。"
+---
+
+<ComponentPreview name="TreeSelect" />
+
+下拉面板是 Tree 的选择框。默认单选；`multiple` 或 `checkable` 时绑定数组，并把前几个选中项显示为标签。`showPath` 在触发框里显示完整路径；`searchable` 在面板内过滤树。
+
+## 示例
+
+```json
+{
+  "root": "treeselect-1",
+  "elements": {
+    "treeselect-1": {
+      "type": "TreeSelect",
+      "props": {
+        "items": [
+          {
+            "label": "Design",
+            "value": "design",
+            "children": [
+              { "label": "Brand", "value": "brand" },
+              { "label": "Icons", "value": "icons" }
+            ]
+          },
+          {
+            "label": "Engineering",
+            "value": "eng",
+            "children": [
+              { "label": "Frontend", "value": "web" },
+              { "label": "API", "value": "api" }
+            ]
+          }
+        ],
+        "searchable": true,
+        "clearable": true,
+        "showPath": true,
+        "value": { "$bindState": "/treeselect-1/value" },
+        "ariaLabel": "Team",
+        "placeholder": "Choose a team"
+      },
+      "children": []
+    }
+  },
+  "state": { "treeselect-1": { "value": "api" } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `items` | 要显示的条目列表。 | `object[]` |  |
+| `value` | 当前值。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `null \| string \| number \| boolean \| (string \| number \| boolean)[]` |  |
+| `defaultValue` | 初始值，只在没有绑定 `value` 时生效。 | `null \| string \| number \| boolean \| (string \| number \| boolean)[]` |  |
+| `multiple` | 允许选择多个。 | `boolean` | `false` |
+| `checkable` | 面板里的树显示复选框，值为节点值数组。 | `boolean` | `false` |
+| `checkStrategy` | 勾选时上报哪些值：`all`、`parent` 或 `leaf`，同 Tree。 | `"all" \| "leaf" \| "parent"` | `"all"` |
+| `searchable` | 面板顶部显示搜索框，按名称过滤并高亮。 | `boolean` | `false` |
+| `clearable` | 有值时显示清除按钮。 | `boolean` | `false` |
+| `loading` | 为 true 时显示加载状态，并暂停交互。 | `boolean` | `false` |
+| `showPath` | 输入框显示从根到选中节点的完整路径，而不只是节点名。 | `boolean` | `false` |
+| `separator` | `showPath` 时各级名称之间的分隔符。 | `string` | `" / "` |
+| `defaultExpandAll` | 打开面板时展开所有节点。 | `boolean` | `false` |
+| `placeholder` | 没有值时显示的提示文字。 | `string` |  |
+| `size` | 尺寸：`sm` 紧凑，`md` 标准，`lg` 宽松。 | `"sm" \| "md" \| "lg"` | `"md"` |
+| `appearance` | 外观：`outline` 描边，`filled` 浅色填充。 | `"outline" \| "filled"` | `"outline"` |
+| `name` | 字段名，表单提交时作为这个值的键。 | `string` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean` | `false` |
+| `invalid` | 标记为校验未通过，显示错误样式。通常由 FormField 自动设置。 | `boolean` | `false` |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+| `source` | 从远程资源读取节点，如 `{ "resource": "categories", "labelField": "name", "lazy": true }`：默认按 `parentId` 组装成树，`lazy` 时逐级请求；已选值会按 ID 回显。设置后忽略静态节点。 字段：`resource`、`dataProviderName?`、`meta?`、`filters?`、`labelField?`、`valueField?`、`parentField?`、`childrenField?`、`leafField?`、`lazy?`、`rootValue?`、`searchField?`、`pageSize?` | `object` |  |
+
+通用参数：
+
+- `checks`：json-render 原生校验规则，如 `{ "type": "required", "message": "请填写" }`，提交或失焦时执行。
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：无

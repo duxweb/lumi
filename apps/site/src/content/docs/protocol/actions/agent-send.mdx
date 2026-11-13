@@ -1,0 +1,48 @@
+---
+title: "agentSend"
+description: "在 session 指向的 AgentSession 里发送一条消息。"
+---
+
+在 `session` 指向的 AgentSession 里发送一条消息。回复进行中或没有内容时忽略；消息被接受后才清空 `clear` 列出的路径。
+
+## 用法
+
+```jsonc
+{
+  "root": "prompt",
+  "elements": {
+    "prompt": {
+      "type": "PromptInput",
+      "props": {
+        "value": { "$bindState": "/prompt" },
+        "streaming": { "$state": "/chat/streaming" }
+      },
+      "on": {
+        // 在输入框里按下发送时执行
+        "submit": {
+          "action": "agentSend",
+          "params": {
+            // AgentSession 写入的状态路径，如 /chat
+            "session": "/chat",
+            // 输入框里的文字
+            "text": { "$state": "/prompt" },
+            // 消息发出后清空输入框
+            "clear": ["/prompt"]
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| `session`（必填） | AgentSession 写入的状态路径，如 `/chat`。 | `string` |
+| `text` | 要发送的文字。 | `string` |
+| `context` | 随消息发送的引用，如 `@` 选中的订单。 | `object[]` |
+| `attachments` | 随消息发送的附件。 | `object[]` |
+| `clear` | 消息被接受后清空的状态路径。 | `string[]` |

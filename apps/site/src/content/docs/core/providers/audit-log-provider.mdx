@@ -1,0 +1,17 @@
+---
+title: "AuditLogProvider"
+description: "AuditLogProvider 接口的方法、参数和返回值。"
+---
+
+Records writes and lists them. Optional: without one nothing is recorded,
+and a backend that keeps its own log only needs `get`.
+
+```typescript
+interface AuditLogProvider
+```
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `create` | `((event: AuditLogEvent) => Promise<unknown> \| void) \| undefined` | 否 | Records one accepted write. |
+| `get` | `((params: AuditLogListParams) => Promise<{ data: AuditLogEntry[]; total?: number; }>) \| undefined` | 否 | Lists the entries of a resource, or of one record with `id`. |
+| `update` | `((params: { id: ID; name: string; }) => Promise<unknown>) \| undefined` | 否 | Names an entry, e.g. with a release note. |

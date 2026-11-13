@@ -1,0 +1,3573 @@
+@import "../../../config/lumi.tailwind.css";
+@import "./react/pages/LumiCardList.css";
+@import "./react/pages/LumiExample.css";
+@import "./react/pages/LumiPreviewCard.css";
+@import "./react/pages/LumiArticle.css";
+@import "./styles/agent-workspace.css";
+@import "./styles/auth.css";
+@import "./styles/boards.css";
+@import "./styles/code-sample.css";
+@import "./styles/sku-editor.css";
+@import "./styles/tree.css";
+@source "./**/*.{ts,tsx}";
+
+/* Document base for an Admin app: the Shell owns the whole page. :where() keeps it overridable. */
+:where(*, *::before, *::after) {
+  box-sizing: border-box;
+}
+
+:where(html, body) {
+  min-height: 100%;
+}
+
+:where(body) {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-family, ui-sans-serif, system-ui, sans-serif);
+}
+
+/* Cards ride on a 10% hairline ring rather than a border, so a card never
+   thickens the line where it meets a bordered neighbour. Derived from
+   `--foreground`, so it follows the theme instead of pinning a second grey. */
+:root,
+[data-theme] {
+  --lumi-hairline: color-mix(in oklab, var(--foreground) 10%, transparent);
+}
+
+/*
+ * The Shell consumes the shadcn sidebar/border tokens only; it never defines a
+ * second palette. The module rail rests on the canvas; navigation, workspace
+ * and assistant are separate panels, so columns are divided by the canvas
+ * gap rather than a shared rule. There are no bevels, double rules or
+ * brand-tinted states.
+ */
+.lumi-shell-frame {
+  gap: var(--lumi-space-2);
+  padding: var(--lumi-space-2);
+  background-color: var(--lumi-surface-canvas);
+}
+
+.lumi-shell-frame[data-layout='dual'] {
+  padding-left: 0;
+}
+
+/* The rail's own inset already separates its icons from the sidebar; the frame
+   gap on top of it doubled the distance. */
+.lumi-shell-frame[data-layout='dual'] > .lumi-shell-dual-rail {
+  margin-inline-end: calc(-1 * var(--lumi-space-2) + 2px);
+}
+
+.lumi-shell-column {
+  min-height: 0;
+}
+
+.lumi-shell-surface {
+  min-height: 0;
+  border: 1px solid var(--sidebar-border);
+  border-radius: var(--lumi-radius-xl);
+}
+
+.lumi-shell-panel {
+  color: var(--sidebar-foreground);
+  background-color: var(--sidebar);
+}
+
+.lumi-shell-workspace,
+.lumi-shell-assistant {
+  color: var(--foreground);
+  background-color: var(--lumi-surface-workspace);
+}
+
+.lumi-shell-dual-rail {
+  color: var(--sidebar-foreground);
+}
+
+.lumi-shell-module {
+  color: var(--muted-foreground);
+}
+
+.lumi-shell-module:hover {
+  color: var(--foreground);
+  background-color: color-mix(in oklab, var(--foreground) 5%, var(--lumi-surface-canvas));
+}
+
+/* The current module is a quiet grey tile with a full-strength glyph: located, not shouted. */
+.lumi-shell-module[data-active='true'] {
+  color: var(--foreground);
+  background-color: color-mix(in oklab, var(--foreground) 10%, var(--lumi-surface-canvas));
+}
+
+/* A menu count: a small pill that stays one step quieter than the label. */
+[data-slot='menu-badge'] {
+  display: inline-flex;
+  min-width: 18px;
+  height: 18px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 5px;
+  border-radius: 999px;
+  color: var(--muted-foreground);
+  background-color: color-mix(in oklab, var(--foreground) 8%, transparent);
+  font-size: 11px;
+  font-weight: var(--lumi-font-weight-medium);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-slot='menu-badge'][data-tone='warning'] {
+  color: var(--lumi-text-warning);
+  background-color: color-mix(in oklab, var(--warning) 14%, transparent);
+}
+
+/* A shell toggle that is on (the assistant panel): an info tint and glyph. */
+.lumi-shell-icon-button[aria-pressed='true'],
+.lumi-shell-icon-button[aria-pressed='true']:hover {
+  color: var(--lumi-text-info);
+  background-color: color-mix(in oklab, var(--lumi-info) 12%, transparent);
+}
+
+/* The sidebar head: a workspace (switchable from two up) or the menu search. */
+.lumi-shell-workspace-head {
+  transition: background-color 150ms;
+}
+
+summary.lumi-shell-workspace-head:hover,
+details[open] > summary.lumi-shell-workspace-head {
+  background-color: var(--sidebar-accent);
+}
+
+.lumi-shell-header-search.lumi-shell-sidebar-search {
+  width: 100%;
+  background-color: var(--background);
+  border-color: var(--sidebar-border);
+}
+
+.lumi-shell-header,
+.lumi-shell-tab-strip {
+  border-bottom: 1px solid var(--border);
+}
+
+.lumi-shell-header-search {
+  display: flex;
+  align-items: center;
+  gap: var(--lumi-space-2);
+  width: min(17rem, 32vw);
+  height: var(--lumi-control-md);
+  padding-inline: var(--lumi-space-2) 6px;
+  color: var(--muted-foreground);
+  background-color: var(--muted);
+  border: 1px solid transparent;
+  border-radius: var(--lumi-radius-control);
+}
+
+.lumi-shell-header-search:focus-within {
+  /* The same focus as any field: an info edge over the faint tint. */
+  background-color: var(--lumi-focus-bg);
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 0.5px var(--ring);
+}
+
+/* Menu groups are separated by their label and by whitespace, never a rule. */
+.lumi-shell-menu-group + .lumi-shell-menu-group {
+  padding-top: var(--lumi-space-3);
+}
+
+.lumi-shell-single-sidebar,
+.lumi-shell-dual-rail,
+.lumi-shell-dual-context,
+.lumi-shell-assistant {
+  display: flex;
+}
+
+@media (width < 1200px) {
+  .lumi-shell-dual-context,
+  .lumi-shell-dual-collapse-control,
+  .lumi-shell-dual-search,
+  .lumi-shell-assistant,
+  .lumi-shell-assistant-toggle {
+    display: none;
+  }
+}
+
+@media (width >= 1200px) {
+  .lumi-shell-mobile-trigger[data-layout='dual'] {
+    display: none;
+  }
+}
+
+@media (width < 768px) {
+  .lumi-shell-single-sidebar,
+  .lumi-shell-dual-rail,
+  .lumi-shell-single-search {
+    display: none;
+  }
+
+  /* Phones get the whole screen: the workspace stops floating. */
+  .lumi-shell-frame,
+  .lumi-shell-frame[data-layout='dual'] {
+    padding: 0;
+  }
+
+  .lumi-shell-workspace {
+    border: 0;
+    border-radius: 0;
+  }
+}
+
+@media (width >= 768px) {
+  .lumi-shell-mobile-trigger[data-layout='single'] {
+    display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  /* The swatch add tile, an image tile's buttons and `data-hit-area` controls (inline citations, chip remove buttons) reach the target through their own hit areas, keeping their size. */
+  [data-lumi-shell] :is(button, a):not([role='radio'], [role='checkbox'], [role='switch'], [data-slot='color-swatch-add'], [data-slot='image-grid-tile'] *, [data-hit-area]) {
+    min-width: var(--lumi-control-touch);
+    min-height: var(--lumi-control-touch);
+  }
+}
+
+.lumi-admin-bootstrap-skeleton {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-columns: min(22vw, 20rem) 1fr;
+  gap: 1px;
+  background: var(--border);
+}
+
+.lumi-admin-bootstrap-skeleton::before,
+.lumi-admin-bootstrap-skeleton::after {
+  background: var(--background);
+  content: '';
+}
+
+/* The app mark's default monogram: the title's initial on the info colour,
+   white in both themes. Dark lifts --info to read as text, so the fill steps
+   back down to seed depth there — the solid info badge's rule — and the white
+   initial keeps 4.5:1. A logo image is drawn as it is. */
+.lumi-brand-mark {
+  display: grid;
+  flex: none;
+  place-items: center;
+  overflow: hidden;
+  color: white;
+  background: var(--info);
+  font-weight: var(--lumi-font-weight-semibold);
+  line-height: 1;
+}
+
+[data-theme='dark'] .lumi-brand-mark {
+  background: oklch(from var(--info) 0.52 c h);
+}
+
+/* Every page shares one responsive measure and a constant gutter. Hosts may
+   override the measure once; page archetypes never introduce their own cap. */
+[data-lumi-shell-main] {
+  background: var(--lumi-surface-workspace);
+}
+
+.lumi-admin-page {
+  width: 100%;
+  max-width: var(--lumi-admin-content-max-width, 1280px);
+  min-width: 0;
+  margin-inline: auto;
+  padding: var(--lumi-space-4);
+  color: var(--foreground);
+}
+
+.lumi-admin-page[data-stack] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lumi-space-5);
+}
+
+.lumi-admin-page[data-stack] > :is(.lumi-page-header, .lumi-stat-strip) {
+  margin-block-end: 0;
+}
+
+.lumi-admin-page[data-width='content'] {
+  max-width: 880px;
+  margin-inline: auto;
+}
+
+.lumi-admin-page[data-width='full'] {
+  width: 100%;
+  max-width: none;
+}
+
+/* Native Spec routes may contain another page. Apply the gutter only once;
+   all default page types inherit the same available content axis. */
+.lumi-admin-page .lumi-admin-page {
+  width: 100%;
+  padding: 0;
+}
+
+.lumi-admin-page .lumi-admin-page[data-width='full'] {
+  max-width: none;
+}
+
+/*
+ * A stretched page claims the region the shell gives it, so a panel whose foot
+ * is part of the design — a wizard's step controls — lands at the bottom of the
+ * region instead of floating halfway up an empty well. Nothing here shrinks
+ * below its content, so a form taller than the viewport still scrolls the shell.
+ */
+.lumi-admin-page:has(> .lumi-admin-page[data-stretch]) {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+}
+
+.lumi-admin-page:has(> .lumi-admin-page[data-stretch]) > .lumi-admin-page,
+.lumi-admin-page[data-stretch] > .lumi-page-frame,
+.lumi-admin-page[data-stretch] > .lumi-page-frame > [data-slot='frame'],
+.lumi-admin-page[data-stretch] > .lumi-list-page__surface {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+/* The panel becomes the column so the body flexes against it: a percentage
+   height would resolve against a block box the flex layout leaves indefinite. */
+.lumi-admin-page[data-stretch] [data-slot='frame-panel'] {
+  display: flex;
+  flex-direction: column;
+}
+
+.lumi-admin-page[data-stretch] .lumi-page-frame__fill {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.lumi-admin-page[data-stretch] .lumi-page-frame__fill > form {
+  flex: 1;
+}
+
+/* The pager belongs at the foot of the panel, not directly under the last row:
+   a short page of results should not move the control that pages them. */
+.lumi-admin-page[data-stretch] .lumi-data-grid {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.lumi-admin-page[data-stretch] .lumi-data-grid__scroll {
+  flex: 1;
+}
+
+/*
+ * A page that is only a state — a result, an exception, a page that failed to
+ * load — sits at the optical centre of the region the shell gives it instead of
+ * at the top of an otherwise empty well.
+ */
+.lumi-admin-page:has(> .lumi-admin-page[data-page-state]),
+.lumi-admin-page[data-page-state] {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+}
+
+.lumi-admin-page[data-page-state] {
+  flex: 1;
+  justify-content: center;
+  padding-block-end: min(10vh, 6rem);
+}
+
+/* Actions sit on the vertical centre of the title block, description included. */
+.lumi-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lumi-space-4);
+  margin-block-end: var(--lumi-space-6);
+}
+
+.lumi-page-header__copy {
+  min-width: 0;
+}
+
+.lumi-page-header__title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.lumi-page-header h1 {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: var(--lumi-fs-page);
+  font-weight: var(--lumi-font-weight-semibold);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.lumi-page-header p {
+  max-width: 72ch;
+  margin: var(--lumi-space-2) 0 0;
+  color: var(--muted-foreground);
+  overflow-wrap: anywhere;
+}
+
+.lumi-page-header__actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--lumi-space-2);
+}
+
+.lumi-data-grid__scroll:focus-visible {
+  border-radius: var(--lumi-radius-control);
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.lumi-page-frame + .lumi-page-frame,
+.lumi-metric-cards + .lumi-dashboard-content {
+  margin-block-start: var(--lumi-space-4);
+}
+
+.lumi-page-frame {
+  min-width: 0;
+}
+
+/* The well is the page header, and a page header is one row: what this page is
+   on the left, what you can do to it on the right. */
+.lumi-page-frame [data-slot='frame-header'] {
+  min-height: var(--lumi-band-height);
+  padding-block: var(--lumi-space-2);
+  /* 13 + the well's own 3px inset = 16 from the frame edge. */
+  padding-inline: 13px;
+}
+
+.lumi-page-frame [data-slot='frame-title'] {
+  font-size: var(--lumi-fs-title);
+  font-weight: var(--lumi-font-weight-medium);
+  line-height: 1.35;
+}
+
+.lumi-page-frame [data-slot='frame-description'] {
+  font-size: var(--lumi-fs-label);
+}
+
+/* The tool row belongs to the table under it, so no rule separates the two. */
+.lumi-page-frame__tools {
+  padding: var(--lumi-space-3) var(--lumi-space-4);
+}
+
+/* The well is one row: presets or title on the left, actions on the right. */
+.lumi-preset-tabs {
+  --lumi-radius-item: max(var(--lumi-radius-sm), calc(var(--lumi-radius-control) - 3px));
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+  background: var(--muted);
+  gap: 2px;
+}
+
+.lumi-preset-tabs button {
+  display: inline-flex;
+  align-items: center;
+  height: calc(var(--lumi-control-md) - 8px);
+  padding: 0 calc(var(--lumi-space-2) + 2px);
+  border-radius: var(--lumi-radius-item);
+  color: var(--lumi-fg-secondary);
+  font-size: var(--lumi-fs-label);
+  /* Regular in every state: a bolder selection would widen it and shift its neighbours. */
+  font-weight: var(--lumi-font-weight-normal);
+  white-space: nowrap;
+}
+
+.lumi-preset-tabs button:hover {
+  color: var(--foreground);
+}
+
+.lumi-preset-tabs button[data-active] {
+  background: var(--lumi-segment-bg);
+  box-shadow: var(--lumi-segment-shadow);
+  color: var(--lumi-segment-fg);
+}
+
+.lumi-preset-tabs button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+/* Dashboard panels adapt to the shared page container. */
+.lumi-dashboard-page {
+  container: dashboard / inline-size;
+}
+
+.lumi-dashboard-body {
+  width: 100%;
+}
+
+.lumi-dashboard-page .lumi-metric-cards {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+}
+
+@container dashboard (width < 640px) {
+  .lumi-dashboard-page .lumi-metric-card__value {
+    font-size: var(--lumi-fs-page);
+  }
+}
+
+/* Panels follow their available container, including on wide screens; the
+   two panels of a row share one height. */
+.lumi-dashboard-content {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: var(--lumi-space-4);
+  width: 100%;
+}
+
+@container dashboard (width < 760px) {
+  .lumi-dashboard-content {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.lumi-dashboard-content > [data-span='full'] {
+  grid-column: 1 / -1;
+}
+
+.lumi-dashboard-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.lumi-dashboard-card > [data-slot='card'] {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+}
+
+.lumi-dashboard-card [data-slot='card-content'] {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.lumi-dashboard-card[data-flush] [data-slot='card-content'] {
+  padding: 0 0 var(--lumi-space-1);
+}
+
+/* A timeline that is a card's whole body spreads its events over the card's
+   height, so it ends level with its neighbour; the rule between two markers
+   stretches with the event above it. */
+.lumi-dashboard-card [data-slot='card-content'] > [data-slot='timeline']:only-child {
+  flex: 1;
+}
+
+.lumi-dashboard-card [data-slot='card-content'] > [data-slot='timeline']:only-child > [data-slot='timeline-item']:not(:last-child) {
+  flex-grow: 1;
+}
+
+/* An activity feed does the same: the entries share the spare height and keep
+   their content centred between the rules. */
+.lumi-dashboard-card [data-slot='card-content'] > [data-slot='activity-feed']:only-child {
+  flex: 1;
+}
+
+.lumi-dashboard-card [data-slot='card-content'] > [data-slot='activity-feed']:only-child > [data-slot='activity-feed-item'] {
+  flex-grow: 1;
+  align-content: center;
+}
+
+.lumi-dashboard-card__footer {
+  display: flex;
+  align-items: center;
+  padding-block-start: var(--lumi-space-3);
+  border-block-start: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  gap: 6px;
+}
+
+/* One population divided, not several things ranked: the stages share a bar and
+   the rows below only carry the counts. In a stretched card the rows share the
+   spare height, so the breakdown ends level with its neighbour. */
+.lumi-pipeline {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--lumi-space-4);
+  container: lumi-pipeline / inline-size;
+}
+
+/* One continuous bar: square blocks split by a hairline gap; only the two
+   outer ends are rounded, by the clip on the bar. */
+.lumi-pipeline__bar {
+  display: flex;
+  height: 20px;
+  overflow: hidden;
+  border-radius: 6px;
+  gap: 2px;
+}
+
+.lumi-pipeline__bar i {
+  display: block;
+  min-width: 4px;
+  flex-basis: 0;
+}
+
+/* A breakdown row per stage: swatch and name, then the count and its share in
+   the trailing columns, as in a proportion list. */
+.lumi-pipeline__legend {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lumi-pipeline__legend li {
+  display: grid;
+  flex: 1;
+  align-items: center;
+  padding-block: var(--lumi-space-2);
+  font-size: var(--lumi-fs-label);
+  column-gap: var(--lumi-space-3);
+  grid-template-columns: 10px minmax(0, 1fr) auto 3.5em;
+}
+
+.lumi-pipeline__legend li + li {
+  border-top: 1px solid var(--border);
+}
+
+.lumi-pipeline__swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.lumi-pipeline__label {
+  overflow: hidden;
+  font-weight: var(--lumi-font-weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lumi-pipeline__reading {
+  display: contents;
+  font-variant-numeric: tabular-nums;
+}
+
+.lumi-pipeline__value {
+  font-weight: var(--lumi-font-weight-medium);
+  text-align: right;
+}
+
+.lumi-pipeline__share {
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  font-weight: var(--lumi-font-weight-normal);
+  text-align: right;
+}
+
+/* With room to spare the rows fold into a legend grid under the bar: name on
+   top, count and share beneath it. */
+@container lumi-pipeline (width >= 640px) {
+  .lumi-pipeline__legend {
+    display: grid;
+    flex: none;
+    gap: var(--lumi-space-3) var(--lumi-space-4);
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  }
+
+  .lumi-pipeline__legend li {
+    padding: 0;
+    column-gap: 8px;
+    row-gap: 2px;
+    grid-template-columns: 10px minmax(0, 1fr);
+  }
+
+  .lumi-pipeline__legend li + li {
+    border-top: 0;
+  }
+
+  .lumi-pipeline__reading {
+    display: flex;
+    align-items: baseline;
+    color: var(--muted-foreground);
+    font-weight: var(--lumi-font-weight-normal);
+    gap: 6px;
+    grid-column: 2;
+  }
+
+  .lumi-pipeline__value {
+    font-weight: inherit;
+  }
+}
+
+.lumi-pipeline [data-tone='neutral'] {
+  background: color-mix(in oklab, var(--muted-foreground) 35%, transparent);
+}
+
+.lumi-pipeline [data-tone='muted'] {
+  background: color-mix(in oklab, var(--muted-foreground) 70%, transparent);
+}
+
+/* On a dark card the light grey step all but vanishes. */
+[data-theme='dark'] .lumi-pipeline [data-tone='neutral'] {
+  background: color-mix(in oklab, var(--muted-foreground) 50%, transparent);
+}
+
+[data-theme='dark'] .lumi-pipeline [data-tone='muted'] {
+  background: color-mix(in oklab, var(--muted-foreground) 82%, transparent);
+}
+
+.lumi-pipeline [data-tone='primary'] {
+  background: var(--brand);
+}
+
+.lumi-pipeline [data-tone='success'] {
+  background: var(--lumi-success);
+}
+
+.lumi-pipeline [data-tone='warning'] {
+  background: var(--lumi-warning);
+}
+
+.lumi-pipeline [data-tone='danger'] {
+  background: var(--destructive);
+}
+
+.lumi-pipeline [data-tone='info'] {
+  background: var(--lumi-info);
+}
+
+/* A centred funnel: SVG bands taper down the middle column, trapezoid
+   connectors join them into one silhouette, and the names and counts sit in
+   side columns of a fixed width so every row aligns. In a stretched card the
+   rows grow, bands more than connectors, so the funnel fills the card. A
+   narrow card keeps the silhouette whole: the side columns slim down, names
+   wrap and each count stacks over its share. */
+.lumi-funnel-chart {
+  --lumi-funnel-side: 6.5rem;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin: 0;
+  container-type: inline-size;
+}
+
+.lumi-funnel-chart__plot {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.lumi-funnel-chart__stage,
+.lumi-funnel-chart__step {
+  display: grid;
+  column-gap: var(--lumi-space-3);
+  grid-template-columns: var(--lumi-funnel-side) minmax(0, 1fr) var(--lumi-funnel-side);
+}
+
+.lumi-funnel-chart__stage {
+  min-height: 32px;
+  flex: 3 1 auto;
+  align-items: center;
+  grid-template-areas: 'label band value';
+}
+
+.lumi-funnel-chart__step {
+  min-height: 22px;
+  flex: 2 1 auto;
+  grid-template-areas: '. connector .';
+}
+
+.lumi-funnel-chart__band,
+.lumi-funnel-chart__connector {
+  position: relative;
+  display: block;
+  align-self: stretch;
+}
+
+.lumi-funnel-chart__band {
+  cursor: default;
+  grid-area: band;
+}
+
+.lumi-funnel-chart__connector {
+  grid-area: connector;
+}
+
+.lumi-funnel-chart__band svg,
+.lumi-funnel-chart__connector svg {
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: color-mix(in oklab, var(--lumi-funnel-fill) var(--lumi-funnel-mix), var(--card));
+  inset: 0;
+}
+
+.lumi-funnel-chart__band svg {
+  transition: filter 0.15s ease;
+}
+
+.lumi-funnel-chart__band:hover svg {
+  filter: brightness(1.1);
+}
+
+.lumi-funnel-chart__rate {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--foreground);
+  font-size: var(--lumi-fs-caption);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--lumi-font-weight-medium);
+  inset: 0;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.lumi-funnel-chart__label {
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--lumi-fs-label);
+  font-weight: var(--lumi-font-weight-medium);
+  grid-area: label;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lumi-funnel-chart__value {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  font-size: var(--lumi-fs-label);
+  font-variant-numeric: tabular-nums;
+  gap: var(--lumi-space-2);
+  grid-area: value;
+  white-space: nowrap;
+}
+
+.lumi-funnel-chart__value b {
+  font-weight: var(--lumi-font-weight-medium);
+}
+
+.lumi-funnel-chart__value small {
+  min-width: 3.2em;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  text-align: right;
+}
+
+@container (width < 440px) {
+  .lumi-funnel-chart {
+    --lumi-funnel-side: 4.75rem;
+  }
+
+  .lumi-funnel-chart__stage,
+  .lumi-funnel-chart__step {
+    column-gap: var(--lumi-space-2);
+  }
+
+  .lumi-funnel-chart__label {
+    line-height: 1.25;
+    white-space: normal;
+  }
+
+  .lumi-funnel-chart__value {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0;
+  }
+}
+
+/* Metric cards: the same object at two scales. `md` leads a dashboard, `sm`
+   rides above a table where the table, not the number, is the page. */
+.lumi-metric-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--lumi-space-4);
+  margin-block-end: var(--lumi-space-4);
+}
+
+.lumi-metric-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-radius: var(--lumi-radius-panel);
+  background: var(--card);
+  box-shadow: 0 0 0 1px var(--lumi-hairline);
+}
+
+/* What the number is and how it moved share one row above a hairline; the
+   number then owns the body, so a long value never wraps beside a chip. */
+.lumi-metric-card__head {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--lumi-space-4);
+  border-bottom: 1px solid var(--border);
+  gap: var(--lumi-space-2);
+}
+
+.lumi-metric-card__icon {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+  color: var(--muted-foreground);
+}
+
+.lumi-metric-card__change {
+  margin-inline-start: auto;
+}
+
+.lumi-metric-card__figure {
+  display: flex;
+  flex-direction: column;
+  padding: 14px var(--lumi-space-4) var(--lumi-space-4);
+  gap: 6px;
+}
+
+.lumi-metric-card__label {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--lumi-fg-secondary);
+  font-size: var(--lumi-fs-label);
+  font-weight: var(--lumi-font-weight-medium);
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lumi-metric-card__value {
+  display: flex;
+  align-items: baseline;
+  margin: 0;
+  font-size: var(--lumi-fs-metric);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--lumi-font-weight-medium);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+  gap: 10px;
+}
+
+.lumi-metric-card__unit {
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-section);
+  font-weight: var(--lumi-font-weight-normal);
+  letter-spacing: 0;
+}
+
+.lumi-metric-card__foot {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  gap: 6px;
+}
+
+/*
+ * The strip above a table is read across, not down: one label line, then the
+ * number with its delta and the window's shape beside it.
+ */
+.lumi-metric-cards[data-scale='sm'] {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--lumi-space-4);
+}
+
+.lumi-metric-card[data-scale='sm'] {
+  display: grid;
+  align-items: center;
+  padding: var(--lumi-space-3) var(--lumi-space-4) 14px;
+  column-gap: var(--lumi-space-3);
+  grid-template-columns: minmax(0, 1fr) auto;
+  row-gap: var(--lumi-space-1);
+}
+
+.lumi-metric-card[data-scale='sm'] .lumi-metric-card__head {
+  grid-column: 1 / -1;
+  min-height: 0;
+  padding: 0;
+  border-bottom: 0;
+}
+
+.lumi-metric-card[data-scale='sm'] .lumi-metric-card__label {
+  font-weight: var(--lumi-font-weight-normal);
+}
+
+.lumi-metric-card[data-scale='sm'] .lumi-metric-card__figure {
+  flex-direction: row;
+  min-width: 0;
+  align-items: baseline;
+  padding: 0;
+  gap: var(--lumi-space-2);
+}
+
+.lumi-metric-card[data-scale='sm'] .lumi-metric-card__value {
+  font-size: var(--lumi-fs-metric-sm);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  /* An amount broken across two lines reads as two numbers. */
+  white-space: nowrap;
+}
+
+.lumi-metric-card[data-scale='sm'] .lumi-metric-card__foot {
+  font-size: var(--lumi-fs-caption);
+}
+
+.lumi-metric-card > .lumi-metric-card__spark {
+  display: flex;
+  height: 44px;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-block-start: auto;
+  padding: 0 var(--lumi-space-4) var(--lumi-space-4);
+  box-sizing: content-box;
+  gap: 4px;
+}
+
+.lumi-metric-card[data-scale='sm'] .lumi-metric-card__spark {
+  width: 72px;
+  height: 18px;
+  flex: none;
+  justify-content: flex-start;
+  margin-block-start: 0;
+  padding: 0;
+  gap: 3px;
+}
+
+/* No history is a flat baseline, not a row of empty tracks that reads as
+   still loading. */
+.lumi-metric-card__spark[data-placeholder] {
+  opacity: 0.6;
+}
+
+.lumi-metric-card__spark[data-placeholder] .lumi-metric-card__col {
+  background: transparent;
+}
+
+/* Plain columns: they share the width but never grow past a narrow bar, and a
+   zero keeps the shortest bar so the row never has a hole. */
+.lumi-metric-card__col {
+  display: flex;
+  max-width: 14px;
+  flex: 1 1 0;
+  align-items: flex-end;
+  align-self: stretch;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--muted-foreground) 12%, transparent);
+}
+
+.lumi-metric-card__col i {
+  display: block;
+  width: 100%;
+  min-height: 4px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--muted-foreground) 40%, transparent);
+}
+
+.lumi-metric-card__col[data-last] i { background: var(--brand); }
+.lumi-metric-card[data-tone='success'] .lumi-metric-card__col[data-last] i { background: var(--lumi-success); }
+.lumi-metric-card[data-tone='warning'] .lumi-metric-card__col[data-last] i { background: var(--lumi-warning); }
+.lumi-metric-card[data-tone='danger'] .lumi-metric-card__col[data-last] i { background: var(--destructive); }
+.lumi-metric-card[data-tone='info'] .lumi-metric-card__col[data-last] i { background: var(--lumi-info); }
+
+/* Column chart drawn by the layout: bars are flex children with subtle track backdrop and unified palette. */
+.lumi-segmented {
+  --lumi-radius-item: max(var(--lumi-radius-sm), calc(var(--lumi-radius-control) - 3px));
+  display: inline-flex;
+  /* Its own width even inside a column that stretches its children. */
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  height: var(--lumi-control-md);
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+  background: var(--muted);
+  gap: 2px;
+}
+
+/* Touch targets grow the options (phones get them too, by width); the track
+   grows with them instead of clipping them. */
+@media (width < 768px), (pointer: coarse) {
+  .lumi-segmented {
+    height: auto;
+    min-height: var(--lumi-control-md);
+  }
+}
+
+.lumi-segmented__option {
+  padding: 0 10px;
+  border-radius: var(--lumi-radius-item);
+  color: var(--lumi-fg-secondary);
+  font-size: var(--lumi-fs-control);
+  /* Regular in every state: a bolder selection would widen it and shift its neighbours. */
+  font-weight: var(--lumi-font-weight-normal);
+  white-space: nowrap;
+}
+
+.lumi-segmented__option:hover {
+  color: var(--foreground);
+}
+
+.lumi-segmented__option:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+/* The chosen option is a raised pill on the track. */
+.lumi-segmented__option[data-active] {
+  background: var(--lumi-segment-bg);
+  box-shadow: var(--lumi-segment-shadow);
+  color: var(--lumi-segment-fg);
+}
+
+/* A dot matrix, not a line: every day is a column of fixed dots filled to its
+   share of the scale, so one bad day reads as a gap rather than a dip in a
+   smoothed curve. */
+.lumi-matrix-chart {
+  --lumi-matrix-dot: color-mix(in oklab, var(--muted-foreground) 14%, transparent);
+  --lumi-matrix-height: 212px;
+  display: grid;
+  margin: 0;
+  padding: var(--lumi-space-3) 0 2px;
+  grid-template-columns: 48px minmax(0, 1fr);
+}
+
+.lumi-matrix-chart__y {
+  display: flex;
+  height: var(--lumi-matrix-height);
+  flex-direction: column;
+  justify-content: space-between;
+  padding-inline-end: 10px;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-micro);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-align: right;
+}
+
+.lumi-matrix-chart__plot {
+  position: relative;
+  display: grid;
+  height: var(--lumi-matrix-height);
+  grid-template-columns: repeat(var(--lumi-matrix-columns), minmax(0, 1fr));
+}
+
+/* The column is the hover band: padded above and below its dots so the
+   highlight frames them instead of clipping the top and bottom rows. */
+.lumi-matrix-chart__column {
+  position: relative;
+  display: flex;
+  margin-block: -8px;
+  padding-block: 8px;
+  border-radius: var(--lumi-radius-item);
+  outline: none;
+}
+
+.lumi-matrix-chart__dots {
+  display: grid;
+  width: 100%;
+  align-items: center;
+  grid-template-rows: repeat(var(--lumi-matrix-rows), 1fr);
+  justify-items: center;
+}
+
+.lumi-matrix-chart__column:hover,
+.lumi-matrix-chart__column:focus-visible {
+  background: var(--muted);
+}
+
+.lumi-matrix-chart__column:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--ring);
+}
+
+.lumi-matrix-chart__column i {
+  width: min(8px, 72%);
+  aspect-ratio: 1;
+  border-radius: 2.5px;
+  background: var(--lumi-matrix-dot);
+}
+
+.lumi-matrix-chart__column i[data-filled] {
+  background: var(--brand);
+}
+
+.lumi-matrix-chart__column[data-flag] {
+  background: color-mix(in oklab, var(--warning) 10%, transparent);
+}
+
+.lumi-matrix-chart__column[data-flag] i[data-filled] {
+  background: color-mix(in oklab, var(--warning) 75%, white);
+}
+
+.lumi-matrix-chart__x {
+  display: grid;
+  margin-block-start: 14px;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-micro);
+  font-variant-numeric: tabular-nums;
+  grid-column: 2;
+  grid-template-columns: repeat(var(--lumi-matrix-columns), minmax(0, 1fr));
+}
+
+.lumi-matrix-chart__x span {
+  overflow: visible;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Fills the card it sits in, so it matches a taller neighbour in the row;
+   180px is the plot's own height when nothing stretches it. The headroom above
+   the top gridline holds the value printed over a full-scale column. */
+.lumi-bar-chart {
+  --lumi-bar-fill: var(--brand);
+  --lumi-bar-headroom: 8px;
+  display: grid;
+  flex: 1;
+  margin: 0;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(180px, 1fr) auto auto;
+}
+
+.lumi-bar-chart[data-axis] {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.lumi-bar-chart[data-values] {
+  --lumi-bar-headroom: 22px;
+}
+
+.lumi-bar-chart[data-tone='success'] { --lumi-bar-fill: var(--lumi-success); }
+.lumi-bar-chart[data-tone='warning'] { --lumi-bar-fill: var(--lumi-warning); }
+.lumi-bar-chart[data-tone='danger'] { --lumi-bar-fill: var(--destructive); }
+.lumi-bar-chart[data-tone='info'] { --lumi-bar-fill: var(--lumi-info); }
+.lumi-bar-chart[data-tone='neutral'] { --lumi-bar-fill: var(--muted-foreground); }
+
+/* Zero-height ticks spread like the gridlines, so each label centres on its line. */
+.lumi-bar-chart__y {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--lumi-bar-headroom) 10px 0 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-micro);
+  font-variant-numeric: tabular-nums;
+  grid-row: 1;
+  line-height: 1;
+}
+
+.lumi-bar-chart__y span {
+  display: flex;
+  height: 0;
+  align-items: center;
+  justify-content: flex-end;
+  white-space: nowrap;
+}
+
+.lumi-bar-chart__plot,
+.lumi-bar-chart__x {
+  display: grid;
+  gap: var(--lumi-space-2);
+  grid-column: -2;
+  grid-template-columns: repeat(var(--lumi-bar-columns), minmax(0, 1fr));
+}
+
+.lumi-bar-chart__plot {
+  position: relative;
+  grid-row: 1;
+}
+
+.lumi-bar-chart__grid {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  inset: var(--lumi-bar-headroom) 0 0;
+  pointer-events: none;
+}
+
+.lumi-bar-chart__grid i {
+  display: block;
+  height: 0;
+  border-block-start: 1px dashed var(--border);
+}
+
+.lumi-bar-chart__grid i:last-child {
+  border-block-start-style: solid;
+}
+
+/* The column is the hover band and the tooltip anchor; the bar inside sits on
+   the baseline, centred, at most 36px wide. */
+.lumi-bar-chart__column {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  padding-block-start: var(--lumi-bar-headroom);
+  border-radius: var(--lumi-radius-item) var(--lumi-radius-item) 0 0;
+  cursor: default;
+  outline: none;
+}
+
+.lumi-bar-chart__column:hover,
+.lumi-bar-chart__column:focus-visible {
+  background: color-mix(in oklab, var(--muted) 55%, transparent);
+}
+
+.lumi-bar-chart__column:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--ring);
+}
+
+.lumi-bar-chart__track {
+  position: relative;
+  display: block;
+  width: min(64%, 36px);
+  flex: 1;
+}
+
+.lumi-bar-chart__column[data-tone='success'] { --lumi-bar-fill: var(--lumi-success); }
+.lumi-bar-chart__column[data-tone='warning'] { --lumi-bar-fill: var(--lumi-warning); }
+.lumi-bar-chart__column[data-tone='danger'] { --lumi-bar-fill: var(--destructive); }
+.lumi-bar-chart__column[data-tone='info'] { --lumi-bar-fill: var(--lumi-info); }
+.lumi-bar-chart__column[data-tone='primary'] { --lumi-bar-fill: var(--brand); }
+.lumi-bar-chart__column[data-tone='neutral'] { --lumi-bar-fill: var(--muted-foreground); }
+
+/* The emphasised column carries the full tone, the others a tint of the same
+   tone mixed into the card, so gridlines never show through a bar. */
+.lumi-bar-chart__bar {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  display: block;
+  min-height: 2px;
+  border-radius: var(--lumi-radius-sm) var(--lumi-radius-sm) 0 0;
+  background: color-mix(in oklab, var(--lumi-bar-fill) 30%, var(--card));
+  transition: background-color 0.15s ease;
+}
+
+[data-theme='dark'] .lumi-bar-chart__bar {
+  background: color-mix(in oklab, var(--lumi-bar-fill) 36%, var(--card));
+}
+
+.lumi-bar-chart__column:hover .lumi-bar-chart__bar,
+.lumi-bar-chart__column:focus-visible .lumi-bar-chart__bar {
+  background: color-mix(in oklab, var(--lumi-bar-fill) 55%, var(--card));
+}
+
+.lumi-bar-chart__column[data-emphasis] .lumi-bar-chart__bar {
+  background: var(--lumi-bar-fill);
+}
+
+.lumi-bar-chart__value {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.lumi-bar-chart__column[data-emphasis] .lumi-bar-chart__value {
+  color: var(--foreground);
+  font-weight: var(--lumi-font-weight-semibold);
+}
+
+.lumi-bar-chart__x {
+  padding-block-start: var(--lumi-space-2);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  font-variant-numeric: tabular-nums;
+  grid-row: 2;
+}
+
+.lumi-bar-chart__x span {
+  min-width: 0;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lumi-bar-chart__x span[data-emphasis] {
+  color: var(--foreground);
+  font-weight: var(--lumi-font-weight-medium);
+}
+
+.lumi-bar-chart__caption {
+  display: flex;
+  align-items: center;
+  padding-block-start: var(--lumi-space-3);
+  border-block-start: 1px solid var(--border);
+  margin-block-start: var(--lumi-space-3);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  gap: 6px;
+  grid-column: 1 / -1;
+  grid-row: 3;
+}
+
+/* A ranking: label and reading on one line, a thin solid bar on a track under
+   them. In a stretched card the rows spread to the card's height so the list
+   ends level with its neighbour. */
+.lumi-proportion-list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0;
+  gap: 2px;
+  list-style: none;
+}
+
+.lumi-proportion-list__row {
+  --lumi-proportion-fill: var(--brand);
+  display: grid;
+  align-items: baseline;
+  padding: var(--lumi-space-2) 10px;
+  margin-inline: -10px;
+  border-radius: var(--lumi-radius-control);
+  font-size: var(--lumi-fs-label);
+  column-gap: var(--lumi-space-3);
+  row-gap: 8px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  transition: background-color 0.15s ease;
+}
+
+.lumi-proportion-list[data-share] .lumi-proportion-list__row {
+  grid-template-columns: minmax(0, 1fr) auto 3.5em;
+}
+
+.lumi-proportion-list__row:hover {
+  background: color-mix(in oklab, var(--muted) 60%, transparent);
+}
+
+.lumi-proportion-list__row[data-tone='success'] { --lumi-proportion-fill: var(--lumi-success); }
+.lumi-proportion-list__row[data-tone='warning'] { --lumi-proportion-fill: var(--lumi-warning); }
+.lumi-proportion-list__row[data-tone='danger'] { --lumi-proportion-fill: var(--destructive); }
+.lumi-proportion-list__row[data-tone='info'] { --lumi-proportion-fill: var(--lumi-info); }
+.lumi-proportion-list__row[data-tone='neutral'] { --lumi-proportion-fill: color-mix(in oklab, var(--muted-foreground) 55%, transparent); }
+
+.lumi-proportion-list__track {
+  display: block;
+  height: 6px;
+  overflow: hidden;
+  border-radius: var(--lumi-radius-full);
+  background: color-mix(in oklab, var(--muted-foreground) 12%, transparent);
+  grid-column: 1 / -1;
+}
+
+.lumi-proportion-list__bar {
+  display: block;
+  height: 100%;
+  min-width: 6px;
+  border-radius: inherit;
+  background: var(--lumi-proportion-fill);
+}
+
+/* One line per rank: a name that breaks mid-word makes its row taller than the
+   ones around it and the ranking stops reading as a column. */
+.lumi-proportion-list__label {
+  min-width: 0;
+  overflow: hidden;
+  font-weight: var(--lumi-font-weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lumi-proportion-list__row[data-other] .lumi-proportion-list__label {
+  color: var(--muted-foreground);
+}
+
+.lumi-proportion-list__value {
+  font-size: var(--lumi-fs-label);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--lumi-font-weight-medium);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.lumi-proportion-list[data-value-tone='muted'] .lumi-proportion-list__value {
+  color: var(--muted-foreground);
+  font-weight: var(--lumi-font-weight-normal);
+}
+
+.lumi-proportion-list__share {
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Each summary is an independent surface above filters and results. */
+.lumi-stat-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  margin: 0 0 var(--lumi-space-5);
+  gap: var(--lumi-space-4);
+}
+
+.lumi-stat-strip__item {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--lumi-space-3) var(--lumi-space-4) 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-panel);
+  background: var(--card);
+  gap: var(--lumi-space-1);
+}
+
+.lumi-stat-strip__item[data-series] {
+  display: grid;
+  align-items: center;
+  column-gap: var(--lumi-space-3);
+  grid-template-columns: minmax(0, 1fr) 68px;
+  grid-template-rows: repeat(3, auto);
+}
+
+.lumi-stat-strip__item[data-series] > :not(.lumi-stat-strip__spark) {
+  grid-column: 1;
+}
+
+.lumi-stat-strip__label {
+  display: flex;
+  align-items: center;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  gap: var(--lumi-space-2);
+  line-height: 1.4;
+}
+
+.lumi-stat-strip__icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: color-mix(in oklab, var(--muted-foreground) 75%, transparent);
+}
+
+.lumi-stat-strip__value {
+  display: flex;
+  align-items: baseline;
+  margin: 0;
+  font-size: var(--lumi-fs-metric-sm);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--lumi-font-weight-medium);
+  gap: var(--lumi-space-2);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+/* A short chip beside the figure, in the figure's own tone. */
+.lumi-stat-strip__badge {
+  padding: 1px 6px;
+  border-radius: var(--lumi-radius-sm);
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  font-weight: var(--lumi-font-weight-medium);
+  letter-spacing: 0;
+  line-height: 1.5;
+}
+
+.lumi-stat-strip__badge[data-tone='warning'] {
+  background: color-mix(in oklab, var(--warning) 12%, transparent);
+  color: var(--lumi-text-warning);
+}
+
+.lumi-stat-strip__badge[data-tone='danger'] {
+  background: color-mix(in oklab, var(--destructive) 12%, transparent);
+  color: var(--destructive);
+}
+
+/* A figure that is itself the problem carries its tone; a plain total does not,
+   because colouring every number leaves nothing for the one that matters. */
+.lumi-stat-strip__value[data-tone='warning'] {
+  color: var(--lumi-text-warning);
+}
+
+.lumi-stat-strip__value[data-tone='danger'] {
+  color: var(--destructive);
+}
+
+.lumi-stat-strip__foot {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  gap: 6px;
+  line-height: 1.4;
+}
+
+.lumi-stat-strip__spark {
+  display: flex;
+  width: 68px;
+  height: 28px;
+  align-items: flex-end;
+  align-self: center;
+  grid-column: 2;
+  grid-row: 1 / -1;
+  gap: 3px;
+  margin: 0;
+}
+
+.lumi-stat-strip__spark i {
+  display: block;
+  max-width: 10px;
+  min-height: 3px;
+  flex: 1 1 0;
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--muted-foreground) 30%, transparent);
+}
+
+.lumi-stat-strip__spark i[data-last] {
+  background: var(--brand);
+}
+
+.lumi-stat-strip__item[data-tone='success'] .lumi-stat-strip__spark i[data-last] {
+  background: var(--lumi-success);
+}
+
+.lumi-stat-strip__item[data-tone='warning'] .lumi-stat-strip__spark i[data-last] {
+  background: var(--lumi-warning);
+}
+
+.lumi-stat-strip__item[data-tone='danger'] .lumi-stat-strip__spark i[data-last] {
+  background: var(--destructive);
+}
+
+.lumi-stat-strip__item[data-tone='info'] .lumi-stat-strip__spark i[data-last] {
+  background: var(--lumi-info);
+}
+
+/* Filters live on the surrounding surface: no second card, no second outline. */
+.lumi-filter-bar {
+  display: grid;
+  gap: var(--lumi-space-2);
+  min-width: 0;
+}
+
+.lumi-filter-bar__copy p {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+}
+
+.lumi-data-grid {
+  min-width: 0;
+}
+
+.lumi-data-grid__scroll {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+.lumi-data-grid__scroll > * {
+  min-width: 720px;
+}
+
+/* One-line rows sit at the shared row height; a two-line entity keeps 12px
+   above and below so stacked rows never touch their rules. */
+.lumi-data-grid tbody td {
+  height: var(--lumi-row-height);
+  padding-block: var(--lumi-space-3);
+}
+
+.lumi-data-grid thead th {
+  height: 36px;
+  font-size: var(--lumi-fs-meta);
+}
+
+/* Rows are scanned across, so cells stay one line at the table's own size. */
+.lumi-data-grid tbody td {
+  font-size: var(--lumi-fs-body);
+}
+
+/* 8px gutters keep a nine-column table inside a 760px column without clipping
+   its text columns; the row-action column is all button and needs none. */
+.lumi-data-grid th[data-slot="table-head"],
+.lumi-data-grid td[data-slot="table-cell"] {
+  padding-inline: 8px;
+}
+
+.lumi-data-grid td[data-kind="actions"] {
+  padding-inline-start: 0;
+}
+
+.lumi-data-grid th[data-slot="table-head"]:first-child,
+.lumi-data-grid td[data-slot="table-cell"]:first-child {
+  padding-inline-start: var(--lumi-space-4);
+}
+
+.lumi-data-grid th[data-slot="table-head"]:last-child,
+.lumi-data-grid td[data-slot="table-cell"]:last-child {
+  padding-inline-end: var(--lumi-space-3);
+}
+
+/* The selection box column carries no gutter on its far side. */
+.lumi-data-grid [data-slot="table-head"]:has([role="checkbox"]),
+.lumi-data-grid [data-slot="table-cell"]:has([role="checkbox"]) {
+  padding-inline-end: 0;
+}
+
+.lumi-data-grid[data-busy='true'] .lumi-data-grid__scroll {
+  pointer-events: none;
+}
+
+.lumi-data-grid[data-loading='true'] tbody td {
+  color: transparent;
+  user-select: none;
+}
+
+.lumi-data-grid[data-loading='true'] tbody td::after {
+  display: block;
+  width: min(100%, 10rem);
+  height: 12px;
+  border-radius: var(--lumi-radius-control);
+  background: var(--muted);
+  content: '';
+}
+
+/* One row: the count on the left, the controls on the right. */
+.lumi-data-grid__pagination > * {
+  display: flex;
+  align-items: center;
+  padding: var(--lumi-space-3) var(--lumi-space-4);
+  border-top: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  gap: var(--lumi-space-3);
+}
+
+.lumi-data-grid__pagination nav {
+  width: auto;
+  margin: 0;
+}
+
+/* Column visibility: a named control, because three stacked bars read as
+   "menu" or "sort" just as easily as "columns". */
+.lumi-columns-menu {
+  position: relative;
+  flex: none;
+}
+
+.lumi-columns-menu__trigger {
+  display: inline-flex;
+  align-items: center;
+  height: var(--lumi-control-md);
+  padding-inline: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+  color: var(--foreground);
+  font-size: var(--lumi-fs-label);
+  gap: 6px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.lumi-columns-menu__trigger::-webkit-details-marker {
+  display: none;
+}
+
+.lumi-columns-menu__trigger:hover {
+  background: var(--accent);
+}
+
+.lumi-columns-menu__trigger svg {
+  width: 14px;
+  height: 14px;
+  fill: currentcolor;
+}
+
+.lumi-columns-menu__panel {
+  position: absolute;
+  z-index: var(--lumi-z-popover);
+  inset-inline-end: 0;
+  --lumi-radius-item: max(var(--lumi-radius-sm), calc(var(--lumi-radius-overlay) - var(--lumi-menu-padding)));
+  min-width: var(--lumi-menu-min-width);
+  margin-block-start: var(--lumi-space-1);
+  padding: var(--lumi-menu-padding);
+}
+
+.lumi-columns-menu__item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--lumi-control-md);
+  padding-inline: var(--lumi-control-px-sm);
+  border-radius: var(--lumi-radius-item);
+  font-size: var(--lumi-fs-control);
+  gap: var(--lumi-space-2);
+  text-align: start;
+}
+
+.lumi-columns-menu__item:hover:not(:disabled),
+.lumi-columns-menu__item:focus-visible {
+  background: var(--lumi-hover-bg);
+  outline: none;
+}
+
+.lumi-columns-menu__item:disabled {
+  opacity: 0.5;
+}
+
+.lumi-columns-menu__mark {
+  display: grid;
+  width: 14px;
+  height: 14px;
+  flex: none;
+  place-items: center;
+}
+
+.lumi-columns-menu__mark svg {
+  width: 14px;
+  height: 14px;
+}
+
+.lumi-list-page__surface {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-panel);
+  background: var(--card);
+}
+
+.lumi-list-page__toolbar {
+  min-width: 0;
+  margin-block-end: var(--lumi-space-4);
+  padding: var(--lumi-space-3) var(--lumi-space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-panel);
+  background: var(--card);
+}
+
+/* The panel's rule runs edge to edge of the toolbar card, like the stat band's. */
+.lumi-list-page__toolbar [data-slot="filters-advanced"] {
+  max-width: none;
+  margin: var(--lumi-space-1) calc(-1 * var(--lumi-space-4)) 0;
+  padding-inline: var(--lumi-space-4);
+}
+
+.lumi-list-page__count {
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  font-variant-numeric: tabular-nums;
+}
+
+.lumi-list-page__views {
+  display: flex;
+  align-items: center;
+  min-height: var(--lumi-band-height);
+  padding: 0 var(--lumi-space-4);
+  gap: var(--lumi-space-2);
+}
+
+.lumi-list-page__views-end {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  gap: var(--lumi-space-2);
+}
+
+.lumi-list-page__views .lumi-columns-menu__trigger {
+  height: var(--lumi-control-sm);
+}
+
+/* A view's row count trails its name, one step quieter. */
+.lumi-preset-tabs__count {
+  margin-inline-start: 6px;
+  color: var(--lumi-fg-secondary);
+  font-size: var(--lumi-fs-caption);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--lumi-font-weight-normal);
+}
+
+/* The selected pill inverts in dark mode, so its count is mixed from the pill's
+   own colours rather than read from the page's secondary grey. */
+.lumi-preset-tabs button[data-active] .lumi-preset-tabs__count {
+  color: color-mix(in oklab, var(--lumi-segment-fg) 65%, var(--lumi-segment-bg));
+}
+
+.lumi-list-page__batch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lumi-space-2);
+  min-height: var(--lumi-band-height);
+  padding: var(--lumi-space-1) var(--lumi-space-4);
+}
+
+/* Inside the results surface the line above the header is already drawn by
+   the surface edge or by the views/batch row. */
+.lumi-list-page__surface:not(:has(> .lumi-list-page__views, > .lumi-list-page__batch)) [data-slot="table-head"] {
+  border-top-width: 0;
+}
+
+.lumi-list-page__results {
+  flex: 1;
+  min-width: 0;
+  padding: var(--lumi-space-4);
+}
+
+.lumi-page-loading {
+  display: grid;
+  gap: var(--lumi-space-3);
+  min-height: 240px;
+  align-content: start;
+  padding: var(--lumi-space-1);
+}
+
+.lumi-page-loading__line {
+  display: block;
+  height: 42px;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+  background: var(--muted);
+  animation: lumi-page-pulse 1.2s ease-in-out infinite alternate;
+}
+
+.lumi-page-loading__line:first-child {
+  width: min(42%, 360px);
+  height: 30px;
+}
+
+.lumi-page-loading__line:last-child {
+  height: 132px;
+}
+
+.lumi-admin-page__notice {
+  margin-block-end: var(--lumi-space-4);
+}
+
+.lumi-form-page__surface {
+  min-width: 0;
+}
+
+/* Form columns respond to the same container used by every page type. */
+.lumi-form-page {
+  container: form-page / inline-size;
+}
+
+.lumi-form-page > .lumi-page-header {
+  margin-block: var(--lumi-space-2) var(--lumi-space-6);
+}
+
+/* Form and settings pages read as one header: title, then a one-line subtitle. */
+:is(.lumi-form-page, .lumi-settings-page) .lumi-page-header p {
+  margin-block-start: 2px;
+  font-size: var(--lumi-fs-label);
+}
+
+.lumi-form-page__page-tabs {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-end: var(--lumi-space-6);
+  gap: var(--lumi-space-4);
+}
+
+.lumi-form-page__page-tabs-actions {
+  display: flex;
+  min-width: 0;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  margin-inline-start: auto;
+  gap: var(--lumi-space-2);
+}
+
+.lumi-form-page__toolbar {
+  display: flex;
+  min-height: var(--lumi-band-height);
+  align-items: center;
+  padding: var(--lumi-space-5) var(--lumi-space-6);
+  margin-block-end: var(--lumi-space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-panel);
+  background: var(--card);
+  gap: var(--lumi-space-4);
+}
+
+.lumi-form-page__surface-copy {
+  min-width: 0;
+}
+
+.lumi-form-page__surface-copy h2 {
+  margin: 0;
+  font-size: var(--lumi-fs-title);
+  font-weight: var(--lumi-font-weight-semibold);
+}
+
+.lumi-form-page__surface-copy p {
+  max-width: 60ch;
+  margin: 3px 0 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+}
+
+.lumi-form-page__toolbar > .lumi-form-page__steps {
+  min-width: 0;
+  flex: 1;
+  padding: 0;
+  border-bottom: 0;
+}
+
+/* Ungrouped native fields get one surface; explicit sections own their cards. */
+.lumi-form-page__body {
+  min-width: 0;
+  padding: var(--lumi-space-6);
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-panel);
+  background: var(--card);
+}
+
+.lumi-form-page__body:has(.lumi-form-section) {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.lumi-form-page__surface .lumi-form-section {
+  min-width: 0;
+  padding: var(--lumi-space-5) var(--lumi-space-6) var(--lumi-space-6);
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-panel);
+  background: var(--card);
+}
+
+.lumi-form-page__surface .lumi-form-section + .lumi-form-section {
+  margin-block-start: var(--lumi-space-5);
+  padding-block-start: var(--lumi-space-5);
+  border-top-style: solid;
+}
+
+/* Supporting information sits beside the editor for every layout. */
+.lumi-form-page__publish {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--lumi-layout-aside);
+  align-items: start;
+  gap: var(--lumi-space-5);
+}
+
+.lumi-form-page__main {
+  min-width: 0;
+}
+
+.lumi-form-page__publish > .lumi-form-page__main,
+.lumi-form-page__aside {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  gap: var(--lumi-space-5);
+}
+
+.lumi-form-page__publish > :is(.lumi-form-page__main, .lumi-form-page__aside) > .lumi-form-section {
+  margin: 0;
+}
+
+.lumi-form-page__aside .lumi-form-section {
+  padding: var(--lumi-space-4);
+}
+
+/* Aside cards are metadata, one step quieter than the editor's groups. */
+.lumi-form-page__aside .lumi-form-section__title {
+  font-size: var(--lumi-fs-title);
+}
+
+.lumi-form-page__aside .lumi-form-section__fields {
+  grid-template-columns: minmax(0, 1fr);
+  gap: calc(var(--lumi-space-3) + 2px);
+  margin-block-start: calc(var(--lumi-space-3) + 2px);
+}
+
+.lumi-form-page__aside .lumi-toggle-row__title {
+  font-size: var(--lumi-fs-label);
+  font-weight: var(--lumi-font-weight-normal);
+}
+
+/* Same floor as the detail page: an editor keeps its side column beside an open Agent panel. */
+@container form-page (width < 680px) {
+  .lumi-form-page__publish {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Tabs lead the page and share their band with the form actions. */
+.lumi-form-page__tabs {
+  display: flex;
+  min-width: 0;
+  width: fit-content;
+  flex: 0 1 auto;
+  align-items: stretch;
+  padding: 0;
+  gap: var(--lumi-space-6);
+  overflow-x: auto;
+}
+
+.lumi-form-page__tab {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--lumi-tabbar-height);
+  padding: var(--lumi-space-2) 0;
+  border-bottom: 2px solid transparent;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  /* Regular in every state: a bolder selection would widen it and shift its neighbours. */
+  font-weight: var(--lumi-font-weight-normal);
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.lumi-form-page__tab[data-active] {
+  border-color: var(--foreground);
+  color: var(--foreground);
+}
+
+.lumi-form-page__tab:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.lumi-form-page__tab:not(:disabled):hover {
+  color: var(--foreground);
+}
+
+.lumi-form-page__tab:disabled {
+  opacity: 0.5;
+}
+
+.lumi-form-page__tab-dot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: var(--lumi-radius-full);
+  background: var(--destructive);
+}
+
+/* Steps read as progress: filled behind you, outlined where you stand. */
+.lumi-form-page__steps {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: var(--lumi-space-4) var(--lumi-space-5);
+  border-bottom: 1px solid var(--border);
+  gap: var(--lumi-space-2);
+  list-style: none;
+}
+
+.lumi-form-page__step {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+}
+
+.lumi-form-page__step:last-child {
+  flex: none;
+}
+
+.lumi-form-page__step-dot {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-full);
+  background: var(--background);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  font-weight: var(--lumi-font-weight-semibold);
+  place-items: center;
+}
+
+.lumi-form-page__step[data-state='done'] .lumi-form-page__step-dot {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.lumi-form-page__step[data-state='now'] .lumi-form-page__step-dot {
+  border-color: var(--foreground);
+  color: var(--foreground);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--foreground) 12%, transparent);
+}
+
+.lumi-form-page__step-text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.lumi-form-page__step-text b {
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  font-weight: var(--lumi-font-weight-normal);
+  white-space: nowrap;
+}
+
+.lumi-form-page__step:is([data-state='now'], [data-state='done']) .lumi-form-page__step-text b {
+  color: var(--foreground);
+}
+
+.lumi-form-page__step-text small {
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  white-space: nowrap;
+}
+
+.lumi-form-page__step-line {
+  height: 1px;
+  min-width: 16px;
+  flex: 1;
+  background: var(--border);
+}
+
+.lumi-form-page__step-line[data-done] {
+  background: var(--primary);
+}
+
+.lumi-form-page__step-panel {
+  min-width: 0;
+}
+
+/* Step actions are the footer band of the form card above them, the same band
+   a settings section closes with. Content that is not a section card keeps a
+   bordered bar of its own. */
+.lumi-form-page__stepfoot {
+  display: flex;
+  min-width: 0;
+  min-height: calc(var(--lumi-control-md) + 2 * var(--lumi-space-3));
+  align-items: center;
+  padding: var(--lumi-space-3) var(--lumi-space-6);
+  margin-block-start: var(--lumi-space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-panel);
+  background: color-mix(in oklab, var(--card) 70%, var(--muted));
+  gap: var(--lumi-space-3);
+}
+
+.lumi-form-page__surface .lumi-form-section:has(+ .lumi-form-page__stepfoot) {
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.lumi-form-page__surface .lumi-form-section + .lumi-form-page__stepfoot {
+  margin-block-start: 0;
+  border-block-start: 0;
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+}
+
+/* Ungrouped fields already sit on one card: the actions close it with a rule. */
+.lumi-form-page__body:not(:has(.lumi-form-section)) .lumi-form-page__stepfoot {
+  min-height: 0;
+  padding: var(--lumi-space-4) 0 0;
+  margin-block-start: var(--lumi-space-6);
+  border-width: 1px 0 0;
+  border-radius: 0;
+  background: none;
+}
+
+.lumi-form-page__stepcount {
+  min-width: 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+}
+
+.lumi-form-page__stepfoot-actions {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  margin-inline-start: auto;
+  gap: var(--lumi-space-2);
+}
+
+.lumi-form-page__feedback {
+  min-width: 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+}
+
+.lumi-form-page__feedback[data-save-state='dirty'],
+.lumi-form-page__feedback[data-save-state='saving'] {
+  color: var(--foreground);
+}
+
+/* The labels share one cell sized to the widest, so a state change never moves the actions. */
+.lumi-form-page__feedback {
+  display: inline-grid;
+  align-items: center;
+}
+
+.lumi-form-page__feedback > [data-state] {
+  grid-area: 1 / 1;
+  justify-self: end;
+  visibility: hidden;
+  white-space: nowrap;
+}
+
+.lumi-form-page__feedback[data-save-state='dirty'] > [data-state='dirty'],
+.lumi-form-page__feedback[data-save-state='saving'] > [data-state='saving'],
+.lumi-form-page__feedback[data-save-state='success'] > [data-state='success'] {
+  visibility: visible;
+}
+
+.lumi-form-page__dirty {
+  display: inline-flex;
+  align-items: center;
+  margin-inline-end: var(--lumi-space-1);
+  color: var(--lumi-text-warning);
+  gap: 6px;
+  font-size: var(--lumi-fs-meta);
+}
+
+.lumi-form-page__dirty::before {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--lumi-radius-full);
+  background: var(--lumi-warning);
+  content: '';
+}
+
+.lumi-form-page__alert {
+  margin-block-end: var(--lumi-space-5);
+}
+
+.lumi-form-section {
+  min-width: 0;
+  container: form-section / inline-size;
+}
+
+/* Sentence case and a clear size step make section headings easy to scan. */
+.lumi-form-section__title {
+  margin: 0;
+  color: var(--foreground);
+  font-size: var(--lumi-fs-section);
+  font-weight: var(--lumi-font-weight-semibold);
+  line-height: 1.4;
+}
+
+.lumi-form-section__description {
+  max-width: 60ch;
+  margin: 2px 0 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  line-height: 1.5;
+}
+
+.lumi-form-section + .lumi-form-section {
+  margin-block-start: var(--lumi-space-8);
+  padding-block-start: var(--lumi-space-8);
+  border-top: 1px dashed var(--border);
+}
+
+.lumi-form-section__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lumi-space-4);
+  margin-block-start: var(--lumi-space-5);
+  min-width: 0;
+}
+
+.lumi-form-section > .lumi-form-section__fields:first-child {
+  margin-block-start: 0;
+}
+
+/* A label-line action rides the trailing edge of the field's own label. */
+.lumi-form-row[data-action] {
+  position: relative;
+}
+
+.lumi-form-row__action {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  color: var(--brand);
+  font-size: var(--lumi-fs-caption);
+  gap: var(--lumi-space-1);
+}
+
+.lumi-form-section__fields > [data-span='full'] {
+  grid-column: 1 / -1;
+}
+
+.lumi-form-section__fields > * {
+  min-width: 0;
+}
+
+@container form-section (width < 480px) {
+  .lumi-form-section__fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Toggle rows stack under one shared rule instead of the field grid's gaps. */
+.lumi-form-section__fields[data-variant='rows'] {
+  display: block;
+  margin-block-start: var(--lumi-space-2);
+}
+
+.lumi-form-section__fields[data-variant='rows'] > * {
+  padding-block: var(--lumi-space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.lumi-form-section__fields[data-variant='rows'] > *:last-child {
+  border-bottom: 0;
+  padding-block-end: 0;
+}
+
+/* Two ends, one line between rows: the sentence on the left, the answer on the
+   right. */
+.lumi-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lumi-space-4);
+}
+
+.lumi-toggle-row__copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lumi-toggle-row__title {
+  display: flex;
+  align-items: center;
+  font-size: var(--lumi-fs-body);
+  font-weight: var(--lumi-font-weight-medium);
+  gap: var(--lumi-space-2);
+}
+
+.lumi-toggle-row__icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: var(--muted-foreground);
+}
+
+.lumi-toggle-row__copy small {
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  line-height: var(--lumi-leading-body);
+}
+
+.lumi-toggle-row__copy .lumi-toggle-row__error {
+  color: var(--destructive);
+}
+
+/* Compact selects and short inputs answer at a fixed width, like a switch. */
+.lumi-toggle-row__control > :is([data-slot='lumi-input'], [data-slot='lumi-input-affix'], [data-slot='select-trigger'], button[role='combobox'], input) {
+  width: 160px;
+}
+
+/* Save feedback: warning dot while dirty, success check once saved. */
+.lumi-save-status {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  color: var(--muted-foreground);
+  gap: var(--lumi-space-1);
+}
+
+.lumi-save-status[data-state='dirty'] {
+  color: var(--lumi-text-warning);
+  gap: 6px;
+}
+
+.lumi-save-status[data-state='dirty']::before {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: var(--lumi-radius-full);
+  background: var(--lumi-warning);
+  content: '';
+}
+
+.lumi-save-status[data-state='success'] {
+  color: var(--lumi-text-success);
+}
+
+.lumi-save-status[data-state='error'] {
+  color: var(--destructive);
+}
+
+.lumi-save-status__icon {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+.lumi-toggle-row__control {
+  flex: none;
+}
+
+/* Rows stacked straight into a card body keep the one line between rows: the
+   body's gap sits above it and an equal inset below. */
+[data-slot='card-content'] > .lumi-toggle-row + .lumi-toggle-row {
+  padding-block-start: var(--lumi-space-4);
+  border-block-start: 1px solid var(--border);
+}
+
+.lumi-detail-page {
+  container: detail-page / inline-size;
+}
+
+/* Summary, content and activity keep their own natural height. */
+.lumi-detail-page__layout {
+  display: grid;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: var(--lumi-space-4);
+}
+
+.lumi-detail-page__layout[data-aside] {
+  grid-template-columns: minmax(0, 1fr) 320px;
+}
+
+.lumi-detail-page__main,
+.lumi-detail-page__aside {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--lumi-space-4);
+}
+
+.lumi-detail-page__panel {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-panel);
+  background: var(--card);
+  background-clip: padding-box;
+}
+
+.lumi-detail-page__items {
+  display: flex;
+  flex-direction: column;
+}
+
+.lumi-detail-page__band {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  padding: var(--lumi-space-5) var(--lumi-space-5) var(--lumi-space-3);
+  gap: var(--lumi-space-2);
+}
+
+.lumi-detail-page__band h2 {
+  margin: 0;
+  color: var(--foreground);
+  font-size: var(--lumi-fs-title);
+  font-weight: var(--lumi-font-weight-semibold);
+  line-height: 1.4;
+}
+
+.lumi-detail-page__band p {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+}
+
+.lumi-detail-page__band[data-action] {
+  align-items: center;
+  padding-block: var(--lumi-space-3);
+  min-height: var(--lumi-band-height);
+}
+
+.lumi-detail-page__band-action {
+  display: flex;
+  align-items: center;
+  margin-inline-start: auto;
+  gap: var(--lumi-space-2);
+}
+
+.lumi-detail-page__block[data-flush] {
+  padding: 0;
+}
+
+/* A timeline block sits one step in from the panel edge, like the design's feed. */
+.lumi-detail-page__block > [data-slot="timeline"][data-marker="dot"] {
+  font-size: var(--lumi-fs-body);
+}
+
+.lumi-detail-page__block {
+  padding: 0 var(--lumi-space-5) var(--lumi-space-5);
+  overflow-wrap: anywhere;
+}
+
+.lumi-detail-page__block > :first-child { margin-block-start: 0; }
+.lumi-detail-page__block > :last-child { margin-block-end: 0; }
+
+/* Fields wrap without leaving a separator at the start of the next row. */
+.lumi-detail-page__fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+  margin: 0;
+  padding: var(--lumi-space-4) var(--lumi-space-5);
+  gap: var(--lumi-space-4);
+}
+
+.lumi-detail-page__fields > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lumi-detail-page__fields dt {
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+}
+
+.lumi-detail-page__fields dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: var(--lumi-fs-body);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--lumi-font-weight-semibold);
+}
+
+.lumi-detail-page__fields dd.lumi-detail-page__hint {
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  font-weight: var(--lumi-font-weight-normal, 400);
+}
+
+/* Money hangs under the amount column, the way an invoice reads — not stretched
+   across the whole table with a thousand pixels of nothing in the middle. */
+.lumi-detail-page__summary {
+  display: flex;
+  width: min(300px, calc(100% - 2 * var(--lumi-space-4)));
+  flex-direction: column;
+  margin: 0 var(--lumi-space-4) 0 auto;
+  padding-block: 14px;
+  border-block-start: 1px solid var(--border);
+  gap: var(--lumi-space-2);
+}
+
+.lumi-detail-page__summary > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  gap: var(--lumi-space-4);
+}
+
+.lumi-detail-page__summary > div[data-total] {
+  padding-block-start: var(--lumi-space-2);
+  border-block-start: 1px solid var(--border);
+  color: var(--foreground);
+  font-size: var(--lumi-fs-title);
+  font-weight: var(--lumi-font-weight-semibold);
+}
+
+.lumi-detail-page__summary dt,
+.lumi-detail-page__summary dd {
+  margin: 0;
+}
+
+.lumi-detail-page__summary dd {
+  font-variant-numeric: tabular-nums;
+}
+
+@container detail-page (width < 680px) {
+  .lumi-detail-page__layout[data-aside] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.lumi-settings-page {
+  container: settings-page / inline-size;
+}
+
+.lumi-settings-page__measure {
+  width: 100%;
+  min-width: 0;
+  margin-inline: auto;
+}
+
+.lumi-settings-page__top {
+  padding-block: var(--lumi-space-2) var(--lumi-space-5);
+}
+
+.lumi-settings-page__top > .lumi-page-header {
+  margin-block-end: 0;
+}
+
+.lumi-settings-page__tabs {
+  width: 100%;
+  min-width: 0;
+  gap: 0;
+}
+
+.lumi-settings-page__tabs > [data-slot='tabs-list'] {
+  width: 100%;
+  max-width: none;
+  height: var(--lumi-tabbar-height);
+  justify-content: flex-start;
+  margin-inline: auto;
+  padding: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+  gap: var(--lumi-space-1);
+  overflow-x: auto;
+}
+
+.lumi-settings-page__tabs > [data-slot='tabs-list'] > [data-slot='tabs-trigger'] {
+  height: var(--lumi-tabbar-height);
+  flex: 0 0 auto;
+  padding: 0 10px;
+  font-size: calc((var(--lumi-fs-label) + var(--lumi-fs-body)) / 2);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--muted-foreground);
+}
+
+.lumi-settings-page__tabs > [data-slot='tabs-list'] > [data-slot='tabs-trigger']::after {
+  inset-inline: 0;
+  bottom: 0;
+  height: 2px;
+}
+
+.lumi-settings-page__tabs > [data-slot='tabs-list'] > [data-slot='tabs-trigger']:is([data-state='active'], [data-active]) {
+  background: transparent;
+  box-shadow: none;
+  color: var(--foreground);
+}
+
+.lumi-settings-page__tabs > [data-slot='tabs-list'] > [data-slot='tabs-trigger']:is([data-state='active'], [data-active])::after {
+  opacity: 1;
+}
+
+.lumi-settings-page__tabs > [data-slot='tabs-content'] {
+  min-width: 0;
+}
+
+.lumi-settings-page__workspace {
+  min-width: 0;
+  margin-block-start: var(--lumi-space-6);
+}
+
+.lumi-settings-page__workspace[data-layout='content'],
+.lumi-settings-row {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-panel);
+  background: var(--card);
+}
+
+.lumi-settings-page__section-header-inner {
+  padding: var(--lumi-space-6) var(--lumi-space-6) 0;
+}
+
+.lumi-settings-page__workspace[data-layout='rows'] > .lumi-settings-page__section-header {
+  margin-block-end: var(--lumi-space-5);
+}
+
+.lumi-settings-page__workspace[data-layout='rows'] .lumi-settings-page__section-header-inner {
+  padding: 0;
+}
+
+.lumi-settings-page__section-copy,
+.lumi-settings-row__copy,
+.lumi-settings-row__control {
+  min-width: 0;
+}
+
+.lumi-settings-page__section-copy h2,
+.lumi-settings-row__label {
+  margin: 0;
+  color: var(--foreground);
+  font-size: var(--lumi-fs-section);
+  font-weight: var(--lumi-font-weight-semibold);
+  line-height: var(--lumi-leading-body);
+}
+
+.lumi-settings-page__section-copy p,
+.lumi-settings-row__description {
+  max-width: 68ch;
+  margin: 2px 0 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  line-height: var(--lumi-leading-body);
+}
+
+.lumi-settings-page__panel {
+  width: 100%;
+  min-width: 0;
+}
+
+.lumi-settings-page__panel[data-layout='rows'] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lumi-space-5);
+}
+
+.lumi-settings-page__content,
+.lumi-settings-row__inner {
+  padding: var(--lumi-space-5) var(--lumi-space-6) var(--lumi-space-6);
+}
+
+/* A group made of setting rows ends on its last hairline, not a field gap. */
+.lumi-settings-row__inner:has(> .lumi-settings-row__control > .lumi-toggle-row:last-child) {
+  padding-block-end: var(--lumi-space-2);
+}
+
+.lumi-settings-page__content > * {
+  max-width: 65ch;
+}
+
+.lumi-settings-row__copy {
+  margin-block-end: var(--lumi-space-5);
+}
+
+.lumi-settings-row__copy:has(+ .lumi-settings-row__control > .lumi-toggle-row:first-child) {
+  margin-block-end: var(--lumi-space-1);
+}
+
+/* Save feedback sits on the title line in a fixed column, so the heading keeps
+   its width whether the card is idle, saving, saved or failed. */
+.lumi-settings-row__copy:has(> .lumi-settings-row__status) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 9rem;
+  column-gap: var(--lumi-space-4);
+}
+
+.lumi-settings-row__copy:has(> .lumi-settings-row__status) > .lumi-settings-row__description {
+  grid-column: 1 / -1;
+}
+
+.lumi-settings-row__status {
+  display: flex;
+  min-width: 0;
+  min-height: calc(var(--lumi-fs-section) * var(--lumi-leading-body));
+  align-items: center;
+  justify-content: flex-end;
+  grid-column: 2;
+  grid-row: 1;
+  font-size: var(--lumi-fs-label);
+  line-height: var(--lumi-leading-body);
+  white-space: nowrap;
+}
+
+.lumi-settings-row__save[data-state='success'] {
+  animation: lumi-settings-saved 2s ease-in forwards;
+}
+
+.lumi-settings-row__retry {
+  margin-inline-start: var(--lumi-space-2);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--primary);
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.lumi-settings-row__retry:focus-visible {
+  border-radius: var(--lumi-radius-sm);
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@keyframes lumi-settings-saved {
+  0%, 70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lumi-settings-row__save[data-state='success'] {
+    animation: none;
+  }
+}
+
+/* A touch-sized Retry overhangs the title line instead of making it taller. */
+@media (width < 768px), (pointer: coarse) {
+  .lumi-settings-row__retry {
+    margin-block: calc((var(--lumi-control-touch) - 1lh) / -2);
+  }
+}
+
+.lumi-settings-row__control {
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: var(--lumi-space-5) var(--lumi-space-6);
+}
+
+.lumi-settings-row__control[data-columns='2'] {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(240px, calc((100% - var(--lumi-space-6)) / 2))), 1fr));
+}
+
+.lumi-settings-row__control > * {
+  min-width: 0;
+}
+
+.lumi-settings-row__label > span {
+  color: var(--primary);
+}
+
+.lumi-settings-form > fieldset > [data-slot='field-group'] {
+  gap: var(--lumi-space-5);
+}
+
+.lumi-settings-form__full {
+  grid-column: 1 / -1;
+}
+
+/* Setting rows: icon + title + one muted line on the left, the control on the
+   right, one hairline between rows instead of the field grid's gaps. */
+.lumi-settings-row__control:has(> .lumi-toggle-row) {
+  row-gap: 0;
+}
+
+.lumi-settings-row__control > .lumi-toggle-row {
+  padding-block: calc(var(--lumi-space-3) + 2px);
+}
+
+.lumi-settings-row__control > * + .lumi-toggle-row {
+  border-top: 1px solid var(--border);
+}
+
+.lumi-settings-row__control > :not(.lumi-toggle-row) + .lumi-toggle-row {
+  margin-block-start: var(--lumi-space-5);
+}
+
+.lumi-settings-row__actions,
+.lumi-settings-page__footer-actions {
+  border-top: 1px solid var(--border);
+  border-radius: 0 0 var(--lumi-radius-panel) var(--lumi-radius-panel);
+  background: color-mix(in oklab, var(--card) 70%, var(--muted));
+}
+
+/* One md control plus the band's padding, whatever the save state shows, so a
+   footer keeps its height as a group turns dirty, saves or fails. */
+.lumi-settings-row__actions,
+.lumi-settings-page__footer-actions-inner {
+  display: flex;
+  min-width: 0;
+  min-height: calc(var(--lumi-control-md) + 2 * var(--lumi-space-3));
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  padding: var(--lumi-space-3) var(--lumi-space-6);
+  gap: var(--lumi-space-2);
+}
+
+.lumi-settings-row__actions > [role='status'],
+.lumi-settings-page__footer-actions-inner > [role='status'] {
+  flex: 1 1 200px;
+  margin-inline-end: auto;
+  font-size: var(--lumi-fs-label);
+  overflow-wrap: anywhere;
+}
+
+.lumi-settings-row__actions > [role='status']:empty,
+.lumi-settings-page__footer-actions-inner > [role='status']:empty {
+  display: none;
+}
+
+/* Use the space left by the shell, not the browser width. A desktop drawer
+   or an expanded navigation can make an otherwise wide viewport narrow. */
+@container form-page (width < 640px) {
+  .lumi-form-page > .lumi-page-header,
+  .lumi-form-page__page-tabs {
+    align-items: stretch;
+    flex-direction: column;
+    gap: var(--lumi-space-4);
+  }
+
+  .lumi-form-page__page-tabs .lumi-form-page__tabs {
+    max-width: 100%;
+  }
+
+  .lumi-form-page__page-tabs-actions {
+    max-width: 100%;
+    flex: 1 1 auto;
+  }
+
+  .lumi-form-page .lumi-page-header__actions {
+    justify-content: flex-end;
+  }
+
+  .lumi-form-page__toolbar,
+  .lumi-form-page__body,
+  .lumi-form-page__surface .lumi-form-section {
+    padding: var(--lumi-space-5) var(--lumi-space-4);
+  }
+
+  .lumi-form-page__publish,
+  .lumi-form-page__publish > .lumi-form-page__main,
+  .lumi-form-page__aside {
+    gap: var(--lumi-space-4);
+  }
+
+  .lumi-form-page__step-text small {
+    display: none;
+  }
+
+  .lumi-form-page__step-text b {
+    white-space: normal;
+  }
+
+  .lumi-form-page__step-dot {
+    width: 44px;
+    height: var(--lumi-control-touch);
+  }
+
+  .lumi-form-page__stepfoot {
+    flex-wrap: wrap;
+    padding: var(--lumi-space-3) var(--lumi-space-4);
+  }
+
+  .lumi-form-page__stepfoot-actions {
+    flex: 1 1 100%;
+  }
+
+  .lumi-form-page__stepfoot-actions > * {
+    flex: 1 1 0;
+  }
+}
+
+@container settings-page (width < 640px) {
+  .lumi-settings-page__tabs > [data-slot='tabs-list'] {
+    gap: var(--lumi-space-3);
+  }
+
+  .lumi-settings-row__inner,
+  .lumi-settings-page__content {
+    padding: var(--lumi-space-5) var(--lumi-space-4);
+  }
+
+  .lumi-settings-page__section-header-inner {
+    padding: var(--lumi-space-5) var(--lumi-space-4) 0;
+  }
+
+  .lumi-settings-row__actions,
+  .lumi-settings-page__footer-actions-inner {
+    padding: var(--lumi-space-3) var(--lumi-space-4);
+  }
+
+  .lumi-settings-row__actions > [role='status'],
+  .lumi-settings-page__footer-actions-inner > [role='status'] {
+    flex-basis: 100%;
+  }
+}
+
+@keyframes lumi-page-pulse {
+  from { opacity: 0.52; }
+  to { opacity: 0.9; }
+}
+
+@media (width < 1200px) {
+  .lumi-metric-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-slot='frame'] {
+    flex-direction: column;
+  }
+
+  [data-slot='frame'] > div:has(> [data-slot='frame-aside']) {
+    flex-direction: column;
+  }
+
+}
+
+@media (width < 768px) {
+  .lumi-admin-page {
+    padding: var(--lumi-space-4) var(--lumi-space-3) max(var(--lumi-space-5), env(safe-area-inset-bottom));
+  }
+
+  .lumi-page-header,
+  .lumi-filter-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .lumi-page-header__actions {
+    justify-content: stretch;
+  }
+
+  .lumi-page-header__actions > * {
+    min-height: var(--lumi-control-touch);
+  }
+
+  .lumi-admin-page :is(button, a, input, select, textarea, [role='tab']):not(
+    /* Single-choice tag chips are radios to assistive tech but buttons to the eye; they grow like the multi-choice ones. */
+    [role='radio']:not([data-slot='toggle-group-item']),
+    [role='checkbox'],
+    [role='switch'],
+    [role='radio'] *,
+    [role='checkbox'] *,
+    [data-slot='number-stepper'] *,
+    /* The add tile keeps its swatches' size; a coarse pointer grows them all together. */
+    [data-slot='color-swatch-add'],
+    [data-slot='image-grid-tile'] *,
+    /* Controls inside a line of text or a chip keep their size and carry their own hit area. */
+    [data-hit-area]
+  ) {
+    min-height: var(--lumi-control-touch);
+  }
+
+  /* The options grow to the touch target; their track grows with them instead
+     of clipping them, as it does under a coarse pointer. */
+  .lumi-admin-page :is(.lumi-segmented, [data-slot='tabs-list']) {
+    height: auto;
+  }
+
+  /* A stepper's taller triggers move the indicator's centre down; its rule follows. */
+  .lumi-admin-page [data-slot='stepper'][data-orientation='horizontal'] [data-slot='stepper-separator'] {
+    margin-top: calc(var(--lumi-control-touch) / 2);
+  }
+
+  .lumi-metric-cards,
+  .lumi-dashboard-content,
+  .lumi-detail-page__fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lumi-filter-bar__copy {
+    flex-basis: auto;
+  }
+}
+
+@media (pointer: coarse) {
+  /* Number steppers are a pointer convenience stacked inside one control
+     height; touch and keyboard edit the value itself. */
+  .lumi-admin-page :is(button, a, input, select, textarea, [role='tab']):not(
+    /* Single-choice tag chips are radios to assistive tech but buttons to the eye; they grow like the multi-choice ones. */
+    [role='radio']:not([data-slot='toggle-group-item']),
+    [role='checkbox'],
+    [role='switch'],
+    [role='radio'] *,
+    [role='checkbox'] *,
+    [data-slot='number-stepper'] *,
+    [data-slot='color-swatch-add'],
+    [data-slot='image-grid-tile'] *
+  ) {
+    min-height: var(--lumi-control-touch);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lumi-page-loading__line {
+    animation: none;
+  }
+}
+
+/* Record list: compact rows for feeds, drawers and dashboard side panels. */
+.lumi-record-list {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--lumi-space-1);
+}
+
+.lumi-record-list + .lumi-record-list {
+  margin-top: var(--lumi-space-3);
+}
+
+.lumi-record-list__title {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  font-weight: var(--lumi-font-weight-semibold);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.lumi-record-list__rows {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+  list-style: none;
+}
+
+.lumi-record-list__rows > li + li {
+  border-top: 1px solid var(--border);
+}
+
+.lumi-record-list__row {
+  display: grid;
+  width: 100%;
+  padding: var(--lumi-space-3) 0;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas: "name status value" "description meta meta";
+  align-items: center;
+  gap: var(--lumi-space-1) var(--lumi-space-2);
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+button.lumi-record-list__row {
+  cursor: pointer;
+  border-radius: var(--lumi-radius-control);
+}
+
+button.lumi-record-list__row:hover {
+  background: var(--muted);
+}
+
+button.lumi-record-list__row:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.lumi-record-list__name {
+  grid-area: name;
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--lumi-fs-body);
+  font-weight: var(--lumi-font-weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lumi-record-list__row > [data-slot='badge'] {
+  grid-area: status;
+  flex: none;
+}
+
+/* Without a figure the status takes the trailing column, so it ends on the
+   same edge as the figures in the rows around it rather than a gap short. */
+.lumi-record-list__row:not(:has(> .lumi-record-list__value)) > [data-slot='badge'] {
+  grid-area: value;
+}
+
+.lumi-record-list__value {
+  grid-area: value;
+  font-size: var(--lumi-fs-body);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--lumi-font-weight-medium);
+  white-space: nowrap;
+}
+
+.lumi-record-list__description {
+  grid-area: description;
+  min-width: 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-meta);
+  overflow-wrap: anywhere;
+}
+
+.lumi-record-list__meta {
+  grid-area: meta;
+  justify-self: end;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-meta);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.lumi-record-list__row:has(> .lumi-record-list__progress) {
+  grid-template-areas: "name status value" "progress progress progress" "description meta meta";
+}
+
+.lumi-record-list__progress {
+  grid-area: progress;
+  margin-block: var(--lumi-space-1);
+}
+
+.lumi-record-list__rows > li[data-check] {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lumi-space-3);
+}
+
+.lumi-record-list__rows > li[data-check] > [data-slot='checkbox'] {
+  flex: none;
+  margin-top: calc(var(--lumi-space-3) + 3px);
+}
+
+/* A list that is a card's whole body runs edge to edge: every row, the first
+   included, carries a full-width rule under the header, and the rows take the
+   card's inset instead of the body's. */
+[data-slot='card-content'] > .lumi-record-list:only-child {
+  margin: 0 calc(-1 * var(--card-spacing)) calc(-1 * var(--card-spacing));
+}
+
+[data-slot='card-content'] > .lumi-record-list:only-child .lumi-record-list__rows > li {
+  padding-inline: var(--card-spacing);
+  border-top: 1px solid var(--border);
+}
+
+[data-slot='card-content'] > .lumi-record-list:only-child button.lumi-record-list__row {
+  border-radius: 0;
+}
+
+/* A flush card has already dropped its body inset; the list stays put and
+   only its rows and title take the card inset. */
+.lumi-dashboard-card[data-flush] [data-slot='card-content'] > .lumi-record-list:only-child {
+  margin: 0;
+}
+
+/* The list's own title keeps the card inset its rows take. */
+[data-slot='card-content'] > .lumi-record-list:only-child > .lumi-record-list__title {
+  padding-inline: var(--card-spacing);
+}
+
+.lumi-record-list__rows > li[data-check] > .lumi-record-list__row {
+  flex: 1;
+}
+
+.lumi-record-list__rows > li[data-done] .lumi-record-list__name {
+  color: var(--muted-foreground);
+  text-decoration: line-through;
+}
+
+.lumi-record-list__note {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+}
+
+/* Assistant panel (createAdmin `assistant`): the Shell frame around the Lumi
+   UI agent components — header, context, thread, history and composer dock. */
+.lumi-assistant {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  font-size: var(--lumi-fs-body);
+}
+
+.lumi-assistant svg {
+  flex: none;
+}
+
+.lumi-assistant__header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--lumi-space-2);
+  height: 3.25rem;
+  padding: 0 var(--lumi-space-2) 0 var(--lumi-space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.lumi-assistant__header strong {
+  font-weight: var(--lumi-font-weight-semibold);
+}
+
+.lumi-assistant__model {
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+}
+
+.lumi-assistant__spacer {
+  flex: 1;
+}
+
+.lumi-assistant__icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: var(--lumi-control-md);
+  border: 0;
+  border-radius: var(--lumi-radius-control);
+  background: transparent;
+  color: var(--lumi-fg-secondary);
+  cursor: pointer;
+}
+
+.lumi-assistant__icon-button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.lumi-assistant__icon-button:hover {
+  background: var(--accent);
+  color: var(--foreground);
+}
+
+.lumi-assistant__icon-button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.lumi-assistant__context {
+  flex: none;
+  margin: var(--lumi-space-3) var(--lumi-space-3) 0;
+}
+
+.lumi-assistant__thread {
+  flex: 1;
+  min-height: 0;
+  padding: var(--lumi-space-4) var(--lumi-space-3) var(--lumi-space-2);
+  overflow-y: auto;
+}
+
+.lumi-assistant__thread[data-empty] {
+  align-content: center;
+}
+
+.lumi-assistant__dock {
+  flex: none;
+  padding: var(--lumi-space-2) var(--lumi-space-3) var(--lumi-space-3);
+}
+
+.lumi-assistant__history {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--lumi-space-1);
+  min-height: 0;
+  margin: 0;
+  padding: var(--lumi-space-3);
+  overflow-y: auto;
+  list-style: none;
+}
+
+.lumi-assistant__history button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--lumi-space-2);
+  padding: var(--lumi-space-2);
+  border: 0;
+  border-radius: var(--lumi-radius-control);
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.lumi-assistant__history button:hover {
+  background: var(--accent);
+}
+
+.lumi-assistant__history button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.lumi-assistant__history button span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lumi-assistant__history button svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+
+/* The hover and focus reading of a chart column, in the popover style. */
+.lumi-chart-tip {
+  position: absolute;
+  z-index: 5;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  display: none;
+  min-width: max-content;
+  flex-direction: column;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+  -webkit-backdrop-filter: var(--lumi-glass-filter);
+  backdrop-filter: var(--lumi-glass-filter);
+  background: var(--lumi-glass);
+  box-shadow: 0 8px 24px -8px rgb(0 0 0 / 18%), 0 1px 2px rgb(0 0 0 / 6%);
+  color: var(--popover-foreground);
+  font-size: var(--lumi-fs-caption);
+  gap: 2px;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+[data-tip-edge='start'] > .lumi-chart-tip {
+  left: 0;
+  transform: none;
+}
+
+[data-tip-edge='end'] > .lumi-chart-tip {
+  right: 0;
+  left: auto;
+  transform: none;
+}
+
+:hover > .lumi-chart-tip,
+:focus-visible > .lumi-chart-tip {
+  display: flex;
+}
+
+.lumi-chart-tip__label {
+  color: var(--muted-foreground);
+}
+
+.lumi-chart-tip__value {
+  font-size: var(--lumi-fs-label);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--lumi-font-weight-semibold);
+}
+
+.lumi-chart-tip__note {
+  color: var(--brand);
+}
+
+/* A route that shows another site: the frame takes the whole region below the header. */
+.lumi-admin-page--embed {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+}

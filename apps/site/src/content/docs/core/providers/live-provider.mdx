@@ -1,0 +1,17 @@
+---
+title: "LiveProvider"
+description: "LiveProvider 接口的方法、参数和返回值。"
+---
+
+Receives the changes the backend pushes. Lumi subscribes each mounted list
+and record to its resource's channel and refetches what an event touches.
+
+```typescript
+interface LiveProvider
+```
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `publish` | `((event: LiveEvent) => void \| Promise<void>) \| undefined` | 否 | Sends an event to the backend, for providers that can. |
+| `reconnect` | `(() => void) \| undefined` | 否 | Opens the connection again, e.g. with the new tenant's headers; called when the tenant changes. |
+| `subscribe` | `(params: LiveSubscribeParams) => () => void` | 是 | Returns the function that ends the subscription. |

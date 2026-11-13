@@ -1,0 +1,67 @@
+---
+title: "ColorSwatches"
+description: "从一行内嵌色块中选颜色，行为是单选组：方向键移动并选中，选中的色块显示对勾和同色外圈。"
+---
+
+<ComponentPreview name="ColorSwatches" />
+
+从一行内嵌色块中选颜色，行为是单选组：方向键移动并选中，选中的色块显示对勾和同色外圈。值是 `#rrggbb` 十六进制字符串，为空时是空字符串；`clearable` 加一个“无颜色”色块，`allowCustom` 加一个 + 块打开完整的 ColorPicker 面板。适合标签色、主题色这类短色板；要在紧凑字段里选任意颜色用 ColorPicker。
+
+## 示例
+
+```json
+{
+  "root": "colorswatches-1",
+  "elements": {
+    "colorswatches-1": {
+      "type": "ColorSwatches",
+      "props": {
+        "swatches": [
+          { "value": "#2d5bff", "label": "Blue" },
+          { "value": "#7c3aed", "label": "Violet" },
+          { "value": "#0891b2", "label": "Cyan" },
+          { "value": "#16a34a", "label": "Green" },
+          { "value": "#ea580c", "label": "Orange" },
+          { "value": "#db2777", "label": "Pink" },
+          { "value": "#171717", "label": "Black" }
+        ],
+        "allowCustom": true,
+        "ariaLabel": "Accent color",
+        "value": { "$bindState": "/colorswatches-1/value" }
+      },
+      "children": []
+    }
+  },
+  "state": { "colorswatches-1": { "value": "#2d5bff" } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `value` | 选中的颜色，`#rrggbb`；空字符串表示未选或“无颜色”。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string` |  |
+| `defaultValue` | 初始值，只在没有绑定 `value` 时生效。 | `string` |  |
+| `swatches`（必填） | 平铺的色块：十六进制颜色，或 `{ value, label }` 为色块起一个读屏名称（如“海蓝”）。不填 `label` 时读出十六进制值；无效颜色会被忽略。 | `(string \| object)[]` |  |
+| `size` | 色块尺寸：`sm` 24px，`md` 28px，`lg` 32px；触屏时统一放大到 32px 并扩展点击区。 | `"sm" \| "md" \| "lg"` | `"md"` |
+| `shape` | 色块形状：`circle` 圆形，`square` 圆角方形。 | `"circle" \| "square"` | `"circle"` |
+| `allowCustom` | 在末尾加一个 + 色块，打开完整取色面板；选出的颜色作为自定义色块加入这一行并显示为选中，改选其他色块后仍保留。 | `boolean` | `false` |
+| `clearable` | 在开头加一个带斜线的“无颜色”色块，选中时值为空字符串。 | `boolean` | `false` |
+| `name` | 字段名，表单提交时作为这个值的键。 | `string` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean` | `false` |
+| `invalid` | 标记为校验未通过，显示错误样式。通常由 FormField 自动设置。 | `boolean` | `false` |
+| `error` | 错误提示文字，显示在控件下方。 | `string` |  |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+
+通用参数：
+
+- `checks`：json-render 原生校验规则，如 `{ "type": "required", "message": "请填写" }`，提交或失焦时执行。
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：无

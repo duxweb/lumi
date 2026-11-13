@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "ES2023",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "baseUrl": "..",
+    "customConditions": [
+      "lumi:source"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "paths": {
+      "@duxweb/lumi": [
+        "packages/lumi/src/index.ts"
+      ],
+      "@duxweb/lumi/catalog": [
+        "packages/lumi/src/catalog.ts"
+      ],
+      "@duxweb/lumi/validation-json-schema": [
+        "packages/lumi/src/validation-json-schema.ts"
+      ],
+      "@duxweb/lumi-ui": [
+        "packages/ui/src/index.ts"
+      ],
+      "@duxweb/lumi-ui/catalog": [
+        "packages/ui/src/catalog.ts"
+      ],
+      "@duxweb/lumi-ui/charts": [
+        "packages/ui/src/charts.tsx"
+      ],
+      "@duxweb/lumi-check": [
+        "packages/check/src/index.ts"
+      ],
+      "@duxweb/lumi-admin": [
+        "packages/admin/src/index.ts"
+      ],
+      "@duxweb/lumi-admin/catalog": [
+        "packages/admin/src/catalog.ts"
+      ]
+    },
+    "resolveJsonModule": true,
+    "types": [],
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "declaration": true,
+    "declarationMap": true,
+    "noEmit": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "ignoreDeprecations": "6.0"
+  }
+}

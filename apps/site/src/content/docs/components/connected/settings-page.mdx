@@ -1,0 +1,23 @@
+---
+title: "SettingsPage"
+description: "绑定的设置导航。"
+---
+
+绑定的设置导航。默认子元素可用 visible 选择显示哪个分区的内容。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `title`（必填） | 页面标题。 | `string` |  |
+| `description` | 标题下方的一行说明。 | `string` |  |
+| `state` | 页面状态：加载中、空、出错、无权限等，`{ kind, title?, reason?, nextStep? }`。不填时正常显示内容。 字段：`kind`、`title`、`reason`、`nextStep`、`actionLabel?`、`disabled?` | `object` |  |
+| `sections`（必填） | 设置分区，每项 `{ key, label, description? }`，左侧显示为导航。 字段：`value`、`label`、`title?`、`description?`、`disabled?`、`content?` | `object[]` |  |
+| `value` | 当前分区的 key。 | `string` |  |
+| `dirty` | 有未保存的修改。为 true 时离开页面会先确认。 | `boolean` | `false` |
+| `navLabel` | 左侧分区导航的读屏名称。 | `string` |  |
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：`default`、`actions`、`status`

@@ -1,0 +1,676 @@
+{
+  "formatVersion": 1,
+  "reason": "React-only entrypoints: the package root is the React entry and /catalog holds the framework-free definitions. Rebaselined 2026-11-06 after 32 more Lumi UI components (overlays, media, display, choice and tree controls), the Admin connected components and the redesigned Upload and charts landed; the growth is Lumi-owned component code with dependencies kept external, and maxima allow about 5% growth. Rebaselined again 2026-11-07 after the component gap work landed: CodeBlock and CodeEditor (only their shells; the grammars and CodeMirror stay in the lazy chunks below), ten Agent UI components with framework-free message schemas (re-exported from /catalog, hence ui-catalog-js), Empty, ActivityFeed, the funnel chart, ColorSwatches, the ImageGrid uploader and calendar month/year panels, plus their styles in ui-css; admin-entry-js also carries the demo's component overview thumbnails and rebuilt Developer pages. Baselines are the measured sizes and the raised maxima again allow about 5% growth. ui-shared-js is the code the root and the charts entry share: the UI text context, cn, the bundled icon map with its lazy full-set loader, and the Empty state the charts draw when there is no data (moved out of the root, not added). The full HugeIcons set is a lazy chunk of its own (admin-icons-js), loaded only for names outside the bundled icon map. Code highlighting and the code editor are lazy chunks too: *-code-highlight-js holds the Lezer grammars and the shared tag map CodeBlock loads on first render, *-code-editor-js holds CodeMirror and imports the highlighter statically so the two never split into a third shared chunk; that static import is why rolldown gives the root's dynamic import a re-export facade (ui-code-highlight-entry-js). Rebaselined 2026-11-08 after the Prose, Markdown and Html content components, the Article page, the numbered Pagination variant and the content styles landed; DOMPurify stays an external dependency of the UI package and the Admin app loads it as a lazy chunk of its own (admin-html-sanitizer-js) on the first Html block. Rebaselined 2026-11-10 after the data layer parity work: tenants, live updates, optimistic and undoable writes, CanAccess, URL-synced lists, CSV/JSON import and export, document titles and the audit log with its activity-feed view grow admin-entry-js (the demo also gains import/export buttons and a change history section); ui-js and ui-css grow by the Agent prompt input and message refinements. Baselines are the measured sizes and the maxima keep their previous headroom. Rebaselined again 2026-11-10 after code grammars became per-language chunks: the highlighter and the editor keep only JSON, every other language loads through its own import() (grammar-* for CodeBlock, language-* for CodeMirror, which re-exports the matching grammar chunk so the two never split a shared Lezer chunk), so a JSON-only page loads the highlighter at about a fifth of its former size. The highlight and editor chunks now hold those dynamic imports, hence their dynamic capabilities; code-* chunks in the UI dist are the re-export facades rolldown gives a dynamic import whose chunk is also imported statically. Existing maxima stayed or shrank; the new entries carry the measured sizes with about 5% (at least a few hundred bytes) headroom.",
+  "dynamicCapabilities": [
+    "ui-js",
+    "ui-charts-js",
+    "ui-shared-js",
+    "admin-entry-js",
+    "ui-code-highlight-js",
+    "ui-code-editor-js",
+    "admin-code-highlight-js",
+    "admin-code-editor-js"
+  ],
+  "assets": [
+    {
+      "name": "ui-catalog-js",
+      "path": "packages/ui/dist/catalog.js",
+      "baseline": {
+        "raw": 2659,
+        "gzip": 550
+      },
+      "maximum": {
+        "raw": 2959,
+        "gzip": 700
+      }
+    },
+    {
+      "name": "ui-js",
+      "path": "packages/ui/dist/index.js",
+      "baseline": {
+        "raw": 694835,
+        "gzip": 166404
+      },
+      "maximum": {
+        "raw": 706835,
+        "gzip": 169404
+      }
+    },
+    {
+      "name": "ui-definitions-js",
+      "path": "packages/ui/dist/definitions-*.js",
+      "baseline": {
+        "raw": 118257,
+        "gzip": 22590
+      },
+      "maximum": {
+        "raw": 121257,
+        "gzip": 22890
+      }
+    },
+    {
+      "name": "ui-chart-catalog-js",
+      "path": "packages/ui/dist/chart-*.js",
+      "baseline": {
+        "raw": 925,
+        "gzip": 453
+      },
+      "maximum": {
+        "raw": 1500,
+        "gzip": 700
+      }
+    },
+    {
+      "name": "ui-charts-js",
+      "path": "packages/ui/dist/charts.js",
+      "baseline": {
+        "raw": 6289,
+        "gzip": 2029
+      },
+      "maximum": {
+        "raw": 6600,
+        "gzip": 2150
+      }
+    },
+    {
+      "name": "ui-chart-engine-js",
+      "path": "packages/ui/dist/engine-*.js",
+      "baseline": {
+        "raw": 6244,
+        "gzip": 2257
+      },
+      "maximum": {
+        "raw": 6600,
+        "gzip": 2400
+      }
+    },
+    {
+      "name": "ui-chart-model-js",
+      "path": "packages/ui/dist/model-*.js",
+      "baseline": {
+        "raw": 649,
+        "gzip": 390
+      },
+      "maximum": {
+        "raw": 1024,
+        "gzip": 512
+      }
+    },
+    {
+      "name": "ui-code-highlight-js",
+      "path": "packages/ui/dist/highlight-*.js",
+      "baseline": {
+        "raw": 6391,
+        "gzip": 2175
+      },
+      "maximum": {
+        "raw": 6750,
+        "gzip": 2300
+      }
+    },
+    {
+      "name": "ui-code-highlight-entry-js",
+      "path": "packages/ui/dist/code-highlight-*.js",
+      "baseline": {
+        "raw": 277,
+        "gzip": 145
+      },
+      "maximum": {
+        "raw": 512,
+        "gzip": 256
+      }
+    },
+    {
+      "name": "ui-code-editor-js",
+      "path": "packages/ui/dist/editor-*.js",
+      "baseline": {
+        "raw": 8440,
+        "gzip": 2794
+      },
+      "maximum": {
+        "raw": 8500,
+        "gzip": 2800
+      }
+    },
+    {
+      "name": "ui-code-grammar-javascript-js",
+      "path": "packages/ui/dist/grammar-javascript-*.js",
+      "baseline": {
+        "raw": 466,
+        "gzip": 271
+      },
+      "maximum": {
+        "raw": 600,
+        "gzip": 350
+      }
+    },
+    {
+      "name": "ui-code-grammar-css-js",
+      "path": "packages/ui/dist/grammar-css-*.js",
+      "baseline": {
+        "raw": 252,
+        "gzip": 199
+      },
+      "maximum": {
+        "raw": 400,
+        "gzip": 300
+      }
+    },
+    {
+      "name": "ui-code-grammar-html-js",
+      "path": "packages/ui/dist/grammar-html-*.js",
+      "baseline": {
+        "raw": 1881,
+        "gzip": 775
+      },
+      "maximum": {
+        "raw": 2050,
+        "gzip": 850
+      }
+    },
+    {
+      "name": "ui-code-grammar-markdown-js",
+      "path": "packages/ui/dist/grammar-markdown-*.js",
+      "baseline": {
+        "raw": 384,
+        "gzip": 271
+      },
+      "maximum": {
+        "raw": 550,
+        "gzip": 350
+      }
+    },
+    {
+      "name": "ui-code-grammar-go-js",
+      "path": "packages/ui/dist/grammar-go-*.js",
+      "baseline": {
+        "raw": 247,
+        "gzip": 196
+      },
+      "maximum": {
+        "raw": 400,
+        "gzip": 300
+      }
+    },
+    {
+      "name": "ui-code-grammar-yaml-js",
+      "path": "packages/ui/dist/grammar-yaml-*.js",
+      "baseline": {
+        "raw": 257,
+        "gzip": 202
+      },
+      "maximum": {
+        "raw": 400,
+        "gzip": 300
+      }
+    },
+    {
+      "name": "ui-code-grammar-shell-js",
+      "path": "packages/ui/dist/grammar-shell-*.js",
+      "baseline": {
+        "raw": 276,
+        "gzip": 208
+      },
+      "maximum": {
+        "raw": 450,
+        "gzip": 300
+      }
+    },
+    {
+      "name": "ui-code-grammar-sql-js",
+      "path": "packages/ui/dist/grammar-sql-*.js",
+      "baseline": {
+        "raw": 289,
+        "gzip": 216
+      },
+      "maximum": {
+        "raw": 450,
+        "gzip": 300
+      }
+    },
+    {
+      "name": "ui-code-language-javascript-js",
+      "path": "packages/ui/dist/language-javascript-*.js",
+      "baseline": {
+        "raw": 513,
+        "gzip": 229
+      },
+      "maximum": {
+        "raw": 650,
+        "gzip": 300
+      }
+    },
+    {
+      "name": "ui-code-language-css-js",
+      "path": "packages/ui/dist/language-css-*.js",
+      "baseline": {
+        "raw": 305,
+        "gzip": 190
+      },
+      "maximum": {
+        "raw": 450,
+        "gzip": 300
+      }
+    },
+    {
+      "name": "ui-code-language-html-js",
+      "path": "packages/ui/dist/language-html-*.js",
+      "baseline": {
+        "raw": 482,
+        "gzip": 255
+      },
+      "maximum": {
+        "raw": 650,
+        "gzip": 350
+      }
+    },
+    {
+      "name": "ui-code-language-markdown-js",
+      "path": "packages/ui/dist/language-markdown-*.js",
+      "baseline": {
+        "raw": 806,
+        "gzip": 350
+      },
+      "maximum": {
+        "raw": 950,
+        "gzip": 450
+      }
+    },
+    {
+      "name": "ui-code-language-go-js",
+      "path": "packages/ui/dist/language-go-*.js",
+      "baseline": {
+        "raw": 361,
+        "gzip": 219
+      },
+      "maximum": {
+        "raw": 500,
+        "gzip": 300
+      }
+    },
+    {
+      "name": "ui-code-language-yaml-js",
+      "path": "packages/ui/dist/language-yaml-*.js",
+      "baseline": {
+        "raw": 375,
+        "gzip": 222
+      },
+      "maximum": {
+        "raw": 550,
+        "gzip": 300
+      }
+    },
+    {
+      "name": "ui-code-grammar-javascript-entry-js",
+      "path": "packages/ui/dist/code-grammar-javascript-*.js",
+      "baseline": {
+        "raw": 100,
+        "gzip": 91
+      },
+      "maximum": {
+        "raw": 250,
+        "gzip": 200
+      }
+    },
+    {
+      "name": "ui-code-grammar-css-entry-js",
+      "path": "packages/ui/dist/code-grammar-css-*.js",
+      "baseline": {
+        "raw": 89,
+        "gzip": 84
+      },
+      "maximum": {
+        "raw": 250,
+        "gzip": 150
+      }
+    },
+    {
+      "name": "ui-code-grammar-html-entry-js",
+      "path": "packages/ui/dist/code-grammar-html-*.js",
+      "baseline": {
+        "raw": 169,
+        "gzip": 124
+      },
+      "maximum": {
+        "raw": 300,
+        "gzip": 200
+      }
+    },
+    {
+      "name": "ui-code-grammar-markdown-entry-js",
+      "path": "packages/ui/dist/code-grammar-markdown-*.js",
+      "baseline": {
+        "raw": 94,
+        "gzip": 89
+      },
+      "maximum": {
+        "raw": 250,
+        "gzip": 200
+      }
+    },
+    {
+      "name": "ui-code-grammar-go-entry-js",
+      "path": "packages/ui/dist/code-grammar-go-*.js",
+      "baseline": {
+        "raw": 88,
+        "gzip": 83
+      },
+      "maximum": {
+        "raw": 250,
+        "gzip": 150
+      }
+    },
+    {
+      "name": "ui-code-grammar-yaml-entry-js",
+      "path": "packages/ui/dist/code-grammar-yaml-*.js",
+      "baseline": {
+        "raw": 90,
+        "gzip": 85
+      },
+      "maximum": {
+        "raw": 250,
+        "gzip": 150
+      }
+    },
+    {
+      "name": "ui-code-language-javascript-entry-js",
+      "path": "packages/ui/dist/code-language-javascript-*.js",
+      "baseline": {
+        "raw": 156,
+        "gzip": 112
+      },
+      "maximum": {
+        "raw": 300,
+        "gzip": 200
+      }
+    },
+    {
+      "name": "ui-code-language-css-entry-js",
+      "path": "packages/ui/dist/code-language-css-*.js",
+      "baseline": {
+        "raw": 171,
+        "gzip": 116
+      },
+      "maximum": {
+        "raw": 300,
+        "gzip": 200
+      }
+    },
+    {
+      "name": "ui-code-language-html-entry-js",
+      "path": "packages/ui/dist/code-language-html-*.js",
+      "baseline": {
+        "raw": 333,
+        "gzip": 182
+      },
+      "maximum": {
+        "raw": 500,
+        "gzip": 250
+      }
+    },
+    {
+      "name": "ui-shared-js",
+      "path": "packages/ui/dist/empty-*.js",
+      "baseline": {
+        "raw": 17095,
+        "gzip": 5114
+      },
+      "maximum": {
+        "raw": 17700,
+        "gzip": 5300
+      }
+    },
+    {
+      "name": "ui-css",
+      "path": "packages/ui/dist/style.css",
+      "baseline": {
+        "raw": 307765,
+        "gzip": 45515
+      },
+      "maximum": {
+        "raw": 312765,
+        "gzip": 46315
+      }
+    },
+    {
+      "name": "admin-chart-engine-js",
+      "path": "apps/admin/dist/assets/engine-*.js",
+      "baseline": {
+        "raw": 1240672,
+        "gzip": 347323
+      },
+      "maximum": {
+        "raw": 1392640,
+        "gzip": 389120
+      }
+    },
+    {
+      "name": "admin-code-highlight-js",
+      "path": "apps/admin/dist/assets/highlight-*.js",
+      "baseline": {
+        "raw": 68916,
+        "gzip": 23483
+      },
+      "maximum": {
+        "raw": 72400,
+        "gzip": 24700
+      }
+    },
+    {
+      "name": "admin-code-editor-js",
+      "path": "apps/admin/dist/assets/editor-*.js",
+      "baseline": {
+        "raw": 278808,
+        "gzip": 90958
+      },
+      "maximum": {
+        "raw": 292800,
+        "gzip": 95600
+      }
+    },
+    {
+      "name": "admin-code-grammar-javascript-js",
+      "path": "apps/admin/dist/assets/grammar-javascript-*.js",
+      "baseline": {
+        "raw": 78039,
+        "gzip": 30791
+      },
+      "maximum": {
+        "raw": 82000,
+        "gzip": 32400
+      }
+    },
+    {
+      "name": "admin-code-grammar-css-js",
+      "path": "apps/admin/dist/assets/grammar-css-*.js",
+      "baseline": {
+        "raw": 17280,
+        "gzip": 8237
+      },
+      "maximum": {
+        "raw": 18200,
+        "gzip": 8700
+      }
+    },
+    {
+      "name": "admin-code-grammar-html-js",
+      "path": "apps/admin/dist/assets/grammar-html-*.js",
+      "baseline": {
+        "raw": 15358,
+        "gzip": 6664
+      },
+      "maximum": {
+        "raw": 16200,
+        "gzip": 7000
+      }
+    },
+    {
+      "name": "admin-code-grammar-markdown-js",
+      "path": "apps/admin/dist/assets/grammar-markdown-*.js",
+      "baseline": {
+        "raw": 35918,
+        "gzip": 12087
+      },
+      "maximum": {
+        "raw": 37800,
+        "gzip": 12700
+      }
+    },
+    {
+      "name": "admin-code-grammar-go-js",
+      "path": "apps/admin/dist/assets/grammar-go-*.js",
+      "baseline": {
+        "raw": 27114,
+        "gzip": 11124
+      },
+      "maximum": {
+        "raw": 28500,
+        "gzip": 11700
+      }
+    },
+    {
+      "name": "admin-code-grammar-yaml-js",
+      "path": "apps/admin/dist/assets/grammar-yaml-*.js",
+      "baseline": {
+        "raw": 10832,
+        "gzip": 4871
+      },
+      "maximum": {
+        "raw": 11400,
+        "gzip": 5200
+      }
+    },
+    {
+      "name": "admin-code-grammar-shell-js",
+      "path": "apps/admin/dist/assets/grammar-shell-*.js",
+      "baseline": {
+        "raw": 2585,
+        "gzip": 1225
+      },
+      "maximum": {
+        "raw": 2750,
+        "gzip": 1300
+      }
+    },
+    {
+      "name": "admin-code-grammar-sql-js",
+      "path": "apps/admin/dist/assets/grammar-sql-*.js",
+      "baseline": {
+        "raw": 36893,
+        "gzip": 10818
+      },
+      "maximum": {
+        "raw": 38800,
+        "gzip": 11400
+      }
+    },
+    {
+      "name": "admin-code-language-javascript-js",
+      "path": "apps/admin/dist/assets/language-javascript-*.js",
+      "baseline": {
+        "raw": 2090,
+        "gzip": 1053
+      },
+      "maximum": {
+        "raw": 2250,
+        "gzip": 1150
+      }
+    },
+    {
+      "name": "admin-code-language-css-js",
+      "path": "apps/admin/dist/assets/language-css-*.js",
+      "baseline": {
+        "raw": 540,
+        "gzip": 401
+      },
+      "maximum": {
+        "raw": 700,
+        "gzip": 500
+      }
+    },
+    {
+      "name": "admin-code-language-html-js",
+      "path": "apps/admin/dist/assets/language-html-*.js",
+      "baseline": {
+        "raw": 2416,
+        "gzip": 1165
+      },
+      "maximum": {
+        "raw": 2550,
+        "gzip": 1250
+      }
+    },
+    {
+      "name": "admin-code-language-markdown-js",
+      "path": "apps/admin/dist/assets/language-markdown-*.js",
+      "baseline": {
+        "raw": 1141,
+        "gzip": 656
+      },
+      "maximum": {
+        "raw": 1300,
+        "gzip": 750
+      }
+    },
+    {
+      "name": "admin-code-language-go-js",
+      "path": "apps/admin/dist/assets/language-go-*.js",
+      "baseline": {
+        "raw": 937,
+        "gzip": 579
+      },
+      "maximum": {
+        "raw": 1100,
+        "gzip": 650
+      }
+    },
+    {
+      "name": "admin-code-language-yaml-js",
+      "path": "apps/admin/dist/assets/language-yaml-*.js",
+      "baseline": {
+        "raw": 1051,
+        "gzip": 572
+      },
+      "maximum": {
+        "raw": 1200,
+        "gzip": 650
+      }
+    },
+    {
+      "name": "admin-html-sanitizer-js",
+      "path": "apps/admin/dist/assets/purify.es-*.js",
+      "baseline": {
+        "raw": 30118,
+        "gzip": 11499
+      },
+      "maximum": {
+        "raw": 31700,
+        "gzip": 12100
+      }
+    },
+    {
+      "name": "admin-entry-js",
+      "path": "apps/admin/dist/assets/index-*.js",
+      "baseline": {
+        "raw": 2376608,
+        "gzip": 704597
+      },
+      "maximum": {
+        "raw": 2472366,
+        "gzip": 732678
+      }
+    },
+    {
+      "name": "admin-icons-js",
+      "path": "apps/admin/dist/assets/icons-*.js",
+      "baseline": {
+        "raw": 6310601,
+        "gzip": 1383080
+      },
+      "maximum": {
+        "raw": 6964600,
+        "gzip": 1539600
+      }
+    }
+  ]
+}

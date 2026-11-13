@@ -1,0 +1,233 @@
+/* Code: CodeBlock and CodeEditor share metrics and syntax colours, so a snippet
+   reads the same shown or edited. The syntax colours are the chart hues pinned
+   to the lightness brand text uses at any hue (`--lumi-ui-tone-brand-text-l`),
+   so each clears 4.5:1 on the code surface, a marked line and the focused
+   field in either theme; they are declared on the component so they resolve
+   against the theme it actually sits in. */
+:is([data-slot="code-block"], [data-slot="code-editor"]) {
+  --lumi-code-font: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+  --lumi-code-font-size: var(--lumi-fs-caption);
+  --lumi-code-leading: var(--lumi-leading-copy);
+  --lumi-code-line: calc(var(--lumi-code-font-size) * var(--lumi-code-leading));
+  --lumi-code-pad-y: var(--lumi-space-3);
+  --lumi-code-pad-x: var(--lumi-space-3);
+  --lumi-code-gap: var(--lumi-space-3);
+  --lumi-code-gutter-min: 2ch;
+  /* Comments, line numbers and placeholders also sit on marked lines and the focused field's tint, so muted steps toward the foreground. */
+  --lumi-code-muted: color-mix(in oklab, var(--muted-foreground) 85%, var(--foreground));
+  --lumi-code-gutter-fg: var(--lumi-code-muted);
+  --lumi-code-keyword: oklch(from var(--chart-1) var(--lumi-ui-tone-brand-text-l) c h);
+  --lumi-code-string: oklch(from var(--chart-2) var(--lumi-ui-tone-brand-text-l) c h);
+  --lumi-code-literal: oklch(from var(--chart-3) var(--lumi-ui-tone-brand-text-l) c h);
+  --lumi-code-function: oklch(from var(--chart-4) var(--lumi-ui-tone-brand-text-l) c h);
+  --lumi-code-property: var(--lumi-code-function);
+  --lumi-code-type: var(--lumi-code-literal);
+  --lumi-code-tag: oklch(from var(--chart-5) var(--lumi-ui-tone-brand-text-l) c h);
+  --lumi-code-comment: var(--lumi-code-muted);
+  --lumi-code-punctuation: var(--lumi-fg-secondary);
+  --lumi-code-error: var(--lumi-text-danger);
+  --lumi-code-mark: var(--lumi-selected-bg);
+  --lumi-code-selection: color-mix(in oklab, var(--brand) 22%, transparent);
+  --lumi-code-selection-blur: color-mix(in oklab, var(--foreground) 10%, transparent);
+  --lumi-code-active-line: color-mix(in oklab, var(--foreground) 4%, transparent);
+  --lumi-code-bracket: color-mix(in oklab, var(--brand) 18%, transparent);
+  --lumi-code-min-height: calc(8 * var(--lumi-code-line) + 2 * var(--lumi-code-pad-y));
+}
+
+.lumi-tok-keyword { color: var(--lumi-code-keyword); }
+.lumi-tok-literal { color: var(--lumi-code-literal); }
+.lumi-tok-string { color: var(--lumi-code-string); }
+.lumi-tok-regexp, .lumi-tok-tag, .lumi-tok-deleted { color: var(--lumi-code-tag); }
+.lumi-tok-function { color: var(--lumi-code-function); }
+.lumi-tok-property { color: var(--lumi-code-property); }
+.lumi-tok-type { color: var(--lumi-code-type); }
+.lumi-tok-comment { color: var(--lumi-code-comment); font-style: italic; }
+.lumi-tok-meta { color: var(--lumi-code-comment); }
+.lumi-tok-punctuation { color: var(--lumi-code-punctuation); }
+.lumi-tok-heading { color: var(--lumi-code-keyword); font-weight: var(--lumi-font-weight-semibold); }
+.lumi-tok-strong { font-weight: var(--lumi-font-weight-semibold); }
+.lumi-tok-emphasis { font-style: italic; }
+.lumi-tok-strikethrough { text-decoration: line-through; }
+.lumi-tok-link { color: var(--lumi-code-keyword); text-decoration: underline; text-underline-offset: 2px; }
+.lumi-tok-inserted { color: var(--lumi-code-string); }
+.lumi-tok-invalid { color: var(--lumi-code-error); }
+
+/* CodeBlock: one opaque surface, so the sticky line numbers can cover code
+   scrolled sideways under them. */
+.lumi-code-block {
+  --lumi-code-bg: color-mix(in oklab, var(--muted) 50%, var(--card));
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--lumi-code-bg);
+  color: var(--foreground);
+}
+
+.lumi-code-header {
+  display: flex;
+  align-items: center;
+  gap: var(--lumi-space-2);
+  min-height: var(--lumi-control-lg);
+  padding-inline: var(--lumi-space-3) var(--lumi-space-1);
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in oklab, var(--muted) 80%, var(--card));
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+}
+.lumi-code-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--foreground);
+  font-weight: var(--lumi-font-weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lumi-code-summary { cursor: pointer; list-style: none; user-select: none; padding-inline-start: var(--lumi-space-2); }
+.lumi-code-summary::-webkit-details-marker { display: none; }
+.lumi-code-summary:hover .lumi-code-title { color: var(--foreground); }
+.lumi-code-summary .lumi-code-title { color: var(--lumi-fg-secondary); }
+.lumi-code-summary:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--ring); }
+.lumi-code-block:not([open]) > .lumi-code-summary { border-bottom: 0; }
+.lumi-code-chevron { width: 0.875rem; height: 0.875rem; flex: none; transition: rotate 150ms ease-out; rotate: -90deg; }
+.lumi-code-block[open] > .lumi-code-summary .lumi-code-chevron { rotate: 0deg; }
+
+.lumi-code-tabs {
+  display: flex;
+  flex: 1;
+  align-self: stretch;
+  min-width: 0;
+  margin-inline-start: calc(-1 * var(--lumi-space-2));
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+/* Tabs past the edge fade out, so a long file list shows there is more to scroll to. */
+.lumi-code-tabs[data-overflow="end"] { mask-image: linear-gradient(to right, black calc(100% - 2rem), transparent); }
+.lumi-code-tabs[data-overflow="start"] { mask-image: linear-gradient(to left, black calc(100% - 2rem), transparent); }
+.lumi-code-tabs[data-overflow="start end"] { mask-image: linear-gradient(to right, transparent, black 2rem, black calc(100% - 2rem), transparent); }
+.lumi-code-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding-inline: var(--lumi-space-2);
+  border: 0;
+  background: none;
+  color: var(--muted-foreground);
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  transition: color 120ms;
+}
+.lumi-code-tab:hover { color: var(--foreground); }
+.lumi-code-tab[data-state="active"] { color: var(--foreground); font-weight: var(--lumi-font-weight-medium); }
+.lumi-code-tab[data-state="active"]::after {
+  position: absolute;
+  inset-inline: var(--lumi-space-2);
+  bottom: -1px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--foreground);
+  content: "";
+}
+.lumi-code-tab:focus-visible { box-shadow: inset 0 0 0 2px var(--ring); border-radius: var(--lumi-radius-item); }
+
+.lumi-code-body { position: relative; }
+.lumi-code-scroll {
+  margin: 0;
+  overflow: auto;
+  padding-block: var(--lumi-code-pad-y);
+  color: var(--foreground);
+  font-family: var(--lumi-code-font);
+  font-size: var(--lumi-code-font-size);
+  line-height: var(--lumi-code-leading);
+  tab-size: 4;
+  outline: none;
+}
+.lumi-code-scroll:focus-visible { box-shadow: inset 0 0 0 2px var(--ring); }
+.lumi-code-block ::selection { background: var(--lumi-code-selection); }
+.lumi-code-lines { display: block; min-width: max-content; }
+.lumi-code-block[data-wrap] .lumi-code-lines { min-width: 0; }
+.lumi-code-line { display: flex; min-height: var(--lumi-code-line); }
+.lumi-code-line[data-highlighted] { background: var(--lumi-code-mark); }
+.lumi-code-text { flex: 1 0 auto; padding-inline: var(--lumi-code-pad-x); white-space: pre; }
+.lumi-code-block[data-wrap] .lumi-code-text { flex-shrink: 1; min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.lumi-code-block[data-line-numbers] .lumi-code-text { padding-inline-start: 0; }
+.lumi-code-ln {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  flex: none;
+  box-sizing: content-box;
+  min-width: max(var(--lumi-code-gutter-min), var(--lumi-code-gutter, 0ch));
+  padding-inline: var(--lumi-code-pad-x) var(--lumi-code-gap);
+  background: var(--lumi-code-bg);
+  color: var(--lumi-code-gutter-fg);
+  text-align: right;
+  user-select: none;
+}
+.lumi-code-line[data-highlighted] > .lumi-code-ln {
+  background: linear-gradient(var(--lumi-code-mark), var(--lumi-code-mark)) var(--lumi-code-bg);
+  color: var(--lumi-selected-fg);
+}
+
+/* The floating copy button covers the end of the first line, so it shows on
+   pointing or focus; touch screens have no hover, so it stays there. */
+.lumi-code-copy { flex: none; color: var(--muted-foreground); }
+.lumi-code-copy:hover { color: var(--foreground); }
+.lumi-code-copy[data-copied] { color: var(--lumi-text-success); }
+.lumi-code-copy[data-floating] {
+  position: absolute;
+  top: var(--lumi-space-2);
+  right: var(--lumi-space-2);
+  z-index: 2;
+  border: 1px solid var(--border);
+  background: var(--lumi-code-bg);
+  opacity: 0;
+  transition: opacity 120ms, color 120ms;
+}
+.lumi-code-body:hover > .lumi-code-copy,
+.lumi-code-copy:focus-visible,
+.lumi-code-copy[data-copied] { opacity: 1; }
+@media (hover: none) {
+  .lumi-code-copy[data-floating] { opacity: 1; }
+}
+
+/* CodeEditor. The frame is the field (Input's surface, focus and invalid
+   states); the gutter repeats the frame's resting or focused fill
+   so text scrolled sideways passes under it. The frame's 1px padding and the
+   host's concentric radius keep that opaque gutter off the frame's inset ring. */
+[data-slot="code-editor-frame"] { --lumi-code-gutter-bg: var(--card); }
+[data-theme="dark"] [data-slot="code-editor-frame"] { --lumi-code-gutter-bg: color-mix(in oklab, white 3.6%, var(--card)); }
+[data-slot="code-editor-frame"]:focus-within { --lumi-code-gutter-bg: var(--lumi-focus-bg); }
+[data-slot="code-editor"] .cm-editor .cm-gutters { background: var(--lumi-code-gutter-bg); }
+[data-slot="code-editor"]:not([data-status="ready"]) .lumi-code-host { display: none; }
+.lumi-code-host {
+  min-height: var(--lumi-code-min-height);
+  overflow: hidden;
+  border-radius: max(0px, calc(var(--lumi-radius-control) - 2px));
+}
+
+.lumi-code-fallback {
+  display: block;
+  width: 100%;
+  min-height: var(--lumi-code-min-height);
+  padding: var(--lumi-code-pad-y) var(--lumi-code-pad-x);
+  overflow: auto;
+  resize: none;
+  field-sizing: content;
+  color: var(--foreground);
+  font-family: var(--lumi-code-font);
+  font-size: var(--lumi-code-font-size);
+  line-height: var(--lumi-code-leading);
+  white-space: pre;
+  tab-size: 4;
+  outline: none;
+}
+.lumi-code-fallback[data-wrap] { white-space: pre-wrap; }
+.lumi-code-fallback::placeholder { color: var(--lumi-code-muted); }
+[data-slot="code-editor"][data-line-numbers] .lumi-code-fallback {
+  padding-inline-start: calc(var(--lumi-code-pad-x) + var(--lumi-code-gutter-min) + var(--lumi-code-gap));
+}

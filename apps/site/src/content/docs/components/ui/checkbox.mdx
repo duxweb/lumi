@@ -1,0 +1,52 @@
+---
+title: "Checkbox"
+description: "带文字的单个开/关选项。"
+---
+
+<ComponentPreview name="Checkbox" />
+
+带文字的单个开/关选项。
+
+## 示例
+
+```json
+{
+  "root": "checkbox-9",
+  "elements": {
+    "checkbox-9": {
+      "type": "Checkbox",
+      "props": {
+        "value": { "$bindState": "/checkbox-9/value" },
+        "label": "Enabled"
+      },
+      "children": []
+    }
+  },
+  "state": { "checkbox-9": { "value": true } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `value` | 是否勾选。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `boolean` |  |
+| `defaultValue` | 初始是否勾选。 | `boolean` | `false` |
+| `label` | 复选框旁的文字。 | `string` |  |
+| `name` | 字段名，表单提交时作为这个值的键。 | `string` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean` | `false` |
+| `invalid` | 标记为校验未通过，显示错误样式。通常由 FormField 自动设置。 | `boolean` | `false` |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+
+通用参数：
+
+- `checks`：json-render 原生校验规则，如 `{ "type": "required", "message": "请填写" }`，提交或失焦时执行。
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：无

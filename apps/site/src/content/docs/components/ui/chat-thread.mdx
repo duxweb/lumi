@@ -1,0 +1,96 @@
+---
+title: "ChatThread"
+description: "由智能体消息数组（{ id, role, parts, status? }）绘制的对话，每条消息是一个 ChatMessage。"
+---
+
+<ComponentPreview name="ChatThread" />
+
+由智能体消息数组（`{ id, role, parts, status? }`）绘制的对话，每条消息是一个 ChatMessage。用 `$bindState` 绑定 `messages`，评价、确认决定和问题的回答都会保存在里面；每个事件触发前 `activeEvent` 收到 `{ type, messageId, partId?, value? }`，因此 `on.approve` 可以执行确认卡片指定的已注册动作。
+
+## 示例
+
+```json
+{
+  "root": "chat-thread",
+  "elements": {
+    "chat-thread": {
+      "type": "ChatThread",
+      "props": { "messages": { "$bindState": "/thread" }, "maxHeight": 448 },
+      "children": []
+    }
+  },
+  "state": {
+    "thread": [
+      {
+        "id": "u1",
+        "role": "user",
+        "parts": [{ "type": "text", "text": "Why did revenue drop yesterday" }]
+      },
+      {
+        "id": "a1",
+        "role": "assistant",
+        "parts": [
+          {
+            "type": "reasoning",
+            "state": "done",
+            "duration": 3800,
+            "steps": [
+              { "label": "Read order stats", "detail": "1,284 orders" },
+              { "label": "Compared with last week" }
+            ]
+          },
+          {
+            "type": "tool-call",
+            "toolCallId": "t1",
+            "toolName": "payments.logs",
+            "title": "Search payment logs",
+            "summary": "41 failed callbacks",
+            "status": "success",
+            "duration": 820,
+            "input": { "date": "2026-08-01" },
+            "output": { "failed": 41 }
+          },
+          {
+            "type": "text",
+            "text": "Revenue fell **18%** because 41 payment callbacks failed between 14:00 and 15:00 [1]."
+          },
+          {
+            "type": "source",
+            "sourceId": "log",
+            "title": "Payment log",
+            "snippet": "41 callbacks failed."
+          }
+        ],
+        "suggestions": [
+          { "label": "Retry the failed payments" },
+          { "label": "Notify the affected customers" }
+        ]
+      }
+    ]
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `messages`（必填） | 消息数组，每条 `{ id, role, parts, status? }`。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。绑定后评价和确认结果会写回消息。 字段：`id`、`role`、`parts`、`status?`、`errorText?`、`createdAt?`、`feedback?`、`suggestions?` | `object[]` |  |
+| `streaming` | 等待回复：最后一条是用户消息时显示思考中的占位。 | `boolean` | `false` |
+| `actions` | 每条回答下方显示的操作，同 ChatMessage。 | `("copy" \| "regenerate" \| "feedback")[]` | `["copy","regenerate","feedback"]` |
+| `activeEvent` | 最近一次操作 `{ type, messageId, partId?, value? }`，在事件触发前写入；`approve` 时 `partId` 是确认卡 id，`value` 是选中的条目。 字段：`type`、`messageId?`、`partId?`、`value?` | `object \| null` |  |
+| `maxHeight` | 最大高度（像素），超出后在内部滚动，并在位于底部时跟随新消息。 | `integer` |  |
+| `emptyTitle` | 没有消息时的标题。 | `string` |  |
+| `emptyDescription` | 没有消息时的说明。 | `string` |  |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`copy`、`regenerate`、`feedback`、`suggestion`、`openSource`、`approve`、`reject`、`edit`、`answer`、`skip`
+- 插槽：无

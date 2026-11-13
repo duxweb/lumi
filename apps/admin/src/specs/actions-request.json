@@ -1,0 +1,87 @@
+{
+  "root": "stack",
+  "state": {
+    "stats": null
+  },
+  "elements": {
+    "stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "load",
+        "stats"
+      ]
+    },
+    "load": {
+      "type": "Button",
+      "props": {
+        "label": "GET /orders/stats",
+        "appearance": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "request",
+          "params": {
+            "url": "/orders/stats",
+            "resultPath": "/stats"
+          },
+          "onSuccess": {
+            "action": "toast",
+            "params": {
+              "tone": "success",
+              "message": {
+                "$t": "Stats loaded"
+              }
+            }
+          }
+        }
+      },
+      "children": []
+    },
+    "stats": {
+      "type": "DescriptionList",
+      "props": {
+        "items": [
+          {
+            "label": {
+              "$t": "Orders"
+            },
+            "value": {
+              "$state": "/stats/data/total"
+            }
+          },
+          {
+            "label": {
+              "$t": "Awaiting payment"
+            },
+            "value": {
+              "$state": "/stats/data/awaitingPayment"
+            }
+          },
+          {
+            "label": {
+              "$t": "To ship"
+            },
+            "value": {
+              "$state": "/stats/data/toShip"
+            }
+          },
+          {
+            "label": {
+              "$t": "Overdue"
+            },
+            "value": {
+              "$state": "/stats/data/overdue"
+            }
+          }
+        ]
+      },
+      "visible": {
+        "$state": "/stats"
+      },
+      "children": []
+    }
+  }
+}

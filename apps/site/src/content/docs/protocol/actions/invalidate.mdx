@@ -1,0 +1,39 @@
+---
+title: "invalidate"
+description: "让一个资源的查询重新请求，用于外部改了数据之后刷新列表。"
+---
+
+让一个资源的查询重新请求，用于外部改了数据之后刷新列表。
+
+## 用法
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "刷新列表" },
+      "on": {
+        // 点击按钮时执行
+        "press": {
+          "action": "invalidate",
+          "params": {
+            // 数据资源名，如 orders
+            "resource": "orders"
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| `resource`（必填） | 数据资源名，如 `orders`。 | `string` |
+| `dataProviderName` | 使用哪个数据源；省略时用当前范围的数据源，没有就是 default。 | `string` |
+| `meta` | 不使用。 | `object` |

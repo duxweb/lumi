@@ -1,0 +1,47 @@
+---
+title: "Loading"
+description: "整块区域正在加载：在内容将要占据的位置居中显示旋转图标和文字。"
+---
+
+<ComponentPreview name="Loading" />
+
+整块区域正在加载：在内容将要占据的位置居中显示旋转图标和文字。已知内容形状时改用 Skeleton。
+
+## 示例
+
+```json
+{
+  "root": "loading-33",
+  "elements": {
+    "loading-33": {
+      "type": "Loading",
+      "props": {
+        "label": "Loading orders",
+        "description": "This usually takes a few seconds.",
+        "minHeight": 160
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `label` | 显示的文字。 | `string \| null` |  |
+| `description` | 标题下方的一行说明。 | `string \| null` |  |
+| `size` | 尺寸：`sm` 紧凑，`md` 标准，`lg` 宽松。 | `"sm" \| "md" \| "lg" \| null` | `"md"` |
+| `minHeight` | 区域的最小高度（像素），避免加载时塌陷。 | `number \| null` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

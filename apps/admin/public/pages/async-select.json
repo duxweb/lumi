@@ -1,0 +1,1092 @@
+{
+  "root": "page",
+  "state": {
+    "picker": {
+      "owner": null,
+      "reviewer": 60,
+      "watchers": [
+        3,
+        47,
+        70
+      ],
+      "assignee": null,
+      "swatch": null,
+      "team": [
+        1,
+        4
+      ],
+      "followers": []
+    },
+    "address": {
+      "province": 13,
+      "city": 18,
+      "district": 19
+    },
+    "text": {
+      "destination": "",
+      "contact": "",
+      "note": "@Ada Chen please check the Shenzhen backlog.",
+      "comment": ""
+    },
+    "transfer": {
+      "channels": [
+        "email",
+        "in-app"
+      ],
+      "crew": [
+        2,
+        66
+      ]
+    },
+    "returnAddress": {
+      "province": null,
+      "city": null,
+      "district": null
+    }
+  },
+  "elements": {
+    "owner-select": {
+      "type": "Select",
+      "props": {
+        "value": {
+          "$bindState": "/picker/owner"
+        },
+        "source": {
+          "resource": "members",
+          "labelField": "name",
+          "searchField": "name",
+          "pageSize": 10
+        },
+        "clearable": true,
+        "placeholder": {
+          "$t": "Search members"
+        },
+        "ariaLabel": {
+          "$t": "Owner"
+        }
+      },
+      "children": []
+    },
+    "owner": {
+      "type": "FormField",
+      "props": {
+        "name": "owner",
+        "label": {
+          "$t": "Owner"
+        }
+      },
+      "children": [
+        "owner-select"
+      ]
+    },
+    "card-search-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "owner",
+        "followers"
+      ]
+    },
+    "card-search": {
+      "type": "Example",
+      "props": {
+        "id": "remote-search",
+        "title": {
+          "$t": "Remote search"
+        },
+        "description": {
+          "$t": "Members from the mock server, ten per page. Typing searches by name after a short pause; scrolling to the end loads the next page"
+        }
+      },
+      "children": [
+        "card-search-stack"
+      ]
+    },
+    "reviewer-select": {
+      "type": "Select",
+      "props": {
+        "value": {
+          "$bindState": "/picker/reviewer"
+        },
+        "source": {
+          "resource": "members",
+          "labelField": "name",
+          "searchField": "name",
+          "pageSize": 10
+        },
+        "clearable": true,
+        "ariaLabel": {
+          "$t": "Reviewer"
+        }
+      },
+      "children": []
+    },
+    "reviewer": {
+      "type": "FormField",
+      "props": {
+        "name": "reviewer",
+        "label": {
+          "$t": "Reviewer"
+        }
+      },
+      "children": [
+        "reviewer-select"
+      ]
+    },
+    "watchers-select": {
+      "type": "MultiSelect",
+      "props": {
+        "value": {
+          "$bindState": "/picker/watchers"
+        },
+        "source": {
+          "resource": "members",
+          "labelField": "name",
+          "searchField": "name",
+          "pageSize": 10
+        },
+        "clearable": true,
+        "ariaLabel": {
+          "$t": "Watchers"
+        }
+      },
+      "children": []
+    },
+    "watchers": {
+      "type": "FormField",
+      "props": {
+        "name": "watchers",
+        "label": {
+          "$t": "Watchers"
+        }
+      },
+      "children": [
+        "watchers-select"
+      ]
+    },
+    "card-echo-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "reviewer",
+        "watchers"
+      ]
+    },
+    "card-echo": {
+      "type": "Example",
+      "props": {
+        "id": "preselected",
+        "title": {
+          "$t": "Preselected values"
+        },
+        "description": {
+          "$t": "The bound ids are far beyond the first page; their labels are read by id so the trigger shows names, and they lead the list until you search"
+        }
+      },
+      "children": [
+        "card-echo-stack"
+      ]
+    },
+    "assignee-select": {
+      "type": "Select",
+      "props": {
+        "value": {
+          "$bindState": "/picker/assignee"
+        },
+        "source": {
+          "resource": "members",
+          "labelField": "name",
+          "searchField": "name",
+          "pageSize": 10,
+          "avatarField": "avatar",
+          "descriptionField": "role"
+        },
+        "clearable": true,
+        "placeholder": {
+          "$t": "Choose a member"
+        },
+        "ariaLabel": {
+          "$t": "Assignee"
+        }
+      },
+      "children": []
+    },
+    "assignee": {
+      "type": "FormField",
+      "props": {
+        "name": "assignee",
+        "label": {
+          "$t": "Assignee"
+        }
+      },
+      "children": [
+        "assignee-select"
+      ]
+    },
+    "swatch-select": {
+      "type": "Select",
+      "props": {
+        "value": {
+          "$bindState": "/picker/swatch"
+        },
+        "source": {
+          "resource": "swatches",
+          "labelField": "name",
+          "searchField": "name",
+          "descriptionField": "sku",
+          "imageField": "image",
+          "pageSize": 12
+        },
+        "clearable": true,
+        "placeholder": {
+          "$t": "Choose a swatch"
+        },
+        "ariaLabel": {
+          "$t": "Swatch"
+        }
+      },
+      "children": []
+    },
+    "swatch": {
+      "type": "FormField",
+      "props": {
+        "name": "swatch",
+        "label": {
+          "$t": "Swatch"
+        }
+      },
+      "children": [
+        "swatch-select"
+      ]
+    },
+    "team-select": {
+      "type": "MultiSelect",
+      "props": {
+        "value": {
+          "$bindState": "/picker/team"
+        },
+        "options": [
+          {
+            "label": "Ada Chen",
+            "value": 1,
+            "description": {
+              "$t": "Operations lead"
+            },
+            "avatar": ""
+          },
+          {
+            "label": "Mina Lopez",
+            "value": 2,
+            "description": {
+              "$t": "Support agent"
+            },
+            "avatar": ""
+          },
+          {
+            "label": "Sam Okafor",
+            "value": 3,
+            "description": {
+              "$t": "Warehouse manager"
+            },
+            "avatar": ""
+          },
+          {
+            "label": "Yuki Tanaka",
+            "value": 4,
+            "description": {
+              "$t": "Finance analyst"
+            },
+            "avatar": ""
+          },
+          {
+            "label": "Theo Novak",
+            "value": 5,
+            "description": {
+              "$t": "Product designer"
+            },
+            "avatar": ""
+          }
+        ],
+        "filterable": true,
+        "ariaLabel": {
+          "$t": "Team (static options)"
+        }
+      },
+      "children": []
+    },
+    "team": {
+      "type": "FormField",
+      "props": {
+        "name": "team",
+        "label": {
+          "$t": "Team (static options)"
+        }
+      },
+      "children": [
+        "team-select"
+      ]
+    },
+    "card-rich-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "assignee",
+        "swatch",
+        "team"
+      ]
+    },
+    "card-rich": {
+      "type": "Example",
+      "props": {
+        "id": "rich-options",
+        "title": {
+          "$t": "Rich options"
+        },
+        "description": {
+          "$t": "Options can lead with an avatar or a thumbnail and carry a second line, mapped from row fields"
+        }
+      },
+      "children": [
+        "card-rich-stack"
+      ]
+    },
+    "province-select": {
+      "type": "Select",
+      "props": {
+        "value": {
+          "$bindState": "/address/province"
+        },
+        "source": {
+          "resource": "regions",
+          "labelField": "name",
+          "searchField": "name",
+          "pageSize": 50,
+          "filters": [
+            {
+              "field": "parentId",
+              "operator": "eq",
+              "value": 0
+            }
+          ]
+        },
+        "clearable": true,
+        "placeholder": {
+          "$t": "Province"
+        },
+        "ariaLabel": {
+          "$t": "Delivery province"
+        }
+      },
+      "children": []
+    },
+    "city-select": {
+      "type": "Select",
+      "props": {
+        "value": {
+          "$bindState": "/address/city"
+        },
+        "source": {
+          "resource": "regions",
+          "labelField": "name",
+          "searchField": "name",
+          "pageSize": 50,
+          "dependsOn": {
+            "parentId": "/address/province"
+          }
+        },
+        "clearable": true,
+        "placeholder": {
+          "$t": "City"
+        },
+        "ariaLabel": {
+          "$t": "Delivery city"
+        }
+      },
+      "children": []
+    },
+    "district-select": {
+      "type": "Select",
+      "props": {
+        "value": {
+          "$bindState": "/address/district"
+        },
+        "source": {
+          "resource": "regions",
+          "labelField": "name",
+          "searchField": "name",
+          "pageSize": 50,
+          "dependsOn": {
+            "parentId": "/address/city"
+          }
+        },
+        "clearable": true,
+        "placeholder": {
+          "$t": "District"
+        },
+        "ariaLabel": {
+          "$t": "Delivery district"
+        }
+      },
+      "children": []
+    },
+    "linkage-grid": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 128,
+        "gap": "sm"
+      },
+      "children": [
+        "province-select",
+        "city-select",
+        "district-select"
+      ]
+    },
+    "card-linkage-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "delivery-address",
+        "return-address"
+      ]
+    },
+    "card-linkage": {
+      "type": "Example",
+      "props": {
+        "id": "linked-regions",
+        "title": {
+          "$t": "Linked regions"
+        },
+        "description": {
+          "$t": "Province, city and district from one regions resource. Each level filters by its parent through dependsOn, stays disabled until the parent has a value, and clears when the parent changes"
+        }
+      },
+      "children": [
+        "card-linkage-stack"
+      ]
+    },
+    "destination-input": {
+      "type": "AutoComplete",
+      "props": {
+        "value": {
+          "$bindState": "/text/destination"
+        },
+        "options": [
+          {
+            "label": {
+              "$t": "Hangzhou"
+            },
+            "value": "hangzhou"
+          },
+          {
+            "label": {
+              "$t": "Shanghai"
+            },
+            "value": "shanghai"
+          },
+          {
+            "label": {
+              "$t": "Shenzhen"
+            },
+            "value": "shenzhen"
+          },
+          {
+            "label": {
+              "$t": "Chengdu"
+            },
+            "value": "chengdu"
+          },
+          {
+            "label": {
+              "$t": "Beijing"
+            },
+            "value": "beijing"
+          },
+          {
+            "label": {
+              "$t": "Nanjing"
+            },
+            "value": "nanjing"
+          },
+          {
+            "label": {
+              "$t": "Suzhou"
+            },
+            "value": "suzhou"
+          },
+          {
+            "label": {
+              "$t": "Guangzhou"
+            },
+            "value": "guangzhou"
+          },
+          {
+            "label": {
+              "$t": "Wuhan"
+            },
+            "value": "wuhan"
+          },
+          {
+            "label": {
+              "$t": "Xi'an"
+            },
+            "value": "xi'an"
+          }
+        ],
+        "clearable": true,
+        "placeholder": {
+          "$t": "Type a city"
+        },
+        "ariaLabel": {
+          "$t": "Destination (local)"
+        }
+      },
+      "children": []
+    },
+    "destination": {
+      "type": "FormField",
+      "props": {
+        "name": "destination",
+        "label": {
+          "$t": "Destination (local)"
+        }
+      },
+      "children": [
+        "destination-input"
+      ]
+    },
+    "contact-input": {
+      "type": "AutoComplete",
+      "props": {
+        "value": {
+          "$bindState": "/text/contact"
+        },
+        "source": {
+          "resource": "members",
+          "labelField": "name",
+          "searchField": "name",
+          "pageSize": 8,
+          "descriptionField": "email"
+        },
+        "clearable": true,
+        "placeholder": {
+          "$t": "Type a member name"
+        },
+        "ariaLabel": {
+          "$t": "Contact (remote)"
+        }
+      },
+      "children": []
+    },
+    "contact": {
+      "type": "FormField",
+      "props": {
+        "name": "contact",
+        "label": {
+          "$t": "Contact (remote)"
+        }
+      },
+      "children": [
+        "contact-input"
+      ]
+    },
+    "card-autocomplete-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "destination",
+        "contact"
+      ]
+    },
+    "card-autocomplete": {
+      "type": "Example",
+      "props": {
+        "id": "autocomplete",
+        "title": {
+          "$t": "AutoComplete"
+        },
+        "description": {
+          "$t": "Free text with suggestions; the matched part is highlighted. Arrow keys move, Enter takes a suggestion, Escape closes. Any text stays a valid value"
+        }
+      },
+      "children": [
+        "card-autocomplete-stack"
+      ]
+    },
+    "note-input": {
+      "type": "Mention",
+      "props": {
+        "value": {
+          "$bindState": "/text/note"
+        },
+        "options": [
+          {
+            "label": "Ada Chen",
+            "value": 1,
+            "description": {
+              "$t": "Operations lead"
+            },
+            "avatar": ""
+          },
+          {
+            "label": "Mina Lopez",
+            "value": 2,
+            "description": {
+              "$t": "Support agent"
+            },
+            "avatar": ""
+          },
+          {
+            "label": "Sam Okafor",
+            "value": 3,
+            "description": {
+              "$t": "Warehouse manager"
+            },
+            "avatar": ""
+          },
+          {
+            "label": "Yuki Tanaka",
+            "value": 4,
+            "description": {
+              "$t": "Finance analyst"
+            },
+            "avatar": ""
+          },
+          {
+            "label": "Theo Novak",
+            "value": 5,
+            "description": {
+              "$t": "Product designer"
+            },
+            "avatar": ""
+          }
+        ],
+        "rows": 3,
+        "placeholder": {
+          "$t": "Type @ to mention a teammate"
+        },
+        "ariaLabel": {
+          "$t": "Handover note (local)"
+        }
+      },
+      "children": []
+    },
+    "note": {
+      "type": "FormField",
+      "props": {
+        "name": "note",
+        "label": {
+          "$t": "Handover note (local)"
+        }
+      },
+      "children": [
+        "note-input"
+      ]
+    },
+    "comment-input": {
+      "type": "Mention",
+      "props": {
+        "value": {
+          "$bindState": "/text/comment"
+        },
+        "source": {
+          "resource": "members",
+          "labelField": "name",
+          "searchField": "name",
+          "pageSize": 6,
+          "avatarField": "avatar",
+          "descriptionField": "role"
+        },
+        "rows": 3,
+        "placeholder": {
+          "$t": "Type @ and a name to search members"
+        },
+        "ariaLabel": {
+          "$t": "Comment (remote)"
+        }
+      },
+      "children": []
+    },
+    "comment": {
+      "type": "FormField",
+      "props": {
+        "name": "comment",
+        "label": {
+          "$t": "Comment (remote)"
+        }
+      },
+      "children": [
+        "comment-input"
+      ]
+    },
+    "card-mention-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "note",
+        "comment"
+      ]
+    },
+    "card-mention": {
+      "type": "Example",
+      "props": {
+        "id": "mention",
+        "title": {
+          "$t": "Mention"
+        },
+        "description": {
+          "$t": "Type @ to mention someone; the list opens at the caret and Enter or Tab inserts the name. The value stays plain text"
+        }
+      },
+      "children": [
+        "card-mention-stack"
+      ]
+    },
+    "channels-transfer": {
+      "type": "Transfer",
+      "props": {
+        "value": {
+          "$bindState": "/transfer/channels"
+        },
+        "options": [
+          {
+            "label": {
+              "$t": "Email"
+            },
+            "value": "email"
+          },
+          {
+            "label": {
+              "$t": "SMS"
+            },
+            "value": "sms"
+          },
+          {
+            "label": {
+              "$t": "In-app"
+            },
+            "value": "in-app"
+          },
+          {
+            "label": {
+              "$t": "Push"
+            },
+            "value": "push"
+          },
+          {
+            "label": {
+              "$t": "Webhook"
+            },
+            "value": "webhook"
+          },
+          {
+            "label": {
+              "$t": "Slack"
+            },
+            "value": "slack"
+          },
+          {
+            "label": {
+              "$t": "WeChat"
+            },
+            "value": "wechat"
+          },
+          {
+            "label": {
+              "$t": "Phone call"
+            },
+            "value": "phone-call",
+            "disabled": true
+          }
+        ],
+        "sourceTitle": {
+          "$t": "Available"
+        },
+        "targetTitle": {
+          "$t": "Enabled"
+        },
+        "ariaLabel": {
+          "$t": "Channels (local)"
+        }
+      },
+      "children": []
+    },
+    "channels": {
+      "type": "FormField",
+      "props": {
+        "name": "channels",
+        "label": {
+          "$t": "Channels (local)"
+        }
+      },
+      "children": [
+        "channels-transfer"
+      ]
+    },
+    "crew-transfer": {
+      "type": "Transfer",
+      "props": {
+        "value": {
+          "$bindState": "/transfer/crew"
+        },
+        "source": {
+          "resource": "members",
+          "labelField": "name",
+          "searchField": "name",
+          "pageSize": 10,
+          "avatarField": "avatar",
+          "descriptionField": "team"
+        },
+        "sourceTitle": {
+          "$t": "Members"
+        },
+        "targetTitle": {
+          "$t": "On shift"
+        },
+        "ariaLabel": {
+          "$t": "Crew (remote)"
+        }
+      },
+      "children": []
+    },
+    "crew": {
+      "type": "FormField",
+      "props": {
+        "name": "crew",
+        "label": {
+          "$t": "Crew (remote)"
+        }
+      },
+      "children": [
+        "crew-transfer"
+      ]
+    },
+    "card-transfer-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "channels",
+        "crew"
+      ]
+    },
+    "card-transfer": {
+      "type": "Example",
+      "props": {
+        "id": "transfer",
+        "title": {
+          "$t": "Transfer"
+        },
+        "description": {
+          "$t": "Check items in either list and move them across. Each list has its own search, check-all and count"
+        }
+      },
+      "children": [
+        "card-transfer-stack"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Remote options"
+        },
+        "description": {
+          "$t": "Choice controls that search, page and echo options from a resource through a Lumi source, with linked levels, suggestions, mentions and a transfer list"
+        }
+      },
+      "children": []
+    },
+    "grid": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "card-search",
+        "card-echo",
+        "card-rich",
+        "card-linkage",
+        "card-autocomplete",
+        "card-mention"
+      ]
+    },
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Remote options"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "grid",
+        "card-transfer"
+      ]
+    },
+    "followers-select": {
+      "type": "MultiSelect",
+      "props": {
+        "value": {
+          "$bindState": "/picker/followers"
+        },
+        "source": {
+          "resource": "members",
+          "labelField": "name",
+          "searchField": "name",
+          "pageSize": 10
+        },
+        "clearable": true,
+        "placeholder": {
+          "$t": "Search members"
+        },
+        "ariaLabel": {
+          "$t": "Followers"
+        }
+      },
+      "children": []
+    },
+    "followers": {
+      "type": "FormField",
+      "props": {
+        "name": "followers",
+        "label": {
+          "$t": "Followers"
+        }
+      },
+      "children": [
+        "followers-select"
+      ]
+    },
+    "return-province-select": {
+      "type": "Select",
+      "props": {
+        "value": {
+          "$bindState": "/returnAddress/province"
+        },
+        "source": {
+          "resource": "regions",
+          "labelField": "name",
+          "searchField": "name",
+          "pageSize": 50,
+          "filters": [
+            {
+              "field": "parentId",
+              "operator": "eq",
+              "value": 0
+            }
+          ]
+        },
+        "clearable": true,
+        "placeholder": {
+          "$t": "Province"
+        },
+        "ariaLabel": {
+          "$t": "Return province"
+        }
+      },
+      "children": []
+    },
+    "return-city-select": {
+      "type": "Select",
+      "props": {
+        "value": {
+          "$bindState": "/returnAddress/city"
+        },
+        "source": {
+          "resource": "regions",
+          "labelField": "name",
+          "searchField": "name",
+          "pageSize": 50,
+          "dependsOn": {
+            "parentId": "/returnAddress/province"
+          }
+        },
+        "clearable": true,
+        "placeholder": {
+          "$t": "City"
+        },
+        "ariaLabel": {
+          "$t": "Return city"
+        }
+      },
+      "children": []
+    },
+    "return-district-select": {
+      "type": "Select",
+      "props": {
+        "value": {
+          "$bindState": "/returnAddress/district"
+        },
+        "source": {
+          "resource": "regions",
+          "labelField": "name",
+          "searchField": "name",
+          "pageSize": 50,
+          "dependsOn": {
+            "parentId": "/returnAddress/city"
+          }
+        },
+        "clearable": true,
+        "placeholder": {
+          "$t": "District"
+        },
+        "ariaLabel": {
+          "$t": "Return district"
+        }
+      },
+      "children": []
+    },
+    "return-grid": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 128,
+        "gap": "sm"
+      },
+      "children": [
+        "return-province-select",
+        "return-city-select",
+        "return-district-select"
+      ]
+    },
+    "delivery-address": {
+      "type": "FormField",
+      "props": {
+        "name": "deliveryAddress",
+        "label": {
+          "$t": "Delivery address"
+        }
+      },
+      "children": [
+        "linkage-grid"
+      ]
+    },
+    "return-address": {
+      "type": "FormField",
+      "props": {
+        "name": "returnAddress",
+        "label": {
+          "$t": "Return address"
+        }
+      },
+      "children": [
+        "return-grid"
+      ]
+    }
+  }
+}

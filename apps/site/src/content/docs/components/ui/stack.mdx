@@ -1,0 +1,59 @@
+---
+title: "Stack"
+description: "弹性布局容器，与 json-render shadcn 的 Stack 兼容。"
+---
+
+<ComponentPreview name="Stack" />
+
+弹性布局容器，与 json-render shadcn 的 Stack 兼容。默认纵向；`wrap` 让横排的按钮、徽标或链接自动换行。
+
+## 示例
+
+```json
+{
+  "root": "stk-row",
+  "elements": {
+    "stk-row": {
+      "type": "Stack",
+      "props": { "direction": "horizontal", "gap": "sm", "wrap": true },
+      "children": ["stk-b1", "stk-b2", "stk-b3"]
+    },
+    "stk-b1": {
+      "type": "Button",
+      "props": { "label": "Save", "appearance": "solid" },
+      "children": []
+    },
+    "stk-b2": {
+      "type": "Button",
+      "props": { "label": "Preview", "appearance": "outline" },
+      "children": []
+    },
+    "stk-b3": {
+      "type": "Button",
+      "props": { "label": "Discard", "appearance": "ghost" },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `direction` | `vertical` 纵向排列，`horizontal` 横向排列。 | `"horizontal" \| "vertical" \| null` | `"vertical"` |
+| `gap` | 子元素之间的间距。 | `"none" \| "sm" \| "md" \| "lg" \| "xl" \| null` |  |
+| `align` | 交叉轴对齐：`start`、`center`、`end`、`stretch`。 | `"start" \| "center" \| "end" \| "stretch" \| null` |  |
+| `justify` | 主轴分布：`between` 两端对齐，`around` 均匀分布。 | `"start" \| "center" \| "end" \| "between" \| "around" \| null` |  |
+| `wrap` | 一行放不下时换行。 | `boolean \| null` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：`default`

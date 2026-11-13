@@ -1,0 +1,337 @@
+---
+title: "Admin 应用"
+description: "createAdmin 和 mountAdmin 的全部选项、返回的实例、扩展对象、CDN 版的 LumiAdminSetup 与 LumiAdmin.use、路由抽屉，以及 JSON 页面和 React 页面混用。"
+---
+
+## 它是什么
+
+`@duxweb/lumi-admin` 把 Lumi 的数据服务、UI 组件和一个完整的后台外壳（登录页、侧栏菜单、标签页、面包屑、权限、AI 助手面板）组装在一起。它有三种启动方式，读的是同一套 manifest、页面 JSON 和主题：
+
+| 方式 | 适合 | 入口 |
+| --- | --- | --- |
+| CDN 版 | 不想编译前端：一个 HTML 加几个 JSON 文件 | `lumi-admin.js` + `config.json` |
+| `mountAdmin` | 有构建流程，想沿用 `config.json`，再加 React 组件 | `mountAdmin(config, extensions)` |
+| `createAdmin` | 完全自己组装：自己的 provider、路由、外壳 | `createAdmin(options)` |
+
+CDN 版内部调用的就是 `mountAdmin`，`mountAdmin` 内部调用的就是 `createAdmin`。三者的关系见 [架构](/guide/advanced/architecture/)。
+
+## createAdmin
+
+```tsx
+import { createLumi, createSimpleDataProvider } from '@duxweb/lumi'
+import { createAdmin } from '@duxweb/lumi-admin'
+import { createRoot } from 'react-dom/client'
+// 样式各引入一次
+import '@duxweb/lumi-ui/style.css'
+import '@duxweb/lumi-admin/style.css'
+
+// 服务上下文：DataProvider、AuthProvider 等都放在这里
+const context = createLumi({
+  dataProvider: createSimpleDataProvider({ apiUrl: '/api' }),
+})
+
+// 后台实例
+export const admin = createAdmin({
+  context,
+  // 菜单和路由：地址，或直接给对象
+  manifest: '/manifest.json',
+  // 主题：地址，或直接给对象
+  theme: '/theme.json',
+})
+
+// 渲染整个后台
+createRoot(document.getElementById('app')!).render(<admin.App />)
+```
+
+`context` 是 `createLumi` 建的服务上下文，DataProvider、AuthProvider、AccessProvider 等都在里面，见 [Provider 一览](/guide/advanced/providers/)。默认的 catalog 和 registry 已经包含全部 UI 组件、数据组件、上传和 Admin 页面组件。
+
+### 选项
+
+**必填**
+
+| 选项 | 说明 |
+| --- | --- |
+| `context` | `createLumi(...)` 的返回值。 |
+| `manifest` | manifest 的地址或对象，格式见 [菜单与路由](/guide/menus/)。 |
+
+**页面与组件**
+
+| 选项 | 说明 |
+| --- | --- |
+| `catalog`、`registry` | 组件目录和 React 实现。要加自己的组件时，传入合并后的版本，见下文和 [自定义组件](/guide/advanced/components/)。 |
+| `handlers` | 自己的 JSON 动作：`{ 动作名: async (params) => {} }`。 |
+| `drawers` | 路由抽屉，见下文。 |
+| `routes` | 额外的 react-router 路由，用于完全不经过 JSON 的页面。 |
+| `theme` | 主题地址或对象。 |
+
+**外壳**
+
+| 选项 | 说明 |
+| --- | --- |
+| `shell` | 换掉整个外壳组件。 |
+| `headerEnd` | 顶栏右侧的内容，例如通知铃铛。 |
+| `sidebarFooter` | 侧栏底部的内容。 |
+| `menuBadges` | 菜单项旁边的数字：`{ 路由名: { label, tone? } }`，`tone` 为 `neutral` 或 `warning`。 |
+| `assistant` | 页面旁边的面板（例如自己的 AI 助手），外壳只提供框和开关按钮。 |
+| `assistantDefaultOpen` | 助手面板第一次是否展开，默认展开；之后记住用户的选择。 |
+| `assistantCommands`、`assistantMentions` | 加到 manifest `app.assistant` 上的 `/` 命令和 `@` 引用。 |
+| `login` | 登录页的文字和选项，同 `config.json` 的 [login](/guide/config/#login)。 |
+| `shellStorageKey` | 外壳在浏览器里保存内容的命名空间：读者的偏好（侧栏折叠等）、打开的标签页和选的语言。默认按 manifest 的 `app.id` 区分。 |
+| `frameOrigins` | `Iframe` 元素和 `page.iframe` 路由可以显示的站点；本站总是可以。不写时所有 https 站点都可以，见 [嵌入其他网页](/guide/embed/)。 |
+
+**事件**
+
+| 选项 | 说明 |
+| --- | --- |
+| `onEvent({ name, payload })` | manifest 顶栏按钮的 `event`、没有 `prompt` 的助手命令（`name` 为 `assistant.command`）会发到这里。 |
+| `onWorkspaceChange(value)` | 用户在侧栏切换工作区（`app.workspaces`）时调用。 |
+
+**加载**
+
+| 选项 | 说明 |
+| --- | --- |
+| `manifestAuth` | `public`（默认）或 `protected`：先确认已登录再加载 manifest。`protected` 时 `context` 必须有 `authProvider`。 |
+| `cacheKey` | manifest 和页面缓存的命名空间。 |
+| `manifestLoader`、`specLoader`、`themeLoader` | 换掉 manifest、页面 JSON、主题的加载方式（`load`、`invalidate`、`peek`）。 |
+| `pages` | 所有页面 JSON 从同一个后端接口取：`{ endpoint, method?, data? }`，见 [一个接口返回所有页面](/guide/remote/#一个接口返回所有页面)。传了 `specLoader` 时以它为准。 |
+| `packKey` | 后端把 manifest、页面、主题打包返回并加了密钥时的密钥，见 [不让页面 JSON 直接可读](/guide/remote/#不让页面-json-直接可读)。 |
+| `loadPageModule` | 怎么加载 `page.module` 路由的组件，默认 `import()` 后取默认导出；每个地址只加载一次。 |
+| `createRouter` | 换路由器，测试里用 `createMemoryRouter`。 |
+
+manifest、页面和主题发往本站或 API 所在域名时，请求带登录凭证、语言和工作区，见 [从后端加载菜单](/guide/remote/#从后端加载菜单)。
+
+### 返回的实例
+
+| 字段 | 说明 |
+| --- | --- |
+| `App` | 渲染整个后台的 React 组件。 |
+| `context`、`catalog`、`registry` | 实际使用的上下文、目录和 registry（已合并默认组件）。 |
+| `ready()` | manifest 加载、路由建好后 resolve。 |
+| `refresh()` | 重新加载 manifest 和页面，例如后端改了菜单之后。 |
+| `clear()` | 清掉已加载的 manifest 和页面，退出登录时用。 |
+| `dispose()` | 释放实例，之后不能再用。 |
+| `getMenu()`、`getRouter()` | 当前的菜单和 react-router 路由器。 |
+
+## 加自己的组件和动作
+
+```tsx
+import type { Spec } from '@json-render/core'
+import { adminRegistry, createAdmin } from '@duxweb/lumi-admin'
+import { adminCatalogDefinitions } from '@duxweb/lumi-admin/catalog'
+import { createLumi } from '@duxweb/lumi'
+import { defineCatalog } from '@json-render/core'
+import { defineRegistry } from '@json-render/react'
+import { schema } from '@json-render/react/schema'
+import { z } from 'zod'
+
+// 已经用 createLumi 建好的上下文
+declare const context: ReturnType<typeof createLumi>
+
+// 自己的组件和动作的定义：参数用 zod 描述
+const ownDefinitions = {
+  components: {
+    OrderSummary: {
+      props: z.object({ title: z.string(), limit: z.number().optional() }),
+      description: 'Latest orders with their totals.',
+    },
+  },
+  actions: {
+    copyText: {
+      params: z.object({ text: z.string() }),
+      description: 'Copies text to the clipboard.',
+    },
+  },
+}
+// registry 只管组件；动作的实现放在下面的 handlers 里
+const own = defineCatalog(schema, {
+  components: ownDefinitions.components,
+  actions: {},
+})
+// 组件的 React 实现
+const { registry: ownRegistry } = defineRegistry(own, {
+  components: { OrderSummary: ({ props }) => <h3>{props.title}</h3> },
+})
+
+// 完整的目录：Admin 自带的加上自己的
+const catalog = defineCatalog(schema, {
+  components: { ...adminCatalogDefinitions.components, ...ownDefinitions.components },
+  actions: { ...adminCatalogDefinitions.actions, ...ownDefinitions.actions },
+})
+
+// React 页面：一个只包含这个组件的页面，交给路由的 page.spec
+const summaryPage: Spec = {
+  root: 'page',
+  elements: {
+    page: { type: 'OrderSummary', props: { title: '最新订单' }, children: [] },
+  },
+}
+
+export const admin = createAdmin({
+  context,
+  catalog,
+  // Admin 自带的实现加上自己的
+  registry: { ...adminRegistry, ...ownRegistry },
+  // 动作的实现
+  handlers: {
+    copyText: async (params) => {
+      await navigator.clipboard.writeText(String(params.text))
+    },
+  },
+  manifest: {
+    app: { id: 'shop', title: '示例商城' },
+    routes: [
+      // JSON 页面
+      {
+        name: 'orders',
+        path: '/orders',
+        page: { src: '/pages/orders.json' },
+        menu: { label: '订单' },
+      },
+      // React 页面：菜单、权限、标签页和 JSON 页面一样处理
+      {
+        name: 'summary',
+        path: '/summary',
+        page: { spec: summaryPage },
+        menu: { label: '概览' },
+      },
+    ],
+  },
+})
+```
+
+要点：
+
+- 组件的定义（zod 参数）进 `catalog`，页面 JSON 和 `lumi-check` 都按它校验；实现进 `registry`。
+- **React 页面**写成一个只包含这个组件的页面（`page.spec`），菜单、权限、标签页、面包屑都和 JSON 页面一样处理。组件里用 [数据 hooks](/guide/advanced/hooks/) 读写数据，和 JSON 页面共用缓存。
+- 动作在 `handlers` 里实现，定义写进 `catalog.actions`，JSON 里就能 `{ "action": "copyText", "params": { "text": "…" } }`。
+
+## 路由抽屉
+
+路由抽屉是注册过的 React 抽屉，打开时地址栏带上 `?drawer=名称&record=id`，可以分享、刷新、前进后退；背后的列表保持不动；抽屉里有未保存的改动时，关闭或离开会先提醒。
+
+```tsx
+import type { AdminRoutedDrawerRegistry } from '@duxweb/lumi-admin'
+import { useOne } from '@duxweb/lumi'
+import { useAdminDrawer } from '@duxweb/lumi-admin'
+
+// 抽屉里的内容：一个普通的 React 组件
+function EditCustomer() {
+  // 当前这一层抽屉：recordId 是打开时传的 id
+  const drawer = useAdminDrawer()
+  // 按 id 读这条客户
+  const customer = useOne<{ name: string }>({
+    resource: 'customers',
+    id: drawer.recordId,
+  })
+  return (
+    <div>
+      <p>{customer.data?.data.name}</p>
+      <button onClick={drawer.close}>关闭</button>
+    </div>
+  )
+}
+
+// 注册：键名就是 openDrawer 的 name
+export const drawers: AdminRoutedDrawerRegistry = {
+  'edit-customer': {
+    title: '编辑客户',
+    component: EditCustomer,
+    side: 'right',
+    size: 'lg',
+  },
+}
+```
+
+把 `drawers` 交给 `createAdmin`（或扩展对象），JSON 里这样打开：
+
+```jsonc
+{
+  "type": "Button",
+  "props": { "label": "编辑" },
+  "on": {
+    "press": {
+      // 打开注册名为 edit-customer 的抽屉，地址栏带上 record=12
+      "action": "openDrawer",
+      "params": { "name": "edit-customer", "id": 12 }
+    }
+  }
+}
+```
+
+| 定义字段 | 说明 |
+| --- | --- |
+| `title`（必填） | 抽屉标题。 |
+| `component`（必填） | React 组件，用 `useAdminDrawer()` 拿到 `{ activeKey, recordId, open(key, id?), close() }`。 |
+| `description` | 标题下的说明。 |
+| `side` | `left`、`right`（默认）、`top`、`bottom`。 |
+| `size` | `sm`、`md`、`lg`。 |
+
+`useAdminDrawerChrome({ revision, title, footerStart, footerEnd })` 让抽屉内容自己设置标题和底部按钮。
+
+## mountAdmin
+
+`mountAdmin` 读取和 CDN 版相同的 `config.json`，按地址选出一个 panel，用它的 `data`、`auth`、`access` 和根上的 `i18n` 建好全部 provider，再调用 `createAdmin`。适合"大部分页面是 JSON，少数地方要 React"的项目。
+
+```tsx
+import { createSimpleDataProvider } from '@duxweb/lumi'
+import { mountAdmin } from '@duxweb/lumi-admin'
+import '@duxweb/lumi-ui/style.css'
+import '@duxweb/lumi-admin/style.css'
+
+// 读 config.json，再加上代码里的扩展
+const admin = await mountAdmin('/config.json', ({ panel, http }) => ({
+  // 自己建一个数据源；用后台的 http，凭证和其他请求一样
+  dataProviders: {
+    cms: createSimpleDataProvider({
+      // 地址从 config.json 的 data 里读：panel.data 是全部后端的列表
+      apiUrl: panel.data.find((item) => item.name === 'cms')?.url ?? '/cms',
+      http,
+    }),
+  },
+  // 页头按钮的 event、没有 prompt 的助手命令会发到这里
+  onEvent: (event) => {
+    console.log(event.name, event.payload)
+  },
+}))
+
+// 返回值里有这次挂载的 panel 和请求客户端
+console.log(admin.panel.panel.name, admin.http.baseUrl)
+```
+
+- 第一个参数是 `config.json` 的地址或对象，配置项见 [项目配置](/guide/config/)。
+- 第二个参数是扩展对象，或一个返回扩展对象（可以是 Promise）的函数。函数收到 `{ config, panel, http }`：校验过、地址已解析的配置，这次挂载的 panel（含它用的 `data`、`auth`、`access`），以及带登录凭证、语言和工作区的请求客户端。`config` 里的 `data`、`auth`、`access`、`panels` 保持 `config.json` 里的写法（对象或数组）；要按名字找后端，用 `panel.data`，它总是带 `name` 的数组。
+- 第三个参数 `{ panel }` 指定挂载哪个 panel，不写时按地址选择，见 [多个后台](/guide/config/#多个后台)。
+- 返回 `MountedAdmin`：`createAdmin` 实例的全部字段，加上 `config`、`panel`、`http` 和 `unmount()`。
+- `config.modules` 由 CDN 版加载；编译的项目里请自己 `import` 这些模块，把它们的扩展对象传进来。
+
+### 扩展对象
+
+扩展对象可以包含 `createAdmin` 的大部分选项，以及要替换的 provider。provider 和 `dataProviders` 平铺在顶层：
+
+| 键 | 说明 |
+| --- | --- |
+| `components` | 自己的组件：`{ 名称: { props: zod, slots?, events?, description?, render } }`，自动加进目录和 registry。只在扩展对象里有，`createAdmin` 用 `catalog`/`registry`。 |
+| `handlers` | 自己的动作。 |
+| `drawers` | 路由抽屉。 |
+| `routes` | 额外的 react-router 路由。 |
+| `dataProviders` | 按 `data` 名称的 DataProvider，元素里用 `dataProviderName` 引用；`default` 指当前 panel 的后端。只写 `{ onRequest, onResponse }` 时保留配置里的地址，只加上这两个函数。 |
+| `authProviders` | 按 `auth` 名称替换默认的登录，见 [认证](/guide/advanced/auth/)。替换后默认的权限判断不再使用，需要时一起给出 `accessProviders`。 |
+| `accessProviders` | 按 `access` 名称替换默认的权限判断，见 [权限](/guide/advanced/access/)。 |
+| `i18nProvider`、`tenantProvider`、`liveProvider`、`auditLogProvider`、`toastProvider`、`notificationProvider`、`validator` | 替换对应的服务，见 [Provider 一览](/guide/advanced/providers/)。 |
+| `upload`、`agent` | 上传和 AI 助手请求的选项，和默认值合并。 |
+| `env` | 页面 JSON 可以读到的环境值。 |
+| `onEvent`、`onWorkspaceChange` | 事件回调。 |
+| `assistantCommands`、`assistantMentions` | 助手的 `/` 命令和 `@` 引用。 |
+| `menuBadges`、`headerEnd`、`sidebarFooter`、`assistant`、`shell` | 外壳内容。 |
+
+多个扩展按顺序合并：`handlers`、`dataProviders`、`authProviders`、`accessProviders`、`drawers`、`menuBadges`、`upload`、`agent` 按键合并；`routes`、命令和引用拼接；每个 `onEvent`、`onWorkspaceChange` 都会被调用；其余选项取最后一个设置的。同名的组件、动作、DataProvider 注册两次时，控制台会提示，后注册的生效。`defineAdminExtension(extension)` 只用于给扩展加类型。
+
+## CDN 版的扩展
+
+CDN 版不编译，扩展写成普通的 ES 模块，在 `config.json` 的 `modules` 里列出。模块返回的就是上面的 [扩展对象](#扩展对象)，合并规则也一样。写法、加载顺序和不单独放文件的写法见 [扩展模块](/guide/modules/)。
+
+## 下一步
+
+- 后台的各层怎么分工：[架构](/guide/advanced/architecture/)。
+- 请求怎么发、错误怎么处理：[数据请求](/guide/advanced/data/)。
+- 全部类型：[@duxweb/lumi-admin API](/api/packages/admin/)。

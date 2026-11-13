@@ -1,0 +1,90 @@
+---
+title: "详情页"
+description: "用 DetailPage 显示一条记录：Query 按地址里的 id 读出来，页面上的字段绑定这条记录。"
+---
+
+详情页是只读的：`Query` 把一条记录读进页面状态，显示用的组件绑定这些状态。
+
+`DetailPage` 是详情页的外壳：标题、一组“标签：值”，下面放别的内容。记录由 `Query` 读出来：
+
+```jsonc
+{
+  "root": "page",
+  // 记录还没返回时，绑定读到的是这里的初始值
+  "state": { "order": { "data": null, "loading": true } },
+  "elements": {
+    "page": {
+      "type": "Fragment",
+      "props": {},
+      "children": ["order-query", "detail"]
+    },
+    // 按地址里的 id 读这条订单，写到 /order
+    "order-query": {
+      "type": "Query",
+      "props": {
+        "resource": "orders",
+        "operation": "one",
+        "id": { "$state": "/route/params/id" },
+        "resultPath": "/order"
+      },
+      "children": []
+    },
+    "detail": {
+      "type": "DetailPage",
+      "props": {
+        // 标题里拼上订单号
+        "title": { "$template": "订单 ${/order/data/number}" },
+        "description": "订单的基本信息和处理记录。",
+        // 每一项是一个“标签：值”
+        "fields": [
+          {
+            "key": "customer",
+            "label": "客户",
+            "value": { "$state": "/order/data/customer" }
+          },
+          {
+            "key": "status",
+            "label": "状态",
+            "value": { "$state": "/order/data/status" }
+          },
+          {
+            "key": "total",
+            "label": "金额",
+            "value": { "$state": "/order/data/total" },
+            "hint": "含运费"
+          }
+        ]
+      },
+      // 标题右边的按钮
+      "slots": { "actions": ["edit"] },
+      // 字段下面的内容
+      "children": ["note"]
+    },
+    "edit": {
+      "type": "Button",
+      "props": { "label": "编辑" },
+      "on": {
+        "press": {
+          "action": "navigate",
+          "params": {
+            "to": { "$template": "/orders/${/route/params/id}/edit" }
+          }
+        }
+      },
+      "children": []
+    },
+    "note": {
+      "type": "Alert",
+      "props": { "tone": "info", "message": "发货后不能再修改收货地址。" },
+      "children": []
+    }
+  }
+}
+```
+
+路由写成 `/orders/:id`，页面就能从 `/route/params/id` 读到是哪一条，见 [地址里的参数](/guide/menus/#地址里的参数)。
+
+- `fields` 的 `value` 是文字或数字。要显示徽标、图片这类内容，放在 `children` 里，用 [DescriptionList](/components/ui/description-list/)、[Badge](/components/ui/badge/) 等组件自己排。
+- `timeline` 在页面下方显示处理记录，格式同 [Timeline](/components/ui/timeline/) 的 `items`。
+- 修改历史用 [AuditLog](/components/connected/audit-log/)，前提是在 `config.json` 的 panel 上配了 `auditLog`。
+- 不想跳到新页面时，把详情放进弹窗，见 [共用弹窗](/guide/reuse/#共用弹窗)。

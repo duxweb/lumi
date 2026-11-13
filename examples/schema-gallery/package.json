@@ -1,0 +1,23 @@
+{
+  "name": "@duxweb/lumi-schema-gallery",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --root ../.. examples/schema-gallery/test",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@json-render/core": "catalog:"
+  },
+  "devDependencies": {
+    "@duxweb/lumi": "workspace:*",
+    "@duxweb/lumi-ui": "workspace:*",
+    "@json-render/react": "catalog:",
+    "vitest": "catalog:",
+    "zod": "catalog:"
+  }
+}

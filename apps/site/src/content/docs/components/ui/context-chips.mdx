@@ -1,0 +1,48 @@
+---
+title: "ContextChips"
+description: "智能体能看到的内容：当前页面的“Viewing”块，带一个绑定到 shared 的共享开关；已附加的上下文条目（可移除，会更新绑定的 items）；以及可选的用量条，显示 used / limit。"
+---
+
+<ComponentPreview name="ContextChips" />
+
+智能体能看到的内容：当前页面的“Viewing”块，带一个绑定到 `shared` 的共享开关；已附加的上下文条目（可移除，会更新绑定的 `items`）；以及可选的用量条，显示 `used` / `limit`。
+
+## 示例
+
+```json
+{
+  "root": "context-chips",
+  "elements": {
+    "context-chips": {
+      "type": "ContextChips",
+      "props": {
+        "viewing": "Orders",
+        "shared": true,
+        "items": [{ "id": "o1", "label": "ORD-1024", "kind": "record" }]
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `viewing` | 正在查看的页面，如 `订单详情 · 1`。 | `string` |  |
+| `shared` | 是否把当前页面共享给 Agent，显示一个开关。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `boolean` |  |
+| `items` | 附加的上下文条目，每项 `{ id, label, kind?, icon?, description? }`。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 字段：`id`、`label`、`kind?`、`icon?`、`description?`、`data?` | `object[]` |  |
+| `removable` | 每个条目显示删除按钮，删除后更新绑定的 `items` 并触发 `remove`。 | `boolean` | `false` |
+| `usage` | 上下文用量 `{ used, limit, unit? }`，超过 80% 显示警告色，超过 95% 显示危险色。 字段：`used`、`limit`、`unit?` | `object` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`、`remove`
+- 插槽：无

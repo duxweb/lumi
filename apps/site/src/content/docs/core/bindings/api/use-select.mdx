@@ -1,0 +1,53 @@
+---
+title: "useSelect"
+description: "useSelect React hook 的签名、参数和返回值。"
+---
+
+Options of a remote select: loaded page by page from a resource, searched on the server, narrowed by other fields, with the selected rows fetched by id when they are not on a loaded page.
+
+```typescript
+useSelect(input: UseSelectOptions): UseSelectResult
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `input` | `UseSelectOptions` | 是 |  |
+
+`input` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `avatarField` | `string \| undefined` | 否 | A field holding the option's avatar image. |
+| `dataProviderName` | `string \| undefined` | 否 | 多数据源名称；省略时使用 default。 |
+| `debounce` | `number \| undefined` | 否 | Milliseconds a typed keyword waits before it is searched; 300 by default. |
+| `dependsOn` | `string[] \| undefined` | 否 | Fields of `deps` whose values filter the options with `eq`, e.g. the city list by `province`. |
+| `deps` | `Record<string, unknown> \| undefined` | 否 | Current values of the fields in `dependsOn`. |
+| `descriptionField` | `string \| undefined` | 否 | A field shown as the option's second line. |
+| `enabled` | `boolean \| undefined` | 否 | `false` loads nothing, e.g. until the select opens. |
+| `filters` | `Filter[] \| undefined` | 否 | Conditions every request carries. |
+| `imageField` | `string \| undefined` | 否 | A field holding the option's picture. |
+| `labelField` | `string \| undefined` | 否 | The field shown; the first of `label`, `name`, `title`, `id` with a value when left out. |
+| `meta` | `Meta \| undefined` | 否 | 原样传给 DataProvider 的扩展数据。 |
+| `pageSize` | `number \| undefined` | 否 | Options loaded per request. |
+| `resource` | `string` | 是 | The resource the options come from. |
+| `search` | `string \| undefined` | 否 | A keyword kept by the caller; the options follow it when it changes. |
+| `searchField` | `string \| undefined` | 否 | The field a search filters with `like`; without it there is no server search. |
+| `selected` | `ID \| ID[] \| null \| undefined` | 否 | The chosen value or values; rows not on a loaded page are fetched by id so their labels show. |
+| `valueField` | `string \| undefined` | 否 | The field used as the value; `id` by default. |
+
+返回 `UseSelectResult`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `hasMore` | `boolean` | 是 | Whether more options remain on the server. |
+| `keyword` | `string` | 是 | The keyword being searched. |
+| `loading` | `boolean` | 是 | The first page of the current search is pending or loading. |
+| `loadingMore` | `boolean` | 是 | A further page is loading. |
+| `loadMore` | `() => void` | 是 | Loads the next page. |
+| `options` | `Option[]` | 是 | Rows of every loaded page, in server order. |
+| `search` | `(keyword: string) => void` | 是 | Searches for a keyword, from the first page. |
+| `selectedOptions` | `Option[]` | 是 | The rows behind `selected`, fetched by id when they are not among the loaded pages. |
+| `setDeps` | `(values: Record<string, unknown>) => void` | 是 | Replaces the dependency values, reloading the options. |
+| `total` | `number \| undefined` | 是 | How many options match the search, when the server says. |

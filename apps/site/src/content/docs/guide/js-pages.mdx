@@ -1,0 +1,67 @@
+---
+title: "JS 页面"
+description: "整个页面不适合用 JSON 写时，路由指向一个 JS 文件：文件怎么写、收到哪些参数、怎么加载，以及它和 JSON 页面的区别。"
+---
+
+整个页面都不适合用 JSON 写时（比如一个复杂的报表），路由的 `page` 可以指向一个 JS 文件。菜单、权限、标签页和 JSON 页面一样处理。
+
+## 路由
+
+在 manifest 里用 `page.module` 指向这个文件：
+
+```jsonc
+// manifest.json
+{
+  "app": { "id": "shop", "title": "示例商城" },
+  "routes": [
+    {
+      "name": "report",
+      "path": "/report",
+      // 用 JS 写的页面，和 JSON 页面一样放在静态目录里
+      "page": { "module": "/pages/report.js" },
+      "menu": { "label": "报表", "icon": "file-text" }
+    }
+  ]
+}
+```
+
+## 文件的写法
+
+文件的写法和扩展模块一样：默认导出一个函数，参数是 Lumi 自带的 React、hooks 和 UI 组件，返回页面组件。页面组件收到路由参数 `params` 和地址里的查询参数 `query`：
+
+```js
+// public/pages/report.js
+// 和扩展模块一样：参数是 Lumi 自带的 React、hooks 和 UI 组件
+export default ({ React, lumi, ui }) => {
+  const h = React.createElement
+
+  // 返回页面组件。query 是地址里的查询参数，params 是路由参数
+  return function OrderReport({ query }) {
+    // 只要总数，所以每页取 1 条
+    const orders = lumi.useList({
+      resource: 'orders',
+      pagination: { page: 1, pageSize: 1 },
+    })
+    const total = orders.data?.total
+    // 地址带 ?period=2026-11 时显示周期
+    return h(
+      ui.LumiCard,
+      {
+        title: '订单报表',
+        description: query.period ? `周期 ${query.period}` : '全部',
+      },
+      h(ui.LumiText, { text: total === undefined ? '统计中…' : `共 ${total} 单` }),
+    )
+  }
+}
+```
+
+## 注意
+
+- 第一次打开时才加载，之后不再重复请求。加载失败时页面显示错误，下次打开会重试。
+- `module` 的相对地址相对于 manifest；inline manifest 写在 `config.json` 里时相对于 `config.json`。
+- JS 页面是静态公开文件，用浏览器原生的 `import()` 加载，不经过 [`pages`](/guide/remote/#一个接口返回所有页面) 接口，也不带 `Authorization` 请求头，所以不能按用户返回不同内容。不要在文件里写密钥。
+- 只能由 manifest 的路由指定。弹窗的 `src` 和 `Include` 只打开 JSON 页面，地址栏里写不了 JS 地址。
+- 编译接入时，`createAdmin({ loadPageModule })` 可以自己决定怎么加载；默认直接 `import()`，用模块的默认导出作为组件。
+
+只是页面里的一块需要代码时，不用把整页改成 JS：写成一个 [组件](/guide/extend-components/#加一个组件)，放进 JSON 页面里。

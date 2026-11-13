@@ -1,0 +1,66 @@
+---
+import type { Locale } from '../i18n'
+import { GithubIcon, LanguageSquareIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { COPY, LOCALES } from '../i18n'
+import '@duxweb/lumi-ui/style.css'
+import '../styles/site.css'
+
+interface Props {
+  locale: Locale
+  title: string
+  description: string
+  /** Docs pages use the full width for their three columns. */
+  wide?: boolean
+  /** A page that fills the window, such as the Playground: the header spans it too. */
+  full?: boolean
+  /** Which header link is the current section. */
+  active?: string
+  /** The page is night whatever the system theme: black ground and white type, as on the home page. */
+  night?: boolean
+}
+const { locale, title, description, wide = false, full = false, active, night = false } = Astro.props
+const t = COPY[locale].nav
+const home = LOCALES[locale].home
+// The switch offers the other language, on its own home page.
+const other = LOCALES[locale === 'zh' ? 'en' : 'zh']
+---
+
+<!doctype html>
+<html lang={LOCALES[locale].lang} data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <script is:inline>
+      // Lumi UI reads its tokens from data-theme; follow the system before first paint.
+      document.documentElement.dataset.theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    </script>
+  </head>
+  <body class:list={{ night }}>
+    <header class:list={['nav', { 'nav--wide': wide, 'nav--full': full }]}>
+      <a class="nav__brand" href={home}>Lumi</a>
+      <nav class="nav__links" aria-label={t.site}>
+        {[
+          ['guide', '/guide/', t.docs],
+          ['components', '/components/', t.components],
+          ['api', '/api/', 'API'],
+          ['ai', '/ai/', 'Skills'],
+          ['playground', '/playground/', t.playground],
+          ['demo', '/demo/', t.demo],
+        ].map(([id, href, label]) => <a href={href} aria-current={id === active ? 'page' : undefined}>{label}</a>)}
+      </nav>
+      <div class="nav__tools">
+        <a class="nav__tool" href={other.home} hreflang={other.lang} lang={other.lang} aria-label={t.language}>
+          <HugeiconsIcon icon={LanguageSquareIcon} size={18} strokeWidth={1.8} />
+          <span>{other.label}</span>
+        </a>
+        <a class="nav__tool nav__tool--icon" href="https://github.com/duxweb" aria-label="GitHub">
+          <HugeiconsIcon icon={GithubIcon} size={19} strokeWidth={1.8} />
+        </a>
+      </div>
+    </header>
+    <slot />
+  </body>
+</html>

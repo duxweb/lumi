@@ -1,0 +1,131 @@
+{
+  "root": "workspace",
+  "elements": {
+    "workspace": {
+      "type": "AgentWorkspace",
+      "props": {
+        "endpoint": "/agent/chat",
+        "resource": "agent-sessions",
+        "emptyTitle": {
+          "$t": "What can I help with?"
+        },
+        "emptyDescription": {
+          "$t": "Ask about orders, or try one of these"
+        },
+        "suggestions": [
+          {
+            "id": "late",
+            "label": {
+              "$t": "Which orders are late this week?"
+            },
+            "icon": "package"
+          },
+          {
+            "id": "remind",
+            "label": {
+              "$t": "Remind the late customers"
+            },
+            "icon": "mail"
+          },
+          {
+            "id": "period",
+            "label": {
+              "$t": "Which period should we review?"
+            },
+            "icon": "calendar"
+          }
+        ],
+        "mentions": {
+          "types": [
+            {
+              "value": "orders",
+              "label": {
+                "$t": "Orders"
+              },
+              "icon": "shopping-bag-01"
+            },
+            {
+              "value": "articles",
+              "label": {
+                "$t": "Articles"
+              },
+              "icon": "news"
+            },
+            {
+              "value": "customers",
+              "label": {
+                "$t": "Customers"
+              },
+              "icon": "user"
+            }
+          ],
+          "sources": {
+            "orders": {
+              "resource": "orders",
+              "labelField": "number",
+              "descriptionField": "customer",
+              "searchField": "searchText",
+              "pageSize": 8
+            },
+            "articles": {
+              "resource": "articles",
+              "labelField": "title",
+              "descriptionField": "author",
+              "searchField": "title",
+              "pageSize": 8
+            },
+            "customers": {
+              "resource": "customers",
+              "labelField": "name",
+              "descriptionField": "email",
+              "searchField": "name",
+              "pageSize": 8
+            }
+          }
+        },
+        "commands": [
+          {
+            "value": "late",
+            "label": {
+              "$t": "Find late orders"
+            },
+            "description": {
+              "$t": "Paid orders unshipped after 24 hours"
+            },
+            "icon": "package",
+            "prompt": {
+              "$t": "Which orders are late this week?"
+            }
+          },
+          {
+            "value": "remind",
+            "label": {
+              "$t": "Remind late customers"
+            },
+            "description": {
+              "$t": "Asks before anything is sent"
+            },
+            "icon": "mail-01",
+            "prompt": {
+              "$t": "Remind the late customers"
+            }
+          },
+          {
+            "value": "summary",
+            "label": {
+              "$t": "Summarize this page"
+            },
+            "description": {
+              "$t": "A short summary of what is on screen"
+            },
+            "icon": "file-01",
+            "prompt": {
+              "$t": "Summarize this page"
+            }
+          }
+        ]
+      },
+      "children": []
+    }
+  }
+}

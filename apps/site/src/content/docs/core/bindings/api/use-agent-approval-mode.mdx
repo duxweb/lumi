@@ -1,0 +1,14 @@
+---
+title: "useAgentApprovalMode"
+description: "useAgentApprovalMode React hook 的签名、参数和返回值。"
+---
+
+The approval mode every agent conversation shares: `ask` waits for the
+reader before changes, `auto` acts at once. It is sent with each request so
+the server applies the same rule to its own approvals, and kept between visits.
+
+```typescript
+useAgentApprovalMode(): [AgentApprovalMode, (mode: AgentApprovalMode) => void]
+```
+
+返回 `[AgentApprovalMode, (mode: AgentApprovalMode) => void]`。

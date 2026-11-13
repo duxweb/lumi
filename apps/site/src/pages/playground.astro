@@ -1,0 +1,24 @@
+---
+import type { PlaygroundComponent } from '../playground/Playground'
+import { GALLERY_PAGES } from '@duxweb/lumi-schema-gallery'
+import { focusComponentDemo } from '../docs/focus'
+import { docsCatalog } from '../docs/reference/catalog'
+import { FAMILIES, familyOf, OTHER_FAMILY } from '../docs/reference/families'
+import Base from '../layouts/Base.astro'
+import { Playground } from '../playground/Playground'
+import '../styles/playground.css'
+
+// Every component the gallery shows, in the docs' own order, with the gallery
+// page that holds its demo. The pages themselves load when one is picked.
+const families = [...FAMILIES.map(([family]) => family), OTHER_FAMILY]
+const components: PlaygroundComponent[] = families.flatMap(family => docsCatalog.components
+  .filter(component => familyOf(component.type) === family)
+  .flatMap((component) => {
+    const page = Object.entries(GALLERY_PAGES).find(([, item]) => focusComponentDemo(item.spec, component.type))?.[0]
+    return page ? [{ type: component.type, family, page }] : []
+  }))
+---
+
+<Base locale="zh" title="Playground - Lumi" description="在浏览器里编写 Lumi 页面 JSON：实时校验，实时预览，一键分享。" full active="playground">
+  <Playground client:only="react" components={components} />
+</Base>

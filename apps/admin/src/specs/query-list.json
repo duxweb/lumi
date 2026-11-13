@@ -1,0 +1,181 @@
+{
+  "root": "stack",
+  "state": {
+    "status": "active",
+    "products": {
+      "data": [],
+      "total": 0,
+      "loading": true
+    }
+  },
+  "elements": {
+    "stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "toolbar",
+        "query",
+        "error",
+        "table"
+      ]
+    },
+    "toolbar": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "align": "end",
+        "justify": "between",
+        "wrap": true
+      },
+      "children": [
+        "status",
+        "refresh"
+      ]
+    },
+    "status": {
+      "type": "FormField",
+      "props": {
+        "name": "status",
+        "label": {
+          "$t": "Product status"
+        },
+        "fieldType": "enum",
+        "widget": "Select",
+        "options": [
+          {
+            "label": {
+              "$t": "Active"
+            },
+            "value": "active"
+          },
+          {
+            "label": {
+              "$t": "Draft"
+            },
+            "value": "draft"
+          },
+          {
+            "label": {
+              "$t": "Archived"
+            },
+            "value": "archived"
+          }
+        ],
+        "value": {
+          "$bindState": "/status"
+        }
+      },
+      "children": []
+    },
+    "refresh": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Refresh products"
+        },
+        "appearance": "outline",
+        "icon": "refresh"
+      },
+      "on": {
+        "press": {
+          "action": "invalidate",
+          "params": {
+            "resource": "products"
+          }
+        }
+      },
+      "children": []
+    },
+    "query": {
+      "type": "Query",
+      "props": {
+        "resource": "products",
+        "pagination": {
+          "page": 1,
+          "pageSize": 5
+        },
+        "filters": [
+          {
+            "field": "status",
+            "operator": "eq",
+            "value": {
+              "$state": "/status"
+            }
+          }
+        ],
+        "resultPath": "/products"
+      },
+      "children": []
+    },
+    "error": {
+      "type": "Alert",
+      "props": {
+        "tone": "danger",
+        "title": {
+          "$t": "Products unavailable"
+        },
+        "message": {
+          "$t": "Try refreshing the products"
+        }
+      },
+      "visible": {
+        "$state": "/products/error"
+      },
+      "children": []
+    },
+    "table": {
+      "type": "Table",
+      "props": {
+        "rows": {
+          "$state": "/products/data"
+        },
+        "loading": {
+          "$state": "/products/loading"
+        },
+        "columns": [
+          {
+            "field": "name",
+            "label": {
+              "$t": "Product"
+            }
+          },
+          {
+            "field": "status",
+            "label": {
+              "$t": "Status"
+            },
+            "kind": "badge",
+            "valueMap": {
+              "active": {
+                "$t": "Active"
+              },
+              "draft": {
+                "$t": "Draft"
+              },
+              "archived": {
+                "$t": "Archived"
+              }
+            },
+            "toneMap": {
+              "active": "success",
+              "draft": "warning",
+              "archived": "neutral"
+            }
+          },
+          {
+            "field": "price",
+            "label": {
+              "$t": "Price"
+            },
+            "kind": "currency",
+            "currency": "USD"
+          }
+        ]
+      },
+      "children": []
+    }
+  }
+}

@@ -1,0 +1,25 @@
+---
+title: "useCan"
+description: "useCan React hook 的签名、参数和返回值。"
+---
+
+Asks the access provider whether the reader may do `action` on `resource`; `data.can` is true without an access provider. The answer is cached until the session changes.
+
+```typescript
+useCan(params: CanParams, enabled?: boolean): UseQueryResult<CanResponse, Error>
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `params` | `CanParams` | 是 |  |
+| `enabled` | `boolean` | 否 | 是否允许自动执行查询。 |
+
+`params` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `action` | `string` | 是 | The action, e.g. `list`, `show`, `create`, `edit`, `delete`, or a name of the app's own. |
+| `params` | `Record<string, unknown> \| undefined` | 否 | Extra conditions for a check on one record, e.g. `{ id: 12 }`. |
+| `resource` | `string` | 是 | The resource asked about, e.g. `orders` or `system/users`. |
+
+返回 `UseQueryResult<CanResponse, Error>`。

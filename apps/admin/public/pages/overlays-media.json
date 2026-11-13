@@ -1,0 +1,2037 @@
+{
+  "root": "page",
+  "elements": {
+    "pop-body-text": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Only orders placed in the last 7 days that are still unpaid"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "pop-body-select": {
+      "type": "Select",
+      "props": {
+        "ariaLabel": {
+          "$t": "Status"
+        },
+        "size": "sm",
+        "value": {
+          "$bindState": "/popover/status"
+        },
+        "options": [
+          {
+            "label": {
+              "$t": "Unpaid"
+            },
+            "value": "unpaid"
+          },
+          {
+            "label": {
+              "$t": "Paid"
+            },
+            "value": "paid"
+          },
+          {
+            "label": {
+              "$t": "Shipped"
+            },
+            "value": "shipped"
+          }
+        ]
+      },
+      "children": []
+    },
+    "pop-basic": {
+      "type": "Popover",
+      "props": {
+        "label": {
+          "$t": "Quick filter"
+        },
+        "icon": "filter",
+        "title": {
+          "$t": "Quick filter"
+        },
+        "description": {
+          "$t": "Narrow the list without opening the full filter panel"
+        },
+        "confirmText": {
+          "$t": "Apply"
+        },
+        "cancelText": {
+          "$t": "Reset"
+        },
+        "align": "start"
+      },
+      "children": [
+        "pop-body-text",
+        "pop-body-select"
+      ],
+      "on": {
+        "confirm": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Filter applied"
+            },
+            "tone": "success"
+          }
+        },
+        "cancel": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Filter reset"
+            }
+          }
+        }
+      }
+    },
+    "pop-info-text": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Revenue counts paid, packed and shipped orders. Refunds are subtracted on the day they settle"
+        }
+      },
+      "children": []
+    },
+    "pop-icon": {
+      "type": "Popover",
+      "props": {
+        "label": {
+          "$t": "How revenue is counted"
+        },
+        "icon": "information-circle",
+        "shape": "square",
+        "appearance": "ghost",
+        "side": "right",
+        "width": "sm"
+      },
+      "children": [
+        "pop-info-text"
+      ]
+    },
+    "pop-avatar": {
+      "type": "Avatar",
+      "props": {
+        "name": "Ada Lovelace",
+        "description": {
+          "$t": "Product designer"
+        },
+        "showName": true
+      },
+      "children": []
+    },
+    "pop-profile-meta": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Owns checkout and onboarding. Usually replies within an hour"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "pop-profile-badge": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Online"
+        },
+        "tone": "success"
+      },
+      "children": []
+    },
+    "pop-profile-message": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Message"
+        },
+        "size": "sm",
+        "appearance": "outline",
+        "icon": "mail-01"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Message drafted"
+            }
+          }
+        }
+      }
+    },
+    "pop-profile-actions": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "justify": "between"
+      },
+      "children": [
+        "pop-profile-badge",
+        "pop-profile-message"
+      ]
+    },
+    "pop-slot": {
+      "type": "Popover",
+      "props": {
+        "title": "Ada Lovelace",
+        "description": {
+          "$t": "ada@lumi.dev · Design"
+        },
+        "aria-label": {
+          "$t": "Ada Lovelace profile"
+        },
+        "align": "start"
+      },
+      "children": [
+        "pop-profile-meta",
+        "pop-profile-actions"
+      ],
+      "slots": {
+        "trigger": [
+          "pop-avatar"
+        ]
+      }
+    },
+    "pop-bound-trigger": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Shortcuts"
+        },
+        "icon": "keyboard",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "pop-tip-text": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "The open state lives in page state, so any action can open or close it"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "pop-tip-done": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Got it"
+        },
+        "size": "sm"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/popover/open",
+            "value": false
+          }
+        }
+      }
+    },
+    "pop-bound": {
+      "type": "Popover",
+      "props": {
+        "title": {
+          "$t": "Keyboard shortcuts"
+        },
+        "side": "bottom",
+        "align": "start",
+        "open": {
+          "$bindState": "/popover/open"
+        }
+      },
+      "children": [
+        "pop-tip-text",
+        "pop-tip-done"
+      ],
+      "slots": {
+        "trigger": [
+          "pop-bound-trigger"
+        ]
+      }
+    },
+    "pop-open-action": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Open from an action"
+        },
+        "appearance": "soft"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/popover/open",
+            "value": true
+          }
+        }
+      }
+    },
+    "pop-bound-row": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "pop-bound",
+        "pop-open-action"
+      ]
+    },
+    "pop-side-top-text": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Panels flip to stay on screen"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "pop-side-top": {
+      "type": "Popover",
+      "props": {
+        "label": {
+          "$t": "Top"
+        },
+        "side": "top",
+        "width": "sm",
+        "title": {
+          "$t": "Placed top"
+        },
+        "appearance": "outline",
+        "size": "sm"
+      },
+      "children": [
+        "pop-side-top-text"
+      ]
+    },
+    "pop-side-right-text": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Panels flip to stay on screen"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "pop-side-right": {
+      "type": "Popover",
+      "props": {
+        "label": {
+          "$t": "Right"
+        },
+        "side": "right",
+        "width": "sm",
+        "title": {
+          "$t": "Placed right"
+        },
+        "appearance": "outline",
+        "size": "sm"
+      },
+      "children": [
+        "pop-side-right-text"
+      ]
+    },
+    "pop-side-bottom-text": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Panels flip to stay on screen"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "pop-side-bottom": {
+      "type": "Popover",
+      "props": {
+        "label": {
+          "$t": "Bottom"
+        },
+        "side": "bottom",
+        "width": "sm",
+        "title": {
+          "$t": "Placed bottom"
+        },
+        "appearance": "outline",
+        "size": "sm"
+      },
+      "children": [
+        "pop-side-bottom-text"
+      ]
+    },
+    "pop-side-left-text": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Panels flip to stay on screen"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "pop-side-left": {
+      "type": "Popover",
+      "props": {
+        "label": {
+          "$t": "Left"
+        },
+        "side": "left",
+        "width": "sm",
+        "title": {
+          "$t": "Placed left"
+        },
+        "appearance": "outline",
+        "size": "sm"
+      },
+      "children": [
+        "pop-side-left-text"
+      ]
+    },
+    "v-pop-basic-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "With footer actions"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "v-pop-basic": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-pop-basic-label",
+        "pop-basic"
+      ]
+    },
+    "v-pop-icon-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Icon trigger"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "v-pop-icon": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-pop-icon-label",
+        "pop-icon"
+      ]
+    },
+    "v-pop-slot-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Any element as trigger"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "v-pop-slot": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-pop-slot-label",
+        "pop-slot"
+      ]
+    },
+    "v-pop-bound-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Opened from state"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "v-pop-bound": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-pop-bound-label",
+        "pop-bound-row"
+      ]
+    },
+    "pop-sides": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "pop-side-top",
+        "pop-side-right",
+        "pop-side-bottom",
+        "pop-side-left"
+      ]
+    },
+    "v-pop-sides-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Placement"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "v-pop-sides": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-pop-sides-label",
+        "pop-sides"
+      ]
+    },
+    "card-popover-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "v-pop-basic",
+        "v-pop-icon",
+        "v-pop-slot",
+        "v-pop-bound",
+        "v-pop-sides"
+      ]
+    },
+    "card-popover": {
+      "type": "Example",
+      "props": {
+        "id": "popover",
+        "title": {
+          "$t": "Popover"
+        },
+        "description": {
+          "$t": "A floating panel anchored to a button or any element: title, description, body and footer actions. Bind open to drive it from actions"
+        }
+      },
+      "children": [
+        "card-popover-body"
+      ]
+    },
+    "pc-delete-button": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Delete"
+        },
+        "icon": "delete-02",
+        "appearance": "danger",
+        "size": "sm"
+      },
+      "children": []
+    },
+    "pc-danger": {
+      "type": "Popconfirm",
+      "props": {
+        "title": {
+          "$t": "Delete this order?"
+        },
+        "description": {
+          "$t": "ORD-01086 and its invoice are removed for good"
+        },
+        "confirmText": {
+          "$t": "Delete"
+        }
+      },
+      "children": [
+        "pc-delete-button"
+      ],
+      "on": {
+        "confirm": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Order deleted"
+            },
+            "tone": "success"
+          }
+        },
+        "cancel": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Kept the order"
+            }
+          }
+        }
+      }
+    },
+    "pc-warning": {
+      "type": "Popconfirm",
+      "props": {
+        "title": {
+          "$t": "Archive this project?"
+        },
+        "description": {
+          "$t": "It leaves the board but can be restored"
+        },
+        "confirmText": {
+          "$t": "Archive"
+        },
+        "tone": "warning",
+        "label": {
+          "$t": "Archive"
+        },
+        "icon": "archive-01",
+        "size": "sm"
+      },
+      "children": [],
+      "on": {
+        "confirm": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Project archived"
+            },
+            "tone": "warning"
+          }
+        }
+      }
+    },
+    "pc-neutral": {
+      "type": "Popconfirm",
+      "props": {
+        "title": {
+          "$t": "Publish now?"
+        },
+        "confirmText": {
+          "$t": "Publish"
+        },
+        "cancelText": {
+          "$t": "Not yet"
+        },
+        "tone": "neutral",
+        "label": {
+          "$t": "Publish"
+        },
+        "appearance": "solid",
+        "size": "sm",
+        "side": "bottom"
+      },
+      "children": [],
+      "on": {
+        "confirm": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Published"
+            },
+            "tone": "success"
+          }
+        }
+      }
+    },
+    "pc-icon": {
+      "type": "Popconfirm",
+      "props": {
+        "title": {
+          "$t": "Remove this member?"
+        },
+        "confirmText": {
+          "$t": "Remove"
+        },
+        "label": {
+          "$t": "Remove member"
+        },
+        "icon": "delete-02",
+        "shape": "square",
+        "appearance": "ghost",
+        "size": "sm",
+        "align": "end"
+      },
+      "children": [],
+      "on": {
+        "confirm": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Member removed"
+            },
+            "tone": "success"
+          }
+        }
+      }
+    },
+    "pc-disabled": {
+      "type": "Popconfirm",
+      "props": {
+        "title": {
+          "$t": "Delete?"
+        },
+        "label": {
+          "$t": "Locked"
+        },
+        "icon": "lock",
+        "size": "sm",
+        "disabled": true,
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "v-pc-danger-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Danger"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "v-pc-danger": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-pc-danger-label",
+        "pc-danger"
+      ]
+    },
+    "pc-tones": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "pc-warning",
+        "pc-neutral"
+      ]
+    },
+    "v-pc-tones-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Warning and neutral"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "v-pc-tones": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-pc-tones-label",
+        "pc-tones"
+      ]
+    },
+    "pc-more": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "pc-icon",
+        "pc-disabled"
+      ]
+    },
+    "v-pc-icon-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Icon action and disabled"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "v-pc-icon": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-pc-icon-label",
+        "pc-more"
+      ]
+    },
+    "pc-member-avatar": {
+      "type": "Avatar",
+      "props": {
+        "name": {
+          "$item": "name"
+        },
+        "description": {
+          "$item": "email"
+        },
+        "size": "sm",
+        "showName": true
+      },
+      "children": []
+    },
+    "pc-member-remove": {
+      "type": "Popconfirm",
+      "props": {
+        "title": {
+          "$t": "Remove {name} from the project?",
+          "params": {
+            "name": {
+              "$item": "name"
+            }
+          }
+        },
+        "description": {
+          "$t": "They lose access right away"
+        },
+        "confirmText": {
+          "$t": "Remove"
+        },
+        "label": {
+          "$t": "Remove {name}",
+          "params": {
+            "name": {
+              "$item": "name"
+            }
+          }
+        },
+        "icon": "user-remove-01",
+        "shape": "square",
+        "appearance": "ghost",
+        "size": "sm",
+        "align": "end"
+      },
+      "children": [],
+      "on": {
+        "confirm": [
+          {
+            "action": "toast",
+            "params": {
+              "message": {
+                "$t": "{name} removed",
+                "params": {
+                  "name": {
+                    "$item": "name"
+                  }
+                }
+              },
+              "tone": "success"
+            }
+          },
+          {
+            "action": "removeState",
+            "params": {
+              "statePath": "/members",
+              "index": {
+                "$index": true
+              }
+            }
+          }
+        ]
+      }
+    },
+    "pc-member-row": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "justify": "between",
+        "align": "center",
+        "gap": "sm"
+      },
+      "children": [
+        "pc-member-avatar",
+        "pc-member-remove"
+      ]
+    },
+    "pc-members": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "pc-member-row"
+      ],
+      "repeat": {
+        "statePath": "/members",
+        "key": "id"
+      }
+    },
+    "pc-members-restore": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Restore members"
+        },
+        "icon": "undo",
+        "appearance": "ghost",
+        "size": "sm"
+      },
+      "children": [],
+      "visible": {
+        "$state": "/members/2",
+        "not": true
+      },
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/members",
+            "value": [
+              {
+                "id": "ada",
+                "name": "Ada Lovelace",
+                "email": "ada@lumi.dev"
+              },
+              {
+                "id": "grace",
+                "name": "Grace Hopper",
+                "email": "grace@lumi.dev"
+              },
+              {
+                "id": "alan",
+                "name": "Alan Turing",
+                "email": "alan@lumi.dev"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "v-pc-list-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Confirm, then act: remove from a list"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "v-pc-list": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "v-pc-list-label",
+        "pc-members",
+        "pc-members-restore"
+      ]
+    },
+    "card-popconfirm-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "v-pc-danger",
+        "v-pc-tones",
+        "v-pc-icon",
+        "v-pc-list"
+      ]
+    },
+    "card-popconfirm": {
+      "type": "Example",
+      "props": {
+        "id": "popconfirm",
+        "title": {
+          "$t": "Popconfirm"
+        },
+        "description": {
+          "$t": "A small confirm bubble beside an inline destructive action. Confirm chains the real action; Escape or clicking away cancels"
+        }
+      },
+      "children": [
+        "card-popconfirm-body"
+      ]
+    },
+    "img-cover": {
+      "type": "Image",
+      "props": {
+        "src": "/media/dunes.svg",
+        "alt": {
+          "$t": "Dunes at dawn"
+        },
+        "aspectRatio": "16/9",
+        "caption": {
+          "$t": "Click to preview"
+        },
+        "preview": true
+      },
+      "children": []
+    },
+    "img-square": {
+      "type": "Image",
+      "props": {
+        "src": "/media/lake.svg",
+        "alt": {
+          "$t": "Lake under the moon"
+        },
+        "aspectRatio": "1/1",
+        "radius": "lg",
+        "width": 140,
+        "preview": true
+      },
+      "children": []
+    },
+    "img-round": {
+      "type": "Image",
+      "props": {
+        "src": "/media/forest.svg",
+        "alt": {
+          "$t": "Forest hills"
+        },
+        "aspectRatio": "1/1",
+        "radius": "full",
+        "width": 96
+      },
+      "children": []
+    },
+    "img-contain": {
+      "type": "Image",
+      "props": {
+        "src": "/media/canyon.svg",
+        "alt": {
+          "$t": "Red canyon"
+        },
+        "aspectRatio": "1/1",
+        "fit": "contain",
+        "width": 140
+      },
+      "children": []
+    },
+    "img-broken": {
+      "type": "Image",
+      "props": {
+        "src": "/media/missing-photo.jpg",
+        "alt": {
+          "$t": "Missing photo"
+        },
+        "aspectRatio": "4/3",
+        "width": 180
+      },
+      "children": []
+    },
+    "v-img-square-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "1:1, large radius"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "v-img-square": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-img-square-label",
+        "img-square"
+      ]
+    },
+    "v-img-round-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Round"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "v-img-round": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-img-round-label",
+        "img-round"
+      ]
+    },
+    "v-img-contain-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Contain"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "v-img-contain": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-img-contain-label",
+        "img-contain"
+      ]
+    },
+    "v-img-broken-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Failed to load"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "v-img-broken": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-img-broken-label",
+        "img-broken"
+      ]
+    },
+    "img-grid": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 140,
+        "gap": "md"
+      },
+      "children": [
+        "v-img-square",
+        "v-img-round",
+        "v-img-contain",
+        "v-img-broken"
+      ]
+    },
+    "v-img-cover-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "16:9 with preview"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "v-img-cover": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-img-cover-label",
+        "img-cover"
+      ]
+    },
+    "card-image-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "v-img-cover",
+        "img-grid"
+      ]
+    },
+    "card-image": {
+      "type": "Example",
+      "props": {
+        "id": "image",
+        "title": {
+          "$t": "Image"
+        },
+        "description": {
+          "$t": "Fixed aspect ratios with a loading shimmer, an image-off fallback and an optional full-screen preview"
+        }
+      },
+      "children": [
+        "card-image-body"
+      ]
+    },
+    "lb": {
+      "type": "Lightbox",
+      "props": {
+        "items": [
+          {
+            "url": "/media/dunes.svg",
+            "alt": {
+              "$t": "Dunes at dawn"
+            },
+            "caption": {
+              "$t": "Warm light over the dunes"
+            }
+          },
+          {
+            "url": "/media/lake.svg",
+            "alt": {
+              "$t": "Lake under the moon"
+            },
+            "caption": {
+              "$t": "A still lake by moonlight"
+            }
+          },
+          {
+            "url": "/media/forest.svg",
+            "alt": {
+              "$t": "Forest hills"
+            },
+            "caption": {
+              "$t": "Rolling green hills"
+            }
+          },
+          {
+            "url": "/media/canyon.svg",
+            "alt": {
+              "$t": "Red canyon"
+            },
+            "caption": {
+              "$t": "Layers of a red canyon"
+            }
+          },
+          {
+            "url": "/media/night.svg",
+            "alt": {
+              "$t": "Night ridge"
+            },
+            "caption": {
+              "$t": "A ridge after dark"
+            }
+          }
+        ],
+        "open": {
+          "$bindState": "/lightbox/open"
+        },
+        "index": {
+          "$bindState": "/lightbox/index"
+        },
+        "loop": true
+      },
+      "children": []
+    },
+    "lb-open": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Open gallery"
+        },
+        "icon": "image-01",
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": [
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/lightbox/index",
+              "value": 0
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/lightbox/open",
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    "lb-open-last": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Open the last photo"
+        },
+        "appearance": "ghost"
+      },
+      "children": [],
+      "on": {
+        "press": [
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/lightbox/index",
+              "value": 4
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/lightbox/open",
+              "value": true
+            }
+          }
+        ]
+      }
+    },
+    "lb-hint": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Wheel or double-click to zoom, drag to pan"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "lb-key-step-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Previous or next photo"
+        }
+      },
+      "children": []
+    },
+    "lb-key-step": {
+      "type": "Kbd",
+      "props": {
+        "keys": [
+          "←",
+          "→"
+        ]
+      },
+      "children": []
+    },
+    "lb-key-step-row": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "justify": "between",
+        "align": "center",
+        "gap": "md"
+      },
+      "children": [
+        "lb-key-step-label",
+        "lb-key-step"
+      ]
+    },
+    "lb-key-zoom-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Zoom in or out"
+        }
+      },
+      "children": []
+    },
+    "lb-key-zoom": {
+      "type": "Kbd",
+      "props": {
+        "keys": [
+          "+",
+          "−"
+        ]
+      },
+      "children": []
+    },
+    "lb-key-zoom-row": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "justify": "between",
+        "align": "center",
+        "gap": "md"
+      },
+      "children": [
+        "lb-key-zoom-label",
+        "lb-key-zoom"
+      ]
+    },
+    "lb-key-reset-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Reset the zoom"
+        }
+      },
+      "children": []
+    },
+    "lb-key-reset": {
+      "type": "Kbd",
+      "props": {
+        "keys": [
+          "0"
+        ]
+      },
+      "children": []
+    },
+    "lb-key-reset-row": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "justify": "between",
+        "align": "center",
+        "gap": "md"
+      },
+      "children": [
+        "lb-key-reset-label",
+        "lb-key-reset"
+      ]
+    },
+    "lb-key-close-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Close the viewer"
+        }
+      },
+      "children": []
+    },
+    "lb-key-close": {
+      "type": "Kbd",
+      "props": {
+        "keys": [
+          "Esc"
+        ]
+      },
+      "children": []
+    },
+    "lb-key-close-row": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "justify": "between",
+        "align": "center",
+        "gap": "md"
+      },
+      "children": [
+        "lb-key-close-label",
+        "lb-key-close"
+      ]
+    },
+    "lb-keys-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Keyboard"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "lb-keys": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "lb-keys-label",
+        "lb-key-step-row",
+        "lb-key-zoom-row",
+        "lb-key-reset-row",
+        "lb-key-close-row",
+        "lb-hint"
+      ]
+    },
+    "lb-row": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "lb-open",
+        "lb-open-last",
+        "lb"
+      ]
+    },
+    "card-lightbox-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "lb-row",
+        "lb-keys"
+      ]
+    },
+    "card-lightbox": {
+      "type": "Example",
+      "props": {
+        "id": "lightbox",
+        "title": {
+          "$t": "Lightbox"
+        },
+        "description": {
+          "$t": "A full-screen viewer with zoom, previous/next, a counter and captions. Open and index are page state"
+        }
+      },
+      "children": [
+        "card-lightbox-body"
+      ]
+    },
+    "ig": {
+      "type": "ImageGrid",
+      "props": {
+        "value": {
+          "$bindState": "/gallery/images"
+        },
+        "ariaLabel": {
+          "$t": "Product photos"
+        },
+        "max": 6,
+        "maxSize": 5242880,
+        "upload": {
+          "url": "/upload?slow=1"
+        }
+      },
+      "children": []
+    },
+    "card-imagegrid-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "ig"
+      ]
+    },
+    "card-imagegrid": {
+      "type": "Example",
+      "props": {
+        "id": "image-grid",
+        "title": {
+          "$t": "Image grid preview"
+        },
+        "description": {
+          "$t": "Upload or drop images, then drag a tile (or press Space and the arrow keys) to reorder. The first image is the cover, and each tile opens the viewer on the whole set"
+        }
+      },
+      "children": [
+        "card-imagegrid-body"
+      ]
+    },
+    "car-images": {
+      "type": "Carousel",
+      "props": {
+        "items": [
+          {
+            "url": "/media/dunes.svg",
+            "alt": {
+              "$t": "Dunes at dawn"
+            },
+            "title": {
+              "$t": "Dunes at dawn"
+            },
+            "description": {
+              "$t": "Warm light over the dunes"
+            }
+          },
+          {
+            "url": "/media/lake.svg",
+            "alt": {
+              "$t": "Lake under the moon"
+            },
+            "title": {
+              "$t": "Lake under the moon"
+            },
+            "description": {
+              "$t": "A still lake by moonlight"
+            }
+          },
+          {
+            "url": "/media/forest.svg",
+            "alt": {
+              "$t": "Forest hills"
+            },
+            "title": {
+              "$t": "Forest hills"
+            },
+            "description": {
+              "$t": "Rolling green hills"
+            }
+          },
+          {
+            "url": "/media/canyon.svg",
+            "alt": {
+              "$t": "Red canyon"
+            },
+            "title": {
+              "$t": "Red canyon"
+            },
+            "description": {
+              "$t": "Layers of a red canyon"
+            }
+          },
+          {
+            "url": "/media/night.svg",
+            "alt": {
+              "$t": "Night ridge"
+            },
+            "title": {
+              "$t": "Night ridge"
+            },
+            "description": {
+              "$t": "A ridge after dark"
+            }
+          }
+        ],
+        "aspectRatio": "21/9",
+        "autoplay": true,
+        "interval": 5000,
+        "loop": true,
+        "aria-label": {
+          "$t": "Featured places"
+        },
+        "value": {
+          "$bindState": "/carousel/index"
+        }
+      },
+      "children": []
+    },
+    "car-slide-0-text": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Revenue is up 12% this week"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "car-slide-0-badge": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Orders"
+        },
+        "tone": "success"
+      },
+      "children": []
+    },
+    "car-slide-0": {
+      "type": "Card",
+      "props": {
+        "title": {
+          "$t": "Orders"
+        }
+      },
+      "children": [
+        "car-slide-0-badge",
+        "car-slide-0-text"
+      ]
+    },
+    "car-slide-1-text": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "38 new accounts since Monday"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "car-slide-1-badge": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Customers"
+        },
+        "tone": "info"
+      },
+      "children": []
+    },
+    "car-slide-1": {
+      "type": "Card",
+      "props": {
+        "title": {
+          "$t": "Customers"
+        }
+      },
+      "children": [
+        "car-slide-1-badge",
+        "car-slide-1-text"
+      ]
+    },
+    "car-slide-2-text": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "3 products are running low"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "car-slide-2-badge": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Inventory"
+        },
+        "tone": "warning"
+      },
+      "children": []
+    },
+    "car-slide-2": {
+      "type": "Card",
+      "props": {
+        "title": {
+          "$t": "Inventory"
+        }
+      },
+      "children": [
+        "car-slide-2-badge",
+        "car-slide-2-text"
+      ]
+    },
+    "car-slide-3-text": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Two refunds wait for approval"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "car-slide-3-badge": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Returns"
+        },
+        "tone": "danger"
+      },
+      "children": []
+    },
+    "car-slide-3": {
+      "type": "Card",
+      "props": {
+        "title": {
+          "$t": "Returns"
+        }
+      },
+      "children": [
+        "car-slide-3-badge",
+        "car-slide-3-text"
+      ]
+    },
+    "car-slide-4-text": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Average rating 4.7 from 210 reviews"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "car-slide-4-badge": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Reviews"
+        },
+        "tone": "neutral"
+      },
+      "children": []
+    },
+    "car-slide-4": {
+      "type": "Card",
+      "props": {
+        "title": {
+          "$t": "Reviews"
+        }
+      },
+      "children": [
+        "car-slide-4-badge",
+        "car-slide-4-text"
+      ]
+    },
+    "car-cards": {
+      "type": "Carousel",
+      "props": {
+        "perView": 2,
+        "aria-label": {
+          "$t": "Weekly highlights"
+        }
+      },
+      "children": [
+        "car-slide-0",
+        "car-slide-1",
+        "car-slide-2",
+        "car-slide-3",
+        "car-slide-4"
+      ]
+    },
+    "v-car-images-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Images, autoplay and loop"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "v-car-images": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-car-images-label",
+        "car-images"
+      ]
+    },
+    "v-car-cards-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Cards, two per view"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "v-car-cards": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-car-cards-label",
+        "car-cards"
+      ]
+    },
+    "car-thumbs": {
+      "type": "Carousel",
+      "props": {
+        "items": [
+          {
+            "url": "/media/dunes.svg",
+            "alt": {
+              "$t": "Dunes at dawn"
+            }
+          },
+          {
+            "url": "/media/lake.svg",
+            "alt": {
+              "$t": "Lake under the moon"
+            }
+          },
+          {
+            "url": "/media/forest.svg",
+            "alt": {
+              "$t": "Forest hills"
+            }
+          },
+          {
+            "url": "/media/canyon.svg",
+            "alt": {
+              "$t": "Red canyon"
+            }
+          },
+          {
+            "url": "/media/night.svg",
+            "alt": {
+              "$t": "Night ridge"
+            }
+          }
+        ],
+        "aspectRatio": "4/3",
+        "perView": 4,
+        "dots": false,
+        "aria-label": {
+          "$t": "Product thumbnails"
+        }
+      },
+      "children": []
+    },
+    "v-car-thumbs-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Thumbnails, four per view, no dots"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "v-car-thumbs": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-car-thumbs-label",
+        "car-thumbs"
+      ]
+    },
+    "card-carousel-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "v-car-images",
+        "v-car-cards",
+        "v-car-thumbs"
+      ]
+    },
+    "card-carousel": {
+      "type": "Example",
+      "props": {
+        "id": "carousel",
+        "title": {
+          "$t": "Carousel"
+        },
+        "description": {
+          "$t": "A native scroll-snap track with arrows, dots and optional autoplay that pauses on hover or focus"
+        }
+      },
+      "children": [
+        "card-carousel-body"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Overlays & media"
+        },
+        "description": {
+          "$t": "Popovers, confirm bubbles, images with a full-screen viewer and carousels, all driven by page state and actions"
+        }
+      },
+      "children": []
+    },
+    "sections": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "card-popover",
+        "card-popconfirm",
+        "card-image",
+        "card-carousel",
+        "card-lightbox",
+        "card-imagegrid"
+      ]
+    },
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Overlays & media"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "sections"
+      ]
+    }
+  },
+  "state": {
+    "popover": {
+      "open": false,
+      "status": "unpaid"
+    },
+    "lightbox": {
+      "open": false,
+      "index": 0
+    },
+    "gallery": {
+      "images": [
+        {
+          "url": "/media/dunes.svg",
+          "alt": "Dunes at dawn"
+        },
+        {
+          "url": "/media/lake.svg",
+          "alt": "Lake under the moon"
+        },
+        {
+          "url": "/media/forest.svg",
+          "alt": "Forest hills"
+        },
+        {
+          "url": "/media/canyon.svg",
+          "alt": "Red canyon"
+        }
+      ]
+    },
+    "carousel": {
+      "index": 0
+    },
+    "members": [
+      {
+        "id": "ada",
+        "name": "Ada Lovelace",
+        "email": "ada@lumi.dev"
+      },
+      {
+        "id": "grace",
+        "name": "Grace Hopper",
+        "email": "grace@lumi.dev"
+      },
+      {
+        "id": "alan",
+        "name": "Alan Turing",
+        "email": "alan@lumi.dev"
+      }
+    ]
+  }
+}

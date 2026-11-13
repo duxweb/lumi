@@ -1,0 +1,18 @@
+---
+title: "useDrawer"
+description: "useDrawer React hook 的签名、参数和返回值。"
+---
+
+Opens a drawer with content rendered by `render`, from the side `placement` names.
+
+```typescript
+useDrawer(): { open: (options: OverlayOpenOptions & { placement?: "left" | "right" | "top" | "bottom"; }) => OverlayHandle; }
+```
+
+返回 `{ open: (options: OverlayOpenOptions & { placement?: "left" | "right" | "top" | "bottom"; }) => OverlayHandle; }`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `open` | `(options: OverlayOpenOptions & { placement?: "left" \| "right" \| "top" \| "bottom"; }) => OverlayHandle` | 是 |  |

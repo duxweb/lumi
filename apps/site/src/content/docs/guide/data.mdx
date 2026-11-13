@@ -1,0 +1,93 @@
+---
+title: "读取数据"
+description: "用 Query 元素从后端读取列表或详情，分页、筛选、刷新都写在 JSON 里。"
+---
+
+`Query` 元素在页面打开时请求数据，参数变化时重新请求，把结果写进 `resultPath`。其他组件读这个路径即可。`/pagination`、`/orders` 这类以 `/` 开头的写法是页面状态里的路径，见 [页面 JSON](/guide/pages/#读取和绑定状态)。
+
+```jsonc
+{
+  "root": "page",
+  // 分页参数，翻页时被改写
+  "state": { "pagination": { "page": 1, "pageSize": 10 } },
+  "elements": {
+    "page": {
+      "type": "Stack",
+      "props": {},
+      "children": ["orders-query", "orders", "pager"]
+    },
+    // 查询：读订单列表，本身不显示
+    "orders-query": {
+      "type": "Query",
+      "props": {
+        "resource": "orders",
+        // 读 state.pagination（/ 开头是状态路径，不是网址），它变了就重新请求
+        "pagination": { "$state": "/pagination" },
+        // 结果写到 /orders：data、total、loading
+        "resultPath": "/orders"
+      },
+      "children": []
+    },
+    // 表格显示查询结果
+    "orders": {
+      "type": "Table",
+      "props": {
+        // 读查询结果里的记录
+        "rows": { "$state": "/orders/data" },
+        "loading": { "$state": "/orders/loading" },
+        "columns": [
+          { "field": "number", "label": "订单号" },
+          { "field": "customer", "label": "客户" },
+          { "field": "total", "label": "金额" }
+        ]
+      },
+      "children": []
+    },
+    // 分页器，翻页写回 /pagination
+    "pager": {
+      "type": "Pagination",
+      "props": {
+        "page": { "$bindState": "/pagination/page" },
+        "pageSize": { "$bindState": "/pagination/pageSize" },
+        // 总条数来自查询结果
+        "total": { "$state": "/orders/total" }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+翻页时 `Pagination` 改写 `/pagination`，`Query` 看到参数变了就重新请求 `GET /orders?page=2&pageSize=10`。
+
+## 结果
+
+`resultPath` 下是 `{ data, total, loading, error }`。列表还没返回时 `data` 是 `[]`，详情是 `null`，组件不会因为空值报错。
+
+## 详情
+
+```jsonc
+{
+  "type": "Query",
+  "props": {
+    "resource": "orders",
+    // 读一条记录
+    "operation": "one",
+    // 要读的记录 id
+    "id": 12,
+    // 记录写到 /order/data
+    "resultPath": "/order"
+  },
+  "children": []
+}
+```
+
+## 筛选
+
+`filters` 是 `{ field, operator, value }` 数组，通常绑定到筛选栏的状态：`"filters": { "$state": "/filters" }`。后端收到的格式见 [数据接口](/guide/backend/)。
+
+## 刷新
+
+增删改成功后，同一资源的 Query 会自动重新请求。别处改了数据，用 [invalidate](/protocol/actions/invalidate/) 手动刷新。
+
+完整参数见 [Query](/components/connected/query/)。更完整的列表页可以直接用 [ListPage](/components/connected/list-page/)。

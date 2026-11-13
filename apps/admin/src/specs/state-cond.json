@@ -1,0 +1,102 @@
+{
+  "root": "stack",
+  "state": {
+    "stock": 8
+  },
+  "elements": {
+    "stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "stock",
+        "status"
+      ]
+    },
+    "stock": {
+      "type": "FormField",
+      "props": {
+        "name": "stock",
+        "label": {
+          "$t": "Units in stock"
+        },
+        "fieldType": "number",
+        "min": 0,
+        "value": {
+          "$bindState": "/stock"
+        }
+      },
+      "children": []
+    },
+    "status": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "align": "center"
+      },
+      "children": [
+        "badge",
+        "note"
+      ]
+    },
+    "badge": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$cond": {
+            "$state": "/stock",
+            "lte": 0
+          },
+          "$then": {
+            "$t": "Out of stock"
+          },
+          "$else": {
+            "$cond": {
+              "$state": "/stock",
+              "lt": 10
+            },
+            "$then": {
+              "$t": "Low stock"
+            },
+            "$else": {
+              "$t": "In stock"
+            }
+          }
+        },
+        "tone": {
+          "$cond": {
+            "$state": "/stock",
+            "lte": 0
+          },
+          "$then": "danger",
+          "$else": {
+            "$cond": {
+              "$state": "/stock",
+              "lt": 10
+            },
+            "$then": "warning",
+            "$else": "success"
+          }
+        }
+      },
+      "children": []
+    },
+    "note": {
+      "type": "Text",
+      "props": {
+        "variant": "muted",
+        "text": {
+          "$t": "{count} units on hand",
+          "params": {
+            "count": {
+              "$state": "/stock"
+            }
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}

@@ -1,0 +1,190 @@
+/* A reading view: one measured column, and on wide screens a contents list
+   that stays in view beside it. */
+.lumi-article {
+  --lumi-article-measure: 44rem;
+  display: grid;
+  grid-template-columns: minmax(0, var(--lumi-article-measure));
+  justify-content: center;
+  gap: var(--lumi-space-8);
+  min-width: 0;
+  color: var(--foreground);
+}
+
+@media (width >= 1180px) {
+  .lumi-article[data-toc] {
+    grid-template-columns: minmax(0, var(--lumi-article-measure)) 13rem;
+  }
+}
+
+.lumi-article__main {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--lumi-space-6);
+}
+
+.lumi-article__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lumi-space-4);
+}
+
+.lumi-article__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lumi-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The title is the one bold, outsized line on the page; the body's h2 is a clear step below it. */
+.lumi-article__title {
+  margin: 0;
+  font-size: clamp(calc(var(--lumi-fs-page) * 1.35), 1.25rem + 1.4vw, calc(var(--lumi-fs-page) * 1.75));
+  font-weight: var(--lumi-font-weight-bold);
+  letter-spacing: -0.028em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.lumi-article__summary {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: calc(var(--lumi-fs-body) * 1.36);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.lumi-article__byline {
+  display: flex;
+  align-items: center;
+  gap: var(--lumi-space-3);
+  margin-top: var(--lumi-space-2);
+  padding-block: var(--lumi-space-4);
+  border-block: 1px solid var(--border);
+}
+
+.lumi-article__byline-text {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  gap: 2px;
+  line-height: var(--lumi-leading-body);
+}
+
+.lumi-article__author {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--lumi-space-2);
+  font-size: var(--lumi-fs-body);
+  font-weight: var(--lumi-font-weight-medium);
+}
+
+.lumi-article__role,
+.lumi-article__meta {
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  font-weight: var(--lumi-font-weight-normal);
+}
+
+.lumi-article__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.lumi-article__actions {
+  display: flex;
+  flex: none;
+  gap: var(--lumi-space-2);
+}
+
+.lumi-article__cover {
+  margin: 0;
+}
+
+.lumi-article__cover img {
+  display: block;
+  width: 100%;
+  max-height: 26rem;
+  object-fit: cover;
+  border-radius: var(--lumi-radius-panel);
+  background: var(--muted);
+}
+
+.lumi-article__cover figcaption {
+  margin-top: var(--lumi-space-3);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  text-align: center;
+}
+
+.lumi-article__after {
+  padding-top: var(--lumi-space-6);
+  border-top: 1px solid var(--border);
+}
+
+/* The contents list: hidden until there is room beside the column. */
+.lumi-article__toc {
+  display: none;
+}
+
+@media (width >= 1180px) {
+  .lumi-article__toc {
+    position: sticky;
+    top: var(--lumi-space-4);
+    display: block;
+    align-self: start;
+    max-height: calc(100vh - 2 * var(--lumi-space-4));
+    overflow-y: auto;
+    font-size: var(--lumi-fs-label);
+  }
+}
+
+.lumi-article__toc-title {
+  margin: 0 0 var(--lumi-space-2);
+  color: var(--foreground);
+  font-weight: var(--lumi-font-weight-medium);
+}
+
+.lumi-article__toc ul {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  border-inline-start: 1px solid var(--border);
+  list-style: none;
+}
+
+.lumi-article__toc a {
+  display: block;
+  margin-inline-start: -1px;
+  padding: 4px var(--lumi-space-3);
+  border-inline-start: 1px solid transparent;
+  color: var(--muted-foreground);
+  line-height: var(--lumi-leading-body);
+  text-decoration: none;
+  transition: color 120ms, border-color 120ms;
+}
+
+.lumi-article__toc li[data-level='3'] a {
+  padding-inline-start: calc(var(--lumi-space-3) + var(--lumi-space-3));
+}
+
+.lumi-article__toc a:hover {
+  color: var(--foreground);
+}
+
+.lumi-article__toc a[aria-current] {
+  border-inline-start-color: var(--foreground);
+  color: var(--foreground);
+  font-weight: var(--lumi-font-weight-medium);
+}
+
+.lumi-article__toc a:focus-visible {
+  border-radius: var(--lumi-radius-sm);
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}

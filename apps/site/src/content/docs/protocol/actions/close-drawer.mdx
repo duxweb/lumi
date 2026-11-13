@@ -1,0 +1,29 @@
+---
+title: "closeDrawer"
+description: "关闭当前这一层抽屉（以及它上面的层），有未保存的改动时先经过离开确认。"
+---
+
+关闭当前这一层抽屉（以及它上面的层），有未保存的改动时先经过离开确认。
+
+## 用法
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "取消" },
+      "on": {
+        // 点击按钮时执行
+        "press": { "action": "closeDrawer", "params": {} }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+没有参数。

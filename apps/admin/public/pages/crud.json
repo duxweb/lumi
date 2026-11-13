@@ -1,0 +1,437 @@
+{
+  "root": "page",
+  "state": {
+    "search": {
+      "name": ""
+    },
+    "table": {
+      "row": null
+    },
+    "dialog": {
+      "open": false,
+      "id": null
+    },
+    "form": {
+      "name": "",
+      "email": "",
+      "tier": "standard"
+    },
+    "formStatus": {}
+  },
+  "elements": {
+    "page": {
+      "type": "Fragment",
+      "props": {},
+      "children": [
+        "list",
+        "dialog"
+      ]
+    },
+    "list": {
+      "type": "ListPage",
+      "props": {
+        "title": {
+          "$t": "Customers"
+        },
+        "description": {
+          "$t": "Create, edit and delete customers."
+        },
+        "resource": "customers",
+        "statePath": "/list",
+        "pageSize": 10,
+        "filters": [
+          {
+            "field": "name",
+            "operator": "like",
+            "value": {
+              "$state": "/search/name"
+            }
+          }
+        ],
+        "columns": [
+          {
+            "field": "name",
+            "label": {
+              "$t": "Name"
+            },
+            "kind": "entity",
+            "descriptionField": "email"
+          },
+          {
+            "field": "tier",
+            "label": {
+              "$t": "Tier"
+            },
+            "kind": "badge",
+            "valueMap": {
+              "standard": {
+                "$t": "Standard"
+              },
+              "gold": {
+                "$t": "Gold"
+              },
+              "enterprise": {
+                "$t": "Enterprise"
+              }
+            },
+            "toneMap": {
+              "standard": "neutral",
+              "gold": "warning",
+              "enterprise": "brand"
+            }
+          },
+          {
+            "field": "spent",
+            "label": {
+              "$t": "Spent"
+            },
+            "kind": "currency",
+            "currency": "CNY"
+          },
+          {
+            "field": "actions",
+            "kind": "actions"
+          }
+        ],
+        "activeRow": {
+          "$bindState": "/table/row"
+        }
+      },
+      "slots": {
+        "actions": [
+          "search",
+          "create"
+        ],
+        "rowActions": [
+          "edit",
+          "remove"
+        ]
+      },
+      "children": []
+    },
+    "search": {
+      "type": "Input",
+      "props": {
+        "value": {
+          "$bindState": "/search/name"
+        },
+        "placeholder": {
+          "$t": "Search by name"
+        },
+        "clearable": true,
+        "ariaLabel": {
+          "$t": "Search by name"
+        }
+      },
+      "children": []
+    },
+    "create": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "New customer"
+        },
+        "icon": "add-01",
+        "appearance": "solid"
+      },
+      "on": {
+        "press": [
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/formStatus",
+              "value": {}
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/form",
+              "value": {
+                "name": "",
+                "email": "",
+                "tier": "standard"
+              }
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/dialog",
+              "value": {
+                "open": true,
+                "id": null
+              }
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "edit": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Edit"
+        },
+        "appearance": "ghost",
+        "size": "sm"
+      },
+      "on": {
+        "press": [
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/formStatus",
+              "value": {}
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/form",
+              "value": {
+                "name": {
+                  "$state": "/table/row/name"
+                },
+                "email": {
+                  "$state": "/table/row/email"
+                },
+                "tier": {
+                  "$state": "/table/row/tier"
+                }
+              }
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/dialog",
+              "value": {
+                "open": true,
+                "id": {
+                  "$state": "/table/row/id"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "remove": {
+      "type": "Popconfirm",
+      "props": {
+        "label": {
+          "$t": "Delete"
+        },
+        "appearance": "ghost",
+        "size": "sm",
+        "title": {
+          "$t": "Delete {name}?",
+          "params": {
+            "name": {
+              "$item": "name"
+            }
+          }
+        },
+        "description": {
+          "$t": "This cannot be undone."
+        },
+        "confirmText": {
+          "$t": "Delete"
+        },
+        "tone": "danger",
+        "align": "end"
+      },
+      "on": {
+        "confirm": [
+          {
+            "action": "delete",
+            "params": {
+              "resource": "customers",
+              "id": {
+                "$state": "/table/row/id"
+              }
+            }
+          },
+          {
+            "action": "toast",
+            "params": {
+              "message": {
+                "$t": "Deleted"
+              },
+              "tone": "success"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "dialog": {
+      "type": "Dialog",
+      "props": {
+        "title": {
+          "$cond": {
+            "$state": "/dialog/id"
+          },
+          "$then": {
+            "$t": "Edit customer"
+          },
+          "$else": {
+            "$t": "New customer"
+          }
+        },
+        "open": {
+          "$bindState": "/dialog/open"
+        }
+      },
+      "children": [
+        "form"
+      ]
+    },
+    "form": {
+      "type": "Form",
+      "props": {},
+      "on": {
+        "submit": [
+          {
+            "action": "submitForm",
+            "params": {
+              "resource": "customers",
+              "id": {
+                "$state": "/dialog/id"
+              },
+              "valuesPath": "/form",
+              "validationPath": "/formStatus",
+              "successState": {
+                "/dialog/open": false
+              }
+            }
+          },
+          {
+            "action": "toast",
+            "params": {
+              "message": {
+                "$t": "Saved"
+              },
+              "tone": "success"
+            }
+          }
+        ]
+      },
+      "children": [
+        "name",
+        "email",
+        "tier",
+        "save"
+      ]
+    },
+    "name": {
+      "type": "FormField",
+      "props": {
+        "name": "name",
+        "label": {
+          "$t": "Name"
+        },
+        "value": {
+          "$bindState": "/form/name"
+        },
+        "error": {
+          "$state": "/formStatus/fieldErrors/name"
+        },
+        "checks": [
+          {
+            "type": "required",
+            "message": {
+              "$t": "Enter a name"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "email": {
+      "type": "FormField",
+      "props": {
+        "name": "email",
+        "label": {
+          "$t": "Email"
+        },
+        "value": {
+          "$bindState": "/form/email"
+        },
+        "error": {
+          "$state": "/formStatus/fieldErrors/email"
+        },
+        "checks": [
+          {
+            "type": "required",
+            "message": {
+              "$t": "Enter an email"
+            }
+          },
+          {
+            "type": "email",
+            "message": {
+              "$t": "Enter a valid email address"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "tier": {
+      "type": "FormField",
+      "props": {
+        "name": "tier",
+        "label": {
+          "$t": "Tier"
+        },
+        "fieldType": "enum",
+        "widget": "Select",
+        "options": [
+          {
+            "label": {
+              "$t": "Standard"
+            },
+            "value": "standard"
+          },
+          {
+            "label": {
+              "$t": "Gold"
+            },
+            "value": "gold"
+          },
+          {
+            "label": {
+              "$t": "Enterprise"
+            },
+            "value": "enterprise"
+          }
+        ],
+        "value": {
+          "$bindState": "/form/tier"
+        },
+        "error": {
+          "$state": "/formStatus/fieldErrors/tier"
+        }
+      },
+      "children": []
+    },
+    "save": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Save"
+        },
+        "type": "submit",
+        "appearance": "solid",
+        "loading": {
+          "$state": "/formStatus/pending"
+        }
+      },
+      "children": []
+    }
+  }
+}

@@ -1,0 +1,48 @@
+---
+title: "Iframe"
+description: "在页面里显示另一个网页，比如报表或老系统。"
+---
+
+<ComponentPreview name="Iframe" />
+
+在页面里显示另一个网页，比如报表或老系统。`src` 只能是 https 地址或本站路径；配置了 `frameOrigins` 时只显示列出的站点和本站，其他地址显示提示。默认加沙箱（允许脚本、表单、弹窗和下载）。iframe 拿不到后台的登录 token，对方页面要自己登录。对方禁止被嵌入时（X-Frame-Options、frame-ancestors）会是空白。
+
+## 示例
+
+```json
+{
+  "root": "iframe-51",
+  "elements": {
+    "iframe-51": {
+      "type": "Iframe",
+      "props": {
+        "src": "https://example.com",
+        "title": "Example Domain",
+        "height": 240
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `src`（必填） | 要显示的网页：https 地址或本站路径，可以用 `$template` 拼出来，如 `{ "$template": "https://bi.example.com/order/${/route/params/id}" }`。其他协议（`http:`、`javascript:`、`data:`）显示提示，不会加载。 | `string` |  |
+| `title`（必填） | 框架的名称，给读屏软件用，如"销售报表"。 | `string` |  |
+| `height` | 高度（px），或 `fill` 占满容器给的高度。 | `number \| "fill" \| null` | `480` |
+| `aspectRatio` | 按宽高比显示，设置后忽略 `height`。 | `"1/1" \| "4/3" \| "3/2" \| "16/9" \| "21/9" \| "3/4" \| null` |  |
+| `sandbox` | `false` 去掉沙箱，只用于可信、需要跳转整个窗口的页面。 | `boolean \| null` | `true` |
+| `allowFullscreen` | 允许里面的页面全屏。 | `boolean \| null` | `false` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

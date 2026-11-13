@@ -1,0 +1,88 @@
+---
+title: "AgentMentionPicker"
+description: "@ 引用选择器：搜索框、按种类分的页签（types，如订单、文章、客户）和高亮匹配部分的结果，用方向键和 Enter 选取。"
+---
+
+<ComponentPreview name="AgentMentionPicker" />
+
+@ 引用选择器：搜索框、按种类分的页签（`types`，如订单、文章、客户）和高亮匹配部分的结果，用方向键和 Enter 选取。选中项作为上下文条目 `{ id, label, kind, icon }` 写入 `value`；把它绑定到 PromptInput 的 `context` 即显示为块。静态 `options` 在组件内按 `type` 和 `query` 过滤；使用远程来源时由宿主搜索和分页（`loading`、`hasMore`）。
+
+## 示例
+
+```json
+{
+  "root": "agent-mention-picker",
+  "elements": {
+    "agent-mention-picker": {
+      "type": "AgentMentionPicker",
+      "props": {
+        "types": [
+          { "value": "orders", "label": "Orders", "icon": "shopping-bag-01" },
+          { "value": "articles", "label": "Articles", "icon": "news" },
+          { "value": "customers", "label": "Customers", "icon": "user" }
+        ],
+        "options": [
+          {
+            "value": 17,
+            "label": "ORD-00017",
+            "description": "Blue Pine Retail",
+            "type": "orders"
+          },
+          {
+            "value": 20,
+            "label": "ORD-00020",
+            "description": "Orchid Supply",
+            "type": "orders"
+          },
+          {
+            "value": 3,
+            "label": "Shipping rules for the holidays",
+            "description": "Avery Chen",
+            "type": "articles"
+          },
+          {
+            "value": 1,
+            "label": "Northwind Studio",
+            "description": "ops@northwind.test",
+            "type": "customers"
+          }
+        ],
+        "value": { "$bindState": "/mentions" },
+        "multiple": true
+      },
+      "children": []
+    }
+  },
+  "state": { "mentions": [] }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `types` | 可引用的类别，以标签页显示，每项 `{ value, label, icon? }`，如订单、文章、客户；Tab 键在类别间切换。 字段：`value`、`label`、`icon?` | `object[]` |  |
+| `type` | 当前类别；不填时为第一个。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string` |  |
+| `query` | 搜索文字。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string` |  |
+| `options` | 当前类别的结果，每项 `{ value, label, description?, avatar?, image?, type? }`。静态数据按 `type` 和搜索文字在组件内过滤；Admin 中给出 `sources` 时由 DataProvider 远程搜索和分页。 字段：`value`、`label`、`description?`、`avatar?`、`image?`、`type?` | `object[]` |  |
+| `value` | 已选的引用，为上下文条目 `{ id, label, kind, icon }`，`id` 为 `类别:值`；绑定到 PromptInput 的 `context` 即显示为输入框里的标签。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 字段：`id`、`label`、`kind?`、`icon?`、`description?`、`data?` | `object[]` |  |
+| `multiple` | 可选多项；否则新选一项会替换上一项。 | `boolean` | `false` |
+| `loading` | 首屏结果加载中，搜索框显示加载图标。 | `boolean` | `false` |
+| `loadingMore` | 正在加载下一页。 | `boolean` |  |
+| `hasMore` | 还有更多结果，滚动到底部时请求下一页。 | `boolean` |  |
+| `placeholder` | 搜索框的占位文字；不填时为“搜索\{类别\}”。 | `string` |  |
+| `emptyText` | 没有结果时的文字。 | `string` |  |
+| `maxHeight` | 结果列表的最大高度（像素），超出后滚动。 | `integer` | `320` |
+| `ariaLabel` | 搜索框的无障碍名称。 | `string` |  |
+| `sources` | 每个类别的远程资源（Lumi Admin），键为 `types` 中的 `value`，如 `{ "orders": { "resource": "orders", "labelField": "number", "searchField": "searchText" } }`；切换类别即搜索对应资源，支持远程搜索和滚动加载。没有对应来源的类别使用静态 `options`。 | `object` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`、`search`、`select`
+- 插槽：无

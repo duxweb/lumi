@@ -1,0 +1,86 @@
+{
+  "root": "list",
+  "state": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Pack order ORD-01086",
+        "done": true
+      },
+      {
+        "id": 2,
+        "title": "Print the customs form",
+        "done": false
+      },
+      {
+        "id": 3,
+        "title": "Book the courier",
+        "done": false
+      }
+    ]
+  },
+  "elements": {
+    "list": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "repeat": {
+        "statePath": "/tasks",
+        "key": "id"
+      },
+      "children": [
+        "task"
+      ]
+    },
+    "task": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "justify": "between",
+        "align": "center",
+        "gap": "sm"
+      },
+      "children": [
+        "check",
+        "badge"
+      ]
+    },
+    "check": {
+      "type": "Checkbox",
+      "props": {
+        "label": {
+          "$item": "title"
+        },
+        "value": {
+          "$bindItem": "done"
+        }
+      },
+      "children": []
+    },
+    "badge": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$cond": {
+            "$item": "done"
+          },
+          "$then": {
+            "$t": "Done"
+          },
+          "$else": {
+            "$t": "To do"
+          }
+        },
+        "tone": {
+          "$cond": {
+            "$item": "done"
+          },
+          "$then": "success",
+          "$else": "neutral"
+        }
+      },
+      "children": []
+    }
+  }
+}

@@ -1,0 +1,48 @@
+---
+title: "useForm"
+description: "useForm React hook 的签名、参数和返回值。"
+---
+
+A form over one record: loads it when `id` is given, keeps the edited values in page state, validates, and saves once through the same path as the `submitForm` action.
+
+```typescript
+useForm<T extends Record<string, any> = Record<string, any>>(input: UseFormOptions<T>): UseFormReturn<T>
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `input` | `UseFormOptions<T>` | 是 |  |
+
+`input` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `dataProviderName` | `string \| undefined` | 否 | 多数据源名称；省略时使用 default。 |
+| `draft` | `FormDraftOptions<T> \| undefined` | 否 | Keeps unsaved values in the browser so they can be restored later. |
+| `groups` | `Record<string, FormGroupDefinition> \| undefined` | 否 | Named groups of fields, such as the steps of a wizard; `groupErrors` reports each group's errors. |
+| `id` | `ID \| undefined` | 否 | With an id the record is loaded and the form updates it; without one it creates. |
+| `initialValues` | `Partial<T> \| undefined` | 否 | Values of a new record. An edited record initializes once it has loaded, and later refetches leave the edits alone. |
+| `meta` | `Record<string, unknown> \| undefined` | 否 | 原样传给 DataProvider 的扩展数据。 |
+| `resource` | `string` | 是 | The resource the form saves to. |
+| `rules` | `unknown` | 否 | Business rules for the context's Validator, e.g. a JSON Schema. Leave it out when no validator is configured. |
+| `valuesPath` | `string \| undefined` | 否 | Where the values live in page state; generated when left out. JSON elements bound to the same path edit the same form. |
+
+返回 `UseFormReturn<T>`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `draft` | `FormDraftControl \| undefined` | 否 | Draft controls, present when the `draft` option is set. |
+| `errors` | `FormValidationIssue[]` | 是 | Every current error, the server's field errors included. |
+| `firstError` | `(fields?: readonly string[]) => string \| undefined` | 是 | The path of the first field in error, among `fields` when given. |
+| `groupErrors` | `Record<string, FormErrorGroup>` | 是 | The errors of each group in `groups`, with their count and first field. |
+| `isDirty` | `boolean` | 是 | Whether the values differ from those loaded or last saved. |
+| `isSubmitting` | `boolean` | 是 | True while a save is under way; another `submit` then sends nothing. |
+| `reset` | `(next?: Partial<T> \| undefined) => void` | 是 | Returns to the initial values, or to `next`. |
+| `setValue` | `(name: string \| keyof T, value: unknown) => void` | 是 | Sets one field; `name` may be a dotted path such as `items.0.sku`. |
+| `setValues` | `(next: T \| ((current: T) => T)) => void` | 是 | Replaces every value, or derives them from the current ones. |
+| `submit` | `() => Promise<SingleResult<T>>` | 是 | Validates, then saves; rejects when validation fails or the server refuses, with the errors already in `errors`. |
+| `validate` | `(options?: FormValidateOptions) => Promise<FormValidationIssue[]>` | 是 | Validates all fields, or only `fields`, without saving; a wizard calls it on "Next". |
+| `values` | `T` | 是 | The current values. |
+| `valuesPath` | `string` | 是 | The page state path the values live at. |

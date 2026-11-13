@@ -1,0 +1,27 @@
+---
+title: "Article"
+description: "一篇可阅读的文章：标签、标题、导语、作者及日期和阅读时长、可选的封面图，然后是来自 Markdown 或已清理 HTML 的正文，使用 Prose 样式。"
+---
+
+一篇可阅读的文章：标签、标题、导语、作者及日期和阅读时长、可选的封面图，然后是来自 Markdown 或已清理 HTML 的正文，使用 Prose 样式。宽屏下，正文旁有一个列出 h2 和 h3 标题的目录，跟随阅读位置。`actions` 放在署名旁（编辑、分享）；`default` 放在正文之后，用于相关记录或评论。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `title`（必填） | 文章标题。 | `string` |  |
+| `summary` | 标题下的导语。 | `string` |  |
+| `author` | 作者 `{ name, avatar?, role? }`，`role` 显示在名字后，如“产品团队”。 字段：`name`、`avatar?`、`role?` | `object` |  |
+| `publishedAt` | 发布日期的显示文字，如 `2026 年 11 月 8 日`。 | `string` |  |
+| `readingTime` | 阅读时长的显示文字，如 `阅读约 6 分钟`。 | `string` |  |
+| `tags` | 标题上方的标签。 | `string[]` |  |
+| `cover` | 封面图 `{ src, alt?, caption? }`，`caption` 为图下说明。 字段：`src`、`alt?`、`caption?` | `object` |  |
+| `content`（必填） | 正文。`format` 为 `markdown` 时按 Markdown 渲染，为 `html` 时先过滤再渲染，规则同 Markdown 与 Html 组件。 | `string` |  |
+| `format` | 正文格式：`markdown` 或 `html`。 | `"markdown" \| "html"` | `"markdown"` |
+| `toc` | 宽屏下在正文右侧显示目录，列出正文的二、三级标题，并随阅读位置高亮当前小节；少于两个标题时不显示。 | `boolean` | `true` |
+| `tocTitle` | 目录标题。 | `string` | `"本页目录"` |
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：`actions`、`default`

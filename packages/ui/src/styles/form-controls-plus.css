@@ -1,0 +1,310 @@
+/* Slider: track, thumb and hit area scale with the control size. */
+[data-slot="lumi-slider"] {
+  --lumi-slider-track: .375rem;
+  --lumi-slider-thumb: 1rem;
+  --lumi-slider-hit: var(--lumi-control-md);
+}
+[data-slot="lumi-slider"][data-size="sm"] { --lumi-slider-track: .25rem; --lumi-slider-thumb: .875rem; --lumi-slider-hit: var(--lumi-control-sm); }
+[data-slot="lumi-slider"][data-size="lg"] { --lumi-slider-track: .5rem; --lumi-slider-thumb: 1.25rem; --lumi-slider-hit: var(--lumi-control-lg); }
+[data-slot="lumi-slider"][data-orientation="vertical"] { min-height: 10rem; }
+[data-slot="lumi-slider"][data-invalid] [data-slot="slider-thumb"] { border-color: var(--destructive); }
+[data-slot="lumi-slider"][data-invalid] [data-slot="slider-range"] { background: var(--destructive); }
+[data-slot="lumi-slider"][data-readonly] [data-slot="slider"] { pointer-events: none; }
+[data-slot="lumi-slider"][data-readonly] [data-slot="slider-thumb"] { cursor: default; }
+
+[data-slot="slider-tooltip"] {
+  position: absolute;
+  bottom: calc(100% + var(--lumi-space-2));
+  left: 50%;
+  translate: -50% 0;
+  min-width: 1.75rem;
+  padding: .125rem var(--lumi-space-2);
+  border-radius: var(--lumi-radius-sm);
+  background: var(--lumi-glass);
+  -webkit-backdrop-filter: var(--lumi-glass-filter);
+  backdrop-filter: var(--lumi-glass-filter);
+  box-shadow: var(--shadow-overlay), 0 0 0 1px color-mix(in oklab, var(--foreground) 10%, transparent);
+  color: var(--popover-foreground);
+  font-size: var(--lumi-fs-meta);
+  line-height: 1.25rem;
+  text-align: center;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 120ms;
+}
+[data-slot="slider-thumb"]:hover > [data-slot="slider-tooltip"],
+[data-slot="slider-thumb"]:focus-visible > [data-slot="slider-tooltip"],
+[data-slot="slider"][data-dragging] [data-slot="slider-thumb"]:focus > [data-slot="slider-tooltip"] { opacity: 1; }
+[data-slot="lumi-slider"][data-orientation="vertical"] [data-slot="slider-tooltip"] {
+  bottom: auto;
+  top: 50%;
+  left: calc(100% + var(--lumi-space-2));
+  translate: 0 -50%;
+}
+
+[data-slot="slider-marks"] { position: relative; height: .5rem; margin-inline: 0; }
+[data-slot="lumi-slider"][data-marks] [data-slot="slider-marks"] { height: 1.5rem; }
+[data-slot="slider-mark"] {
+  position: absolute;
+  top: 0;
+  translate: -50% 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .125rem;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-meta);
+  line-height: 1rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+[data-slot="slider-mark"] > i { width: 1px; height: .375rem; background: var(--border); }
+/* End labels line up with the track ends instead of hanging past them; the tick stays under the thumb. */
+[data-slot="slider-mark"][data-edge="start"] { translate: calc(var(--lumi-slider-thumb) / -2) 0; align-items: flex-start; }
+[data-slot="slider-mark"][data-edge="start"] > i { margin-left: calc(var(--lumi-slider-thumb) / 2 - .5px); }
+[data-slot="slider-mark"][data-edge="end"] { translate: calc(var(--lumi-slider-thumb) / 2 - 100%) 0; align-items: flex-end; }
+[data-slot="slider-mark"][data-edge="end"] > i { margin-right: calc(var(--lumi-slider-thumb) / 2 - .5px); }
+[data-slot="slider-mark"][data-active] { color: var(--foreground); }
+[data-slot="slider-mark"][data-active] > i { background: var(--brand); }
+[data-slot="lumi-slider"][data-orientation="vertical"] [data-slot="slider-marks"] { height: auto; width: auto; min-width: .5rem; margin-inline-start: var(--lumi-space-1); }
+[data-slot="lumi-slider"][data-orientation="vertical"] [data-slot="slider-mark"] { top: auto; left: 0; translate: 0 50%; flex-direction: row; }
+[data-slot="lumi-slider"][data-orientation="vertical"] [data-slot="slider-mark"] > i { width: .375rem; height: 1px; }
+[data-slot="lumi-slider"][data-readonly] [data-slot="slider-mark"],
+[data-slot="slider"][data-disabled] + [data-slot="slider-marks"] [data-slot="slider-mark"] { cursor: default; pointer-events: none; }
+[data-slot="slider"][data-disabled] + [data-slot="slider-marks"] { opacity: .5; }
+
+/* Choice cards: padding, gap and the auto-fill column width follow the size. */
+[data-slot="lumi-choice-cards"] {
+  --lumi-choice-card-padding: var(--lumi-space-3);
+  --lumi-choice-card-gap: var(--lumi-space-2);
+  --lumi-choice-card-min: 12rem;
+}
+[data-slot="lumi-choice-cards"][data-size="sm"] { --lumi-choice-card-padding: var(--lumi-space-2) var(--lumi-space-3); --lumi-choice-card-min: 10rem; }
+[data-slot="lumi-choice-cards"][data-size="lg"] { --lumi-choice-card-padding: var(--lumi-space-4); --lumi-choice-card-gap: var(--lumi-space-3); --lumi-choice-card-min: 14rem; }
+[data-slot="lumi-choice-cards"][data-size="sm"] [data-slot="choice-card-icon"] { display: none; }
+
+/* Choice card states: a brand edge and a faint brand tint when checked, the same selection language as tables and steppers.
+   Cards sit inside other surfaces, so they stay transparent and every tint mixes with transparent. */
+[data-slot="choice-card"] {
+  --lumi-choice-card-tint: 6%;
+  border-color: var(--input);
+  background: transparent;
+}
+[data-theme="dark"] [data-slot="choice-card"] { --lumi-choice-card-tint: 12%; }
+[data-slot="choice-card"]:not(:disabled, [aria-readonly="true"], [data-readonly], [aria-invalid="true"], [data-state="checked"]):hover {
+  border-color: color-mix(in oklab, var(--input), var(--foreground) 22%);
+  background: color-mix(in oklab, var(--accent) 60%, transparent);
+}
+[data-slot="choice-card"][data-state="checked"] {
+  border-color: var(--brand);
+  background: color-mix(in oklab, var(--brand) var(--lumi-choice-card-tint), transparent);
+}
+[data-slot="choice-card"][data-state="checked"] [data-slot="choice-card-description"] { color: var(--lumi-fg-secondary); }
+[data-slot="choice-card"][data-state="checked"] [data-slot="choice-card-icon"] {
+  background: color-mix(in oklab, var(--brand) 14%, transparent);
+  color: var(--lumi-selected-fg);
+}
+/* Selection changes colour only, never weight: the inset ring is reserved for invalid, as on inputs. */
+[data-slot="choice-card"]:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent); }
+/* The invalid edge and surface come from the shared invalid rule in style.css. */
+[data-slot="choice-card"][aria-invalid="true"]:focus-visible { box-shadow: inset 0 0 0 .5px var(--destructive), 0 0 0 3px color-mix(in oklab, var(--destructive) 30%, transparent); }
+[data-slot="choice-card"][aria-invalid="true"] [data-slot="choice-card-mark"] { border-color: var(--destructive); }
+[data-slot="choice-card"][aria-invalid="true"][data-state="checked"] [data-slot="choice-card-mark"] { border-color: var(--brand); }
+
+/* TagSelect chips: selected chips use the shared selection tokens. */
+[data-slot="toggle-group-item"][data-state="on"] {
+  border-color: var(--lumi-selected-border);
+  background: var(--lumi-selected-bg);
+  color: var(--lumi-selected-fg);
+}
+[data-slot="toggle-group-item"][data-state="on"]:hover { border-color: var(--brand); color: var(--lumi-selected-fg); }
+[data-slot="toggle-group"][data-invalid] [data-slot="toggle-group-item"]:not([data-state="on"]) { border-color: color-mix(in oklab, var(--destructive) 60%, var(--border)); }
+
+/* Color picker: the area and hue strip are colour content; only their edges and thumbs are chrome. */
+.lumi-color-area,
+.lumi-color-hue {
+  position: relative;
+  touch-action: none;
+  user-select: none;
+  cursor: crosshair;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 10%, transparent);
+}
+.lumi-color-area {
+  height: 9.5rem;
+  border-radius: var(--lumi-radius-item);
+  background:
+    linear-gradient(to top, black, transparent),
+    linear-gradient(to right, white, transparent),
+    var(--lumi-color-hue);
+}
+.lumi-color-hue {
+  height: .75rem;
+  margin-inline: .375rem;
+  border-radius: 999px;
+  cursor: pointer;
+  background: linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red);
+}
+.lumi-color-hue::before {
+  content: "";
+  position: absolute;
+  inset: 0 -.375rem;
+  border-radius: inherit;
+  background: inherit;
+  box-shadow: inherit;
+}
+:is(.lumi-color-area, .lumi-color-hue)[data-disabled] { cursor: not-allowed; opacity: .5; }
+/* The thumb ring stays white in both themes: it sits on arbitrary colour, not on the surface. */
+.lumi-color-thumb {
+  position: absolute;
+  z-index: 1;
+  width: 1rem;
+  height: 1rem;
+  translate: -50% -50%;
+  border: 2px solid white;
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--foreground) 22%, transparent), inset 0 0 0 1px color-mix(in oklab, black 18%, transparent);
+  outline: none;
+  transition: box-shadow 150ms;
+}
+.lumi-color-thumb:focus-visible { box-shadow: 0 0 0 1px color-mix(in oklab, var(--foreground) 22%, transparent), 0 0 0 4px color-mix(in oklab, var(--ring) 50%, transparent); }
+.lumi-color-swatch {
+  border-radius: var(--lumi-radius-item);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+.lumi-color-swatch-empty {
+  background:
+    repeating-conic-gradient(var(--muted) 0 25%, transparent 0 50%) 0 0 / .5rem .5rem;
+}
+/* A full row of presets sets the panel width, so the area, hue strip, swatches and hex field share both edges. */
+[data-slot="color-picker-panel"] {
+  --lumi-color-columns: 7;
+  --lumi-color-gap: calc(var(--spacing) * 2);
+  width: calc(var(--lumi-color-columns) * var(--lumi-control-sm) + (var(--lumi-color-columns) - 1) * var(--lumi-color-gap) + 2 * var(--lumi-popover-padding) + 2px);
+}
+[data-slot="color-picker-presets"] {
+  display: grid;
+  grid-template-columns: repeat(var(--lumi-color-columns), var(--lumi-control-sm));
+  gap: var(--lumi-color-gap);
+}
+.lumi-color-preset {
+  outline: none;
+  transition: box-shadow 150ms;
+}
+.lumi-color-preset:hover { box-shadow: inset 0 0 0 1px var(--border), 0 0 0 2px var(--popover), 0 0 0 3px var(--input); }
+.lumi-color-preset[aria-pressed="true"] { box-shadow: inset 0 0 0 1px var(--border), 0 0 0 2px var(--popover), 0 0 0 3px var(--brand); }
+.lumi-color-preset:focus-visible { box-shadow: inset 0 0 0 1px var(--border), 0 0 0 2px var(--popover), 0 0 0 4px color-mix(in oklab, var(--ring) 60%, transparent); }
+
+/* Color swatches: the colours are data; the chrome is a faint edge, the ring and the add tile. */
+[data-slot="lumi-color-swatches"] {
+  --lumi-swatch-size: var(--lumi-control-sm);
+  --lumi-swatch-gap: var(--lumi-space-3);
+  --lumi-swatch-radius: var(--lumi-radius-full);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lumi-swatch-gap);
+}
+[data-slot="lumi-color-swatches"][data-size="sm"] { --lumi-swatch-size: var(--lumi-control-xs); --lumi-swatch-gap: var(--lumi-space-2); }
+[data-slot="lumi-color-swatches"][data-size="lg"] { --lumi-swatch-size: var(--lumi-control-md); }
+[data-slot="lumi-color-swatches"][data-shape="square"] { --lumi-swatch-radius: var(--lumi-radius-item); }
+[data-slot="color-swatches"] { display: flex; flex-wrap: wrap; gap: var(--lumi-swatch-gap); }
+[data-slot="color-swatch"],
+[data-slot="color-swatch-add"] {
+  position: relative;
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: var(--lumi-swatch-size);
+  height: var(--lumi-swatch-size);
+  border-radius: var(--lumi-swatch-radius);
+  outline: none;
+  cursor: pointer;
+}
+/* The ring is the swatch's own colour, held clear of the surface's lightness so a
+   black swatch still shows its ring on a dark card and a white one on a light card. */
+[data-slot="color-swatch"] {
+  --lumi-swatch-ring: oklch(from var(--lumi-swatch-color) min(l, 0.82) c h);
+  /* A faint inner edge keeps a swatch as dark or as light as the surface visible. */
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 12%, transparent);
+}
+[data-theme="dark"] [data-slot="color-swatch"] { --lumi-swatch-ring: oklch(from var(--lumi-swatch-color) max(l, 0.5) c h); }
+[data-slot="color-swatch"] > svg { width: 56%; height: 56%; }
+/* 2px ring, 2px off the swatch; the gap shows whatever surface is behind it. */
+[data-slot="color-swatch"]::after {
+  position: absolute;
+  inset: -4px;
+  border: 2px solid transparent;
+  border-radius: calc(var(--lumi-swatch-radius) + 4px);
+  content: "";
+  pointer-events: none;
+  transition: border-color 150ms, box-shadow 150ms;
+}
+[data-slot="lumi-color-swatches"]:not([data-readonly], [data-disabled]) [data-slot="color-swatch"]:not([aria-checked="true"]):hover::after,
+[data-slot="color-swatch"]:not([aria-checked="true"]):focus-visible::after { border-color: color-mix(in oklab, var(--lumi-swatch-ring) 40%, transparent); }
+[data-slot="color-swatch"]:focus-visible::after { box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent); }
+[data-slot="color-swatch"][aria-checked="true"]::after { border-color: var(--lumi-swatch-ring); }
+/* No color: the surface crossed by a slash. */
+[data-slot="color-swatch"][data-kind="none"] {
+  --lumi-swatch-ring: var(--muted-foreground);
+  background: linear-gradient(to bottom right, transparent calc(50% - .75px), var(--muted-foreground) calc(50% - .75px) calc(50% + .75px), transparent calc(50% + .75px));
+  box-shadow: inset 0 0 0 1px var(--input);
+}
+[data-slot="color-swatch-add"] {
+  border: 1px dashed color-mix(in oklab, var(--foreground) 22%, transparent);
+  color: var(--muted-foreground);
+  transition: background-color 150ms, border-color 150ms, color 150ms;
+}
+[data-slot="color-swatch-add"] > svg { width: 50%; height: 50%; }
+[data-slot="color-swatch-add"]:not(:disabled):hover,
+[data-slot="color-swatch-add"][aria-expanded="true"] {
+  border-color: color-mix(in oklab, var(--foreground) 40%, transparent);
+  background: var(--lumi-hover-bg);
+  color: var(--foreground);
+}
+[data-slot="color-swatch-add"]:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent); }
+[data-slot="lumi-color-swatches"][data-invalid] [data-slot="color-swatch"] { box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--destructive) 60%, transparent); }
+[data-slot="lumi-color-swatches"][data-invalid] [data-slot="color-swatch-add"] { border-color: color-mix(in oklab, var(--destructive) 60%, transparent); }
+[data-slot="lumi-color-swatches"][data-readonly] :is([data-slot="color-swatch"], [data-slot="color-swatch-add"]) { cursor: default; }
+[data-slot="lumi-color-swatches"][data-disabled] { opacity: .5; }
+[data-slot="lumi-color-swatches"][data-disabled] :is([data-slot="color-swatch"], [data-slot="color-swatch-add"]) { cursor: not-allowed; }
+/* A fingertip gets a 44px target: a larger swatch plus half the gap on each side. */
+@media (pointer: coarse) {
+  [data-slot="lumi-color-swatches"],
+  [data-slot="lumi-color-swatches"][data-size] { --lumi-swatch-size: var(--lumi-control-md); --lumi-swatch-gap: var(--lumi-space-3); }
+  :is([data-slot="color-swatch"], [data-slot="color-swatch-add"])::before { position: absolute; inset: calc(var(--lumi-swatch-gap) / -2); content: ""; }
+}
+
+/* Rating: empty marks use the input line colour; the fill is clipped to the score. */
+[data-slot="lumi-rating"] {
+  --lumi-rating-size: 1.25rem;
+  --lumi-rating-fill: var(--lumi-warning);
+}
+[data-slot="lumi-rating"][data-size="sm"] { --lumi-rating-size: 1rem; }
+[data-slot="lumi-rating"][data-size="lg"] { --lumi-rating-size: 1.5rem; }
+[data-slot="lumi-rating"][data-tone="brand"] { --lumi-rating-fill: var(--brand); }
+[data-slot="lumi-rating"][data-invalid] { --lumi-rating-fill: var(--destructive); }
+[data-slot="lumi-rating"][data-disabled] { opacity: .5; }
+[data-slot="rating-item"] {
+  position: relative;
+  display: inline-flex;
+  width: var(--lumi-rating-size);
+  height: var(--lumi-rating-size);
+  color: var(--input);
+  cursor: pointer;
+  transition: scale 120ms;
+}
+[data-slot="lumi-rating"][data-readonly] [data-slot="rating-item"],
+[data-slot="lumi-rating"][data-disabled] [data-slot="rating-item"] { cursor: default; }
+[data-slot="lumi-rating"]:not([data-readonly], [data-disabled]) [data-slot="rating-item"]:hover { scale: 1.1; }
+[data-slot="rating-item"] svg { width: 100%; height: 100%; flex-shrink: 0; }
+[data-slot="rating-fill"] {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  display: flex;
+  overflow: hidden;
+  color: var(--lumi-rating-fill);
+}
+[data-slot="rating-fill"] svg { width: var(--lumi-rating-size); min-width: var(--lumi-rating-size); }

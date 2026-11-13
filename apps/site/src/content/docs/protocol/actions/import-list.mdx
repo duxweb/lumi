@@ -1,0 +1,88 @@
+---
+title: "importList"
+description: "让用户选一个 CSV 或 JSON 文件，逐条通过 create（或按 batchSize 通过 createMany）新建记录，被拒绝的行跳过继续。"
+---
+
+让用户选一个 CSV 或 JSON 文件，逐条通过 create（或按 `batchSize` 通过 createMany）新建记录，被拒绝的行跳过继续。进度写进 `progressPath`，结果写进 `resultPath` 并弹出通知，最后刷新资源。给了 `url` 时改由后端导入：把文件原样上传到这个接口，返回的就是导入结果。
+
+## 用法
+
+### 在浏览器里导入
+
+不写 `url`：在浏览器里读 CSV 或 JSON，每一行调用一次新建接口。
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "导入 CSV" },
+      "on": {
+        // 点击按钮时执行
+        "press": {
+          "action": "importList",
+          "params": {
+            // 数据资源名，如 orders
+            "resource": "customers",
+            // 进度写到这里：已处理、成功、失败的条数
+            "progressPath": "/import/progress",
+            // 结束后的结果写到这里，含每个被拒绝的行
+            "resultPath": "/import/result"
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+### 由后端导入
+
+写上 `url`：用户选的文件原样上传到这个接口（表单字段 `file`），由后端解析、校验、落库，返回导入结果。文件格式由后端决定。后端要怎么接，见 [后端导入](/guide/backend-files/#后端导入)。
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "导入 Excel" },
+      "on": {
+        // 点击按钮时执行
+        "press": {
+          "action": "importList",
+          "params": {
+            // 数据资源名，如 orders
+            "resource": "products",
+            // 后端的导入接口，相对于后端地址
+            "url": "/products/import",
+            // 文件选择框里允许的类型
+            "accept": ".xlsx,.csv",
+            // 进度写到这里：uploaded 是文件已上传的百分比
+            "progressPath": "/import/progress",
+            // 后端返回的导入结果写到这里
+            "resultPath": "/import/result"
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| `resource`（必填） | 数据资源名，如 `orders`。 | `string` |
+| `dataProviderName` | 使用哪个数据源；省略时用当前范围的数据源，没有就是 default。 | `string` |
+| `meta` | 不写 `url` 时原样传给 DataProvider；写了 `url` 时作为其他表单字段和文件一起上传。 | `object` |
+| `columns` | 导入的列，每个 `{ field, label }`，把文件里的表头对应到字段。写了 `url` 时不使用。 | `object[]` |
+| `url` | 后端的导入接口，相对于 DataProvider 的 API 地址。写了它，文件原样上传（表单字段 `file`）由后端导入；不写时在浏览器里解析并逐条新建。 | `string` |
+| `accept` | 文件选择框里允许的类型；默认 CSV 和 JSON，给了 `url` 时默认不限。 | `string` |
+| `batchSize` | 按批调用 createMany 时每批的条数；不填则逐条 create。默认的 DataProvider 没有批量新建，始终逐条。 | `integer` |
+| `progressPath` | 把进度写进页面状态的路径。写了 `url` 时其中的 `uploaded` 是文件已上传的百分比。 | `string` |
+| `resultPath` | 把导入结果写进页面状态的路径：`{ total, succeeded, failed, errors }`。 | `string` |

@@ -1,0 +1,59 @@
+---
+title: "Popover"
+description: "依附在触发元素上的浮动面板：标题、说明、任意内容（children）和可选的底部按钮。"
+---
+
+<ComponentPreview name="Popover" />
+
+依附在触发元素上的浮动面板：标题、说明、任意内容（`children`）和可选的底部按钮。触发元素是 `trigger` 插槽（任意元素，如 Button 或 Avatar）；没有时由 `label`/`icon`/`appearance`/`size`/`shape` 生成一个按钮。绑定 `open`（`{ "$bindState": "/path" }`）即可从动作中打开或关闭；`confirmText`/`cancelText` 加底部按钮，触发 `confirm`/`cancel` 并关闭面板。`width`：sm 16rem，md 18rem（默认），lg 24rem。
+
+## 示例
+
+```json
+{
+  "root": "popover-40",
+  "elements": {
+    "popover-40": {
+      "type": "Popover",
+      "props": {
+        "label": "Shipping details",
+        "appearance": "outline",
+        "title": "Shipping",
+        "description": "Orders placed before 3 pm ship the same day."
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `label` | 显示的文字。 | `string \| null` |  |
+| `icon` | 图标名，来自内置 HugeIcons 图标集，如 `download`、`receipt`。 | `string \| null` |  |
+| `appearance` | 外观：`outline` 描边，`filled` 浅色填充。 | `"solid" \| "brand" \| "soft" \| "outline" \| "ghost" \| null` | `"outline"` |
+| `size` | 尺寸：`sm` 紧凑，`md` 标准，`lg` 宽松。 | `"sm" \| "md" \| "lg" \| null` | `"md"` |
+| `shape` | 内置触发按钮的形状。`circle`、`square` 配合 `icon` 时只显示图标。 | `"default" \| "pill" \| "circle" \| "square" \| null` | `"default"` |
+| `title` | 标题。 | `string \| null` |  |
+| `description` | 标题下方的一行说明。 | `string \| null` |  |
+| `side` | 浮层出现在触发元素的哪一侧。 | `"top" \| "right" \| "bottom" \| "left" \| null` | `"bottom"` |
+| `align` | 浮层相对触发元素的对齐方式：`start`、`center`、`end`。 | `"start" \| "center" \| "end" \| null` | `"center"` |
+| `width` | 浮层宽度：`sm` 16rem，`md` 18rem，`lg` 24rem。 | `"sm" \| "md" \| "lg" \| null` | `"md"` |
+| `open` | 是否打开。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `boolean \| null` |  |
+| `defaultOpen` | 初始是否打开，只在没有绑定 `open` 时生效。 | `boolean \| null` | `false` |
+| `confirmText` | 底部确认按钮的文字；点击触发 `confirm` 并关闭浮层。不填不显示。 | `string \| null` |  |
+| `cancelText` | 底部取消按钮的文字；点击触发 `cancel` 并关闭浮层。不填不显示。 | `string \| null` |  |
+| `tone` | 语义色：`success` 成功，`warning` 警告，`danger` 危险，`info` 提示，`neutral` 中性。 | `"default" \| "danger" \| null` | `"neutral"` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`openChange`、`confirm`、`cancel`
+- 插槽：`default`、`trigger`、`footer`

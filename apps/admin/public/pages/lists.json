@@ -1,0 +1,459 @@
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Lists & timeline"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "sections"
+      ]
+    },
+    "timeline-1": {
+      "type": "Timeline",
+      "props": {
+        "items": [
+          {
+            "key": "created",
+            "title": {
+              "$t": "Order placed"
+            },
+            "description": {
+              "$t": "Paid by card"
+            },
+            "timestamp": "2026-08-08 09:12",
+            "status": "complete"
+          },
+          {
+            "key": "packed",
+            "title": {
+              "$t": "Packed"
+            },
+            "description": {
+              "$t": "Warehouse Shanghai"
+            },
+            "timestamp": "2026-08-08 15:40",
+            "status": "complete"
+          },
+          {
+            "key": "shipped",
+            "title": {
+              "$t": "In transit"
+            },
+            "description": {
+              "$t": "SF Express 1290 4471"
+            },
+            "timestamp": "2026-08-09 08:05",
+            "status": "current"
+          },
+          {
+            "key": "delivered",
+            "title": {
+              "$t": "Delivered"
+            },
+            "timestamp": {
+              "$t": "Expected Aug 11"
+            },
+            "status": "upcoming"
+          }
+        ]
+      },
+      "children": []
+    },
+    "card-2": {
+      "type": "Example",
+      "props": {
+        "id": "timeline",
+        "title": {
+          "$t": "Timeline"
+        },
+        "description": {
+          "$t": "Status markers for a process; each step has a time and a short note"
+        }
+      },
+      "children": [
+        "timeline-1"
+      ]
+    },
+    "timeline-3": {
+      "type": "Timeline",
+      "props": {
+        "marker": "dot",
+        "items": [
+          {
+            "key": "1",
+            "title": {
+              "$t": "Ada changed the price of Lumi Lamp"
+            },
+            "timestamp": {
+              "$t": "5 min ago"
+            },
+            "tone": "primary"
+          },
+          {
+            "key": "2",
+            "title": {
+              "$t": "Refund approved for ORD-00011"
+            },
+            "timestamp": {
+              "$t": "1 h ago"
+            },
+            "tone": "success"
+          },
+          {
+            "key": "3",
+            "title": {
+              "$t": "Payment callback failed"
+            },
+            "timestamp": {
+              "$t": "Yesterday"
+            },
+            "tone": "danger"
+          }
+        ]
+      },
+      "children": []
+    },
+    "timeline-4": {
+      "type": "Timeline",
+      "props": {
+        "items": [],
+        "empty": {
+          "$t": "Nothing has happened yet"
+        }
+      },
+      "children": []
+    },
+    "stack-5": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "timeline-3",
+        "timeline-4"
+      ]
+    },
+    "card-6": {
+      "type": "Example",
+      "props": {
+        "id": "timeline-dots",
+        "title": {
+          "$t": "Activity feed"
+        },
+        "description": {
+          "$t": "Dot markers with tones for an activity log; an empty feed says so"
+        }
+      },
+      "children": [
+        "stack-5"
+      ]
+    },
+    "activityfeed-13": {
+      "type": "ActivityFeed",
+      "props": {
+        "ariaLabel": {
+          "$t": "Team activity"
+        },
+        "items": [
+          {
+            "key": "1",
+            "actor": "Mina Manager",
+            "action": {
+              "$t": "approved"
+            },
+            "target": {
+              "$t": "Atlas budget"
+            },
+            "context": {
+              "$t": "Atlas rollout"
+            },
+            "status": {
+              "label": {
+                "$t": "Approved"
+              },
+              "tone": "success"
+            },
+            "timestamp": {
+              "$t": "10 min ago"
+            }
+          },
+          {
+            "key": "2",
+            "actor": "Sam Support",
+            "action": {
+              "$t": "escalated"
+            },
+            "target": {
+              "$t": "Store 12 outage"
+            },
+            "context": {
+              "$t": "Orion support"
+            },
+            "status": {
+              "label": {
+                "$t": "Urgent"
+              },
+              "tone": "danger"
+            },
+            "timestamp": {
+              "$t": "1 h ago"
+            }
+          },
+          {
+            "key": "3",
+            "actor": "Theo Ops",
+            "action": {
+              "$t": "commented on"
+            },
+            "target": {
+              "$t": "Access audit"
+            },
+            "context": {
+              "$t": "Keystone access"
+            },
+            "timestamp": {
+              "$t": "Yesterday"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "card-14": {
+      "type": "Example",
+      "props": {
+        "id": "activity-feed",
+        "title": {
+          "$t": "Team activity"
+        },
+        "description": {
+          "$t": "Who did what: an avatar, the action and its target, with context or a status below"
+        }
+      },
+      "children": [
+        "activityfeed-13"
+      ]
+    },
+    "recordlist-7": {
+      "type": "RecordList",
+      "props": {
+        "title": {
+          "$t": "Open tasks"
+        },
+        "items": [
+          {
+            "key": "1",
+            "title": {
+              "$t": "Reorder SKU-0002"
+            },
+            "description": {
+              "$t": "3 left in stock"
+            },
+            "status": {
+              "label": {
+                "$t": "Urgent"
+              },
+              "tone": "danger"
+            },
+            "value": {
+              "$t": "Fri"
+            }
+          },
+          {
+            "key": "2",
+            "title": {
+              "$t": "Reply to Mia Chen"
+            },
+            "description": {
+              "$t": "Asked about delivery"
+            },
+            "meta": {
+              "$t": "2 h"
+            },
+            "checked": false
+          },
+          {
+            "key": "3",
+            "title": {
+              "$t": "Close July books"
+            },
+            "description": {
+              "$t": "Finance"
+            },
+            "progress": {
+              "value": 70,
+              "tone": "brand"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "card-8": {
+      "type": "Example",
+      "props": {
+        "id": "record-list",
+        "title": {
+          "$t": "Record list"
+        },
+        "description": {
+          "$t": "Compact rows with a status, a value and progress"
+        }
+      },
+      "children": [
+        "recordlist-7"
+      ]
+    },
+    "proportionlist-9": {
+      "type": "ProportionList",
+      "props": {
+        "ariaLabel": {
+          "$t": "Sales by channel"
+        },
+        "tone": "primary",
+        "items": [
+          {
+            "key": "web",
+            "label": {
+              "$t": "Web store"
+            },
+            "value": 52,
+            "display": "52%"
+          },
+          {
+            "key": "app",
+            "label": {
+              "$t": "Mobile app"
+            },
+            "value": 24,
+            "display": "24%"
+          },
+          {
+            "key": "pos",
+            "label": {
+              "$t": "In store"
+            },
+            "value": 15,
+            "display": "15%"
+          },
+          {
+            "key": "other",
+            "label": {
+              "$t": "Other channels"
+            },
+            "value": 9,
+            "display": "9%",
+            "other": true
+          }
+        ]
+      },
+      "children": []
+    },
+    "card-10": {
+      "type": "Example",
+      "props": {
+        "id": "proportions",
+        "title": {
+          "$t": "Proportions"
+        },
+        "description": {
+          "$t": "Shares of a whole with their values; the remainder stays last as other"
+        }
+      },
+      "children": [
+        "proportionlist-9"
+      ]
+    },
+    "pipeline-11": {
+      "type": "Pipeline",
+      "props": {
+        "ariaLabel": {
+          "$t": "Order pipeline"
+        },
+        "stages": [
+          {
+            "key": "paid",
+            "label": {
+              "$t": "Paid"
+            },
+            "value": 42
+          },
+          {
+            "key": "packed",
+            "label": {
+              "$t": "Packed"
+            },
+            "value": 31,
+            "tone": "info"
+          },
+          {
+            "key": "shipped",
+            "label": {
+              "$t": "Shipped"
+            },
+            "value": 27,
+            "tone": "success"
+          },
+          {
+            "key": "late",
+            "label": {
+              "$t": "Late"
+            },
+            "value": 3,
+            "tone": "warning"
+          }
+        ]
+      },
+      "children": []
+    },
+    "card-12": {
+      "type": "Example",
+      "props": {
+        "id": "pipeline",
+        "title": {
+          "$t": "Pipeline"
+        },
+        "description": {
+          "$t": "Counts per stage of a flow"
+        }
+      },
+      "children": [
+        "pipeline-11"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Lists & timeline"
+        },
+        "description": {
+          "$t": "Timelines, record lists, proportions and pipelines for activity and progress"
+        }
+      },
+      "children": []
+    },
+    "sections": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "card-2",
+        "card-6",
+        "card-14",
+        "card-8",
+        "card-10",
+        "card-12"
+      ]
+    }
+  }
+}

@@ -1,0 +1,59 @@
+---
+title: "AgentQuestion"
+description: "智能体继续之前向读者提的问题。"
+---
+
+<ComponentPreview name="AgentQuestion" />
+
+智能体继续之前向读者提的问题。`single`（默认）列出选项单选——点选项即作答，数字键按序号选；`multiple` 可勾选多项后确认；`text` 接受文字回答；`allowText` 在选项旁加一个文字回答。绑定 `status` 和 `answer`：作答时写入 `answered` 和答案并触发 `answer`，Skip（`skippable` 时）写入 `skipped` 并触发 `skip`。已作答或已跳过的问题折叠成一行显示答案，展开可修改。
+
+## 示例
+
+```json
+{
+  "root": "agent-question",
+  "elements": {
+    "agent-question": {
+      "type": "AgentQuestion",
+      "props": {
+        "title": "Which courier should ship it",
+        "status": "pending",
+        "answer": { "$bindState": "/courier" },
+        "skippable": true,
+        "options": [
+          { "value": "sf", "label": "SF Express", "description": "Next day" },
+          { "value": "ems", "label": "EMS", "description": "2 to 3 days" }
+        ]
+      },
+      "children": []
+    }
+  },
+  "state": { "courier": null }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `title`（必填） | 要问的问题，如 `用哪家快递发货`。 | `string` |  |
+| `description` | 问题下方的补充说明。 | `string` |  |
+| `mode` | `single` 单选（点击或按数字键即回答）、`multiple` 多选后确认、`text` 填写文字。 | `"single" \| "multiple" \| "text"` | `"single"` |
+| `options` | 选项，每项 `{ value, label, description? }`。 字段：`value`、`label`、`description?` | `object[]` |  |
+| `allowText` | 在选项下加一个“其他”输入框，回车即回答。 | `boolean` | `false` |
+| `placeholder` | 输入框的占位文字。 | `string` |  |
+| `status`（必填） | `pending` 等待回答、`answered` 已回答、`skipped` 已跳过；回答或跳过后折叠为一行，点开可修改。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `"pending" \| "answered" \| "skipped"` |  |
+| `answer` | 回答：单选和文字为字符串，多选为字符串数组。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string \| string[] \| null` |  |
+| `submitLabel` | 确认按钮的文字。 | `string` |  |
+| `skippable` | 显示“跳过”按钮，按下触发 `skip`。 | `boolean` | `false` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`answer`、`skip`
+- 插槽：无

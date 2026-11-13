@@ -1,0 +1,553 @@
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Cards"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "sections"
+      ]
+    },
+    "text-1": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Holds a form, a table or a chart"
+        },
+        "variant": "body"
+      },
+      "children": []
+    },
+    "card-2": {
+      "type": "Card",
+      "props": {
+        "title": {
+          "$t": "Outline card"
+        },
+        "description": {
+          "$t": "The default surface on a page"
+        }
+      },
+      "children": [
+        "text-1"
+      ]
+    },
+    "text-3": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Use it for a nested group, never on the bare page"
+        },
+        "variant": "body"
+      },
+      "children": []
+    },
+    "card-4": {
+      "type": "Card",
+      "props": {
+        "title": {
+          "$t": "Filled card"
+        },
+        "description": {
+          "$t": "Sits inside another surface"
+        },
+        "appearance": "filled"
+      },
+      "children": [
+        "text-3"
+      ]
+    },
+    "text-5": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Inventory: 1,284 units across 3 warehouses"
+        },
+        "variant": "body"
+      },
+      "children": []
+    },
+    "card-6": {
+      "type": "Card",
+      "props": {
+        "title": {
+          "$t": "With an icon"
+        },
+        "description": {
+          "$t": "The icon names the subject"
+        },
+        "icon": "package"
+      },
+      "children": [
+        "text-5"
+      ]
+    },
+    "card-header-badge": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Live"
+        },
+        "tone": "success",
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "text-7": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Payments settle every weekday at 18:00"
+        },
+        "variant": "body"
+      },
+      "children": []
+    },
+    "card-8": {
+      "type": "Card",
+      "props": {
+        "title": {
+          "$t": "With a header action"
+        },
+        "description": {
+          "$t": "Status or a small action at the end of the header"
+        }
+      },
+      "children": [
+        "text-7"
+      ],
+      "slots": {
+        "headerEnd": [
+          "card-header-badge"
+        ]
+      }
+    },
+    "text-9": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "1,086 orders · 11 waiting for review"
+        },
+        "variant": "body"
+      },
+      "children": []
+    },
+    "text-9-meta": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Last order 4 minutes ago"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "stack-10": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "text-9",
+        "text-9-meta"
+      ]
+    },
+    "card-10": {
+      "type": "Card",
+      "props": {
+        "title": {
+          "$t": "Link card"
+        },
+        "description": {
+          "$t": "The whole card opens a page"
+        },
+        "href": "#link-card",
+        "icon": "shopping-cart-01"
+      },
+      "children": [
+        "stack-10"
+      ]
+    },
+    "text-11": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Frames group related content without a card's elevation"
+        },
+        "variant": "body"
+      },
+      "children": []
+    },
+    "frame-12": {
+      "type": "Frame",
+      "props": {
+        "title": {
+          "$t": "Frame"
+        },
+        "description": {
+          "$t": "A framed region inside a page or drawer"
+        },
+        "summary": {
+          "$t": "3 records"
+        }
+      },
+      "children": [
+        "text-11"
+      ]
+    },
+    "text-13": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "A filled frame reads as a quieter, secondary region"
+        },
+        "variant": "body"
+      },
+      "children": []
+    },
+    "frame-14": {
+      "type": "Frame",
+      "props": {
+        "title": {
+          "$t": "Filled frame"
+        },
+        "description": {
+          "$t": "Sits inside another surface"
+        },
+        "appearance": "filled",
+        "summary": {
+          "$t": "Read only"
+        }
+      },
+      "children": [
+        "text-13"
+      ]
+    },
+    "progress-15": {
+      "type": "Progress",
+      "props": {
+        "value": 64,
+        "label": {
+          "$t": "Monthly target"
+        },
+        "tone": "brand"
+      },
+      "children": []
+    },
+    "dashboardcard-16": {
+      "type": "DashboardCard",
+      "props": {
+        "title": {
+          "$t": "Dashboard card"
+        },
+        "description": {
+          "$t": "A dashboard tile with a title and body"
+        }
+      },
+      "children": [
+        "progress-15"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Cards"
+        },
+        "description": {
+          "$t": "Card and frame surfaces: outline and filled, with icons, header actions, links and summaries"
+        }
+      },
+      "children": []
+    },
+    "sections": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "example-card",
+        "example-frame",
+        "example-dashboard-card",
+        "example-layout"
+      ]
+    },
+    "example-card": {
+      "type": "Example",
+      "props": {
+        "id": "card",
+        "title": {
+          "$t": "Card"
+        },
+        "description": {
+          "$t": "Outline and filled surfaces, a header icon, a header action and a whole-card link"
+        }
+      },
+      "children": [
+        "card-variants"
+      ]
+    },
+    "card-variants": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 200,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "card-2",
+        "card-4",
+        "card-6",
+        "card-8",
+        "card-10"
+      ]
+    },
+    "example-dashboard-card": {
+      "type": "Example",
+      "props": {
+        "id": "dashboard-card",
+        "title": {
+          "$t": "Dashboard card"
+        },
+        "description": {
+          "$t": "A dashboard tile: a title, an optional header action and a footer line"
+        }
+      },
+      "children": [
+        "dashboardcard-16"
+      ]
+    },
+    "example-frame": {
+      "type": "Example",
+      "props": {
+        "id": "frame",
+        "title": {
+          "$t": "Frame"
+        },
+        "description": {
+          "$t": "A well around an inner panel, as a data grid uses it; PageFrame adds Admin slots"
+        }
+      },
+      "children": [
+        "frame-variants"
+      ]
+    },
+    "frame-variants": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 200,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "frame-12",
+        "frame-14",
+        "page-frame"
+      ]
+    },
+    "example-layout": {
+      "type": "Example",
+      "props": {
+        "id": "layout",
+        "title": {
+          "$t": "Layout"
+        },
+        "description": {
+          "$t": "Stack lines items up, Grid fits columns to the width and Fragment groups children or splits off an aside"
+        }
+      },
+      "children": [
+        "layout"
+      ]
+    },
+    "layout": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "layout-stack-label",
+        "layout-stack",
+        "layout-grid-label",
+        "layout-grid",
+        "layout-split-label",
+        "layout-split"
+      ]
+    },
+    "layout-stack-label": {
+      "type": "Text",
+      "props": {
+        "text": "Stack",
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "layout-stack": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "layout-stack-1",
+        "layout-stack-2",
+        "layout-stack-3"
+      ]
+    },
+    "layout-stack-1": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "One"
+        }
+      },
+      "children": []
+    },
+    "layout-stack-2": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Two"
+        }
+      },
+      "children": []
+    },
+    "layout-stack-3": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Three"
+        }
+      },
+      "children": []
+    },
+    "layout-grid-label": {
+      "type": "Text",
+      "props": {
+        "text": "Grid",
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "layout-grid": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 96,
+        "gap": "sm"
+      },
+      "children": [
+        "layout-grid-1",
+        "layout-grid-2",
+        "layout-grid-3",
+        "layout-grid-4"
+      ]
+    },
+    "layout-grid-1": {
+      "type": "Card",
+      "props": {
+        "title": "1"
+      },
+      "children": []
+    },
+    "layout-grid-2": {
+      "type": "Card",
+      "props": {
+        "title": "2"
+      },
+      "children": []
+    },
+    "layout-grid-3": {
+      "type": "Card",
+      "props": {
+        "title": "3"
+      },
+      "children": []
+    },
+    "layout-grid-4": {
+      "type": "Card",
+      "props": {
+        "title": "4"
+      },
+      "children": []
+    },
+    "layout-split-label": {
+      "type": "Text",
+      "props": {
+        "text": "Fragment · split",
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "layout-split": {
+      "type": "Fragment",
+      "props": {
+        "layout": "split",
+        "asideWidth": 160
+      },
+      "children": [
+        "layout-main",
+        "layout-aside"
+      ]
+    },
+    "layout-main": {
+      "type": "Card",
+      "props": {
+        "title": {
+          "$t": "Main"
+        },
+        "description": {
+          "$t": "Fills the remaining width"
+        }
+      },
+      "children": []
+    },
+    "layout-aside": {
+      "type": "Card",
+      "props": {
+        "title": {
+          "$t": "Aside"
+        },
+        "description": {
+          "$t": "Keeps its own width"
+        }
+      },
+      "children": []
+    },
+    "page-frame": {
+      "type": "PageFrame",
+      "props": {
+        "title": {
+          "$t": "Page frame"
+        },
+        "description": {
+          "$t": "The Admin frame, with slots for header tools, an aside and a summary"
+        },
+        "summary": {
+          "$t": "3 warehouses"
+        }
+      },
+      "children": [
+        "page-frame-text"
+      ]
+    },
+    "page-frame-text": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Stock is counted nightly across every warehouse"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    }
+  }
+}

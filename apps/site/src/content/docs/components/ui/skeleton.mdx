@@ -1,0 +1,50 @@
+---
+title: "Skeleton"
+description: "内容还在加载时按内容形状显示的占位。"
+---
+
+<ComponentPreview name="Skeleton" />
+
+内容还在加载时按内容形状显示的占位。`text` 画 `lines` 行长短自然的文字，`circle` 画头像，`rect` 画卡片或图片，`list-row` 每行画一个头像和两行文字。闪烁动画在读者偏好减少动效时关闭；`label` 为加载区域命名。
+
+## 示例
+
+```json
+{
+  "root": "skeleton-31",
+  "elements": {
+    "skeleton-31": {
+      "type": "Skeleton",
+      "props": {
+        "variant": "list-row",
+        "lines": 2,
+        "label": "Loading members"
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `variant` | 占位形状：`text` 若干行文字，`circle` 头像，`rect` 卡片或图片，`list-row` 头像加两行文字的列表行。 | `"text" \| "circle" \| "rect" \| "list-row" \| null` | `"text"` |
+| `lines` | `text` 的行数，或 `list-row` 的行数。 | `integer \| null` | `3` |
+| `size` | 尺寸：`sm` 紧凑，`md` 标准，`lg` 宽松。 | `"sm" \| "md" \| "lg" \| null` | `"md"` |
+| `width` | `rect`、`circle` 的宽度，CSS 长度如 `"100%"`、`"12rem"`。 | `string \| null` |  |
+| `height` | `rect`、`circle` 的高度，CSS 长度。不填时按 `size` 决定。 | `string \| null` |  |
+| `animated` | 显示闪光动画；偏好减少动效时自动关闭。 | `boolean \| null` | `true` |
+| `label` | 显示的文字。 | `string \| null` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

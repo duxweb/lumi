@@ -1,0 +1,28 @@
+---
+title: "useCreateMany"
+description: "useCreateMany React hook 的签名、参数和返回值。"
+---
+
+Creates several records: one `createMany` call when the provider has it, else one `create` per record.
+
+```typescript
+useCreateMany<T = any, V = any>(options: MutationOptions<ManyResult<T>, V[]>): UseMutationResult<ManyResult<T>, Error, V[]>
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `options` | `MutationOptions<ManyResult<T>, V[]>` | 是 |  |
+
+`options` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `dataProviderName` | `string \| undefined` | 否 | 多数据源名称；省略时使用 default。 |
+| `meta` | `Meta \| undefined` | 否 | 原样传给 DataProvider 的扩展数据。 |
+| `mutationMode` | `MutationMode \| undefined` | 否 | Updates and deletes only: `optimistic` shows the change at once and rolls it back on failure; `undoable` also waits `undoableTimeout` with an Undo notice before sending (Undo rejects with MutationUndoneError, unreported). Defaults to the context's `mutationMode`, else `pessimistic`. |
+| `onError` | `((error: Error, variables: V[]) => void \| Promise<void>) \| undefined` | 否 | Replaces the default report: without it a failure is shown as a danger toast. |
+| `onSuccess` | `((data: ManyResult<T>, variables: V[]) => void \| Promise<void>) \| undefined` | 否 | Called with the saved data once the write succeeded. |
+| `resource` | `string` | 是 | The resource written to; its lists, records and aggregates refetch after a success. |
+| `undoableTimeout` | `number \| undefined` | 否 | Milliseconds an `undoable` write waits for Undo before it is sent; 5000 by default. |
+
+返回 `UseMutationResult<ManyResult<T>, Error, V[]>`。

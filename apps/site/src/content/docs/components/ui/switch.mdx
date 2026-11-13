@@ -1,0 +1,52 @@
+---
+title: "Switch"
+description: "开关一个设置，切换后立即生效。"
+---
+
+<ComponentPreview name="Switch" />
+
+开关一个设置，切换后立即生效。
+
+## 示例
+
+```json
+{
+  "root": "switch-12",
+  "elements": {
+    "switch-12": {
+      "type": "Switch",
+      "props": {
+        "value": { "$bindState": "/switch-12/value" },
+        "label": "Notifications"
+      },
+      "children": []
+    }
+  },
+  "state": { "switch-12": { "value": true } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `value` | 是否打开。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `boolean` |  |
+| `defaultValue` | 初始是否打开。 | `boolean` | `false` |
+| `label` | 开关旁的文字。 | `string` |  |
+| `name` | 字段名，表单提交时作为这个值的键。 | `string` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean` | `false` |
+| `invalid` | 标记为校验未通过，显示错误样式。通常由 FormField 自动设置。 | `boolean` | `false` |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+
+通用参数：
+
+- `checks`：json-render 原生校验规则，如 `{ "type": "required", "message": "请填写" }`，提交或失焦时执行。
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：无

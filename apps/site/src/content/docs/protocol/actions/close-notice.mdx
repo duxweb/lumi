@@ -1,0 +1,37 @@
+---
+title: "closeNotice"
+description: "关闭 notify 打开的、key 对应的通知卡片。"
+---
+
+关闭 `notify` 打开的、`key` 对应的通知卡片。
+
+## 用法
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "知道了" },
+      "on": {
+        // 点击按钮时执行
+        "press": {
+          "action": "closeNotice",
+          "params": {
+            // 要关闭的通知的 key
+            "key": "published"
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| `key`（必填） | 要关闭的通知的 `key`。 | `string` |

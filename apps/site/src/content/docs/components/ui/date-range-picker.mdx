@@ -1,0 +1,59 @@
+---
+title: "DateRangePicker"
+description: "日期范围，值为 [start, end]（yyyy-MM-dd），与 dateRange 筛选的格式相同。"
+---
+
+<ComponentPreview name="DateRangePicker" />
+
+日期范围，值为 `[start, end]`（`yyyy-MM-dd`），与 dateRange 筛选的格式相同。两个月并排显示；可选的 `presets` 一键跳到固定范围。点月份标题切换到月份和年份网格；`captionLayout: "label"` 时只显示标题。
+
+## 示例
+
+```json
+{
+  "root": "daterangepicker-1",
+  "elements": {
+    "daterangepicker-1": {
+      "type": "DateRangePicker",
+      "props": {
+        "value": { "$bindState": "/daterangepicker-1/value" },
+        "ariaLabel": "Default date range picker"
+      },
+      "children": []
+    }
+  },
+  "state": { "daterangepicker-1": { "value": ["2026-08-03", "2026-08-10"] } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `value` | 选中的范围 `[开始, 结束]`，都是 `yyyy-MM-dd`。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string[]` |  |
+| `defaultValue` | 初始范围。 | `string[]` | `[]` |
+| `min` | 最早可选日期。 | `string` |  |
+| `max` | 最晚可选日期。 | `string` |  |
+| `months` | 并排显示几个月。 | `integer` | `2` |
+| `presets` | 左侧的快捷范围，每项 `{ label, value: [开始, 结束] }`，如“最近 7 天”。 字段：`label`、`value` | `object[]` |  |
+| `captionLayout` | `panel`：点击月份标题切换到月份网格，再点年份切换到年份网格，选中后逐级返回，Esc 返回上一级；超出 `min`/`max` 的月份和年份不可选。`label`：只显示标题。选中的月份落在被点击的那一栏，其余月份随之衔接。 | `"panel" \| "label"` | `"panel"` |
+| `placeholder` | 没有值时显示的提示文字。 | `string` |  |
+| `size` | 尺寸：`sm` 紧凑，`md` 标准，`lg` 宽松。 | `"sm" \| "md" \| "lg"` | `"md"` |
+| `appearance` | 外观：`outline` 描边，`filled` 浅色填充。 | `"outline" \| "filled"` | `"outline"` |
+| `name` | 字段名，表单提交时作为这个值的键。 | `string` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean` | `false` |
+| `invalid` | 标记为校验未通过，显示错误样式。通常由 FormField 自动设置。 | `boolean` | `false` |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+
+通用参数：
+
+- `checks`：json-render 原生校验规则，如 `{ "type": "required", "message": "请填写" }`，提交或失焦时执行。
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：无

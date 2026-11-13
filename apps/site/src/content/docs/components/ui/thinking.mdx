@@ -1,0 +1,53 @@
+---
+title: "Thinking"
+description: "紧凑的工作状态条——旋转图标、阶段名称和已用时间——state 为 done 时变成对勾和总耗时。"
+---
+
+<ComponentPreview name="Thinking" />
+
+紧凑的工作状态条——旋转图标、阶段名称和已用时间——`state` 为 `done` 时变成对勾和总耗时。步骤和推理文字在下方展开：工作中展开，完成后折叠。除旋转图标外没有其他动效，读者偏好减少动效时旋转也停止。
+
+## 示例
+
+```json
+{
+  "root": "thinking",
+  "elements": {
+    "thinking": {
+      "type": "Thinking",
+      "props": {
+        "state": "done",
+        "duration": 3800,
+        "steps": [
+          { "label": "Read order stats", "detail": "1,284 orders" },
+          { "label": "Compared with last week", "status": "done" }
+        ],
+        "text": "Payments look like the cause, the order count held steady."
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `state` | `streaming` 处理中（转圈、计时、展开步骤），`done` 完成（对勾和用时，默认收起）。 | `"streaming" \| "done"` | `"streaming"` |
+| `label` | 处理中显示的阶段名，如 `正在搜索订单`。 | `string` |  |
+| `text` | 自由的推理文字（Markdown），展开后显示在步骤下方。 | `string` |  |
+| `steps` | 步骤列表，每项 `{ label, detail?, icon?, status? }`，`status` 为 `running`、`done` 或 `error`；数据到达时逐步追加。 字段：`id?`、`label`、`detail?`、`icon?`、`status?` | `object[]` |  |
+| `duration` | 用时（毫秒），完成后显示为“思考了 12 秒”；不填时使用组件看到的处理时长。 | `number` |  |
+| `open` | 是否展开步骤；不填时处理中展开、完成后收起。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `boolean` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`openChange`
+- 插槽：无

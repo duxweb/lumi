@@ -1,0 +1,223 @@
+{
+  "root": "demo",
+  "state": {
+    "product": {
+      "images": [],
+      "manual": []
+    },
+    "profile": {
+      "avatar": []
+    }
+  },
+  "elements": {
+    "demo": {
+      "type": "Fragment",
+      "props": {},
+      "children": [
+        "images-card",
+        "variants-grid"
+      ]
+    },
+    "images-card": {
+      "type": "Card",
+      "props": {
+        "title": {
+          "$t": "Gallery upload"
+        },
+        "description": {
+          "$t": "Upload is connected to the Lumi upload service. This endpoint answers after two seconds, so per-file progress and Cancel are visible; the returned URLs are written to /product/images"
+        }
+      },
+      "children": [
+        "images"
+      ]
+    },
+    "images": {
+      "type": "Upload",
+      "props": {
+        "ariaLabel": {
+          "$t": "Product images"
+        },
+        "accept": "image/*",
+        "multiple": true,
+        "maxFiles": 6,
+        "preview": true,
+        "maxSize": 5242880,
+        "value": {
+          "$bindState": "/product/images"
+        },
+        "upload": {
+          "url": "/upload?slow=1"
+        }
+      },
+      "children": []
+    },
+    "variants-grid": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 360,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "manual-card",
+        "avatar-card"
+      ]
+    },
+    "manual-card": {
+      "type": "Card",
+      "props": {
+        "title": {
+          "$t": "Rejected files"
+        },
+        "description": {
+          "$t": "The compact button variant. A rejection shows on the file row with its reason, and nothing is written to state"
+        }
+      },
+      "children": [
+        "manual-field",
+        "notes-field"
+      ]
+    },
+    "manual": {
+      "type": "Upload",
+      "props": {
+        "ariaLabel": {
+          "$t": "Product manual"
+        },
+        "variant": "button",
+        "accept": "application/pdf,text/plain",
+        "value": {
+          "$bindState": "/product/manual"
+        },
+        "upload": {
+          "url": "/upload?fail=1"
+        }
+      },
+      "children": []
+    },
+    "avatar-card": {
+      "type": "Card",
+      "props": {
+        "title": {
+          "$t": "Image tiles"
+        },
+        "description": {
+          "$t": "The image variant holds one file in a tile; hover or focus it to replace or remove the picture"
+        }
+      },
+      "children": [
+        "avatar-tiles"
+      ]
+    },
+    "avatar": {
+      "type": "Upload",
+      "props": {
+        "ariaLabel": {
+          "$t": "Profile picture"
+        },
+        "variant": "image",
+        "shape": "circle",
+        "accept": "image/*",
+        "maxSize": 2097152,
+        "value": {
+          "$bindState": "/profile/avatar"
+        },
+        "upload": {
+          "url": "/upload?slow=1"
+        }
+      },
+      "children": []
+    },
+    "manual-field": {
+      "type": "FormField",
+      "props": {
+        "name": "manual",
+        "label": {
+          "$t": "Server limit · always answers 413"
+        }
+      },
+      "children": [
+        "manual"
+      ]
+    },
+    "notes-field": {
+      "type": "FormField",
+      "props": {
+        "name": "notes",
+        "label": {
+          "$t": "Browser limit · 100 KB"
+        }
+      },
+      "children": [
+        "notes"
+      ]
+    },
+    "notes": {
+      "type": "Upload",
+      "props": {
+        "ariaLabel": {
+          "$t": "Release notes"
+        },
+        "variant": "button",
+        "accept": "application/pdf,text/plain",
+        "maxSize": 102400,
+        "upload": {
+          "url": "/upload"
+        }
+      },
+      "children": []
+    },
+    "avatar-field": {
+      "type": "FormField",
+      "props": {
+        "name": "avatar",
+        "label": {
+          "$t": "Profile picture"
+        }
+      },
+      "children": [
+        "avatar"
+      ]
+    },
+    "logo-field": {
+      "type": "FormField",
+      "props": {
+        "name": "logo",
+        "label": {
+          "$t": "Store logo"
+        }
+      },
+      "children": [
+        "logo"
+      ]
+    },
+    "logo": {
+      "type": "Upload",
+      "props": {
+        "ariaLabel": {
+          "$t": "Store logo"
+        },
+        "variant": "image",
+        "shape": "square",
+        "accept": "image/*",
+        "maxSize": 2097152,
+        "upload": {
+          "url": "/upload?slow=1"
+        }
+      },
+      "children": []
+    },
+    "avatar-tiles": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 160,
+        "gap": "md"
+      },
+      "children": [
+        "avatar-field",
+        "logo-field"
+      ]
+    }
+  }
+}

@@ -1,0 +1,297 @@
+---
+title: "权限"
+description: "AccessProvider 是什么、Lumi 在哪里问它、默认规则怎么把 resource 和 action 拼成权限串，以及怎么接自己的权限接口或角色规则。"
+---
+
+## 干什么
+
+`AccessProvider` 只回答一个问题：当前用户能不能对某个资源做某个动作。
+
+```ts
+import type { CanParams, CanResponse } from '@duxweb/lumi'
+
+export interface MyAccessProvider {
+  // 例如 { resource: 'system/users', action: 'delete' } → { can: false, reason: '没有删除权限' }
+  can: (params: CanParams) => Promise<CanResponse>
+}
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `resource` | 资源名，如 `orders`、`system/users`。首尾的 `/` 会先去掉。 |
+| `action` | 动作，如 `list`、`show`、`create`、`edit`、`delete`，也可以是任意自定义的名字。 |
+| `params` | 可选，额外的条件，如 `{ id: 12 }`，按记录判断时用。 |
+
+返回 `{ can, reason? }`。`reason` 是不允许的原因，`CanAccess` 会把它写进状态，页面可以显示出来。
+
+登录归 [AuthProvider](/guide/advanced/auth/)，权限归 `AccessProvider`，两者是同级的 provider。同类框架里，refine 也把权限放在单独的 `accessControlProvider`；react-admin 则把 `canAccess` 放在 `authProvider` 里。Lumi 选择分开：换登录方式不必重写权限规则，权限规则也可以单独接一个权限服务。
+
+隐藏菜单和按钮只是体验。用户仍然可以直接调用接口，后端必须自己检查权限。
+
+## Lumi 在哪里问它
+
+| 位置 | 怎么用 |
+| --- | --- |
+| 菜单 | manifest 路由的 `access`（如 `{ "resource": "orders", "action": "list" }`）不通过时，菜单项隐藏。`action` 不写时是 `list`。 |
+| 路由 | 同一个 `access` 不通过时，直接打开地址显示 403 页面。 |
+| JSON 的 `CanAccess` 元素 | 通过时显示子元素，否则显示 `fallback` 插槽；写了 `resultPath` 还会把 `{ can, reason, loading }` 写进状态。 |
+| React | `useCan({ resource, action })` 和 `<LumiCanAccess>`。 |
+
+没有配置 `AccessProvider` 时，所有检查都通过。结果会缓存，登录、退出、切换账号时一起清空。
+
+## 在页面里用
+
+把删除按钮包在 `CanAccess` 里，没有权限就不显示：
+
+```jsonc
+{
+  "root": "can-delete",
+  "elements": {
+    "can-delete": {
+      "type": "CanAccess",
+      // 能删除 orders 时才显示里面的按钮
+      "props": { "resource": "orders", "action": "delete" },
+      "slots": { "fallback": ["no-access"] },
+      "children": ["delete"]
+    },
+    "delete": {
+      "type": "Button",
+      "props": { "label": "删除", "appearance": "danger" },
+      "children": []
+    },
+    // 没有权限时显示这一句
+    "no-access": {
+      "type": "Text",
+      "props": { "text": "没有删除权限", "variant": "muted" },
+      "children": []
+    }
+  }
+}
+```
+
+想让按钮显示但不可点击时，写 `resultPath`，再让按钮读它：
+
+```jsonc
+{
+  "root": "page",
+  // 检查结果的初始值：还没查到时按没有权限处理
+  "state": { "access": { "edit": { "can": false } } },
+  "elements": {
+    "page": {
+      "type": "Stack",
+      "props": {},
+      "children": ["check", "edit"]
+    },
+    // 只检查、不包内容：结果写到 /access/edit
+    "check": {
+      "type": "CanAccess",
+      "props": {
+        "resource": "orders",
+        "action": "edit",
+        "resultPath": "/access/edit"
+      },
+      "children": []
+    },
+    // 编辑按钮：读检查结果
+    "edit": {
+      "type": "Button",
+      "props": {
+        "label": "编辑",
+        // 没有权限时禁用
+        "disabled": {
+          "$cond": { "$state": "/access/edit/can" },
+          "$then": false,
+          "$else": true
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+React 里：
+
+```tsx
+import { LumiCanAccess, useCan } from '@duxweb/lumi'
+
+export function OrderActions(): React.ReactNode {
+  // 问一次：能不能编辑 orders
+  const edit = useCan({ resource: 'orders', action: 'edit' })
+  return (
+    <>
+      {/* 没有权限时按钮禁用 */}
+      <button type="button" disabled={!edit.data?.can}>
+        编辑
+      </button>
+      {/* 有权限才显示里面的按钮，否则显示 fallback */}
+      <LumiCanAccess
+        resource="orders"
+        action="delete"
+        fallback={<span>没有删除权限</span>}
+      >
+        <button type="button">删除</button>
+      </LumiCanAccess>
+    </>
+  )
+}
+```
+
+## 默认规则
+
+默认的 `AccessProvider` 由 [createSimpleAuthProvider](/guide/advanced/auth/#默认实现createsimpleauthprovider) 提供。它读登录或 `me` 接口返回的 `permissions` 字符串数组，把 `{ resource, action }` 拼成一个权限串去匹配：
+
+1. 资源名里的 `/` 换成分隔符，再按 `format`（默认 `{resource}{separator}{action}`）拼起来。
+2. 用分隔符把双方切成几段，逐段比较。
+3. 后端给的权限里，任何一段写 `*` 匹配这一段的任意值；最后一段是 `*` 时，匹配它下面的所有层级。
+
+分隔符是 `:`（默认）时：
+
+| 检查 | 拼成 | 能通过的权限 |
+| --- | --- | --- |
+| `orders` + `list` | `orders:list` | `orders:list`、`orders:*`、`*:list`、`*`、`*:*` |
+| `system/users` + `delete` | `system:users:delete` | `system:users:delete`、`system:users:*`、`system:*`、`*:users:delete`、`*` |
+| `system/users` + `delete` | `system:users:delete` | 不能通过：`system`、`system:users`（没有 `*` 不会覆盖下层）、`system:roles:*` |
+
+`action` 以 `field:` 开头（如 `field:price`）时，只要对这个资源有任何一项权限就算通过。
+
+### 配置
+
+CDN 版写在 `config.json` 顶层的 `access`，和登录的 `auth` 分开，多个后台可以各用一个：
+
+```jsonc
+{
+  "data": { "url": "/api" },
+  "panels": { "manifest": "/manifest.json" },
+  // 后端用 system.users.delete 这样的点号格式
+  "access": { "separator": "." }
+}
+```
+
+npm 里传给 `createSimpleAuthProvider` 的 `permission`：
+
+```ts
+import { createSimpleAuthProvider } from '@duxweb/lumi'
+
+// 后端的权限串是 delete:system:users，动作在前面
+export const auth = createSimpleAuthProvider({
+  apiUrl: '/api',
+  permission: { separator: ':', format: '{action}{separator}{resource}' },
+})
+```
+
+| 选项 | 说明 |
+| --- | --- |
+| `separator` | `:`（默认）或 `.`。 |
+| `format` | 拼法模板，可用 `{resource}`、`{action}`、`{separator}`，必须包含前两个。 |
+
+后端返回格式见 [对接后端](/guide/backend-auth/#权限标识)，全部配置见 [项目配置](/guide/config/)。
+
+## 自定义
+
+### 从单独的接口读权限列表
+
+登录接口不返回权限、而是另有一个权限接口时，自己请求，再用 `createPermissionMatcher` 复用默认的匹配规则：
+
+```ts
+import type { AccessProvider, HttpClient } from '@duxweb/lumi'
+import { createPermissionMatcher } from '@duxweb/lumi'
+
+// 应用的请求客户端
+declare const http: HttpClient
+
+// 复用默认的匹配规则，分隔符用点号
+const matches = createPermissionMatcher({ separator: '.' })
+// 缓存这次会话的权限列表
+let loading: Promise<string[]> | undefined
+
+// 一次会话只请求一次；登录、退出后调用 reset
+const permissions = (): Promise<string[]> => {
+  loading ??= http
+    .request<{ data: string[] }>('/rbac/permissions')
+    .then((body) => body.data)
+    // 失败时不缓存，下次再试
+    .catch((error: unknown) => {
+      loading = undefined
+      throw error
+    })
+  return loading
+}
+
+export const accessProvider: AccessProvider = {
+  // 用取回的列表判断
+  can: async ({ resource, action }) => ({
+    can: matches(await permissions(), { resource, action }),
+  }),
+}
+// 清掉缓存
+export const reset = (): void => {
+  loading = undefined
+}
+```
+
+`createPermissionMatcher(options)` 返回 `(permissions, { resource, action }) => boolean`，选项和上面的 `permission` 相同。缓存要在登录、退出后清掉，比如在自己的 `AuthProvider` 的 `login`、`logout` 里调用 `reset()`。
+
+### 按角色和条件判断
+
+后端返回角色，前端按规则表判断，类似 CASL、Casbin 的写法；`params` 可以带上记录，按记录判断：
+
+```ts
+import type { AccessProvider, AuthProvider } from '@duxweb/lumi'
+
+// 应用的 AuthProvider，用来读当前用户
+declare const authProvider: AuthProvider
+
+// 一条规则：哪个资源、哪些动作
+interface Rule {
+  resource: string
+  actions: string[]
+  // 可选的条件：只对一部分记录生效，比如自己的订单
+  when?: (params: Record<string, unknown>, user: { id: number }) => boolean
+}
+
+// 每个角色的规则
+const rules: Record<string, Rule[]> = {
+  // 管理员：全部允许
+  admin: [{ resource: '*', actions: ['*'] }],
+  sales: [
+    // 销售：能看和新建订单
+    { resource: 'orders', actions: ['list', 'show', 'create'] },
+    // 只能编辑自己负责的订单
+    {
+      resource: 'orders',
+      actions: ['edit'],
+      when: (params, user) => params.ownerId === user.id,
+    },
+  ],
+}
+
+export const roleAccessProvider: AccessProvider = {
+  can: async ({ resource, action, params = {} }) => {
+    // 当前用户和他的角色
+    const user = await authProvider.getIdentity?.<{ id: number; role: string }>()
+    // 有一条规则同时匹配资源、动作和条件就允许
+    const allowed = (rules[user?.role ?? ''] ?? []).some(
+      (rule) =>
+        (rule.resource === '*' || rule.resource === resource) &&
+        (rule.actions.includes('*') || rule.actions.includes(action)) &&
+        (!rule.when || rule.when(params, user!)),
+    )
+    return allowed ? { can: true } : { can: false, reason: '当前角色不能执行这个操作' }
+  },
+}
+```
+
+### 注册到应用
+
+- **npm**：交给 `createLumi({ accessProvider })`。
+- **Admin 的 `mountAdmin`**：扩展选项里写 `accessProviders: { default: provider }`（键是 `access` 配置的名字），见 [Admin 应用](/guide/advanced/admin/)。
+- **CDN 扩展模块**：模块返回 `{ accessProviders: { 名称: provider } }`，按 `access` 的名字替换，和 `authProviders` 一样，见 [换成自己的登录](/guide/extend-backend/#换成自己的登录)。
+
+在 Admin 里，只要换了 `authProvider`，默认的 `accessProvider` 就不再使用，因为它读的是默认登录的权限列表。这时不另给 `accessProvider`，菜单和路由不再按权限过滤，所有检查都通过。
+
+## 相关
+
+- `useCan(params)`：返回 TanStack Query 的结果，`data` 是 `{ can, reason }`。见 [数据 hooks](/guide/advanced/hooks/)。
+- [CanAccess](/components/connected/can-access/) 元素。
+- 接口的完整类型见 [AccessProvider](/core/providers/access-provider/)，各 provider 的分工见 [架构](/guide/advanced/architecture/)。

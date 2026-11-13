@@ -1,0 +1,71 @@
+---
+title: "嵌入网页"
+description: "把报表平台、老系统这类已有的网页挂进后台：整页嵌入、页面里的一块、限制能嵌入的站点，以及登录和安全上的限制。"
+---
+
+报表平台、老系统这类已有的网页，可以直接挂进后台，不用重写。
+
+## 整页嵌入
+
+路由的 `page` 写 `iframe`，网页占满整个内容区，菜单、标签页、权限照常生效：
+
+```jsonc
+{
+  "app": { "id": "shop", "title": "示例商城" },
+  "routes": [
+    {
+      "name": "sales-report",
+      "path": "/reports/sales",
+      // 整个内容区显示这个网页
+      "page": { "iframe": "https://bi.example.com/sales" },
+      "menu": { "label": "销售报表", "icon": "file-text" }
+    }
+  ]
+}
+```
+
+## 页面里的一块
+
+用 `Iframe` 元素，放在卡片或弹窗里，地址可以按状态拼：
+
+```jsonc
+{
+  "root": "report",
+  "elements": {
+    "report": {
+      "type": "Iframe",
+      "props": {
+        // 当前订单的 BI 页面
+        "src": {
+          "$template": "https://bi.example.com/order/${/route/params/id}"
+        },
+        // 读屏用的标题和高度
+        "title": "订单分析",
+        "height": 600
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 限制能嵌入的站点
+
+在 `config.json` 根上写 `frameOrigins`，`page.iframe` 和 `Iframe` 元素都只能显示列出的站点和本站：
+
+```jsonc
+{
+  "data": { "url": "https://api.example.com" },
+  "panels": { "manifest": "/manifest.json" },
+  // 只允许嵌入这两个站点
+  "frameOrigins": ["https://bi.example.com", "https://old.example.com"]
+}
+```
+
+## 注意
+
+- 地址只能是 https 或本站路径。`http:`、`javascript:`、`data:`，以及不在 `frameOrigins` 里的站点，都显示"这个地址不能在这里显示"，不会加载。不写 `frameOrigins` 时，所有 https 站点都可以。
+- 默认加沙箱，允许脚本、表单、弹窗和下载。对方页面需要跳转整个窗口时，给 `Iframe` 写 `"sandbox": false`，只对可信页面这样做。
+- iframe 里的页面拿不到后台的登录 token。对方也要登录时，要么用 cookie 且和后台同域，要么由后端签发短期票据拼在地址里（如 `?ticket=…`）。不要把 token 直接拼进地址。
+- 对方用 `X-Frame-Options` 或 CSP 的 `frame-ancestors` 禁止被嵌入时，浏览器会显示空白，前端没法绕过，要对方放开。
+- `page.iframe` 的相对地址相对于 manifest。

@@ -1,0 +1,51 @@
+---
+title: "Tooltip"
+description: "在唯一子元素（如图标按钮）上悬停或键盘聚焦时显示的简短提示。"
+---
+
+<ComponentPreview name="Tooltip" />
+
+在唯一子元素（如图标按钮）上悬停或键盘聚焦时显示的简短提示。完整名称写在子元素上，提示只做补充。
+
+## 示例
+
+```json
+{
+  "root": "tooltip-1",
+  "elements": {
+    "tooltip-1": {
+      "type": "Tooltip",
+      "props": { "content": "Download as CSV" },
+      "children": ["tooltip-1-button"]
+    },
+    "tooltip-1-button": {
+      "type": "Button",
+      "props": {
+        "label": "Export",
+        "icon": "download",
+        "shape": "square",
+        "appearance": "outline"
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `content`（必填） | 提示文字，悬停或键盘聚焦子元素时显示。 | `string` |  |
+| `side` | 提示出现在子元素的哪一侧：`top`、`right`、`bottom`、`left`。 | `"top" \| "right" \| "bottom" \| "left" \| null` | `"top"` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：`default`

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "Lumi",
+  "description": "JSON-driven admin frontend for backends and AI, built on native json-render. Pages, menus and themes are JSON validated against a component Catalog; a prebuilt CDN script renders them as a full React admin with data, forms, auth and an AI assistant.",
+  "branch": "main",
+  "folders": ["apps/site/src/content/docs"],
+  "excludeFolders": ["tasks", "plan", "packages", "apps/admin", "apps/json-api", "examples", "e2e", "scripts"],
+  "excludeFiles": ["AGENTS.md", "CLAUDE.md", "CHANGELOG.md"],
+  "rules": [
+    "Write pages as native json-render Spec JSON: root, elements with type, props and children, and optional state.",
+    "Only use component types and actions listed in the Lumi Catalog; check each component's page for its props and events.",
+    "Read state with $state and two-way bind inputs with $bindState; load backend data with a Query element and its resultPath.",
+    "Save forms with the submitForm action instead of chaining validation, create and close actions; an action array is not a transaction.",
+    "Keep JSON serializable: no functions, expressions or component instances.",
+    "Validate every page with npx -y @duxweb/lumi-check page.json (add --catalog for a custom Catalog) and fix issues by their JSON path.",
+    "For a project without a build step, load @duxweb/lumi-admin dist/base/lumi-admin.js from a CDN with config.json, manifest.json and page JSON files."
+  ]
+}

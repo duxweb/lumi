@@ -1,0 +1,132 @@
+---
+title: "仪表盘"
+description: "用 DashboardPage、指标卡和图表做汇总页面：数据由 Query 读出来再绑定，以及每种图适合什么数据。"
+---
+
+仪表盘是汇总数字的只读页面。和[详情页](/guide/detail/)一样，`Query` 把数据读进页面状态，指标卡和图表绑定这些状态。
+
+`DashboardPage` 顶部是一排指标卡，下面是若干面板，每个面板是一个 `DashboardCard`：
+
+```jsonc
+{
+  "root": "page",
+  "state": {
+    "stats": { "data": null },
+    "orders": { "data": [], "loading": true }
+  },
+  "elements": {
+    "page": {
+      "type": "DashboardPage",
+      "props": {
+        "title": "销售概览",
+        "description": "本月的收入、订单和最新动态。",
+        // 顶部的指标卡
+        "metrics": [
+          {
+            "key": "revenue",
+            "label": "收入",
+            "value": "131.5",
+            "unit": "万元",
+            // 变化幅度和它的颜色
+            "change": "+8.2%",
+            "tone": "success",
+            // 最近几期的数值，画成迷你柱状图
+            "series": [88, 101, 109, 117, 112, 124, 131]
+          },
+          {
+            "key": "orders",
+            "label": "订单",
+            "value": "1,086",
+            "change": "+12.2%",
+            "tone": "success"
+          }
+        ]
+      },
+      "children": ["stats-query", "revenue", "latest"]
+    },
+    // 统计接口：不属于增删改查，用 custom 请求
+    "stats-query": {
+      "type": "Query",
+      "props": {
+        "resource": "orders",
+        "operation": "custom",
+        "url": "/orders/stats",
+        "resultPath": "/stats"
+      },
+      "children": []
+    },
+    // 一个面板：标题加图表，占满一行
+    "revenue": {
+      "type": "DashboardCard",
+      "props": {
+        "title": "月收入",
+        "description": "单位：万元",
+        "span": "full"
+      },
+      "children": ["revenue-chart"]
+    },
+    "revenue-chart": {
+      "type": "Chart",
+      "props": {
+        "type": "area",
+        "ariaLabel": "月收入",
+        "height": 240,
+        // 数据点来自统计接口：[{ label, value }]
+        "points": { "$state": "/stats/data/monthly" }
+      },
+      "children": []
+    },
+    // 另一个面板：最新的几条订单
+    "latest": {
+      "type": "DashboardCard",
+      "props": { "title": "最新订单", "span": "full", "flush": true },
+      "children": ["orders-query", "orders"]
+    },
+    "orders-query": {
+      "type": "Query",
+      "props": {
+        "resource": "orders",
+        "pagination": { "page": 1, "pageSize": 5 },
+        "sorters": [{ "field": "id", "order": "desc" }],
+        "resultPath": "/orders"
+      },
+      "children": []
+    },
+    "orders": {
+      "type": "Table",
+      "props": {
+        "rows": { "$state": "/orders/data" },
+        "loading": { "$state": "/orders/loading" },
+        "columns": [
+          { "field": "number", "label": "订单号" },
+          { "field": "customer", "label": "客户" }
+        ]
+      },
+      "children": []
+    }
+  }
+}
+```
+
+这里的统计接口 `GET /orders/stats` 返回 `{ "data": { "monthly": [{ "label": "1月", "value": 96 }, …] } }`，`Query` 把 `data` 写到 `/stats/data`。
+
+- 指标卡的数字也可以绑定：`"value": { "$state": "/stats/data/revenue" }`。数字的格式由后端给好，前端不做计算。
+- `DashboardCard` 的 `span` 决定面板占多宽，`flush` 让表格贴着面板的边。
+- 配了实时推送时，`Query` 读的列表会在数据变化后自动刷新，见 [项目配置](/guide/config/#data)。
+
+## 选哪种图
+
+| 组件 | 适合 |
+| --- | --- |
+| [Chart](/components/connected/chart/) | 趋势和占比：面积、折线、柱状、环形 |
+| [BarChart](/components/connected/bar-chart/) | 少量分类或最近几天的对比 |
+| [FunnelChart](/components/connected/funnel-chart/) | 转化漏斗：每一步剩下多少 |
+| [Pipeline](/components/connected/pipeline/) | 一批东西分布在哪几个阶段，如订单按状态 |
+| [ProportionList](/components/connected/proportion-list/) | 排行：每一项的数值和占比 |
+| [MatrixChart](/components/connected/matrix-chart/) | 按天的点阵，看一段时间的疏密 |
+| [MetricCard](/components/connected/metric-card/) | 一个核心数字，带变化幅度 |
+| [StatStrip](/components/connected/stat-strip/) | 表格上方的一排小统计 |
+
+`Chart` 的渲染引擎按需加载，没用到它的页面不会下载。图表都要写 `ariaLabel`，读屏软件靠它读出图表的名字。
+
+完整的例子在在线演示的“仪表盘”里，可以在 [Playground](/playground/) 的“销售分析页”示例里直接改。

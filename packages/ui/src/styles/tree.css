@@ -1,0 +1,121 @@
+/* Tree: nested rows indented per level; groups open by animating their row track. */
+.lumi-tree {
+  --lumi-tree-indent: 1.25rem;
+  --lumi-tree-row: var(--lumi-control-md);
+  --lumi-tree-toggle: 1.25rem;
+  display: grid;
+  min-width: 0;
+  gap: var(--lumi-space-1);
+  font-size: var(--lumi-fs-control);
+  color: var(--foreground);
+}
+.lumi-tree[data-size="sm"] { --lumi-tree-row: var(--lumi-control-sm); --lumi-tree-indent: 1rem; font-size: var(--lumi-fs-label); }
+.lumi-tree[data-disabled] { opacity: .5; }
+.lumi-tree__search { display: flex; align-items: center; gap: var(--lumi-space-2); padding-inline-start: var(--lumi-control-px-md); border: 1px solid var(--input); border-radius: var(--lumi-radius-control); background: transparent; }
+.lumi-tree__search:where([data-theme="dark"] *) { background: color-mix(in oklab, var(--input) 30%, transparent); }
+.lumi-tree__search:focus-within { border-color: var(--ring); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent); }
+.lumi-tree__search > svg { width: 1rem; height: 1rem; flex-shrink: 0; color: var(--muted-foreground); }
+.lumi-tree__search input { height: calc(var(--lumi-tree-row) - 2px); border: 0; background: transparent; padding-inline-start: 0; }
+.lumi-tree__search input:focus-visible { box-shadow: none; }
+.lumi-tree__list, .lumi-tree__list ul { list-style: none; margin: 0; padding: 0; }
+.lumi-tree__list { display: grid; gap: 1px; min-width: 0; }
+.lumi-tree__list ul { display: grid; gap: 1px; min-height: 0; overflow: hidden; }
+.lumi-tree__group > ul { padding-top: 1px; }
+.lumi-tree__item { position: relative; outline: none; }
+.lumi-tree__row {
+  display: flex;
+  align-items: center;
+  gap: var(--lumi-space-1);
+  min-height: var(--lumi-tree-row);
+  padding-inline: calc(var(--lumi-space-1) + var(--lumi-tree-level, 0) * var(--lumi-tree-indent)) var(--lumi-control-px-sm);
+  cursor: default;
+  user-select: none;
+  isolation: isolate;
+}
+/* The highlight starts at the node's own indent, so ancestors' lines stay outside it and the row's own segments paint above it. */
+.lumi-tree__row::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline: calc(var(--lumi-tree-level, 0) * var(--lumi-tree-indent)) 0;
+  z-index: -1;
+  border-radius: var(--lumi-radius-item);
+  pointer-events: none;
+}
+.lumi-tree__row:hover { color: var(--lumi-hover-fg); }
+.lumi-tree__row:hover::before { background: var(--lumi-hover-bg); }
+.lumi-tree__row[data-selected] { color: var(--lumi-selected-fg); }
+.lumi-tree__row[data-selected]::before { background: var(--lumi-selected-bg); }
+.lumi-tree__row[data-disabled] { opacity: .45; pointer-events: none; }
+.lumi-tree__item:focus-visible > .lumi-tree__row::before { box-shadow: inset 0 0 0 2px var(--ring); }
+.lumi-tree__list[aria-readonly="true"] .lumi-tree__row:hover:not([data-selected]) { color: inherit; }
+.lumi-tree__list[aria-readonly="true"] .lumi-tree__row:hover:not([data-selected])::before { background: transparent; }
+.lumi-tree__toggle { display: inline-flex; width: var(--lumi-tree-toggle); height: var(--lumi-tree-toggle); flex-shrink: 0; align-items: center; justify-content: center; border-radius: var(--lumi-radius-sm); color: var(--muted-foreground); }
+.lumi-tree__toggle[data-expandable]:hover { color: var(--foreground); }
+.lumi-tree__toggle > svg { width: .875rem; height: .875rem; transition: transform 150ms ease; }
+.lumi-tree__toggle > svg[data-open] { transform: rotate(90deg); }
+.lumi-tree__toggle > svg:dir(rtl):not([data-open]) { transform: rotate(180deg); }
+.lumi-tree__icon { width: 1rem; height: 1rem; flex-shrink: 0; color: var(--muted-foreground); }
+.lumi-tree__row[data-selected] .lumi-tree__icon { color: currentColor; }
+.lumi-tree__label { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lumi-tree__match { border-radius: 2px; background: color-mix(in oklab, var(--lumi-ui-tone-warning) 24%, transparent); color: inherit; }
+.lumi-tree__status { display: flex; align-items: center; justify-content: center; gap: var(--lumi-space-2); min-height: var(--lumi-band-height); margin: 0; color: var(--muted-foreground); font-size: var(--lumi-fs-label); }
+
+.lumi-tree__group { display: grid; grid-template-rows: 1fr; position: relative; transition: grid-template-rows 180ms ease; }
+.lumi-tree__group[data-state="closed"] { grid-template-rows: 0fr; }
+
+/*
+ * Connectors, one segment per indent column of each row. Segments reach 1px
+ * above the row to bridge the gap between rows; the tick stops just before the
+ * chevron, or runs across a leaf's empty toggle to its content.
+ */
+.lumi-tree__row { position: relative; --lumi-tree-tick: calc(var(--lumi-tree-indent) - var(--lumi-tree-toggle) / 2 - 1px); --lumi-tree-line-color: color-mix(in oklab, var(--border), var(--muted-foreground) 12%); }.lumi-tree__row[data-leaf] { --lumi-tree-tick: calc(var(--lumi-tree-indent) + var(--lumi-tree-toggle) / 2 - 3px); }
+.lumi-tree__guide {
+  position: absolute;
+  top: -1px;
+  bottom: 0;
+  inset-inline-start: calc(var(--lumi-space-1) + var(--lumi-tree-column) * var(--lumi-tree-indent) + var(--lumi-tree-toggle) / 2 - .5px);
+  width: var(--lumi-tree-tick);
+  pointer-events: none;
+}
+.lumi-tree__guide::before, .lumi-tree__guide::after { content: ""; position: absolute; inset-inline-start: 0; border-color: var(--lumi-tree-line-color); border-style: solid; border-width: 0; }
+.lumi-tree__guide[data-guide="line"]::before, .lumi-tree__guide[data-guide="tee"]::before { top: 0; bottom: 0; border-inline-start-width: 1px; }
+.lumi-tree__guide[data-guide="tee"]::after { top: calc(50% + .5px); inset-inline-end: 0; border-top-width: 1px; }
+.lumi-tree__guide[data-guide="end"]::before { top: 0; height: calc(50% + 1.5px); inset-inline-end: 0; border-inline-start-width: 1px; border-bottom-width: 1px; border-end-start-radius: 4px; }
+.lumi-tree__guide[data-guide="stem"] { top: calc(50% + var(--lumi-tree-toggle) / 2 - 2px); }
+.lumi-tree__guide[data-guide="stem"]::before { top: 0; bottom: 0; border-inline-start-width: 1px; }
+
+/* Check mark drawn like Checkbox, without being a focus stop of its own. */
+.lumi-tree__check {
+  position: relative;
+  display: inline-flex;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--input);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--brand-foreground);
+}
+.lumi-tree__check:where([data-theme="dark"] *) { background: color-mix(in oklab, var(--input) 30%, transparent); }
+.lumi-tree__check > svg { width: .75rem; height: .75rem; }
+.lumi-tree__check > i { display: block; width: .5rem; height: 2px; border-radius: 1px; background: var(--brand); }
+.lumi-tree__check[data-state="checked"] { border-color: var(--brand); background: var(--brand); }
+.lumi-tree__check[data-state="indeterminate"] { border-color: var(--brand); }
+.lumi-tree__check[data-disabled] { opacity: .5; }
+.lumi-tree[data-invalid] .lumi-tree__check[data-state="unchecked"] { border-color: var(--destructive); }
+
+/* TreeSelect panel and the inline cascader columns. */
+.lumi-tree-select__popover { display: flex; flex-direction: column; min-width: 14rem; }
+.lumi-tree-select__body { min-height: 0; max-height: 18rem; overflow-y: auto; padding: var(--lumi-menu-padding); }
+/* Inline panels have no fill of their own: a hairline frame on whatever surface holds them. */
+.lumi-cascader-panel { display: flex; width: max-content; max-width: 100%; align-self: flex-start; border: 1px solid var(--border); border-radius: var(--lumi-radius-control); background: transparent; }
+.lumi-cascader-panel[data-invalid] { border-color: var(--destructive); }
+.lumi-cascader-panel[data-disabled] { opacity: .5; }
+.lumi-cascader-panel > [data-slot="cascader-columns"] { min-width: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lumi-tree__group, .lumi-tree__toggle > svg { transition: none; }
+}

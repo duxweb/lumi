@@ -1,0 +1,204 @@
+---
+title: "菜单与路由"
+description: "manifest.json 描述整个后台：应用信息、菜单分组、路由、页面来源、权限，以及地址里的参数。"
+---
+
+`manifest.json` 有两部分：`app` 是应用本身，`routes` 是路由和菜单。每个路由的 `page` 是页面 JSON 的地址（`src`）或直接内嵌（`spec`）。
+
+```jsonc
+{
+  // 应用设置
+  "app": {
+    "id": "shop",
+    "title": "示例商城",
+    // 菜单布局：单栏
+    "layout": "single",
+    // 打开过的页面显示成标签页
+    "tabs": true
+  },
+  // 路由：每一项是一个页面
+  "routes": [
+    // 访问首页时跳到订单
+    { "path": "/", "redirect": "/orders" },
+    {
+      "name": "orders",
+      "path": "/orders",
+      "page": { "src": "/pages/orders.json" },
+      // 有 orders 的 list 权限才显示
+      "access": { "resource": "orders", "action": "list" },
+      // 侧边菜单里的样子
+      "menu": {
+        "label": "订单",
+        "icon": "shopping-cart",
+        // 数字小的排在前面
+        "order": 10,
+        // 同名分组的菜单放在一起
+        "group": { "name": "sales", "label": "销售" }
+      }
+    },
+    {
+      "name": "customers",
+      "path": "/customers",
+      "page": { "src": "/pages/customers.json" },
+      "menu": {
+        "label": "客户",
+        "icon": "users",
+        "order": 20,
+        "group": { "name": "sales", "label": "销售" }
+      }
+    }
+  ]
+}
+```
+
+## app
+
+| 字段 | 说明 |
+| --- | --- |
+| `id` | 应用标识，用于本地缓存的命名空间，必填。 |
+| `title`、`subtitle`、`logo` | 侧栏顶部的名称、副标题和图标地址。要翻译时用 `titleKey`、`subtitleKey`。 |
+| `documentTitle` | 浏览器标签页的标题模板，`{page}` 是当前路由的菜单名，`{app}` 是 `title`。默认 `"{page} · {app}"`，`false` 表示不修改。 |
+| `layout` | `single` 一栏菜单；`dual` 左侧模块栏加菜单栏，菜单项多时用。 |
+| `tabs` | 打开过的页面显示为标签。 |
+| `search` | 菜单搜索放在 `sidebar`（默认）、`header` 或 `none`。 |
+| `locales` | 账号菜单里可切换的语言，两种以上才显示，见 [切换语言](/guide/i18n/#切换语言)。 |
+| `workspaces`、`workspace` | 可切换的工作区（租户、店铺、团队），见下文。 |
+| `header` | 页头右侧的按钮，见下文。 |
+| `assistant` | AI 助手面板，见 [AI 助手](/guide/assistant/)。 |
+
+### 工作区
+
+`workspaces` 有两个以上时，侧栏顶部变成切换器：
+
+```jsonc
+{
+  "app": {
+    "id": "shop",
+    "title": "示例商城",
+    // 可切换的工作区；value 就是请求头 X-Tenant 的值
+    "workspaces": [
+      { "value": "north", "label": "华北店", "description": "北京、天津" },
+      { "value": "south", "label": "华南店", "logo": "/logos/south.svg" }
+    ],
+    // 第一次打开时选中的工作区
+    "workspace": "north"
+  },
+  "routes": []
+}
+```
+
+切换后，之后的每个请求都带 `X-Tenant: south`，所有列表和详情重新请求，读者的选择保存在浏览器里。后端按这个头返回对应工作区的数据。
+
+### 页头按钮
+
+```jsonc
+{
+  "app": {
+    "id": "shop",
+    "header": {
+      "actions": [
+        // 打开一个已注册的路由抽屉
+        {
+          "name": "inbox",
+          "label": "消息",
+          "icon": "notification-01",
+          "drawer": "inbox"
+        },
+        // 跳到一个地址
+        {
+          "name": "help",
+          "label": "帮助",
+          "icon": "help-circle",
+          "href": "/help"
+        },
+        // 发一个事件给扩展模块的 onEvent
+        { "name": "sync", "label": "同步", "icon": "refresh", "event": "sync" }
+      ]
+    }
+  },
+  "routes": []
+}
+```
+
+按钮只显示图标，`label` 是悬停提示和读屏文字。`drawer`、`href`、`event` 选一个。
+
+## 路由
+
+| 字段 | 说明 |
+| --- | --- |
+| `path` | 地址，如 `/orders`。可以带参数，如 `/orders/:id`，见 [地址里的参数](#地址里的参数)。 |
+| `page` | `{ "src": "/pages/orders.json" }`、`{ "spec": { ... } }`，用 JS 写的页面 `{ "module": "/pages/report.js" }`（见 [JS 页面](/guide/js-pages/)），或嵌入其他网页 `{ "iframe": "https://bi.example.com/sales" }`（见 [嵌入其他网页](/guide/embed/)）。 |
+| `redirect` | 打开时跳到另一个地址。 |
+| `menu` | 菜单项：`label`、`icon`、`order`、`hidden`，以及 `group`（分组）和 `module`（`dual` 布局的模块）。 |
+| `name` | 路由名，`menuBadges`、标签页和 `navigate` 用它识别路由。 |
+| `access` | 需要的权限，如 `{ "resource": "orders", "action": "list" }`，`action` 默认 `list`。没有权限时菜单隐藏、页面显示 403。权限串的拼法见 [权限标识](/guide/backend-auth/#权限标识)。 |
+| `dataProvider` | 这个路由和它的子路由默认用哪个数据源（`config.json` 里 `data` 的名称），页面元素不用再逐个写 `dataProviderName`。 |
+| `public` | 不登录也能打开。 |
+| `children` | 子路由。子路由的 `path` 可以写完整地址，也可以写相对于父路由的地址；父路由没有 `page` 时只用来分组。 |
+
+菜单项 `menu` 的字段：`label`（或 `labelKey`）、`icon`、`order`（小的在前）、`hidden`（不在菜单里显示，但地址能打开，用于详情页、编辑页），`group: { name, label, icon }` 把菜单分组，`module: { name, label, icon }` 是 `dual` 布局左侧的模块。
+
+图标名来自 HugeIcons，如 `layout-dashboard`、`shopping-cart`、`users`、`settings`。
+
+### 地址里的参数
+
+详情页、编辑页的地址里带着记录的 id。路由的 `path` 用 `:名称` 声明参数，页面 JSON 从状态路径 `/route/params/名称` 读取：
+
+```jsonc
+{
+  "app": { "id": "shop", "title": "示例商城" },
+  "routes": [
+    {
+      "name": "order-edit",
+      // 打开 /orders/12/edit 时，id 是 "12"
+      "path": "/orders/:id/edit",
+      "page": { "src": "/pages/order-edit.json" },
+      // 不出现在菜单里，由列表页跳转过来
+      "menu": { "label": "编辑订单", "hidden": true }
+    }
+  ]
+}
+```
+
+```jsonc
+// pages/order-edit.json
+{
+  "root": "form",
+  "elements": {
+    // 整页表单：读记录、保存、离开前提醒
+    "form": {
+      "type": "FormPage",
+      "props": {
+        "resource": "orders",
+        "title": "编辑订单",
+        // 地址里的 id：读这条记录，保存时更新它
+        "id": { "$state": "/route/params/id" },
+        // 表单值在页面状态里的位置
+        "valuesPath": "/values"
+      },
+      "children": ["number"]
+    },
+    // 订单号字段，绑定到表单值
+    "number": {
+      "type": "Input",
+      "props": {
+        "ariaLabel": "订单号",
+        "value": { "$bindState": "/values/number" }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+- 参数的值是字符串。地址换成另一条记录（`/orders/13/edit`）时，页面重新开始，状态回到初始值。
+- 页面自己的 `state` 里不要用 `route` 这个名字，它会被路由参数覆盖。同样，弹窗页面的 `/drawer`、`Include` 页面的 `/include` 也是保留的。
+- 列表每一行的按钮用 `{ "action": "navigate", "params": { "to": { "$template": "/orders/${id}/edit" } } }` 跳过来，`${id}` 读这一行的 `id`。
+
+## 相关
+
+- 菜单和页面由后端按用户返回：[从后端加载](/guide/remote/)。
+- 菜单名、应用名的翻译：[菜单的翻译](/guide/i18n/#菜单的翻译)。
+- 几个页面共用的弹窗和片段：[弹窗与复用](/guide/reuse/)；把已有的网页挂进后台：[嵌入网页](/guide/embed/)。
+- 整个页面用 JS 写：[JS 页面](/guide/js-pages/)。
+- 每个页面旁边的助手面板：[AI 助手](/guide/assistant/)。

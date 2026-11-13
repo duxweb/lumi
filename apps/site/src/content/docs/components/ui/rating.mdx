@@ -1,0 +1,58 @@
+---
+title: "Rating"
+description: "用一排星星或其他图标表示评分，可选半星。"
+---
+
+<ComponentPreview name="Rating" />
+
+用一排星星或其他图标表示评分，可选半星。`readonly` 时只做展示。方向键改变分值，Home 和 End 跳到两端。
+
+## 示例
+
+```json
+{
+  "root": "rating-1",
+  "elements": {
+    "rating-1": {
+      "type": "Rating",
+      "props": {
+        "ariaLabel": "Default rating",
+        "value": { "$bindState": "/rating-1/value" }
+      },
+      "children": []
+    }
+  },
+  "state": { "rating-1": { "value": 3 } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `value` | 当前值。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `number` |  |
+| `defaultValue` | 初始值，只在没有绑定 `value` 时生效。 | `number` |  |
+| `count` | 图标数量。 | `integer` | `5` |
+| `allowHalf` | 允许半颗星。 | `boolean` | `false` |
+| `icon` | 图标名，来自内置 HugeIcons 图标集，如 `download`、`receipt`。 | `string` |  |
+| `clearable` | 有值时显示清除按钮。 | `boolean` | `false` |
+| `tone` | 语义色：`success` 成功，`warning` 警告，`danger` 危险，`info` 提示，`neutral` 中性。 | `"warning" \| "brand"` | `"neutral"` |
+| `size` | 尺寸：`sm` 紧凑，`md` 标准，`lg` 宽松。 | `"sm" \| "md" \| "lg"` | `"md"` |
+| `name` | 字段名，表单提交时作为这个值的键。 | `string` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean` | `false` |
+| `invalid` | 标记为校验未通过，显示错误样式。通常由 FormField 自动设置。 | `boolean` | `false` |
+| `error` | 错误提示文字，显示在控件下方。 | `string` |  |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+
+通用参数：
+
+- `checks`：json-render 原生校验规则，如 `{ "type": "required", "message": "请填写" }`，提交或失焦时执行。
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：无

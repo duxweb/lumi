@@ -1,0 +1,44 @@
+---
+title: "useUpload"
+description: "useUpload React hook 的签名、参数和返回值。"
+---
+
+Uploads files with progress and cancellation, through the data provider's client or straight to object storage with `sign`; defaults come from the context's `upload` option.
+
+```typescript
+useUpload(input?: UseUploadOptions): UseUploadReturn
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `input` | `UseUploadOptions` | 否 |  |
+
+`input` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `context` | `LumiContext \| undefined` | 否 | The Lumi context to use outside a Lumi provider. |
+| `data` | `Record<string, unknown> \| undefined` | 否 | Other form fields sent beside the file. |
+| `dataProviderName` | `string \| undefined` | 否 | The data provider whose API root and request client are used. |
+| `fieldName` | `string \| undefined` | 否 | Form field of the file; `file` by default. |
+| `headers` | `UploadHeaders \| undefined` | 否 | Extra headers, or a function answering them; the reader's credentials are added by the request client. |
+| `method` | `"POST" \| "PUT" \| "PATCH" \| undefined` | 否 | `POST` by default. |
+| `sign` | `UploadSignOptions \| undefined` | 否 | Uploads straight to object storage with a ticket from the backend, instead of through `url`. |
+| `signal` | `AbortSignal \| undefined` | 否 | Aborts the upload. |
+| `trustedOrigins` | `string[] \| undefined` | 否 | Other sites an upload `url` may point at and be signed for; the API root and this site always are. |
+| `url` | `string \| undefined` | 否 | Where the file is sent, relative to the API root; `/upload` by default. |
+| `withCredentials` | `boolean \| undefined` | 否 | Sends cookies; follows the auth provider's credentials when left out. |
+
+返回 `UseUploadReturn`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `cancel` | `() => void` | 是 | Aborts the upload under way. |
+| `error` | `Error \| null` | 是 | Why the last `upload` failed. |
+| `progress` | `number` | 是 | Percent of the files `upload` is sending, 0 to 100. |
+| `reset` | `() => void` | 是 | Clears the progress and the error. |
+| `upload` | `(input: File \| File[] \| FileList, options?: UploadOptions) => Promise<UploadResult[]>` | 是 | Sends the files one after another and answers their results in order. |
+| `uploadFile` | `(file: File, options?: UploadOptions & { onProgress?: (percent: number) => void; }) => Promise<UploadResult>` | 是 | Sends one file on its own: several may run at once, each with its own progress and `signal`. It leaves the shared progress/uploading/error alone. |
+| `uploading` | `boolean` | 是 | True while `upload` runs; another call is refused until it ends. |

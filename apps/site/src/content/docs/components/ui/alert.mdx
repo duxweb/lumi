@@ -1,0 +1,47 @@
+---
+title: "Alert"
+description: "页面内的语义色提示信息，可关闭。"
+---
+
+<ComponentPreview name="Alert" />
+
+页面内的语义色提示信息，可关闭。
+
+## 示例
+
+```json
+{
+  "root": "alert-25",
+  "elements": {
+    "alert-25": {
+      "type": "Alert",
+      "props": {
+        "title": "Ready",
+        "message": "All standard components are available.",
+        "tone": "info"
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `tone` | 语义色：`success` 成功，`warning` 警告，`danger` 危险，`info` 提示，`neutral` 中性。 | `"danger" \| "neutral" \| "primary" \| "success" \| "warning" \| "info"` | `"neutral"` |
+| `title` | 提示标题。 | `string` |  |
+| `message` | 提示正文。 | `string` |  |
+| `closable` | 显示关闭按钮。 | `boolean` | `false` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`close`
+- 插槽：无

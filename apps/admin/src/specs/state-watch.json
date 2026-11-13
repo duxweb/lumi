@@ -1,0 +1,131 @@
+{
+  "root": "stack",
+  "state": {
+    "address": {
+      "country": "cn",
+      "city": "shanghai"
+    },
+    "cities": {
+      "data": [],
+      "loading": true
+    }
+  },
+  "elements": {
+    "stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "country",
+        "cities",
+        "city",
+        "summary"
+      ]
+    },
+    "country": {
+      "type": "FormField",
+      "props": {
+        "name": "country",
+        "label": {
+          "$t": "Country"
+        },
+        "fieldType": "enum",
+        "widget": "Select",
+        "options": [
+          {
+            "label": {
+              "$t": "China"
+            },
+            "value": "cn"
+          },
+          {
+            "label": {
+              "$t": "United States"
+            },
+            "value": "us"
+          },
+          {
+            "label": {
+              "$t": "Germany"
+            },
+            "value": "de"
+          }
+        ],
+        "value": {
+          "$bindState": "/address/country"
+        }
+      },
+      "watch": {
+        "/address/country": {
+          "action": "setState",
+          "params": {
+            "statePath": "/address/city",
+            "value": ""
+          }
+        }
+      },
+      "children": []
+    },
+    "cities": {
+      "type": "Query",
+      "props": {
+        "resource": "regions",
+        "operation": "custom",
+        "url": "/regions",
+        "query": {
+          "country": {
+            "$state": "/address/country"
+          }
+        },
+        "resultPath": "/cities"
+      },
+      "children": []
+    },
+    "city": {
+      "type": "FormField",
+      "props": {
+        "name": "city",
+        "label": {
+          "$t": "City"
+        },
+        "fieldType": "enum",
+        "widget": "Select",
+        "placeholder": {
+          "$t": "Choose a city"
+        },
+        "options": {
+          "$state": "/cities/data"
+        },
+        "loading": {
+          "$state": "/cities/loading"
+        },
+        "value": {
+          "$bindState": "/address/city"
+        }
+      },
+      "children": []
+    },
+    "summary": {
+      "type": "Alert",
+      "props": {
+        "tone": "info",
+        "title": {
+          "$t": "Summary"
+        },
+        "message": {
+          "$t": "Ship to {city} ({country})",
+          "params": {
+            "city": {
+              "$state": "/address/city"
+            },
+            "country": {
+              "$state": "/address/country"
+            }
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}

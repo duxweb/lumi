@@ -1,0 +1,12 @@
+---
+title: "useIdentity"
+description: "useIdentity React hook 的签名、参数和返回值。"
+---
+
+The current user, from `authProvider.getIdentity`; `null` when signed out or when the provider has none.
+
+```typescript
+useIdentity<T = any>(): UseQueryResult<T | null, Error>
+```
+
+返回 `UseQueryResult<T | null, Error>`。

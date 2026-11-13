@@ -1,0 +1,65 @@
+---
+title: "Slider"
+description: "沿轨道拖动选一个数字，range 时选 [start, end] 范围。"
+---
+
+<ComponentPreview name="Slider" />
+
+沿轨道拖动选一个数字，`range` 时选 `[start, end]` 范围。支持 `step`、带文字的 `marks`、数值提示、轨道旁的数字输入框和竖向排列。方向键、Page Up/Down、Home 和 End 移动当前滑块。
+
+## 示例
+
+```json
+{
+  "root": "slider-1",
+  "elements": {
+    "slider-1": {
+      "type": "Slider",
+      "props": {
+        "tooltip": true,
+        "ariaLabel": "Default slider",
+        "value": { "$bindState": "/slider-1/value" }
+      },
+      "children": []
+    }
+  },
+  "state": { "slider-1": { "value": 40 } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `value` | 当前值。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `number \| number[]` |  |
+| `defaultValue` | 初始值，只在没有绑定 `value` 时生效。 | `number \| number[]` |  |
+| `min` | 允许的最小值。 | `number` |  |
+| `max` | 允许的最大值。 | `number` |  |
+| `step` | 每次增减的步长。 | `number` |  |
+| `range` | 两个滑块，值为 `[开始, 结束]`。 | `boolean` | `false` |
+| `minStepsBetweenThumbs` | 范围模式下两个滑块最少相隔几个步长。 | `integer` | `0` |
+| `marks` | 轨道上的刻度，每项 `{ value, label? }`。 字段：`value`、`label?` | `object[]` |  |
+| `tooltip` | 拖动、悬停或聚焦时在滑块上方显示数值。 | `boolean` | `true` |
+| `input` | 在轨道旁显示数字输入框，编辑同一个值。 | `boolean` | `false` |
+| `orientation` | 方向：`horizontal` 横向，`vertical` 纵向。 | `"horizontal" \| "vertical"` | `"horizontal"` |
+| `prefix` | 数值前的固定文字，如 `¥`。 | `string` |  |
+| `suffix` | 数值后的固定文字，如 `%`。 | `string` |  |
+| `size` | 尺寸：`sm` 紧凑，`md` 标准，`lg` 宽松。 | `"sm" \| "md" \| "lg"` | `"md"` |
+| `name` | 字段名，表单提交时作为这个值的键。 | `string` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean` | `false` |
+| `invalid` | 标记为校验未通过，显示错误样式。通常由 FormField 自动设置。 | `boolean` | `false` |
+| `error` | 错误提示文字，显示在控件下方。 | `string` |  |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+
+通用参数：
+
+- `checks`：json-render 原生校验规则，如 `{ "type": "required", "message": "请填写" }`，提交或失焦时执行。
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：无

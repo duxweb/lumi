@@ -1,0 +1,296 @@
+---
+title: "认证"
+description: "AuthProvider 是什么、每个方法什么时候被调用、默认的 createSimpleAuthProvider 有哪些选项，以及怎么换成 SSO 等自己的登录方式。"
+---
+
+## 干什么
+
+`AuthProvider` 管理整个应用唯一的登录会话。跟登录有关的事都归它：
+
+- 会话请求：登录、退出、注册、找回密码、当前用户是谁；
+- 凭证存在哪里：`localStorage`、`sessionStorage`、内存，或者只靠后端的 cookie；
+- 每个请求怎么带凭证（`authorizeRequest`）；
+- 凭证过期怎么续（`refresh`）；
+- 请求失败对会话意味着什么（`onError`）。
+
+一个应用只有一个 `AuthProvider`，但可以整体替换。`DataProvider` 不碰凭证：数据、上传、AI 助手和实时推送的请求都经过同一个 [HttpClient](/guide/advanced/data/)，由它在发送前向 `AuthProvider` 要凭证。权限判断是另一个 provider，见 [权限](/guide/advanced/access/)。各个 provider 的分工见 [架构](/guide/advanced/architecture/)，全部 provider 见 [Provider](/guide/advanced/providers/)。
+
+## 怎么用
+
+CDN 版不用写代码：`config.json` 的 `auth` 就是默认 `AuthProvider` 的配置，多个后台可以各有一个，见 [项目配置](/guide/config/)，接口格式见 [对接后端](/guide/backend-auth/#登录)。
+
+npm 项目里自己创建，把同一个 provider 交给 `createLumi` 和 `HttpClient`：
+
+```ts
+import {
+  createHttpClient,
+  createLumi,
+  createSimpleAuthProvider,
+  createSimpleDataProvider,
+} from '@duxweb/lumi'
+
+// 默认约定的登录；401 时先调 /refresh 续期
+const auth = createSimpleAuthProvider({
+  apiUrl: '/api',
+  endpoints: { refresh: '/refresh' },
+})
+// 所有请求共用一个客户端，凭证由 auth provider 提供
+const http = createHttpClient({ baseUrl: '/api', authProvider: auth.authProvider })
+
+export const lumi = createLumi({
+  http,
+  // 数据请求走同一个客户端
+  dataProvider: createSimpleDataProvider({ apiUrl: '/api', http }),
+  // 登录会话
+  authProvider: auth.authProvider,
+  // 按登录返回的 permissions 判断权限
+  accessProvider: auth.accessProvider,
+})
+```
+
+`createLumi` 没收到 `http` 时，会用 `authProvider`、当前语言和工作区自己创建一个。
+
+## 接口
+
+```ts
+import type {
+  AuthActionResponse,
+  AuthErrorResponse,
+  CheckResponse,
+  RequestAuthorization,
+} from '@duxweb/lumi'
+
+export interface MyAuthProvider {
+  // 必填：登录、退出、检查是否已登录
+  login: (params: any) => Promise<AuthActionResponse>
+  logout: (params?: any) => Promise<AuthActionResponse>
+  check: () => Promise<CheckResponse>
+  // 当前用户和权限
+  getIdentity?: <T = any>() => Promise<T | null>
+  getPermissions?: (params?: any) => Promise<unknown>
+  // 请求失败后会话怎么办，比如 401 时退出
+  onError?: (error: any) => Promise<AuthErrorResponse>
+  // 每个请求带什么凭证
+  authorizeRequest?: (request: {
+    url: string
+    method: string
+  }) => RequestAuthorization | undefined | Promise<RequestAuthorization | undefined>
+  // 凭证过期时续期；返回 true 就重发原请求
+  refresh?: () => Promise<boolean>
+  // 注册、找回密码、重置密码：实现了才有对应的页面
+  register?: (params: any) => Promise<AuthActionResponse>
+  forgotPassword?: (params: any) => Promise<AuthActionResponse>
+  updatePassword?: (params: any) => Promise<AuthActionResponse>
+}
+```
+
+`login`、`logout`、`check` 必填，其余可选。返回值：
+
+| 类型 | 字段 |
+| --- | --- |
+| `AuthActionResponse` | `success`；可选 `redirectTo`（之后跳到哪）、`error`（失败原因，登录页显示它的 `message`），也可以带别的字段。 |
+| `CheckResponse` | `authenticated`；可选 `redirectTo`、`error`。 |
+| `AuthErrorResponse` | 可选 `logout`（是否退出）、`redirectTo`、`error`。 |
+| `RequestAuthorization` | 可选 `headers`（要加的请求头）、`credentials`（fetch 的 `credentials`，如 `include`）。 |
+
+### 每个方法什么时候被调用
+
+| 方法 | 谁调用、什么时候 |
+| --- | --- |
+| `login(params)` | 登录页提交、`useLogin`、JSON 的 `login` 动作。`params` 是登录表单的值，如 `{ username, password, remember }`。 |
+| `logout(params?)` | 账号菜单的退出、`useLogout`、JSON 的 `logout` 动作，以及 `onError` 要求退出时。 |
+| `check()` | 打开受保护的路由时，以及 `manifestAuth: "protected"` 加载 manifest 前。`authenticated: false` 时跳到 `redirectTo`。 |
+| `getIdentity()` | 账号菜单、`useIdentity`，读当前用户。 |
+| `getPermissions(params?)` | `usePermissions`。Lumi 自己的权限判断不调用它，菜单和路由走 [AccessProvider](/guide/advanced/access/)。 |
+| `authorizeRequest({ url, method })` | `HttpClient` 每发一个请求前调用一次，包括上传和事件流，返回这个请求要带的凭证。 |
+| `refresh()` | 请求返回 401 时调用。返回 `true` 就用新凭证把原请求重发一次。多个请求同时 401 只调用一次。 |
+| `onError(error)` | 数据请求失败、且 `refresh` 没能挽回时调用。返回 `{ logout: true }` 就退出并跳到 `redirectTo`。 |
+| `register(params)` | 注册页提交、`useRegister`。有这个方法时登录页才出现"创建账号"。 |
+| `forgotPassword(params)` | 找回密码页、`useForgotPassword`。 |
+| `updatePassword(params)` | 重置密码页（带重置链接里的 token）、`useUpdatePassword`。 |
+
+## 登录状态怎么变化
+
+**登录、注册、退出**
+
+1. 同一时间只执行一个会话操作，连点两次登录也不会并发。
+2. `success` 不是 `false` 时，Lumi 取消进行中的请求，清空数据、权限、当前用户的缓存，再重新请求页面上的数据。上一个账号的数据不会出现在新会话里。
+3. 失败时什么都不清，保留当前会话。
+
+**请求返回 401**
+
+1. `HttpClient` 调用 `refresh()`（有的话）。成功就重发原请求，页面感觉不到。
+2. 没有 `refresh` 或续期失败，错误交给 `onError`。
+3. `onError` 返回 `{ logout: true }`：执行 `logout`，清空缓存，跳到登录页。
+
+同一个错误只处理一次：一个页面上十个请求同时 401，也只退出一次。退出过程中重新请求触发的 401 不会再次退出。
+
+`onError` 只处理经过数据层的请求：hooks、`Query`、`ListPage`、JSON 动作。在组件里直接调用 `http.request` 时，请求失败不会让后台退出；页面里的请求请用 `useCustom`、`useCustomMutation` 或 JSON 的 `request` 动作，`http` 用来写 DataProvider。
+
+**另一个后端**
+
+`http.extend({ auth: false })` 或 `config.json` 里 `data` 某一项的 `"auth": false` 得到的客户端不带后台的凭证，它的失败不会交给 `onError`，401 也不会让后台退出：
+
+```ts
+import type { HttpClient } from '@duxweb/lumi'
+
+// 应用的请求客户端
+declare const http: HttpClient
+
+// 和后台共用登录：它返回 401 也会让后台退出
+export const crm = http.extend({ baseUrl: 'https://crm.example.com/api' })
+// 用自己的密钥，不带后台的凭证；它的失败只交给调用方
+export const open = http.extend({
+  baseUrl: 'https://open.example.com',
+  auth: false,
+  headers: { 'X-Api-Key': 'key' },
+})
+```
+
+**请求头的优先级**
+
+一个请求自己写的同名请求头会被 `authorizeRequest` 返回的值覆盖，页面 JSON 不能伪造凭证。语言和工作区的头则以请求自己写的为准。
+
+## 默认实现：createSimpleAuthProvider
+
+它返回 `{ authProvider, accessProvider, getSession }`，按 [对接后端](/guide/backend-auth/#登录) 的约定请求登录接口。
+
+| 选项 | 说明 |
+| --- | --- |
+| `apiUrl`（必填） | 会话接口的根地址。 |
+| `mode` | `bearer`（默认）：登录返回的 token 存起来，请求带 `Authorization: Bearer …`。`cookie`：不存凭证，请求带 `credentials: 'include'`，用 `me` 判断是否已登录。 |
+| `csrf` | cookie 模式下的防伪：`{ cookie, header }`。写操作（非 GET、HEAD、OPTIONS）读这个 cookie，放进这个请求头。 |
+| `endpoints` | `login`、`logout`、`me`（默认 `/login`、`/logout`、`/me`），以及 `register`、`forgotPassword`、`updatePassword`、`refresh`。后四个填了才有对应的方法。 |
+| `tokenKey` | bearer 模式下 token 的键名，默认 `lumi_token`。 |
+| `storage` | bearer 模式下 token 存在哪，默认 `localStorage`，没有时用内存。要实现 `getItem`、`setItem`、`removeItem`。 |
+| `loginPath` | 没登录、退出、401 时跳到哪，默认 `/login`。 |
+| `http` | 会话请求用哪个客户端，可以借此带上语言、工作区，或者测试用的 fetch。 |
+| `readCookie` | cookie 模式下怎么读 CSRF cookie，默认读 `document.cookie`。 |
+| `permission` | `accessProvider` 怎么拼权限串，见 [权限](/guide/advanced/access/#默认规则)。 |
+
+它的行为：
+
+- `check()` 在 bearer 模式下没有 token 就直接返回未登录，有 token 才请求 `me`；cookie 模式下总是请求 `me`。`me` 失败会清掉 token。
+- `me` 的结果（用户和权限）会记住，`getIdentity`、`getPermissions` 和 `accessProvider` 都读它，不会重复请求。
+- `onError` 只对 401 退出，其他状态码不影响会话。
+- 登录、注册等会话请求本身返回 401 不会触发续期。
+- `logout` 先请求退出接口，失败也照样清掉本地会话。
+
+## 自定义
+
+下面三个例子都是完整可用的 provider。
+
+### SSO：跳到统一登录页
+
+登录在另一个站点完成，回调地址带回 token：
+
+```ts
+import type { AuthProvider } from '@duxweb/lumi'
+
+// token 在 sessionStorage 里的键名
+const KEY = 'sso_token'
+// 统一登录页的地址
+const SSO = 'https://sso.example.com/authorize'
+
+// 统一登录页跳回来时，地址里带着 #token=…
+function readCallback(): void {
+  const match = /[#&]token=([^&]+)/u.exec(location.hash)
+  // 存下 token，再把它从地址栏里去掉
+  if (match) {
+    sessionStorage.setItem(KEY, decodeURIComponent(match[1]!))
+    history.replaceState(null, '', location.pathname + location.search)
+  }
+}
+readCallback()
+
+// 读当前的 token
+const token = (): string | null => sessionStorage.getItem(KEY)
+
+export const ssoAuthProvider: AuthProvider = {
+  // 不用登录表单：直接跳到统一登录页
+  login: async () => {
+    location.assign(`${SSO}?redirect_uri=${encodeURIComponent(location.href)}`)
+    return { success: true }
+  },
+  // 退出：清掉 token
+  logout: async () => {
+    sessionStorage.removeItem(KEY)
+    return { success: true, redirectTo: '/login' }
+  },
+  // 有 token 才算已登录
+  check: async () =>
+    token() ? { authenticated: true } : { authenticated: false, redirectTo: '/login' },
+  // 当前用户
+  getIdentity: async () => {
+    const value = token()
+    // JWT 的中间一段就是用户信息
+    return value ? JSON.parse(atob(value.split('.')[1]!)) : null
+  },
+  // 每个请求带上 token
+  authorizeRequest: () => {
+    const value = token()
+    return value ? { headers: { Authorization: `Bearer ${value}` } } : undefined
+  },
+  // 请求返回 401 时退出
+  onError: async (error) =>
+    error?.status === 401 ? { logout: true, redirectTo: '/login' } : {},
+}
+```
+
+### 签名请求
+
+请求签名、防篡改跟请求内容有关，不归 `AuthProvider`：写在 DataProvider 的 `onRequest` 里，它能看到最终的地址、请求头和 body，见 [签名与改写请求](/guide/advanced/data/#签名与改写请求)。`AuthProvider` 只负责保存签名用的会话密钥。
+
+### 只改默认实现的一部分
+
+接口大体符合约定，只有当前用户的格式不同时，包一层默认实现：
+
+```ts
+import type { AuthProvider } from '@duxweb/lumi'
+import { createSimpleAuthProvider } from '@duxweb/lumi'
+
+// 默认实现
+const simple = createSimpleAuthProvider({ apiUrl: '/api' })
+
+export const authProvider: AuthProvider = {
+  // 其他方法照旧
+  ...simple.authProvider,
+  // 后端返回 { profile: { nickname } }，账号菜单要的是 { name }
+  getIdentity: async <T,>() => {
+    const user = await simple.authProvider.getIdentity!<{
+      profile?: { nickname?: string }
+    }>()
+    return (user ? { ...user, name: user.profile?.nickname } : null) as T | null
+  },
+}
+// 权限判断仍用默认的
+export const accessProvider = simple.accessProvider
+```
+
+### 注册到应用
+
+- **npm**：交给 `createLumi({ authProvider })`，同时让 `createHttpClient({ authProvider })` 用同一个。
+- **Admin 的 `mountAdmin`**：扩展选项里写 `authProviders: { default: provider }`（键是 `auth` 配置的名字），后台的 `http` 会自动改用它，见 [Admin 应用](/guide/advanced/admin/)。
+- **CDN 扩展模块**：模块返回 `{ authProviders: { 名称: provider } }`，按 `config.json` 里 `auth` 的名字替换，见 [扩展模块](/guide/extend-backend/#换成自己的登录)。
+
+在 Admin 里替换了 `authProvider` 却没有同时给 `accessProvider` 时，默认的权限判断不再生效：它读的是默认登录的权限列表。见 [权限](/guide/advanced/access/#注册到应用)。
+
+## hooks 和 JSON 动作
+
+| hook | 作用 |
+| --- | --- |
+| `useLogin()`、`useLogout()`、`useRegister()` | 会话操作，返回 TanStack Query 的 mutation，`mutate(params)` 执行。成功后清空缓存。 |
+| `useForgotPassword()`、`useUpdatePassword()` | 找回、重置密码，不改变会话。 |
+| `useCheck()` | `check()` 的结果。 |
+| `useIdentity()` | 当前用户。 |
+| `usePermissions(params?)` | `getPermissions()` 的结果。 |
+
+JSON 页面用 [login](/protocol/actions/login/) 和 [logout](/protocol/actions/logout/) 动作，它们和 hooks 走同一个会话队列。完整列表见 [数据 hooks](/guide/advanced/hooks/)。
+
+## 错误格式
+
+请求失败时，`HttpClient` 把返回转成统一的 `DataProviderError`：`status`、`message`、`code`、`errors`（字段错误 `[{ path, message }]`）和原始返回 `raw`。表单把 `errors` 显示到字段下面，没有处理的失败会弹出 `message`，`onError` 收到的也是它。
+
+怎么读错误是数据层的事，不归 `AuthProvider`：后端错误格式不同时，在 DataProvider 上写 `parseError`，它和读成功返回的 `unwrap` 是一对，见 [数据请求](/guide/advanced/data/)。`onError` 只决定失败后会话怎么办。
+
+接口的完整类型见 [AuthProvider](/core/providers/auth-provider/)。

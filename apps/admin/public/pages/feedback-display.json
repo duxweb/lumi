@@ -1,0 +1,3064 @@
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Status & display"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "sections"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Status & display"
+        },
+        "description": {
+          "$t": "Loading placeholders, spinners, keyboard keys, scroll areas, tags, an inline calendar and a listbox, each bound to page state"
+        }
+      },
+      "children": []
+    },
+    "sections": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "sections-cards",
+        "card-calendar",
+        "sections-listbox"
+      ]
+    },
+    "sections-cards": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "card-skeleton",
+        "card-spinner",
+        "card-empty",
+        "card-empty-tones",
+        "card-tags",
+        "card-tag-extras",
+        "card-chips",
+        "card-tag-group",
+        "card-kbd",
+        "card-scroll"
+      ]
+    },
+    "sections-listbox": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "card-listbox",
+        "card-listbox-multi"
+      ]
+    },
+    "card-skeleton": {
+      "type": "Example",
+      "props": {
+        "id": "skeleton",
+        "title": {
+          "$t": "Skeleton"
+        },
+        "description": {
+          "$t": "Placeholders in the shape of the content. Turn the content on to see what they stand in for"
+        }
+      },
+      "children": [
+        "skeleton-body"
+      ]
+    },
+    "skeleton-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "skeleton-switches",
+        "skeleton-loading",
+        "skeleton-loaded"
+      ]
+    },
+    "skeleton-switches": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "lg",
+        "wrap": true
+      },
+      "children": [
+        "skeleton-animated",
+        "skeleton-loaded-switch"
+      ]
+    },
+    "skeleton-animated": {
+      "type": "Switch",
+      "props": {
+        "label": {
+          "$t": "Shimmer"
+        },
+        "value": {
+          "$bindState": "/skeleton/animated"
+        }
+      },
+      "children": []
+    },
+    "skeleton-loaded-switch": {
+      "type": "Switch",
+      "props": {
+        "label": {
+          "$t": "Content loaded"
+        },
+        "value": {
+          "$bindState": "/skeleton/loaded"
+        }
+      },
+      "children": []
+    },
+    "skeleton-loading": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "visible": {
+        "$state": "/skeleton/loaded",
+        "not": true
+      },
+      "children": [
+        "skeleton-loading-1",
+        "skeleton-loading-2",
+        "skeleton-loading-3"
+      ]
+    },
+    "skeleton-text-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Text · 3 lines"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "skeleton-text": {
+      "type": "Skeleton",
+      "props": {
+        "variant": "text",
+        "lines": 3,
+        "animated": {
+          "$state": "/skeleton/animated"
+        },
+        "label": {
+          "$t": "Loading article"
+        }
+      },
+      "children": []
+    },
+    "skeleton-row-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "List rows"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "skeleton-rows": {
+      "type": "Skeleton",
+      "props": {
+        "variant": "list-row",
+        "lines": 2,
+        "animated": {
+          "$state": "/skeleton/animated"
+        },
+        "label": {
+          "$t": "Loading people"
+        }
+      },
+      "children": []
+    },
+    "skeleton-shape-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Circle sm · md · lg and card"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "skeleton-shapes": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "md",
+        "align": "center"
+      },
+      "children": [
+        "skeleton-circle-sm",
+        "skeleton-circle-md",
+        "skeleton-circle-lg",
+        "skeleton-rect"
+      ]
+    },
+    "skeleton-circle-sm": {
+      "type": "Skeleton",
+      "props": {
+        "variant": "circle",
+        "size": "sm",
+        "animated": {
+          "$state": "/skeleton/animated"
+        }
+      },
+      "children": []
+    },
+    "skeleton-circle-md": {
+      "type": "Skeleton",
+      "props": {
+        "variant": "circle",
+        "size": "md",
+        "animated": {
+          "$state": "/skeleton/animated"
+        }
+      },
+      "children": []
+    },
+    "skeleton-circle-lg": {
+      "type": "Skeleton",
+      "props": {
+        "variant": "circle",
+        "size": "lg",
+        "animated": {
+          "$state": "/skeleton/animated"
+        }
+      },
+      "children": []
+    },
+    "skeleton-rect": {
+      "type": "Skeleton",
+      "props": {
+        "variant": "rect",
+        "size": "sm",
+        "width": "100%",
+        "animated": {
+          "$state": "/skeleton/animated"
+        },
+        "className": "flex-1"
+      },
+      "children": []
+    },
+    "skeleton-loaded": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "visible": {
+        "$state": "/skeleton/loaded"
+      },
+      "children": [
+        "skeleton-loaded-text",
+        "skeleton-loaded-person",
+        "skeleton-loaded-person-2"
+      ]
+    },
+    "skeleton-loaded-text": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Orders paid before 16:00 leave the warehouse the same day. Later orders ship on the next working day, and customers get tracking as soon as the parcel is scanned"
+        }
+      },
+      "children": []
+    },
+    "skeleton-loaded-person": {
+      "type": "Avatar",
+      "props": {
+        "name": "Mia Chen",
+        "description": {
+          "$t": "Fulfilment lead"
+        },
+        "showName": true
+      },
+      "children": []
+    },
+    "skeleton-loaded-person-2": {
+      "type": "Avatar",
+      "props": {
+        "name": "Leo Park",
+        "description": {
+          "$t": "Support"
+        },
+        "showName": true
+      },
+      "children": []
+    },
+    "card-spinner": {
+      "type": "Example",
+      "props": {
+        "id": "spinner",
+        "title": {
+          "$t": "Spinner & loading"
+        },
+        "description": {
+          "$t": "Spinners for a pending action, and a loading block that holds the space of a section"
+        }
+      },
+      "children": [
+        "spinner-body"
+      ]
+    },
+    "spinner-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "spinner-body-1",
+        "spinner-body-2",
+        "spinner-body-3",
+        "spinner-body-4"
+      ]
+    },
+    "spinner-size-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Sizes sm · md · lg"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "spinner-sizes": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "lg",
+        "align": "center"
+      },
+      "children": [
+        "spinner-sm",
+        "spinner-md",
+        "spinner-lg"
+      ]
+    },
+    "spinner-sm": {
+      "type": "Spinner",
+      "props": {
+        "size": "sm"
+      },
+      "children": []
+    },
+    "spinner-md": {
+      "type": "Spinner",
+      "props": {
+        "size": "md"
+      },
+      "children": []
+    },
+    "spinner-lg": {
+      "type": "Spinner",
+      "props": {
+        "size": "lg"
+      },
+      "children": []
+    },
+    "spinner-tone-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Tones"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "spinner-tones": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "lg",
+        "align": "center",
+        "wrap": true
+      },
+      "children": [
+        "spinner-muted",
+        "spinner-brand",
+        "spinner-success",
+        "spinner-warning",
+        "spinner-danger",
+        "spinner-info"
+      ]
+    },
+    "spinner-muted": {
+      "type": "Spinner",
+      "props": {
+        "tone": "muted",
+        "size": "lg",
+        "label": {
+          "$t": "Muted"
+        }
+      },
+      "children": []
+    },
+    "spinner-brand": {
+      "type": "Spinner",
+      "props": {
+        "tone": "brand",
+        "size": "lg",
+        "label": {
+          "$t": "Brand"
+        }
+      },
+      "children": []
+    },
+    "spinner-success": {
+      "type": "Spinner",
+      "props": {
+        "tone": "success",
+        "size": "lg",
+        "label": {
+          "$t": "Success"
+        }
+      },
+      "children": []
+    },
+    "spinner-warning": {
+      "type": "Spinner",
+      "props": {
+        "tone": "warning",
+        "size": "lg",
+        "label": {
+          "$t": "Warning"
+        }
+      },
+      "children": []
+    },
+    "spinner-danger": {
+      "type": "Spinner",
+      "props": {
+        "tone": "danger",
+        "size": "lg",
+        "label": {
+          "$t": "Danger"
+        }
+      },
+      "children": []
+    },
+    "spinner-info": {
+      "type": "Spinner",
+      "props": {
+        "tone": "info",
+        "size": "lg",
+        "label": {
+          "$t": "Info"
+        }
+      },
+      "children": []
+    },
+    "spinner-label-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "With a visible label"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "spinner-labelled": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "lg",
+        "wrap": true
+      },
+      "children": [
+        "spinner-saving",
+        "spinner-syncing"
+      ]
+    },
+    "spinner-saving": {
+      "type": "Spinner",
+      "props": {
+        "label": {
+          "$t": "Saving changes…"
+        },
+        "showLabel": true,
+        "tone": "muted"
+      },
+      "children": []
+    },
+    "spinner-syncing": {
+      "type": "Spinner",
+      "props": {
+        "label": {
+          "$t": "Syncing inventory"
+        },
+        "showLabel": true,
+        "tone": "brand",
+        "size": "sm"
+      },
+      "children": []
+    },
+    "spinner-block-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Loading block"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "spinner-block": {
+      "type": "Loading",
+      "props": {
+        "label": {
+          "$t": "Loading report"
+        },
+        "description": {
+          "$t": "Totals for the last 28 days are being calculated"
+        },
+        "minHeight": 220,
+        "className": "rounded-control border border-dashed border-border"
+      },
+      "children": []
+    },
+    "card-empty": {
+      "type": "Example",
+      "props": {
+        "id": "empty",
+        "title": {
+          "$t": "Empty state"
+        },
+        "description": {
+          "$t": "Says why an area is empty and what to do next. Tables, lists, charts and pickers use the same figure"
+        }
+      },
+      "children": [
+        "empty-body"
+      ]
+    },
+    "card-empty-tones": {
+      "type": "Example",
+      "props": {
+        "id": "empty-tones",
+        "title": {
+          "$t": "Empty state · tones"
+        },
+        "description": {
+          "$t": "The glyph tint says what kind of empty it is: danger for a failure, warning for blocked or offline, success for done, info for planned"
+        }
+      },
+      "children": [
+        "empty-tones"
+      ]
+    },
+    "empty-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "empty-body-1",
+        "empty-body-3"
+      ]
+    },
+    "empty-body-1": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "empty-panel-label",
+        "empty-panel"
+      ]
+    },
+    "empty-panel-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "In a panel · with a way forward"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "empty-panel": {
+      "type": "Empty",
+      "props": {
+        "title": {
+          "$t": "No orders yet"
+        },
+        "description": {
+          "$t": "Orders show up here as soon as a customer checks out"
+        },
+        "className": "border border-dashed border-border"
+      },
+      "children": [
+        "empty-panel-action"
+      ]
+    },
+    "empty-panel-action": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Create order"
+        },
+        "appearance": "outline",
+        "size": "sm",
+        "icon": "plus"
+      },
+      "children": []
+    },
+    "empty-tones": {
+      "type": "Grid",
+      "props": {
+        "columns": 2,
+        "gap": "sm",
+        "align": "stretch"
+      },
+      "children": [
+        "empty-tone-danger",
+        "empty-tone-warning",
+        "empty-tone-success",
+        "empty-tone-info"
+      ]
+    },
+    "empty-tone-danger": {
+      "type": "Empty",
+      "props": {
+        "tone": "danger",
+        "icon": "alert-02",
+        "title": {
+          "$t": "Orders unavailable"
+        },
+        "description": {
+          "$t": "Try again in a moment"
+        },
+        "className": "border border-border"
+      },
+      "children": []
+    },
+    "empty-tone-warning": {
+      "type": "Empty",
+      "props": {
+        "tone": "warning",
+        "icon": "cloud-off",
+        "title": {
+          "$t": "You are offline"
+        },
+        "description": {
+          "$t": "Changes sync when you reconnect"
+        },
+        "className": "border border-border"
+      },
+      "children": []
+    },
+    "empty-tone-success": {
+      "type": "Empty",
+      "props": {
+        "tone": "success",
+        "icon": "checkmark-circle-02",
+        "title": {
+          "$t": "All caught up"
+        },
+        "description": {
+          "$t": "No orders are waiting for review"
+        },
+        "className": "border border-border"
+      },
+      "children": []
+    },
+    "empty-tone-info": {
+      "type": "Empty",
+      "props": {
+        "tone": "info",
+        "icon": "clock",
+        "title": {
+          "$t": "Nothing scheduled"
+        },
+        "description": {
+          "$t": "Planned shipments appear here"
+        },
+        "className": "border border-border"
+      },
+      "children": []
+    },
+    "empty-body-3": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "empty-line-label",
+        "empty-line"
+      ]
+    },
+    "empty-line-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "One line · dropdowns and narrow columns"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "empty-line": {
+      "type": "Empty",
+      "props": {
+        "size": "xs",
+        "icon": "search-remove",
+        "title": {
+          "$t": "No results for “{query}”",
+          "params": {
+            "query": "zz"
+          }
+        },
+        "className": "border border-dashed border-border"
+      },
+      "children": []
+    },
+    "card-tags": {
+      "type": "Example",
+      "props": {
+        "id": "tags",
+        "title": {
+          "$t": "Tags"
+        },
+        "description": {
+          "$t": "Tags use the badge tones and appearances"
+        }
+      },
+      "children": [
+        "tags-body"
+      ]
+    },
+    "tags-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "tags-body-1",
+        "tags-body-2",
+        "tags-body-3"
+      ]
+    },
+    "card-tag-extras": {
+      "type": "Example",
+      "props": {
+        "id": "tag-sizes",
+        "title": {
+          "$t": "Tag sizes and leads"
+        },
+        "description": {
+          "$t": "Three sizes, with an icon, an avatar or a dot in front. Closing a tag runs its close action"
+        }
+      },
+      "children": [
+        "tag-extras-body"
+      ]
+    },
+    "tag-extras-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "tags-body-4",
+        "tags-body-5",
+        "tags-body-6"
+      ]
+    },
+    "tags-soft-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Soft"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "tags-soft": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "tag-soft-neutral",
+        "tag-soft-primary",
+        "tag-soft-brand",
+        "tag-soft-success",
+        "tag-soft-warning",
+        "tag-soft-danger",
+        "tag-soft-info"
+      ]
+    },
+    "tag-soft-neutral": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Neutral"
+        },
+        "tone": "neutral"
+      },
+      "children": []
+    },
+    "tag-soft-primary": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Primary"
+        },
+        "tone": "primary"
+      },
+      "children": []
+    },
+    "tag-soft-brand": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Brand"
+        },
+        "tone": "brand"
+      },
+      "children": []
+    },
+    "tag-soft-success": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Success"
+        },
+        "tone": "success"
+      },
+      "children": []
+    },
+    "tag-soft-warning": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Warning"
+        },
+        "tone": "warning"
+      },
+      "children": []
+    },
+    "tag-soft-danger": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Danger"
+        },
+        "tone": "danger"
+      },
+      "children": []
+    },
+    "tag-soft-info": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Info"
+        },
+        "tone": "info"
+      },
+      "children": []
+    },
+    "tags-solid-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Solid"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "tags-solid": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "tag-solid-neutral",
+        "tag-solid-primary",
+        "tag-solid-brand",
+        "tag-solid-success",
+        "tag-solid-warning",
+        "tag-solid-danger",
+        "tag-solid-info"
+      ]
+    },
+    "tag-solid-neutral": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Neutral"
+        },
+        "tone": "neutral",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "tag-solid-primary": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Primary"
+        },
+        "tone": "primary",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "tag-solid-brand": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Brand"
+        },
+        "tone": "brand",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "tag-solid-success": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Success"
+        },
+        "tone": "success",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "tag-solid-warning": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Warning"
+        },
+        "tone": "warning",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "tag-solid-danger": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Danger"
+        },
+        "tone": "danger",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "tag-solid-info": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Info"
+        },
+        "tone": "info",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "tags-outline-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Outline"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "tags-outline": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "tag-outline-neutral",
+        "tag-outline-primary",
+        "tag-outline-brand",
+        "tag-outline-success",
+        "tag-outline-warning",
+        "tag-outline-danger",
+        "tag-outline-info"
+      ]
+    },
+    "tag-outline-neutral": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Neutral"
+        },
+        "tone": "neutral",
+        "appearance": "outline",
+        "dot": true
+      },
+      "children": []
+    },
+    "tag-outline-primary": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Primary"
+        },
+        "tone": "primary",
+        "appearance": "outline",
+        "dot": true
+      },
+      "children": []
+    },
+    "tag-outline-brand": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Brand"
+        },
+        "tone": "brand",
+        "appearance": "outline",
+        "dot": true
+      },
+      "children": []
+    },
+    "tag-outline-success": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Success"
+        },
+        "tone": "success",
+        "appearance": "outline",
+        "dot": true
+      },
+      "children": []
+    },
+    "tag-outline-warning": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Warning"
+        },
+        "tone": "warning",
+        "appearance": "outline",
+        "dot": true
+      },
+      "children": []
+    },
+    "tag-outline-danger": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Danger"
+        },
+        "tone": "danger",
+        "appearance": "outline",
+        "dot": true
+      },
+      "children": []
+    },
+    "tag-outline-info": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Info"
+        },
+        "tone": "info",
+        "appearance": "outline",
+        "dot": true
+      },
+      "children": []
+    },
+    "tags-size-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Sizes sm · md · lg"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "tags-sizes": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "align": "center",
+        "wrap": true
+      },
+      "children": [
+        "tag-size-sm",
+        "tag-size-md",
+        "tag-size-lg"
+      ]
+    },
+    "tag-size-sm": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Small"
+        },
+        "tone": "brand",
+        "size": "sm",
+        "closable": true
+      },
+      "children": []
+    },
+    "tag-size-md": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Medium"
+        },
+        "tone": "brand",
+        "size": "md",
+        "closable": true
+      },
+      "children": []
+    },
+    "tag-size-lg": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Large"
+        },
+        "tone": "brand",
+        "size": "lg",
+        "closable": true
+      },
+      "children": []
+    },
+    "tags-lead-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Icon, avatar and dot"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "tags-lead": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "tag-icon",
+        "tag-avatar",
+        "tag-avatar-2",
+        "tag-dot"
+      ]
+    },
+    "tag-icon": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Shipped"
+        },
+        "icon": "truck",
+        "tone": "success"
+      },
+      "children": []
+    },
+    "tag-avatar": {
+      "type": "Tag",
+      "props": {
+        "label": "Mia Chen",
+        "avatar": {
+          "name": "Mia Chen"
+        },
+        "tone": "neutral",
+        "appearance": "outline",
+        "size": "lg"
+      },
+      "children": []
+    },
+    "tag-avatar-2": {
+      "type": "Tag",
+      "props": {
+        "label": "Leo Park",
+        "avatar": {
+          "name": "Leo Park"
+        },
+        "tone": "neutral",
+        "appearance": "outline",
+        "size": "lg"
+      },
+      "children": []
+    },
+    "tag-dot": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Overdue"
+        },
+        "dot": true,
+        "tone": "warning"
+      },
+      "children": []
+    },
+    "tags-close-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Closable"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "tags-closable": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "align": "center",
+        "wrap": true
+      },
+      "children": [
+        "tag-close-design",
+        "tag-close-backend",
+        "tag-close-docs",
+        "tags-close-reset"
+      ]
+    },
+    "tag-close-design": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Design"
+        },
+        "tone": "info",
+        "closable": true
+      },
+      "visible": {
+        "$state": "/tags/visible/design"
+      },
+      "children": [],
+      "on": {
+        "close": [
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/tags/visible/design",
+              "value": false
+            }
+          }
+        ]
+      }
+    },
+    "tag-close-backend": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Backend"
+        },
+        "tone": "success",
+        "closable": true
+      },
+      "visible": {
+        "$state": "/tags/visible/backend"
+      },
+      "children": [],
+      "on": {
+        "close": [
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/tags/visible/backend",
+              "value": false
+            }
+          }
+        ]
+      }
+    },
+    "tag-close-docs": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Docs"
+        },
+        "tone": "warning",
+        "closable": true
+      },
+      "visible": {
+        "$state": "/tags/visible/docs"
+      },
+      "children": [],
+      "on": {
+        "close": [
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/tags/visible/docs",
+              "value": false
+            }
+          }
+        ]
+      }
+    },
+    "tags-close-reset": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Reset"
+        },
+        "appearance": "ghost",
+        "size": "sm",
+        "icon": "rotate-ccw"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/tags/visible",
+            "value": {
+              "design": true,
+              "backend": true,
+              "docs": true
+            }
+          }
+        }
+      }
+    },
+    "card-chips": {
+      "type": "Example",
+      "props": {
+        "id": "selectable-tags",
+        "title": {
+          "$t": "Selectable tags"
+        },
+        "description": {
+          "$t": "Checkable tags toggle a bound boolean; a tag group with options toggles values in an array"
+        }
+      },
+      "children": [
+        "chips-body"
+      ]
+    },
+    "chips-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "chips-body-1",
+        "chips-body-2",
+        "chips-body-3"
+      ]
+    },
+    "chips-single-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Checkable tags"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "chips-single": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "chip-urgent",
+        "chip-mine",
+        "chip-disabled"
+      ]
+    },
+    "chip-urgent": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Urgent only"
+        },
+        "checkable": true,
+        "checked": {
+          "$bindState": "/chips/urgent"
+        }
+      },
+      "children": []
+    },
+    "chip-mine": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Assigned to me"
+        },
+        "icon": "user",
+        "checkable": true,
+        "checked": {
+          "$bindState": "/chips/mine"
+        }
+      },
+      "children": []
+    },
+    "chip-disabled": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Archived"
+        },
+        "checkable": true,
+        "disabled": true
+      },
+      "children": []
+    },
+    "chips-multi-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Several at once"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "chips-multi": {
+      "type": "TagGroup",
+      "props": {
+        "ariaLabel": {
+          "$t": "Channels"
+        },
+        "value": {
+          "$bindState": "/chips/channels"
+        },
+        "options": [
+          {
+            "label": {
+              "$t": "Web store"
+            },
+            "value": "web"
+          },
+          {
+            "label": {
+              "$t": "Marketplace"
+            },
+            "value": "marketplace"
+          },
+          {
+            "label": {
+              "$t": "Retail"
+            },
+            "value": "retail"
+          },
+          {
+            "label": {
+              "$t": "Wholesale"
+            },
+            "value": "wholesale"
+          },
+          {
+            "label": {
+              "$t": "Phone"
+            },
+            "value": "phone",
+            "disabled": true
+          }
+        ]
+      },
+      "children": []
+    },
+    "chips-one-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "One at most"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "chips-one": {
+      "type": "TagGroup",
+      "props": {
+        "ariaLabel": {
+          "$t": "Period"
+        },
+        "multiple": false,
+        "size": "lg",
+        "value": {
+          "$bindState": "/chips/period"
+        },
+        "options": [
+          {
+            "label": {
+              "$t": "Today"
+            },
+            "value": "today"
+          },
+          {
+            "label": {
+              "$t": "7 days"
+            },
+            "value": "7d"
+          },
+          {
+            "label": {
+              "$t": "28 days"
+            },
+            "value": "28d"
+          },
+          {
+            "label": {
+              "$t": "90 days"
+            },
+            "value": "90d"
+          }
+        ]
+      },
+      "children": []
+    },
+    "card-tag-group": {
+      "type": "Example",
+      "props": {
+        "id": "tag-group",
+        "title": {
+          "$t": "Tag group"
+        },
+        "description": {
+          "$t": "A row of closable tags bound to an array. Removing one writes the shorter array back; focus moves to the next tag"
+        }
+      },
+      "children": [
+        "group-body"
+      ]
+    },
+    "group-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "group-body-1",
+        "group-body-2",
+        "group-body-3"
+      ]
+    },
+    "group-body-3": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "group-disabled-label",
+        "group-disabled"
+      ]
+    },
+    "group-disabled-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Disabled"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "group-disabled": {
+      "type": "TagGroup",
+      "props": {
+        "ariaLabel": {
+          "$t": "Locked labels"
+        },
+        "value": [
+          "design",
+          "docs"
+        ],
+        "labels": {
+          "design": {
+            "$t": "Design"
+          },
+          "docs": {
+            "$t": "Docs"
+          }
+        },
+        "disabled": true
+      },
+      "children": []
+    },
+    "group-labels": {
+      "type": "TagGroup",
+      "props": {
+        "ariaLabel": {
+          "$t": "Product labels"
+        },
+        "value": {
+          "$bindState": "/group/labels"
+        },
+        "labels": {
+          "new": {
+            "$t": "New arrival"
+          },
+          "sale": {
+            "$t": "On sale"
+          },
+          "eco": {
+            "$t": "Eco"
+          },
+          "limited": {
+            "$t": "Limited edition"
+          },
+          "gift": {
+            "$t": "Gift idea"
+          }
+        },
+        "tone": "brand"
+      },
+      "children": []
+    },
+    "group-actions": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm"
+      },
+      "children": [
+        "group-reset",
+        "group-clear"
+      ]
+    },
+    "group-reset": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Reset labels"
+        },
+        "appearance": "outline",
+        "size": "sm",
+        "icon": "rotate-ccw"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/group/labels",
+            "value": [
+              "new",
+              "sale",
+              "eco",
+              "limited",
+              "gift"
+            ]
+          }
+        }
+      }
+    },
+    "group-clear": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Clear"
+        },
+        "appearance": "ghost",
+        "size": "sm"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/group/labels",
+            "value": []
+          }
+        }
+      }
+    },
+    "group-empty-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Empty and outline"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "group-empty": {
+      "type": "TagGroup",
+      "props": {
+        "ariaLabel": {
+          "$t": "Reviewers"
+        },
+        "value": {
+          "$bindState": "/group/reviewers"
+        },
+        "appearance": "outline",
+        "empty": {
+          "$t": "No reviewers yet"
+        }
+      },
+      "children": []
+    },
+    "card-kbd": {
+      "type": "Example",
+      "props": {
+        "id": "kbd",
+        "title": {
+          "$t": "Keyboard keys"
+        },
+        "description": {
+          "$t": "Shortcuts as key chips. Modifier symbols are read out by name"
+        }
+      },
+      "children": [
+        "kbd-body"
+      ]
+    },
+    "kbd-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "kbd-group-keys",
+        "kbd-group-seq",
+        "kbd-group-sizes"
+      ]
+    },
+    "kbd-group-keys": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "kbd-keys-label",
+        "kbd-keys-rows"
+      ]
+    },
+    "kbd-keys-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Keys and combinations"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "kbd-keys-rows": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "kbd-row-1",
+        "kbd-row-3",
+        "kbd-row-2"
+      ]
+    },
+    "kbd-group-seq": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "kbd-seq-group-label",
+        "kbd-seq-rows"
+      ]
+    },
+    "kbd-seq-group-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Sequences"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "kbd-seq-rows": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "kbd-row-4",
+        "kbd-row-orders"
+      ]
+    },
+    "kbd-row-orders": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "justify": "between",
+        "align": "center",
+        "gap": "md"
+      },
+      "children": [
+        "kbd-orders-label",
+        "kbd-orders"
+      ]
+    },
+    "kbd-orders-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Go to orders"
+        }
+      },
+      "children": []
+    },
+    "kbd-orders": {
+      "type": "Kbd",
+      "props": {
+        "keys": [
+          "G",
+          "O"
+        ],
+        "separator": {
+          "$t": "then"
+        }
+      },
+      "children": []
+    },
+    "kbd-group-sizes": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "kbd-sizes-label",
+        "kbd-sizes-rows"
+      ]
+    },
+    "kbd-sizes-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Sizes sm · md"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "kbd-sizes-rows": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "kbd-row-sm",
+        "kbd-row-5"
+      ]
+    },
+    "kbd-row-sm": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "justify": "between",
+        "align": "center",
+        "gap": "md"
+      },
+      "children": [
+        "kbd-sm-label",
+        "kbd-sm"
+      ]
+    },
+    "kbd-sm-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Small"
+        }
+      },
+      "children": []
+    },
+    "kbd-sm": {
+      "type": "Kbd",
+      "props": {
+        "keys": [
+          "⇧",
+          "⌘",
+          "↵"
+        ]
+      },
+      "children": []
+    },
+    "kbd-search-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Search"
+        }
+      },
+      "children": []
+    },
+    "kbd-search": {
+      "type": "Kbd",
+      "props": {
+        "keys": [
+          "⌘",
+          "K"
+        ]
+      },
+      "children": []
+    },
+    "kbd-palette-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Command palette"
+        }
+      },
+      "children": []
+    },
+    "kbd-palette": {
+      "type": "Kbd",
+      "props": {
+        "keys": [
+          "Ctrl",
+          "Shift",
+          "P"
+        ],
+        "separator": "+"
+      },
+      "children": []
+    },
+    "kbd-esc-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Close panel"
+        }
+      },
+      "children": []
+    },
+    "kbd-esc": {
+      "type": "Kbd",
+      "props": {
+        "keys": [
+          "Esc"
+        ]
+      },
+      "children": []
+    },
+    "kbd-seq-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Go to inbox"
+        }
+      },
+      "children": []
+    },
+    "kbd-seq": {
+      "type": "Kbd",
+      "props": {
+        "keys": [
+          "G",
+          "I"
+        ],
+        "separator": {
+          "$t": "then"
+        }
+      },
+      "children": []
+    },
+    "kbd-md-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Medium"
+        }
+      },
+      "children": []
+    },
+    "kbd-md": {
+      "type": "Kbd",
+      "props": {
+        "keys": [
+          "⇧",
+          "⌘",
+          "↵"
+        ],
+        "size": "md"
+      },
+      "children": []
+    },
+    "card-scroll": {
+      "type": "Example",
+      "props": {
+        "id": "scroll-area",
+        "title": {
+          "$t": "Scroll area"
+        },
+        "description": {
+          "$t": "Content scrolls inside a set height with slim themed scrollbars; focus the area and use the arrow keys"
+        }
+      },
+      "children": [
+        "scroll-body"
+      ]
+    },
+    "scroll-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "scroll-body-1",
+        "scroll-body-2"
+      ]
+    },
+    "scroll-v-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Vertical · max height 180px"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "scroll-v": {
+      "type": "ScrollArea",
+      "props": {
+        "ariaLabel": {
+          "$t": "Release notes"
+        },
+        "maxHeight": 180,
+        "className": "rounded-control border border-border"
+      },
+      "children": [
+        "scroll-v-list"
+      ]
+    },
+    "scroll-v-list": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "className": "p-3"
+      },
+      "children": [
+        "note-1",
+        "note-2",
+        "note-3",
+        "note-4",
+        "note-5",
+        "note-6",
+        "note-7",
+        "note-8"
+      ]
+    },
+    "note-1": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "v2.8 · Orders can be split across warehouses"
+        }
+      },
+      "children": []
+    },
+    "note-2": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "v2.7 · Refunds show the original payment method"
+        }
+      },
+      "children": []
+    },
+    "note-3": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "v2.6 · Bulk edit for product prices and stock"
+        }
+      },
+      "children": []
+    },
+    "note-4": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "v2.5 · Customers can save several addresses"
+        }
+      },
+      "children": []
+    },
+    "note-5": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "v2.4 · Dashboard periods remember your last choice"
+        }
+      },
+      "children": []
+    },
+    "note-6": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "v2.3 · Invoices are numbered per fiscal year"
+        }
+      },
+      "children": []
+    },
+    "note-7": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "v2.2 · Low-stock alerts per warehouse"
+        }
+      },
+      "children": []
+    },
+    "note-8": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "v2.1 · First public release"
+        }
+      },
+      "children": []
+    },
+    "scroll-h-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Horizontal"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "scroll-h": {
+      "type": "ScrollArea",
+      "props": {
+        "ariaLabel": {
+          "$t": "Categories"
+        },
+        "orientation": "horizontal",
+        "className": "rounded-control border border-border"
+      },
+      "children": [
+        "scroll-h-row"
+      ]
+    },
+    "scroll-h-row": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "className": "w-max p-3"
+      },
+      "children": [
+        "cat-1",
+        "cat-2",
+        "cat-3",
+        "cat-4",
+        "cat-5",
+        "cat-6",
+        "cat-7",
+        "cat-8",
+        "cat-9",
+        "cat-10"
+      ]
+    },
+    "cat-1": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Lighting"
+        },
+        "size": "lg"
+      },
+      "children": []
+    },
+    "cat-2": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Furniture"
+        },
+        "size": "lg"
+      },
+      "children": []
+    },
+    "cat-3": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Kitchen"
+        },
+        "size": "lg"
+      },
+      "children": []
+    },
+    "cat-4": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Textiles"
+        },
+        "size": "lg"
+      },
+      "children": []
+    },
+    "cat-5": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Outdoor"
+        },
+        "size": "lg"
+      },
+      "children": []
+    },
+    "cat-6": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Storage"
+        },
+        "size": "lg"
+      },
+      "children": []
+    },
+    "cat-7": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Decor"
+        },
+        "size": "lg"
+      },
+      "children": []
+    },
+    "cat-8": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Bath"
+        },
+        "size": "lg"
+      },
+      "children": []
+    },
+    "cat-9": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Office"
+        },
+        "size": "lg"
+      },
+      "children": []
+    },
+    "cat-10": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$t": "Kids"
+        },
+        "size": "lg"
+      },
+      "children": []
+    },
+    "card-calendar": {
+      "type": "Example",
+      "props": {
+        "id": "calendar",
+        "title": {
+          "$t": "Calendar"
+        },
+        "description": {
+          "$t": "Inline months bound to state: one date, a range or several days. Dots mark days with events; blocked days cannot be picked"
+        }
+      },
+      "children": [
+        "calendar-grid"
+      ]
+    },
+    "calendar-grid": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 240,
+        "gap": "md"
+      },
+      "children": [
+        "calendar-body",
+        "calendar-range-col",
+        "calendar-multi-col"
+      ]
+    },
+    "calendar-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "calendar-single-label",
+        "calendar-single"
+      ]
+    },
+    "calendar-single-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "One date · October to December"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "calendar-single": {
+      "type": "Calendar",
+      "props": {
+        "ariaLabel": {
+          "$t": "Delivery date"
+        },
+        "value": {
+          "$bindState": "/calendar/day"
+        },
+        "min": "2026-10-01",
+        "max": "2026-12-31",
+        "marks": [
+          {
+            "date": "2026-11-03",
+            "tone": "danger",
+            "label": {
+              "$t": "Release freeze"
+            }
+          },
+          {
+            "date": "2026-11-12",
+            "tone": "brand",
+            "label": {
+              "$t": "Sprint review"
+            }
+          },
+          {
+            "date": "2026-11-12",
+            "tone": "success",
+            "label": {
+              "$t": "Launch"
+            }
+          },
+          {
+            "date": "2026-11-18",
+            "tone": "info",
+            "label": {
+              "$t": "Webinar"
+            }
+          },
+          {
+            "date": "2026-11-24",
+            "tone": "warning",
+            "label": {
+              "$t": "Stock count"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "calendar-range-col": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "calendar-range-label",
+        "calendar-range"
+      ]
+    },
+    "calendar-range-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Range · two presses"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "calendar-multi-col": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "calendar-multi-label",
+        "calendar-multi"
+      ]
+    },
+    "calendar-multi-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Several days · weekdays only"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "calendar-range": {
+      "type": "Calendar",
+      "props": {
+        "ariaLabel": {
+          "$t": "Campaign period"
+        },
+        "mode": "range",
+        "value": {
+          "$bindState": "/calendar/range"
+        },
+        "appearance": "plain"
+      },
+      "children": []
+    },
+    "calendar-multi": {
+      "type": "Calendar",
+      "props": {
+        "ariaLabel": {
+          "$t": "Shift days"
+        },
+        "mode": "multiple",
+        "value": {
+          "$bindState": "/calendar/days"
+        },
+        "disabledWeekdays": [
+          0,
+          6
+        ],
+        "disabledDates": [
+          "2026-11-11",
+          "2026-11-26"
+        ],
+        "appearance": "plain"
+      },
+      "children": []
+    },
+    "card-listbox": {
+      "type": "Example",
+      "props": {
+        "id": "listbox",
+        "title": {
+          "$t": "Listbox"
+        },
+        "description": {
+          "$t": "An open list with icons, descriptions and groups. Arrow keys move, Enter picks, typing jumps to a match"
+        }
+      },
+      "children": [
+        "listbox-body"
+      ]
+    },
+    "listbox-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "listbox-single"
+      ]
+    },
+    "listbox-single": {
+      "type": "Listbox",
+      "props": {
+        "ariaLabel": {
+          "$t": "Notification channel"
+        },
+        "value": {
+          "$bindState": "/listbox/channel"
+        },
+        "options": [
+          {
+            "label": {
+              "$t": "Email"
+            },
+            "value": "email",
+            "icon": "mail",
+            "description": {
+              "$t": "A daily digest at 9:00"
+            },
+            "group": {
+              "$t": "Personal"
+            }
+          },
+          {
+            "label": {
+              "$t": "Push"
+            },
+            "value": "push",
+            "icon": "bell",
+            "description": {
+              "$t": "Instant, on every device you sign in on"
+            },
+            "group": {
+              "$t": "Personal"
+            }
+          },
+          {
+            "label": {
+              "$t": "SMS"
+            },
+            "value": "sms",
+            "icon": "smart-phone-01",
+            "description": {
+              "$t": "Needs a verified phone number"
+            },
+            "group": {
+              "$t": "Personal"
+            },
+            "disabled": true
+          },
+          {
+            "label": {
+              "$t": "Team channel"
+            },
+            "value": "team",
+            "icon": "user-group",
+            "description": {
+              "$t": "Posts to the shared operations channel"
+            },
+            "group": {
+              "$t": "Team"
+            }
+          },
+          {
+            "label": {
+              "$t": "Webhook"
+            },
+            "value": "webhook",
+            "icon": "link",
+            "description": {
+              "$t": "Sends JSON to your endpoint"
+            },
+            "group": {
+              "$t": "Team"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "card-listbox-multi": {
+      "type": "Example",
+      "props": {
+        "id": "listbox-multiple",
+        "title": {
+          "$t": "Listbox · several"
+        },
+        "description": {
+          "$t": "With multiple, each pick toggles a value; the list scrolls past its maximum height"
+        }
+      },
+      "children": [
+        "listbox-multi-body"
+      ]
+    },
+    "listbox-multi-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "listbox-multi",
+        "listbox-empty-group"
+      ]
+    },
+    "listbox-empty-group": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "listbox-empty-label",
+        "listbox-empty"
+      ]
+    },
+    "listbox-empty-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Empty"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "listbox-empty": {
+      "type": "Listbox",
+      "props": {
+        "ariaLabel": {
+          "$t": "Pick-up points"
+        },
+        "options": [],
+        "empty": {
+          "$t": "No pick-up points in this city yet"
+        }
+      },
+      "children": []
+    },
+    "listbox-multi": {
+      "type": "Listbox",
+      "props": {
+        "ariaLabel": {
+          "$t": "Warehouses"
+        },
+        "multiple": true,
+        "maxHeight": 220,
+        "value": {
+          "$bindState": "/listbox/warehouses"
+        },
+        "options": [
+          {
+            "label": {
+              "$t": "Amsterdam"
+            },
+            "value": "ams",
+            "icon": "package"
+          },
+          {
+            "label": {
+              "$t": "Berlin"
+            },
+            "value": "ber",
+            "icon": "package"
+          },
+          {
+            "label": {
+              "$t": "Lisbon"
+            },
+            "value": "lis",
+            "icon": "package"
+          },
+          {
+            "label": {
+              "$t": "Madrid"
+            },
+            "value": "mad",
+            "icon": "package"
+          },
+          {
+            "label": {
+              "$t": "Milan"
+            },
+            "value": "mil",
+            "icon": "package"
+          },
+          {
+            "label": {
+              "$t": "Paris"
+            },
+            "value": "par",
+            "icon": "package"
+          },
+          {
+            "label": {
+              "$t": "Prague"
+            },
+            "value": "prg",
+            "icon": "package",
+            "disabled": true
+          },
+          {
+            "label": {
+              "$t": "Vienna"
+            },
+            "value": "vie",
+            "icon": "package"
+          }
+        ]
+      },
+      "children": []
+    },
+    "group-empty-actions": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm"
+      },
+      "children": [
+        "group-add-reviewers"
+      ]
+    },
+    "group-add-reviewers": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Add reviewers"
+        },
+        "appearance": "outline",
+        "size": "sm",
+        "icon": "plus"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/group/reviewers",
+            "value": [
+              "Mia Chen",
+              "Leo Park"
+            ]
+          }
+        }
+      }
+    },
+    "skeleton-loading-1": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "skeleton-text-label",
+        "skeleton-text"
+      ]
+    },
+    "skeleton-loading-2": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "skeleton-row-label",
+        "skeleton-rows"
+      ]
+    },
+    "skeleton-loading-3": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "skeleton-shape-label",
+        "skeleton-shapes"
+      ]
+    },
+    "spinner-body-1": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "spinner-size-label",
+        "spinner-sizes"
+      ]
+    },
+    "spinner-body-2": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "spinner-tone-label",
+        "spinner-tones"
+      ]
+    },
+    "spinner-body-3": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "spinner-label-label",
+        "spinner-labelled"
+      ]
+    },
+    "spinner-body-4": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "spinner-block-label",
+        "spinner-block"
+      ]
+    },
+    "tags-body-1": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "tags-soft-label",
+        "tags-soft"
+      ]
+    },
+    "tags-body-2": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "tags-solid-label",
+        "tags-solid"
+      ]
+    },
+    "tags-body-3": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "tags-outline-label",
+        "tags-outline"
+      ]
+    },
+    "tags-body-4": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "tags-size-label",
+        "tags-sizes"
+      ]
+    },
+    "tags-body-5": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "tags-lead-label",
+        "tags-lead"
+      ]
+    },
+    "tags-body-6": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "tags-close-label",
+        "tags-closable"
+      ]
+    },
+    "chips-body-1": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "chips-single-label",
+        "chips-single"
+      ]
+    },
+    "chips-body-2": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "chips-multi-label",
+        "chips-multi"
+      ]
+    },
+    "chips-body-3": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "chips-one-label",
+        "chips-one"
+      ]
+    },
+    "group-body-1": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "group-labels",
+        "group-actions"
+      ]
+    },
+    "group-body-2": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "group-empty-label",
+        "group-empty",
+        "group-empty-actions"
+      ]
+    },
+    "scroll-body-1": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "scroll-v-label",
+        "scroll-v"
+      ]
+    },
+    "scroll-body-2": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "scroll-h-label",
+        "scroll-h"
+      ]
+    },
+    "kbd-row-1": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "justify": "between",
+        "align": "center",
+        "gap": "md"
+      },
+      "children": [
+        "kbd-search-label",
+        "kbd-search"
+      ]
+    },
+    "kbd-row-2": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "justify": "between",
+        "align": "center",
+        "gap": "md"
+      },
+      "children": [
+        "kbd-palette-label",
+        "kbd-palette"
+      ]
+    },
+    "kbd-row-3": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "justify": "between",
+        "align": "center",
+        "gap": "md"
+      },
+      "children": [
+        "kbd-esc-label",
+        "kbd-esc"
+      ]
+    },
+    "kbd-row-4": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "justify": "between",
+        "align": "center",
+        "gap": "md"
+      },
+      "children": [
+        "kbd-seq-label",
+        "kbd-seq"
+      ]
+    },
+    "kbd-row-5": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "justify": "between",
+        "align": "center",
+        "gap": "md"
+      },
+      "children": [
+        "kbd-md-label",
+        "kbd-md"
+      ]
+    }
+  },
+  "state": {
+    "skeleton": {
+      "animated": true,
+      "loaded": false
+    },
+    "tags": {
+      "visible": {
+        "design": true,
+        "backend": true,
+        "docs": true
+      }
+    },
+    "chips": {
+      "urgent": true,
+      "mine": false,
+      "channels": [
+        "web",
+        "retail"
+      ],
+      "period": [
+        "28d"
+      ]
+    },
+    "group": {
+      "labels": [
+        "new",
+        "sale",
+        "eco",
+        "limited",
+        "gift"
+      ],
+      "reviewers": []
+    },
+    "calendar": {
+      "day": "2026-11-12",
+      "range": [
+        "2026-11-09",
+        "2026-11-15"
+      ],
+      "days": [
+        "2026-11-05",
+        "2026-11-17"
+      ]
+    },
+    "listbox": {
+      "channel": "push",
+      "warehouses": [
+        "ams",
+        "lis"
+      ]
+    }
+  }
+}

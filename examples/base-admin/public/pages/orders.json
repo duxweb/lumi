@@ -1,0 +1,6 @@
+{
+  "root": "summary",
+  "elements": {
+    "summary": { "type": "OrderSummary", "props": { "title": "Latest orders", "limit": 5 } }
+  }
+}

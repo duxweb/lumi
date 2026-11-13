@@ -1,0 +1,33 @@
+---
+title: "ListPage"
+description: "有数据来源的 Admin 列表，分页和排序保存在原生页面 Store 中。"
+---
+
+有数据来源的 Admin 列表，分页和排序保存在原生页面 Store 中。`syncWithLocation` 时页码、每页条数和排序也写入地址查询参数（`page`、`pageSize`、`sort=field:asc`），刷新、分享链接和前进/后退都能还原。`actions` 插槽放页面自己的按钮；`toolbar` 插槽在标题和结果之间，放 FilterBar，列表的 `filters` 读它绑定的值；`rowActions` 插槽里的元素会画在 `kind: "actions"` 列的每一行，各自绑定自己的动作；属性里用 `$item` 读这一行，动作执行前这一行会写入绑定的 `activeRow`，参数里用 `{ "$state": "/table/row/id" }` 读取。`bulkActions` 在结果上方显示勾选操作栏；`bulkAction` 把点击的值写入 `activeAction`，与绑定的 `selectedKeys` 一起使用。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `resource`（必填） | 数据资源名，如 `orders`。DataProvider 据此拼出接口地址。 | `string` |  |
+| `dataProviderName` | 使用哪个 DataProvider。只有一个时不用填。 | `string` |  |
+| `meta` | 原样传给 DataProvider 的附加参数，如自定义请求头或查询字段。 | `object` |  |
+| `title`（必填） | 页面标题。 | `string` |  |
+| `description` | 标题下方的一行说明。 | `string` |  |
+| `state` | 页面状态：加载中、空、出错、无权限等，`{ kind, title?, reason?, nextStep? }`。不填时正常显示内容。 字段：`kind`、`title`、`reason`、`nextStep`、`actionLabel?`、`disabled?` | `object` |  |
+| `statePath`（必填） | 列表的分页、筛选、勾选状态存放在页面状态里的路径。 | `string` |  |
+| `columns`（必填） | 列定义，同 Table 的 `columns`。 字段：`field`、`label?`、`width?`、`sortable?`、`align?`、`kind?`、`valueMap?`、`toneMap?`、`descriptionField?`、`imageField?`、`labelField?`、`initials?`、`truncate?`、`wrap?`、`currency?`、`actions?` | `object[]` |  |
+| `rowKey` | 每行数据里用作唯一键的字段名。 | `string` | `"id"` |
+| `pageSize` | 每页条数。 | `number` |  |
+| `syncWithLocation` | 把页码、每页条数和排序写进地址栏参数（`page`、`pageSize`、`sort=字段:asc`），刷新、分享链接和前进后退都能还原；填字符串时作为参数名前缀，用于一页多个列表。 | `boolean \| string` | `false` |
+| `filters` | 筛选条件，每项 `{ field, operator, value }`，会传给 DataProvider。 字段：`field`、`operator`、`value` | `object[]` |  |
+| `selectedKeys` | 已勾选行的键。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `(string \| number)[]` | `[]` |
+| `activeRow` | 最近一次点击的行数据，供行操作读取。通常绑定到状态。 | `object` |  |
+| `activeAction` | 最近一次点击的行操作名。通常绑定到状态。 | `string` |  |
+| `selectable` | 显示勾选列，可以多选行。 | `boolean` | `false` |
+| `bulkActions` | 勾选行后出现的批量操作按钮，每项 `{ action, label, tone? }`。 字段：`value`、`label`、`icon?`、`tone?`、`disabled?` | `object[]` |  |
+
+## 事件与插槽
+
+- 事件：`rowClick`、`rowAction`、`selectionChange`、`bulkAction`
+- 插槽：`actions`、`toolbar`、`aside`、`rowActions`

@@ -1,0 +1,49 @@
+---
+title: "Tabs"
+description: "在同一位置切换并列的视图。"
+---
+
+<ComponentPreview name="Tabs" />
+
+在同一位置切换并列的视图。
+
+## 示例
+
+```json
+{
+  "root": "tabs-22",
+  "elements": {
+    "tabs-22": {
+      "type": "Tabs",
+      "props": {
+        "value": { "$bindState": "/tabs-22/value" },
+        "items": [
+          { "label": "Alpha", "value": "alpha" },
+          { "label": "Beta", "value": "beta" }
+        ]
+      },
+      "children": []
+    }
+  },
+  "state": { "tabs-22": { "value": "alpha" } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `value` | 当前标签的 value。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string` |  |
+| `defaultValue` | 初始值，只在没有绑定 `value` 时生效。 | `string` |  |
+| `items`（必填） | 标签列表，每项 `{ label, value, disabled? }`。 字段：`label`、`value`、`disabled?`、`content?` | `object[]` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：`default`

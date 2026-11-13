@@ -1,0 +1,31 @@
+---
+title: "Lumi Skill"
+description: "Lumi Skill 教 AI 编写、修改和修复 Lumi 页面：查目录、写 Spec、校验、扩展组件、在浏览器里检查。"
+---
+
+Skill 是一份给 AI 看的说明。装好后，AI 在新建或修改 `src/pages` 下的页面、查询有哪些组件、页面校验失败时会自动按它做。
+
+## 安装
+
+`create-lumi` 新建的项目已经带好，写在两个位置，Claude Code 和其他读 `.agents` 的工具都能找到：
+
+```text
+.claude/skills/lumi/SKILL.md
+.agents/skills/lumi/SKILL.md
+```
+
+已有项目可以用 `npm create @duxweb/lumi@latest` 新建一个空项目，把里面的 `.claude/skills/lumi/SKILL.md` 复制到同样的位置；它的源文件是 Lumi 仓库里的 `packages/create/ai/SKILL.md`。
+
+## 它让 AI 做什么
+
+1. **先查再写**。不凭记忆猜组件和参数：用 `lumi-check catalog` 列出组件和动作，用 `lumi-check describe <组件名>` 看某个组件的参数、插槽和事件。目录里没有的组件，先加到目录里，不拿别的组件凑。
+2. **按 Spec 写页面**。每个元素有 `type`、`props`、`children`；读状态用 `$state`，双向绑定用 `$bindState`；读数据用 `Query` 加 `resultPath`；表单用 `submitForm` 保存；JSON 里不写函数和表达式。
+3. **每个改过的页面都校验**。命令是：
+
+   ```sh
+   npx -y @duxweb/lumi-check src/pages/<page>.json --catalog src/catalog.mjs --json
+   ```
+
+   退出码 0 是通过，1 是有错误，2 是文件或目录有问题。照着错误路径（如 `/elements/orders/props/columns/0/kind`）修改，直到通过。不能删掉功能来"修好"错误。
+4. **加组件时两处一起改**：定义写进 `src/catalog.mjs`（不引入 React），实现写进 `src/App.tsx` 的 registry。
+5. **在浏览器里看**：首次加载、空数据、请求失败、表单保存被拒，这几种情况都要看。校验只能证明格式对，不能证明功能对。

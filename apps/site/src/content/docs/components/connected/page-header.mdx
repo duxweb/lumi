@@ -1,0 +1,19 @@
+---
+title: "PageHeader"
+description: "Admin 页面标题和操作插槽。"
+---
+
+Admin 页面标题和操作插槽。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `title`（必填） | 页面标题。 | `string` |  |
+| `description` | 标题下方的一行说明。 | `string` |  |
+| `state` | 页面状态：加载中、空、出错、无权限等，`{ kind, title?, reason?, nextStep? }`。不填时正常显示内容。 字段：`kind`、`title`、`reason`、`nextStep`、`actionLabel?`、`disabled?` | `object` |  |
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：`actions`、`meta`

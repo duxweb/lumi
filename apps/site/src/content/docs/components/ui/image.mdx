@@ -1,0 +1,53 @@
+---
+title: "Image"
+description: "图片，放在固定 aspectRatio 的框里（默认 4/3；auto 保持原比例），加载时闪烁占位，失败时显示图片失效的替代图形。"
+---
+
+<ComponentPreview name="Image" />
+
+图片，放在固定 `aspectRatio` 的框里（默认 4/3；`auto` 保持原比例），加载时闪烁占位，失败时显示图片失效的替代图形。`radius` 跟随主题（默认 md）。`preview` 让它成为按钮，点击打开全屏 Lightbox。`width` 以 px 限制宽度；`caption` 显示在下方，同时作为预览的名称。
+
+## 示例
+
+```json
+{
+  "root": "image-42",
+  "elements": {
+    "image-42": {
+      "type": "Image",
+      "props": {
+        "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90'><rect width='160' height='90' fill='%230ea5e9'/><circle cx='118' cy='30' r='14' fill='%23e0f2fe'/><path d='M0 90 L52 42 L92 78 L118 58 L160 90 Z' fill='%23e0f2fe' opacity='0.7'/></svg>",
+        "alt": "Lake at dawn",
+        "aspectRatio": "16/9",
+        "width": 320,
+        "caption": "Lake at dawn",
+        "preview": true
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `src`（必填） | 图片地址。 | `string` |  |
+| `alt` | 替代文字，图片无法显示或读屏时使用。 | `string \| null` |  |
+| `aspectRatio` | 图框比例，如 `16/9`；`auto` 按图片自身比例。 | `"auto" \| "1/1" \| "4/3" \| "3/2" \| "16/9" \| "21/9" \| "3/4" \| null` | `"4/3"` |
+| `fit` | `cover` 裁切填满图框，`contain` 完整显示并留白。 | `"cover" \| "contain" \| null` | `"cover"` |
+| `radius` | 圆角大小，`full` 为圆形。 | `"none" \| "sm" \| "md" \| "lg" \| "full" \| null` | `"md"` |
+| `width` | 最大宽度（像素）。不填时撑满父容器。 | `number \| null` |  |
+| `caption` | 图表下方的说明，如统计口径或时间范围。 | `string \| null` |  |
+| `preview` | 显示已上传图片的缩略图。 | `boolean \| null` | `false` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

@@ -1,0 +1,31 @@
+{
+  "root": "demo",
+  "elements": {
+    "demo": {
+      "type": "Fragment",
+      "props": {},
+      "children": [
+        "save",
+        "missing"
+      ]
+    },
+    "save": {
+      "type": "Button",
+      "props": {
+        "label": "Save",
+        "appearance": "glow"
+      },
+      "on": {
+        "press": {
+          "action": "publishEverything"
+        }
+      },
+      "children": []
+    },
+    "chart": {
+      "type": "Sparkline3D",
+      "props": {},
+      "children": []
+    }
+  }
+}

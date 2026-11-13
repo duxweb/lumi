@@ -1,0 +1,386 @@
+/* The site's own frame around Lumi UI: whitespace, large type and one stage.
+   Colours follow the Lumi tokens: black primary, #2d5bff accent. */
+:root {
+  --site-paper: #ffffff;
+  --site-ink: #000000;
+  --site-muted: #5d6270;
+  --site-line: #e4e6ed;
+  --site-tint: #f5f6f9;
+  --site-accent: #2d5bff;
+  --site-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  --site-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --site-width: 1200px;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --site-paper: #0e1015;
+  --site-ink: #f4f5f8;
+  --site-muted: #9aa0ad;
+  --site-line: #262a33;
+  --site-tint: #161920;
+  --site-accent: #6f8fff;
+  color-scheme: dark;
+}
+
+/* The home page is night whatever the system theme: black ground, white type. */
+.night {
+  --site-paper: #000000;
+  --site-ink: #ffffff;
+  --site-muted: #a3a8b8;
+  --site-line: rgb(255 255 255 / 0.12);
+  --site-tint: #0a0b0f;
+  --site-accent: #ffb59a;
+  color-scheme: dark;
+}
+html:has(.night) { background: #000000; }
+/* The sky sits behind the content; the black comes from the root, so the body must not cover it. */
+body.night { background: transparent; }
+
+* { box-sizing: border-box; }
+
+html { background: var(--site-paper); }
+
+body {
+  margin: 0;
+  background: var(--site-paper);
+  color: var(--site-ink);
+  font: 16px/1.7 var(--site-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+a { color: inherit; }
+
+:focus-visible { outline: 2px solid var(--site-accent); outline-offset: 2px; }
+
+main, .nav, .footer {
+  width: 100%;
+  max-width: var(--site-width);
+  margin-inline: auto;
+  padding-inline: max(24px, env(safe-area-inset-left, 0px));
+}
+
+/* Navigation */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 24px;
+}
+/* A page that fills the window: the header spans it, aligned with the page's own edge. */
+.nav--full { max-width: none; padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
+.nav__brand { font-size: 20px; font-weight: 700; text-decoration: none; }
+.nav { gap: 24px; }
+.nav__links { display: flex; gap: 24px; margin-left: auto; font-size: 15px; }
+.nav__links a { color: var(--site-muted); text-decoration: none; }
+.nav__links a:hover, .nav__links a[aria-current] { color: var(--site-ink); }
+.nav__links a[aria-current] { font-weight: 600; }
+.nav__tools { display: flex; align-items: center; gap: 4px; padding-left: 20px; border-left: 1px solid var(--site-line); }
+.nav__tool { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding-inline: 10px; border-radius: 999px; color: var(--site-muted); font-size: 14px; text-decoration: none; }
+.nav__tool:hover { background: var(--site-tint); color: var(--site-ink); }
+.nav__tool--icon { width: 34px; padding: 0; justify-content: center; }
+#ai { scroll-margin-top: 32px; }
+/* On the night page the header sits on the sky. */
+.night .nav__links a { color: rgb(255 255 255 / 0.78); }
+.night .nav__links a:hover, .night .nav__links a[aria-current] { color: #fff; }
+.night .nav__tools { border-left-color: rgb(255 255 255 / 0.2); }
+.night .nav__tool { color: rgb(255 255 255 / 0.78); }
+.night .nav__tool:hover { background: rgb(255 255 255 / 0.12); color: #fff; }
+
+/* Hero: a sky after sunset behind the header, the headline and the window; it darkens into the black page */
+.hero {
+  position: relative;
+  padding-block: 72px 56px;
+  text-align: center;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -110px calc(50% - 50vw) -720px;
+  background:
+    linear-gradient(180deg, rgb(12 6 28 / 0.55) 0%, rgb(12 6 28 / 0.15) 32%, transparent 55%, rgb(0 0 0 / 0.6) 82%, #000 100%),
+    url("/home/sky.webp") center top / cover no-repeat #1a1030;
+}
+.hero__tag {
+  display: inline-block;
+  margin: 0 0 28px;
+  padding: 6px 14px;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.08);
+  color: rgb(255 255 255 / 0.85);
+  font-size: 14px;
+}
+.hero h1 {
+  margin: 0;
+  font-size: clamp(40px, 7vw, 88px);
+  line-height: 1.1;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  word-break: keep-all;
+}
+.hero__lede {
+  max-width: 34em;
+  margin: 28px auto 0;
+  color: rgb(255 255 255 / 0.82);
+  font-size: clamp(16px, 1.5vw, 19px);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.hero__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 36px; }
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  height: 50px;
+  padding-inline: 26px;
+  border: 1px solid var(--site-line);
+  border-radius: 999px;
+  background: var(--site-paper);
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.button:hover { border-color: var(--site-ink); }
+.button--solid { background: var(--site-ink); border-color: var(--site-ink); color: var(--site-paper); }
+/* Over the sky the second button is dark glass, not a black slab. */
+.night .button:not(.button--solid) { border-color: rgb(255 255 255 / 0.2); background: rgb(6 9 24 / 0.55); }
+.night .button:not(.button--solid):hover { border-color: rgb(255 255 255 / 0.6); }
+
+.command {
+  position: relative;
+  margin-top: 24px;
+  padding: 4px;
+  border: 0;
+  background: none;
+  color: rgb(255 255 255 / 0.7);
+  font: 14px var(--site-mono);
+  cursor: pointer;
+}
+.command:hover { color: #fff; }
+.command code::before { content: "$ "; opacity: 0.5; }
+.command__done { position: absolute; left: 100%; margin-left: 8px; color: #fff; opacity: 0; transition: opacity 0.2s; white-space: nowrap; }
+.command[data-copied] .command__done { opacity: 1; }
+
+/* Wide blocks: the product window wider than the text column */
+.wide { position: relative; width: min(1280px, calc(100vw - 48px)); left: 50%; transform: translateX(-50%); }
+
+/* The window's foot sinks into the dark, where the sky ends. */
+.stage-slot { position: relative; min-height: 816px; }
+.stage-slot::after {
+  content: "";
+  position: absolute;
+  inset: auto -1px -1px;
+  height: 150px;
+  border-radius: 0 0 22px 22px;
+  background: linear-gradient(180deg, transparent, #000);
+  pointer-events: none;
+}
+.showcase__note { margin: 20px 0 0; color: var(--site-muted); font-size: 14px; text-align: center; }
+
+.window {
+  padding: 6px;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: 22px;
+  background: #08090d;
+  box-shadow: 0 40px 120px -40px rgb(0 0 0 / 0.7);
+  text-align: left;
+}
+.window__bar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  height: 38px;
+  padding-inline: 12px;
+}
+.window__dots { display: flex; gap: 7px; }
+.window__dots i { width: 10px; height: 10px; border-radius: 50%; background: rgb(255 255 255 / 0.18); }
+.window__address {
+  padding: 2px 16px;
+  border-radius: 8px;
+  background: rgb(255 255 255 / 0.08);
+  color: rgb(255 255 255 / 0.6);
+  font: 12px var(--site-mono);
+}
+/* The admin shell is position: fixed; the transform turns this box into its viewport. */
+.window__app { position: relative; height: 760px; border-radius: 16px; transform: translateZ(0); overflow: hidden; }
+
+/* Section heads: a dot and a short name, then the title */
+.eyebrow { display: inline-flex; align-items: center; gap: 10px; margin: 0; font-size: 15px; font-weight: 500; }
+.eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.section-head { text-align: center; }
+.section-title { margin: 14px 0 0; font-size: clamp(30px, 4vw, 48px); line-height: 1.2; font-weight: 500; letter-spacing: -0.01em; text-align: center; text-wrap: balance; word-break: keep-all; }
+.section-lede { max-width: 40em; margin: 20px auto 0; color: var(--site-muted); font-size: 17px; text-wrap: pretty; }
+
+/* Pillars: four cards in a row, the icon alone at the top and the words at the foot */
+.pillars { padding-block: 150px 0; }
+.pillars__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 64px; }
+.pillar {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 12px 28px;
+  border: 1px solid var(--site-line);
+  border-radius: 18px;
+  background: var(--site-tint);
+}
+/* A small piece of the product on a warm glow, one per card. */
+.pillar__art {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  gap: 8px;
+  height: 148px;
+  margin-bottom: 22px;
+  padding: 16px;
+  border-radius: 10px;
+  background:
+    radial-gradient(ellipse 90% 80% at 50% 115%, rgb(255 150 120 / 0.34), transparent 70%),
+    linear-gradient(180deg, rgb(120 80 190 / 0.2), rgb(120 80 190 / 0.05));
+  font: 12.5px/1.5 var(--site-mono);
+}
+.pillar__art--lines { flex-direction: column; flex-wrap: nowrap; align-items: stretch; justify-content: center; }
+.chip {
+  padding: 5px 11px;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 0.07);
+  color: rgb(255 255 255 / 0.82);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chip--good { border-color: rgb(110 231 170 / 0.4); color: #8af0b9; }
+.chip--bad { border-color: rgb(255 140 140 / 0.4); color: #ffa3a3; }
+.chip--solid { border-color: #fff; background: #fff; color: #000; }
+.chip--off { border-style: dashed; background: none; color: rgb(255 255 255 / 0.4); text-decoration: line-through; }
+.chip--end { align-self: flex-end; }
+.chip--start { align-self: flex-start; }
+.pillar h3 { margin: 0 14px; font-size: 18px; font-weight: 600; line-height: 1.4; }
+.pillar p { margin: 8px 14px 0; color: var(--site-muted); font-size: 15px; line-height: 1.65; text-wrap: pretty; }
+
+/* Flow: the title on the left, a sentence on the right, then one card for building and one for using */
+.flow { padding-block: 150px 0; }
+.flow__head { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: end; gap: 48px; }
+.flow__head .section-title { text-align: left; }
+.flow__lede { margin: 0; color: var(--site-muted); font-size: 16px; text-wrap: pretty; }
+.flow__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 56px; }
+.flow__column { padding: 16px 16px 28px; border: 1px solid var(--site-line); border-radius: 18px; background: var(--site-tint); }
+/* Each card opens with a cut of the same sky, a piece of the product floating on it. */
+.flow__art {
+  display: grid;
+  place-items: center;
+  height: 230px;
+  border-radius: 12px;
+  background:
+    url("/home/sky.webp") center 46% / 150% auto no-repeat #2a1446;
+  mask-image: linear-gradient(180deg, #000 70%, transparent);
+}
+.glass {
+  display: grid;
+  gap: 10px;
+  width: min(340px, 82%);
+  padding: 16px 18px;
+  border: 1px solid rgb(255 255 255 / 0.22);
+  border-radius: 14px;
+  background: rgb(8 12 36 / 0.55);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  font-size: 14px;
+}
+.glass--mono { gap: 6px; font: 13px/1.6 var(--site-mono); color: rgb(255 255 255 / 0.72); }
+.glass--mono span:last-child { color: #fff; }
+.glass__title { margin: 0; font-weight: 600; }
+.glass__bars { display: grid; gap: 6px; }
+.glass__bars i { height: 6px; border-radius: 3px; background: rgb(255 255 255 / 0.2); }
+.glass__bars i:last-child { width: 62%; }
+.glass__actions { display: flex; gap: 8px; margin-top: 2px; }
+.glass__button { padding: 5px 14px; border: 1px solid rgb(255 255 255 / 0.28); border-radius: 999px; font-size: 13px; }
+.glass__button--solid { flex: 1; border-color: #fff; background: #fff; color: #000; text-align: center; }
+.flow__stage { display: flex; align-items: baseline; gap: 12px; margin: 20px 12px 16px; color: var(--site-muted); font-size: 15px; }
+.flow__stage strong { color: var(--site-ink); font-size: 20px; font-weight: 600; }
+.flow__list { margin: 0 12px; padding: 0; list-style: none; }
+.flow__list li { display: grid; grid-template-columns: 8.5em minmax(0, 1fr); gap: 16px; padding-block: 13px; border-top: 1px solid var(--site-line); color: var(--site-muted); font-size: 15px; }
+.flow__name { color: var(--site-ink); font-weight: 600; }
+
+/* Architecture: the layers as a stack, the backend beneath */
+.arch { padding-block: 150px 0; }
+.arch__stack { margin-top: 56px; border: 1px solid var(--site-line); border-radius: 18px; overflow: hidden; background: var(--site-tint); }
+.arch__layer, .arch__backend { display: grid; grid-template-columns: 9em 13em minmax(0, 1fr); align-items: baseline; gap: 24px; padding: 22px 28px; }
+.arch__layer + .arch__layer { border-top: 1px solid var(--site-line); }
+.arch__layer--upstream { color: var(--site-muted); }
+.arch__role { font-weight: 600; }
+.arch__name { color: var(--site-accent); font: 14px var(--site-mono); }
+.arch__layer--upstream .arch__name { color: var(--site-muted); }
+.arch__text { color: var(--site-muted); font-size: 15px; }
+.arch__backend { grid-template-columns: 9em minmax(0, 1fr); margin-top: 12px; border: 1px dashed var(--site-line); border-radius: 18px; }
+
+/* Closing: the sky comes back from below, under the footer */
+.closing { position: relative; padding-block: 170px 150px; text-align: center; }
+.closing::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0 calc(50% - 50vw) -130px;
+  background: linear-gradient(180deg, #000 0%, rgb(0 0 0 / 0.72) 38%, rgb(0 0 0 / 0.2) 100%), url("/home/sky.webp") center 30% / cover no-repeat #000;
+}
+.closing__line { margin: 0; font-size: clamp(36px, 5.6vw, 64px); font-weight: 500; letter-spacing: -0.01em; line-height: 1.2; }
+.closing .hero__actions { justify-content: center; }
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  padding-block: 32px 48px;
+  border-top: 1px solid var(--site-line);
+  color: var(--site-muted);
+  font-size: 14px;
+}
+.footer a { text-decoration: none; }
+.night .footer { border-top-color: rgb(255 255 255 / 0.16); color: rgb(255 255 255 / 0.78); }
+
+@media (max-width: 1100px) {
+  .pillars__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  .hero { padding-block: 48px 40px; }
+  .hero::before { inset-block-end: -560px; }
+  .wide { width: calc(100vw - 32px); }
+  .stage-slot { min-height: 696px; }
+  .window__app { height: 640px; }
+  .window__address { display: none; }
+  .pillars, .flow, .arch { padding-block: 104px 0; }
+  .pillars__grid { margin-top: 40px; }
+  .flow__head { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .flow__grid { grid-template-columns: minmax(0, 1fr); margin-top: 40px; }
+  .flow__art { height: 200px; }
+  .flow__list li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .arch__stack { margin-top: 40px; }
+  .arch__layer, .arch__backend { grid-template-columns: minmax(0, 1fr); gap: 4px; padding: 18px 20px; }
+  /* Every section stays reachable: the links get their own scrolling row. */
+  .nav { flex-wrap: wrap; row-gap: 12px; }
+  .nav__links { order: 3; width: 100%; margin-left: 0; gap: 20px; overflow-x: auto; scrollbar-width: none; white-space: nowrap; }
+  .nav__tools { margin-left: auto; }
+  /* Beside the command there is no room on a phone; the note shows beneath it. */
+  .command__done { left: 50%; top: 100%; margin: 6px 0 0; transform: translateX(-50%); }
+  .nav__tools { padding-left: 12px; }
+  .nav__tool span { display: none; }
+  .nav__tool { width: 34px; padding: 0; justify-content: center; }
+  .closing { padding-block: 120px 100px; }
+}
+
+@media (max-width: 640px) {
+  .pillars__grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+
+/* Shiki emits both themes; dark mode swaps the token colours. */
+.astro-code { background-color: var(--site-tint) !important; }
+:root[data-theme="dark"] .astro-code,
+:root[data-theme="dark"] .astro-code span { color: var(--shiki-dark) !important; }

@@ -1,0 +1,28 @@
+---
+title: "useMany"
+description: "useMany React hook 的签名、参数和返回值。"
+---
+
+Reads several records by id: one `getMany` call when the provider has it, else one `getOne` per id.
+
+```typescript
+useMany<T = any>(input: UseManyOptions): UseQueryResult<ManyResult<T>, Error>
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `input` | `UseManyOptions` | 是 |  |
+
+`input` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `dataProviderName` | `string \| undefined` | 否 | 多数据源名称；省略时使用 default。 |
+| `enabled` | `boolean \| undefined` | 否 | 是否允许自动执行查询。 |
+| `ids` | `ID[]` | 是 | The records to read. |
+| `liveMode` | `LiveMode \| undefined` | 否 | Defaults to the context's `liveMode`, which is `auto` with a liveProvider. |
+| `meta` | `Meta \| undefined` | 否 | 原样传给 DataProvider 的扩展数据。 |
+| `onLiveEvent` | `((event: LiveEvent) => void) \| undefined` | 否 | Called for each event of the resource, in `auto` and `manual` mode. |
+| `resource` | `string` | 是 | 交给 DataProvider 解释的数据目标，如 `orders`。 |
+
+返回 `UseQueryResult<ManyResult<T>, Error>`。

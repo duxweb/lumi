@@ -1,0 +1,146 @@
+{
+  "root": "grid",
+  "state": {
+    "customers": {
+      "data": [],
+      "total": 0,
+      "loading": true
+    },
+    "selected": null,
+    "customer": {
+      "data": null,
+      "loading": false
+    }
+  },
+  "elements": {
+    "grid": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 240,
+        "gap": "lg"
+      },
+      "children": [
+        "list-query",
+        "table",
+        "detail-query",
+        "detail",
+        "empty"
+      ]
+    },
+    "list-query": {
+      "type": "Query",
+      "props": {
+        "resource": "customers",
+        "pagination": {
+          "page": 1,
+          "pageSize": 5
+        },
+        "resultPath": "/customers"
+      },
+      "children": []
+    },
+    "table": {
+      "type": "Table",
+      "props": {
+        "rows": {
+          "$state": "/customers/data"
+        },
+        "loading": {
+          "$state": "/customers/loading"
+        },
+        "activeRow": {
+          "$bindState": "/selected"
+        },
+        "columns": [
+          {
+            "field": "name",
+            "label": {
+              "$t": "Customer"
+            }
+          },
+          {
+            "field": "tier",
+            "label": {
+              "$t": "Tier"
+            },
+            "width": "7rem"
+          }
+        ]
+      },
+      "children": []
+    },
+    "detail-query": {
+      "type": "Query",
+      "props": {
+        "resource": "customers",
+        "operation": "one",
+        "id": {
+          "$state": "/selected/id"
+        },
+        "resultPath": "/customer"
+      },
+      "children": []
+    },
+    "detail": {
+      "type": "DescriptionList",
+      "props": {
+        "layout": "rows",
+        "items": [
+          {
+            "label": {
+              "$t": "Name"
+            },
+            "value": {
+              "$state": "/customer/data/name"
+            }
+          },
+          {
+            "label": {
+              "$t": "Email"
+            },
+            "value": {
+              "$state": "/customer/data/email"
+            }
+          },
+          {
+            "label": {
+              "$t": "Tier"
+            },
+            "value": {
+              "$state": "/customer/data/tier"
+            }
+          },
+          {
+            "label": {
+              "$t": "Spent"
+            },
+            "value": {
+              "$state": "/customer/data/spent"
+            }
+          }
+        ]
+      },
+      "visible": {
+        "$state": "/selected"
+      },
+      "children": []
+    },
+    "empty": {
+      "type": "Empty",
+      "props": {
+        "icon": "user",
+        "title": {
+          "$t": "No customer selected"
+        },
+        "description": {
+          "$t": "Click a row to load its record"
+        }
+      },
+      "visible": {
+        "$state": "/selected",
+        "not": true
+      },
+      "children": []
+    }
+  }
+}

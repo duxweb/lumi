@@ -1,0 +1,824 @@
+{
+  "root": "fragment-1",
+  "elements": {
+    "fragment-1": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "card-2",
+        "card-9",
+        "card-13",
+        "card-stack",
+        "card-grid",
+        "card-icon",
+        "card-progress",
+        "card-links",
+        "card-repeater"
+      ]
+    },
+    "card-2": {
+      "type": "Card",
+      "props": {
+        "title": "Form + FormField",
+        "description": "A form owns the values; each field names one of them."
+      },
+      "children": [
+        "fragment-3"
+      ]
+    },
+    "fragment-3": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "form-4"
+      ]
+    },
+    "form-4": {
+      "type": "Form",
+      "props": {
+        "layout": "vertical"
+      },
+      "children": [
+        "form-4-identity",
+        "form-4-row",
+        "formfield-8"
+      ]
+    },
+    "formfield-email": {
+      "type": "FormField",
+      "props": {
+        "name": "email",
+        "label": "Contact email",
+        "fieldType": "string",
+        "error": "Enter a full email address, like name@example.com",
+        "value": {
+          "$bindState": "/form-4/email"
+        }
+      },
+      "children": []
+    },
+    "formfield-5": {
+      "type": "FormField",
+      "props": {
+        "name": "name",
+        "label": "Name",
+        "fieldType": "string",
+        "required": true,
+        "help": "Shown to everyone in the workspace.",
+        "value": {
+          "$bindState": "/form-4/name"
+        }
+      },
+      "children": []
+    },
+    "formfield-6": {
+      "type": "FormField",
+      "props": {
+        "name": "seats",
+        "label": "Seats",
+        "fieldType": "number",
+        "min": 1,
+        "value": {
+          "$bindState": "/form-4/seats"
+        }
+      },
+      "children": []
+    },
+    "formfield-7": {
+      "type": "FormField",
+      "props": {
+        "name": "tier",
+        "label": "Tier",
+        "fieldType": "enum",
+        "widget": "Select",
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ],
+        "value": {
+          "$bindState": "/form-4/tier"
+        }
+      },
+      "children": []
+    },
+    "formfield-8": {
+      "type": "FormField",
+      "props": {
+        "name": "active",
+        "label": "Active",
+        "fieldType": "boolean",
+        "widget": "Switch",
+        "value": {
+          "$bindState": "/form-4/active"
+        }
+      },
+      "children": []
+    },
+    "card-9": {
+      "type": "Card",
+      "props": {
+        "title": "Filters",
+        "description": "A list page toolbar: primary controls out, the rest behind a panel."
+      },
+      "children": [
+        "fragment-10"
+      ]
+    },
+    "fragment-10": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "variant-filters-11",
+        "variant-filters-12"
+      ]
+    },
+    "variant-filters-11": {
+      "type": "FormField",
+      "props": {
+        "name": "filters-11",
+        "label": "Applies on change"
+      },
+      "children": [
+        "filters-11"
+      ]
+    },
+    "variant-filters-12": {
+      "type": "FormField",
+      "props": {
+        "name": "filters-12",
+        "label": "Apply button · loading"
+      },
+      "children": [
+        "filters-12"
+      ]
+    },
+    "filters-11": {
+      "type": "Filters",
+      "props": {
+        "schema": {
+          "fields": [
+            {
+              "field": "q",
+              "label": "Search",
+              "widget": "search",
+              "placeholder": "Search…",
+              "primary": true
+            },
+            {
+              "field": "status",
+              "label": "Status",
+              "widget": "select",
+              "options": [
+                {
+                  "label": "Alpha",
+                  "value": "alpha"
+                },
+                {
+                  "label": "Beta",
+                  "value": "beta"
+                }
+              ],
+              "primary": true
+            },
+            {
+              "field": "tier",
+              "label": "Tier",
+              "widget": "chips",
+              "options": [
+                {
+                  "label": "Alpha",
+                  "value": "alpha"
+                },
+                {
+                  "label": "Beta",
+                  "value": "beta"
+                }
+              ]
+            }
+          ]
+        },
+        "applyMode": "immediate",
+        "value": {
+          "$bindState": "/filters-11/value"
+        }
+      },
+      "children": []
+    },
+    "filters-12": {
+      "type": "Filters",
+      "props": {
+        "schema": {
+          "fields": [
+            {
+              "field": "status",
+              "label": "Status",
+              "widget": "select",
+              "options": [
+                {
+                  "label": "Alpha",
+                  "value": "alpha"
+                },
+                {
+                  "label": "Beta",
+                  "value": "beta"
+                }
+              ]
+            }
+          ]
+        },
+        "applyMode": "explicit",
+        "value": {
+          "$bindState": "/filters-12/value"
+        },
+        "loading": true
+      },
+      "children": []
+    },
+    "card-13": {
+      "type": "Card",
+      "props": {
+        "title": "Fragment",
+        "description": "Grouping with no surface of its own — stacked, or split with an aside."
+      },
+      "children": [
+        "fragment-14"
+      ]
+    },
+    "fragment-14": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "fragment-15"
+      ]
+    },
+    "fragment-15": {
+      "type": "Fragment",
+      "props": {
+        "layout": "split",
+        "asideWidth": 240
+      },
+      "children": [
+        "alert-16",
+        "alert-16b",
+        "alert-17"
+      ]
+    },
+    "alert-16": {
+      "type": "Alert",
+      "props": {
+        "message": "Main column",
+        "tone": "info"
+      },
+      "children": []
+    },
+    "alert-17": {
+      "type": "Alert",
+      "props": {
+        "message": "Aside · 240px",
+        "tone": "neutral"
+      },
+      "children": []
+    },
+    "stk-b1": {
+      "type": "Button",
+      "props": {
+        "label": "Save",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "stk-b2": {
+      "type": "Button",
+      "props": {
+        "label": "Preview",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "stk-b3": {
+      "type": "Button",
+      "props": {
+        "label": "Discard",
+        "appearance": "ghost"
+      },
+      "children": []
+    },
+    "stk-row": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "stk-b1",
+        "stk-b2",
+        "stk-b3"
+      ]
+    },
+    "stk-h": {
+      "type": "Heading",
+      "props": {
+        "text": "Shipping",
+        "level": "h3"
+      },
+      "children": []
+    },
+    "stk-t": {
+      "type": "Text",
+      "props": {
+        "text": "Orders placed before 14:00 ship the same day.",
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "stk-sep": {
+      "type": "Separator",
+      "props": {},
+      "children": []
+    },
+    "stk-col": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "stk-h",
+        "stk-t"
+      ]
+    },
+    "card-stack": {
+      "type": "Card",
+      "props": {
+        "title": "Stack, Heading and Separator",
+        "description": "Flex layout compatible with json-render shadcn: a vertical stack, a divider and a wrapping horizontal row."
+      },
+      "children": [
+        "card-stack-body"
+      ]
+    },
+    "card-stack-body": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "stk-col",
+        "stk-sep",
+        "stk-row"
+      ]
+    },
+    "grid-c0": {
+      "type": "Card",
+      "props": {
+        "title": "1,284",
+        "description": "Orders"
+      },
+      "children": []
+    },
+    "grid-c1": {
+      "type": "Card",
+      "props": {
+        "title": "$48,210",
+        "description": "Revenue"
+      },
+      "children": []
+    },
+    "grid-c2": {
+      "type": "Card",
+      "props": {
+        "title": "12",
+        "description": "Refunds"
+      },
+      "children": []
+    },
+    "grid-3": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 96,
+        "gap": "md"
+      },
+      "children": [
+        "grid-c0",
+        "grid-c1",
+        "grid-c2"
+      ]
+    },
+    "card-grid": {
+      "type": "Card",
+      "props": {
+        "title": "Grid",
+        "description": "Fixed columns (1-6) that collapse to one on small screens, or minColumnWidth to fit as many as the width allows."
+      },
+      "children": [
+        "card-grid-body"
+      ]
+    },
+    "card-grid-body": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "grid-3"
+      ]
+    },
+    "card-icon": {
+      "type": "Card",
+      "props": {
+        "title": "Icon",
+        "description": "Any HugeIcons free icon by name, in three sizes and the semantic tones; names outside the bundled set load on first use."
+      },
+      "children": [
+        "card-icon-body"
+      ]
+    },
+    "card-icon-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "icon-sizes",
+        "icon-tones"
+      ]
+    },
+    "icon-search": {
+      "type": "Icon",
+      "props": {
+        "name": "search",
+        "label": "Search, medium"
+      },
+      "children": []
+    },
+    "icon-truck": {
+      "type": "Icon",
+      "props": {
+        "name": "delivery-truck-01",
+        "label": "Delivery",
+        "tone": "brand"
+      },
+      "children": []
+    },
+    "icon-check": {
+      "type": "Icon",
+      "props": {
+        "name": "checkmark-circle-02",
+        "label": "Done",
+        "tone": "success"
+      },
+      "children": []
+    },
+    "icon-alert": {
+      "type": "Icon",
+      "props": {
+        "name": "alert-02",
+        "label": "Warning",
+        "tone": "warning"
+      },
+      "children": []
+    },
+    "card-progress": {
+      "type": "Card",
+      "props": {
+        "title": "Progress",
+        "description": "A value from 0 to max; label names the bar."
+      },
+      "children": [
+        "card-progress-body"
+      ]
+    },
+    "card-progress-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "progress-a",
+        "progress-b"
+      ]
+    },
+    "progress-a": {
+      "type": "Progress",
+      "props": {
+        "label": "Campaign prep",
+        "value": 72
+      },
+      "children": []
+    },
+    "progress-b": {
+      "type": "Progress",
+      "props": {
+        "label": "Warehouse rota · 2 days behind",
+        "value": 30,
+        "tone": "warning"
+      },
+      "children": []
+    },
+    "card-links": {
+      "type": "Card",
+      "props": {
+        "title": "Link cards",
+        "description": "href makes the whole card one link; icon leads the header."
+      },
+      "children": [
+        "card-links-body"
+      ]
+    },
+    "card-links-body": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 180,
+        "gap": "sm"
+      },
+      "children": [
+        "link-a",
+        "link-b"
+      ]
+    },
+    "link-a": {
+      "type": "Card",
+      "props": {
+        "title": "New product",
+        "description": "Drafts autosave",
+        "icon": "package",
+        "href": "#new-product"
+      },
+      "children": []
+    },
+    "link-b": {
+      "type": "Card",
+      "props": {
+        "title": "Export reports",
+        "description": "Day, week or month",
+        "icon": "download-01",
+        "href": "#export"
+      },
+      "children": []
+    },
+    "card-repeater": {
+      "type": "Card",
+      "props": {
+        "title": "Repeater",
+        "description": "Rows of a state array: add, duplicate, remove and reorder, with computed columns and a summary."
+      },
+      "children": [
+        "repeater-lines"
+      ]
+    },
+    "repeater-lines": {
+      "type": "Repeater",
+      "props": {
+        "value": {
+          "$bindState": "/lines/items"
+        },
+        "rowKey": "id",
+        "min": 1,
+        "max": 6,
+        "ariaLabel": "Order lines",
+        "columns": [
+          {
+            "key": "product",
+            "label": "Product",
+            "required": true
+          },
+          {
+            "key": "qty",
+            "label": "Qty",
+            "width": 110
+          },
+          {
+            "key": "price",
+            "label": "Unit price",
+            "width": 140,
+            "prefix": "$",
+            "precision": 2
+          },
+          {
+            "key": "total",
+            "label": "Line total",
+            "width": 130,
+            "align": "end",
+            "prefix": "$",
+            "precision": 2,
+            "compute": {
+              "op": "product",
+              "fields": [
+                "qty",
+                "price"
+              ]
+            }
+          }
+        ],
+        "summary": [
+          {
+            "key": "qty",
+            "op": "sum"
+          },
+          {
+            "key": "total",
+            "op": "sum"
+          }
+        ],
+        "newRow": {
+          "product": "",
+          "qty": 1,
+          "price": 0
+        },
+        "addLabel": "Add line"
+      },
+      "repeat": {
+        "statePath": "/lines/items",
+        "key": "id"
+      },
+      "children": [
+        "repeater-line"
+      ]
+    },
+    "repeater-line": {
+      "type": "RepeaterRow",
+      "props": {},
+      "children": [
+        "repeater-line-product",
+        "repeater-line-qty",
+        "repeater-line-price"
+      ]
+    },
+    "repeater-line-product": {
+      "type": "Input",
+      "props": {
+        "ariaLabel": "Product",
+        "value": {
+          "$bindItem": "product"
+        }
+      }
+    },
+    "repeater-line-qty": {
+      "type": "NumberInput",
+      "props": {
+        "ariaLabel": "Qty",
+        "min": 1,
+        "value": {
+          "$bindItem": "qty"
+        }
+      }
+    },
+    "repeater-line-price": {
+      "type": "NumberInput",
+      "props": {
+        "ariaLabel": "Price",
+        "min": 0,
+        "value": {
+          "$bindItem": "price"
+        }
+      }
+    },
+    "form-4-row": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 160
+      },
+      "children": [
+        "formfield-6",
+        "formfield-7"
+      ]
+    },
+    "alert-16b": {
+      "type": "Alert",
+      "props": {
+        "message": "Stacks with the main column",
+        "tone": "info"
+      },
+      "children": []
+    },
+    "icon-sm": {
+      "type": "Icon",
+      "props": {
+        "name": "search",
+        "size": "sm",
+        "label": "Search, small"
+      },
+      "children": []
+    },
+    "icon-lg": {
+      "type": "Icon",
+      "props": {
+        "name": "search",
+        "size": "lg",
+        "label": "Search, large"
+      },
+      "children": []
+    },
+    "icon-muted": {
+      "type": "Icon",
+      "props": {
+        "name": "clock-01",
+        "label": "Pending",
+        "tone": "muted"
+      },
+      "children": []
+    },
+    "icon-danger": {
+      "type": "Icon",
+      "props": {
+        "name": "cancel-circle",
+        "label": "Failed",
+        "tone": "danger"
+      },
+      "children": []
+    },
+    "icon-info": {
+      "type": "Icon",
+      "props": {
+        "name": "information-circle",
+        "label": "Note",
+        "tone": "info"
+      },
+      "children": []
+    },
+    "icon-sizes": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "md"
+      },
+      "children": [
+        "icon-sm",
+        "icon-search",
+        "icon-lg"
+      ]
+    },
+    "icon-tones": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "md"
+      },
+      "children": [
+        "icon-muted",
+        "icon-truck",
+        "icon-check",
+        "icon-alert",
+        "icon-danger",
+        "icon-info"
+      ]
+    },
+    "form-4-identity": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 160
+      },
+      "children": [
+        "formfield-5",
+        "formfield-email"
+      ]
+    }
+  },
+  "state": {
+    "form-4": {
+      "name": "Lumi",
+      "seats": 3,
+      "tier": "alpha",
+      "email": "lumi@",
+      "active": true
+    },
+    "filters-11": {
+      "value": {
+        "status": "alpha"
+      }
+    },
+    "filters-12": {
+      "value": {}
+    },
+    "lines": {
+      "items": [
+        {
+          "id": "l1",
+          "product": "Wireless mouse",
+          "qty": 2,
+          "price": 39
+        },
+        {
+          "id": "l2",
+          "product": "USB-C hub",
+          "qty": 1,
+          "price": 59
+        }
+      ]
+    }
+  }
+}

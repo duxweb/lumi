@@ -1,0 +1,22 @@
+---
+title: "ProportionList"
+description: "按数值排名的条目：标签、读数和可选的占总数比例，下方细条按最大项的比例绘制。"
+---
+
+按数值排名的条目：标签、读数和可选的占总数比例，下方细条按最大项的比例绘制。默认降序；`other` 项始终排在最后，用中性色。`valueTone: "muted"` 把读数显示为次要的计数。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `items`（必填） | 排行项，每项 `{ key, label, value, display?, tone?, other? }`。条长按最大项计算；`other: true` 表示“其他”汇总，固定排在最后并用中性色。 字段：`key`、`label`、`value`、`tone?`、`display?`、`other?` | `object[]` |  |
+| `ariaLabel`（必填） | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+| `tone` | 条的颜色。 | `"neutral" \| "primary" \| "success" \| "warning" \| "danger" \| "info"` | `"primary"` |
+| `sort` | `desc` 按数值从大到小排列（`other` 项除外）；`none` 保持传入顺序。 | `"desc" \| "none"` | `"desc"` |
+| `showShare` | 在读数后显示各项占总和的百分比。 | `boolean` | `false` |
+| `valueTone` | `muted` 把右侧读数降为次要的弱色计数（如成员旁的“9 项任务”），比较交给条长；`default` 保持强调。 | `"default" \| "muted"` | `"default"` |
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

@@ -1,0 +1,584 @@
+---
+title: "其他 Provider"
+description: "语言、路由、工作区、实时推送、审计日志、提示与通知、校验、上传、AI 助手和 env：每个 Provider 干什么、默认实现、接口、怎么换成自己的。"
+---
+
+数据、登录和权限各有一篇：[数据请求](/guide/advanced/data/)、[认证](/guide/advanced/auth/)、[权限](/guide/advanced/access/)。这一篇讲其余的 Provider 和配置。它们在整体里的位置见 [架构](/guide/advanced/architecture/)。
+
+所有 Provider 都是普通对象，有两种注册方式：
+
+- npm：作为 `createLumi({ ... })` 的同名选项传入。
+- CDN 版和 `mountAdmin`：在扩展模块返回的对象里写同名的键（`i18nProvider`、`tenantProvider`、`liveProvider`…），会替换 Admin 的默认实现，见 [Admin 应用](/guide/advanced/admin/)。
+
+```ts
+import { createI18nProvider, createLumi, createTenantProvider } from '@duxweb/lumi'
+
+const context = createLumi({
+  // 语言：默认中文，缺词时用英文
+  i18nProvider: createI18nProvider({ locale: 'zh-CN', fallbackLocale: 'en-US' }),
+  // 工作区：选择保存在 localStorage 的 shop:tenant 里
+  tenantProvider: createTenantProvider({ storageKey: 'shop:tenant' }),
+})
+```
+
+## I18nProvider：语言和格式
+
+**干什么**：翻译文字、切换语言，并按语言格式化数字、日期和金额。页面 JSON 里的 `{ "$t": "Orders" }`、组件自带的文字（"暂无数据"、校验提示）都经过它。
+
+**默认实现**：`createI18nProvider`。Admin 用 `config.json` 的 `i18n` 创建它，见 [项目配置](/guide/config/#i18n)。
+
+| 选项 | 说明 |
+| --- | --- |
+| `locale`（必填） | 当前语言。 |
+| `fallbackLocale` | 缺词时查的语言。 |
+| `translations` | `{ 语言: { 键: 文字 } }`，优先于 Lumi 自带的翻译。键可以是原文，也可以是 `a.b.c` 嵌套。 |
+| `direction` | `ltr` / `rtl`，或按语言返回方向的函数；默认按语言判断（阿拉伯语、希伯来语等为 `rtl`）。 |
+| `format` | `{ currency, currencyUnit, timeZone, dateTimeInput }`，金额和时间的格式。 |
+
+查找顺序：当前语言的 `translations` → Lumi 自带的当前语言 → 后备语言的 `translations` → Lumi 自带的后备语言 → 调用方给的默认文字 → 键本身。`{name}` 这样的占位符用参数替换。
+
+页面 JSON 带了自己的 `translations` 时，`LumiSpecPage` 用 `withPageTranslations(provider, translations)` 包一层，只在这个页面里生效：先查页面当前语言，再走上面的顺序（默认文字之前插入页面的后备语言）。规则见 [页面自己的翻译](/guide/i18n/#页面自己的翻译)。自己实现的 provider 加上 `getFallbackLocale()`，页面的后备语言才会生效。
+
+**接口**
+
+| 方法 | 说明 |
+| --- | --- |
+| `translate(key, params?, defaultMessage?)` | 返回翻译后的文字，必填。 |
+| `changeLocale(locale)` | 切换语言，必填。 |
+| `getLocale()` | 当前语言，必填。 |
+| `subscribe(listener)` | 语言变化时通知；有它时 `$t` 和组件文字会跟着刷新。 |
+| `getDirection()` | 文字方向。 |
+| `getFormatConfig()` | 返回 `format` 配置。 |
+| `formatNumber`、`formatDate`、`formatRelativeTime`、`formatCurrency`、`formatDateTime` | 按语言格式化，没有时组件用浏览器的 `Intl`。 |
+
+`format.currencyUnit` 为 `minor` 时，金额按"分"存储，显示前除以 100（按币种的小数位数）。`formatDateTime` 只接受 ISO 8601 UTC 字符串（`2026-11-11T08:00:00Z`），按 `timeZone` 显示。
+
+**自定义**：接已有的 i18next 等库时，实现必填的三个方法，加上 `subscribe`：
+
+```ts
+import type { I18nProvider } from '@duxweb/lumi'
+
+// 已有的 i18next 实例
+declare const i18n: {
+  t: (key: string, options?: Record<string, unknown>) => string
+  language: string
+  changeLanguage: (locale: string) => Promise<unknown>
+  on: (event: 'languageChanged', listener: () => void) => void
+  off: (event: 'languageChanged', listener: () => void) => void
+}
+
+export const i18nProvider: I18nProvider = {
+  // 翻译：没有译文时用默认文字，再没有就用键本身
+  translate: (key, params, defaultMessage) =>
+    i18n.t(key, { ...params, defaultValue: defaultMessage ?? key }),
+  // 切换语言
+  changeLocale: async (locale) => {
+    await i18n.changeLanguage(locale)
+  },
+  // 当前语言
+  getLocale: () => i18n.language,
+  // 语言变化时通知 Lumi；不写的话切换后要刷新页面才生效
+  subscribe: (listener) => {
+    i18n.on('languageChanged', listener)
+    return () => i18n.off('languageChanged', listener)
+  },
+}
+```
+
+**相关**：`$t`；hooks `useTranslate`、`useChangeLocale`、`useLocale`、`useFormatNumber`、`useFormatDate`、`useFormatDateTime`、`useFormatCurrency`、`useFormatRelativeTime`；manifest 的 `app.locales` 决定账号菜单里可切换的语言。
+
+## RouterProvider：导航
+
+**干什么**：让 Lumi 能跳转页面、读取当前地址，而不依赖具体的路由库。JSON 的 `navigate` 动作、`submitForm` 后的跳转、401 回登录页，都调用它。
+
+**默认实现**：Admin 自己提供，背后是 react-router，不需要配置。只在 Admin 之外的 React 项目里才需要自己写。
+
+**接口**
+
+| 方法 | 说明 |
+| --- | --- |
+| `go({ to?, query?, hash?, replace? })` | 跳转，必填。 |
+| `back()` | 后退，必填。 |
+| `parse()` | 当前地址：`{ pathname, params, query?, resource?, action?, id? }`，必填。 |
+| `getCurrentPath()` | 当前路径，必填。 |
+| `subscribe(listener)` | 地址变化时通知。 |
+
+**自定义**：在自己的 React 项目里接 react-router：
+
+```ts
+import type { RouterProvider } from '@duxweb/lumi'
+
+// 已有的 react-router 路由器
+declare const router: {
+  navigate: (to: string | number, options?: { replace?: boolean }) => void
+  state: { location: { pathname: string; search: string } }
+  subscribe: (listener: () => void) => () => void
+}
+
+export const routerProvider: RouterProvider = {
+  // 跳转：把路径、查询参数和 # 拼成地址
+  go: ({ to, query, hash, replace }) => {
+    const entries = Object.entries(query ?? {}).map(([key, value]) => [
+      key,
+      String(value),
+    ])
+    const search = new URLSearchParams(entries).toString()
+    const base = to ?? router.state.location.pathname
+    const path = `${base}${search ? `?${search}` : ''}${hash ? `#${hash}` : ''}`
+    router.navigate(path, { replace })
+  },
+  // 后退
+  back: () => router.navigate(-1),
+  // 当前地址
+  parse: () => ({
+    pathname: router.state.location.pathname,
+    params: {},
+    query: Object.fromEntries(new URLSearchParams(router.state.location.search)),
+  }),
+  // 当前路径
+  getCurrentPath: () => router.state.location.pathname,
+  // 地址变化时通知 Lumi
+  subscribe: (listener) => router.subscribe(listener),
+}
+```
+
+**相关**：动作 [navigate](/protocol/actions/navigate/)；hooks `useNavigation`、`useParsedLocation`。
+
+## TenantProvider：工作区
+
+**干什么**：记住当前的工作区（租户、团队、店铺）。每个请求带上 `X-Tenant` 头（`createHttpClient` 的 `tenantHeader` 可以改名）；切换工作区时，Lumi 丢掉全部缓存的数据并重新请求页面上的列表，实时推送也用新的工作区重连。一个工作区的数据不会出现在另一个工作区里。
+
+**默认实现**：`createTenantProvider({ initial?, options?, storageKey? })`，保存在内存，给了 `storageKey` 时保存在 `localStorage`。保存的值不在 `options` 里时会被忽略。Admin 默认用 `lumi:{cacheKey}:tenant` 保存，侧栏的工作区切换来自 manifest 的 `app.workspaces`。
+
+**接口**
+
+| 方法 | 说明 |
+| --- | --- |
+| `get()` | 当前工作区的值，还没选时为 `undefined`，必填。 |
+| `set(value)` | 切换，必填。 |
+| `subscribe(listener)` | 切换时通知，必填；Lumi 靠它清缓存。 |
+| `options()` | 可选的工作区：`[{ value, label, description?, logo? }]`。 |
+
+**自定义**：工作区放在地址里（如 `/t/north/orders`）时：
+
+```ts
+import type { TenantProvider } from '@duxweb/lumi'
+
+// 工作区变化时要通知的回调
+const listeners = new Set<() => void>()
+// 地址是 /t/north/orders，第二段就是工作区
+const read = (): string | undefined => location.pathname.split('/')[2] || undefined
+
+export const tenantProvider: TenantProvider = {
+  // 当前工作区
+  get: read,
+  // 切换：改地址，再通知 Lumi 清缓存、重新请求
+  set: (value) => {
+    if (value === read()) return
+    history.pushState(
+      null,
+      '',
+      location.pathname.replace(/^\/t\/[^/]+/u, `/t/${value}`),
+    )
+    listeners.forEach((listener) => listener())
+  },
+  // Lumi 靠它知道工作区变了
+  subscribe: (listener) => {
+    listeners.add(listener)
+    return () => listeners.delete(listener)
+  },
+}
+```
+
+**相关**：hook `useTenant()` 返回 `{ tenant, current, options, setTenant }`。
+
+## LiveProvider：实时推送
+
+**干什么**：接收后端推送的变化。别人（或后台任务、AI 助手的后端工具）改了数据后，正在看的列表和详情自动刷新。
+
+**默认实现**：`createSseLiveProvider({ url, http, publishUrl?, retryDelay? })`，用 fetch 读一个 SSE 流，所以和数据请求带同样的登录凭证、语言和工作区（浏览器自带的 `EventSource` 加不了请求头）。断开后重连，等待时间翻倍，最长 30 秒。Admin 在 `config.json` 的 `data` 填了 `live` 时自动创建。
+
+后端每条消息是一行 `data:`：
+
+```text
+data: {"channel":"resources/orders","type":"updated","payload":{"ids":[12]}}
+```
+
+| 字段 | 说明 |
+| --- | --- |
+| `channel` | 资源的变化发在 `resources/{资源名}`，如 `resources/orders`、`resources/shop/orders`。 |
+| `type` | `created`、`updated`、`deleted`，或你自己的类型。 |
+| `payload.ids` | 改了哪些记录。有它时只刷新这些记录的详情；没有时刷新整个资源。 |
+| `date` | 可选，事件时间。 |
+
+**刷新方式**：`liveMode` 决定收到事件后做什么，可以在 `createLumi` 里设默认值，也可以在 `Query`、`ListPage` 等元素上单独写。
+
+| `liveMode` | 行为 |
+| --- | --- |
+| `auto` | 自动重新请求受影响的列表和详情。有 LiveProvider 时的默认值。 |
+| `manual` | 只通知，不刷新，由你决定。 |
+| `off` | 不订阅。 |
+
+**接口**
+
+| 方法 | 说明 |
+| --- | --- |
+| `subscribe({ channel, types?, onLiveEvent })` | 订阅一个频道，返回取消订阅的函数，必填。 |
+| `publish(event)` | 向后端发事件，可选。 |
+| `reconnect()` | 重新连接，切换工作区时调用，可选。 |
+
+**自定义**：用 WebSocket：
+
+```ts
+import type { LiveEvent, LiveProvider, LiveSubscribeParams } from '@duxweb/lumi'
+
+// 当前的订阅
+const subscriptions = new Set<LiveSubscribeParams>()
+let socket: WebSocket | undefined
+
+// 建立（或重建）连接，把收到的事件分发给匹配的订阅
+function connect(): void {
+  socket?.close()
+  socket = new WebSocket('wss://api.example.com/live')
+  socket.onmessage = (message) => {
+    const event = JSON.parse(String(message.data)) as LiveEvent
+    // 频道相同、类型也符合才通知
+    for (const item of subscriptions) {
+      if (
+        item.channel === event.channel &&
+        (!item.types?.length || item.types.includes(event.type))
+      )
+        item.onLiveEvent(event)
+    }
+  }
+}
+
+export const liveProvider: LiveProvider = {
+  // 订阅一个频道，返回取消订阅的函数
+  subscribe: (params) => {
+    if (!socket) connect()
+    subscriptions.add(params)
+    return () => subscriptions.delete(params)
+  },
+  // 向后端发事件
+  publish: (event) => socket?.send(JSON.stringify(event)),
+  // 切换工作区时调用，用新的工作区重连
+  reconnect: connect,
+}
+```
+
+**相关**：hooks `useSubscription({ channel, types?, onLiveEvent })`、`usePublish`；`resourceChannel('orders')` 返回 `resources/orders`。
+
+## AuditLogProvider：审计日志
+
+**干什么**：记录每次写入，并列出某个资源或某条记录的修改历史。
+
+**记录什么**：hooks 和 JSON 动作的每次写入（`create`、`update`、`delete` 和批量版本），在后端接受之后记录；被拒绝或被撤销的不记录；导入记一条 `import`，内容是成功和失败的条数。日志写失败不会让原来的写入失败。
+
+**默认实现**：`createDataAuditLogProvider({ dataProvider, resource? })`，把日志当成 DataProvider 里的又一个资源（默认 `audit-logs`）：写入时 `create` 一条，列表按 `resource`、`recordId` 筛选、按 `createdAt` 倒序。只改了一条记录时会带上 `recordId`。Admin 在 `config.json` 的 panel 填了 `auditLog` 时自动创建。
+
+后端收到的一条日志：
+
+```text
+{
+  "action": "update",
+  "resource": "orders",
+  "ids": [12],
+  "recordId": "12",
+  "data": { "status": "shipped" }
+}
+```
+
+谁做的、什么时候，由后端在保存时填上（`author`、`createdAt`），前端不传。
+
+**接口**：三个方法都可选。后端自己记日志时，只实现 `get` 就够了。
+
+| 方法 | 说明 |
+| --- | --- |
+| `create(event)` | 记录一次写入：`{ action, resource, ids?, data?, meta? }`。 |
+| `get({ resource, id?, pagination?, meta?, signal? })` | 返回 `{ data: AuditLogEntry[], total? }`，每条有 `id`、`createdAt`、`author`、`name`。 |
+| `update({ id, name })` | 给一条日志起名字，例如版本说明。 |
+
+**自定义**：后端已经有日志接口时：
+
+```ts
+import type { AuditLogEntry, AuditLogProvider, HttpClient } from '@duxweb/lumi'
+
+// 应用的请求客户端
+declare const http: HttpClient
+
+export const auditLogProvider: AuditLogProvider = {
+  // 后端自己记日志，所以只实现读取
+  get: async ({ resource, id, pagination, signal }) => {
+    const body = await http.request<{ items: AuditLogEntry[]; count: number }>(
+      '/history',
+      {
+        query: { resource, id, page: pagination?.page, size: pagination?.pageSize },
+        signal,
+      },
+    )
+    // 转成 Lumi 要的 { data, total }
+    return { data: body.items, total: body.count }
+  },
+}
+```
+
+**相关**：Admin 组件 [AuditLog](/components/connected/audit-log/)（`resource`、`id`），写入后自动刷新；hook `useAuditLogList`。
+
+## ToastProvider 和 NotificationProvider：提示与通知
+
+**干什么**：两种反馈。
+
+- **Toast**：一行轻提示，如"已保存"。JSON 动作失败、以及没写 `onError` 的写入 hooks 失败，也会自动用 toast 显示错误信息，所以失败不会悄无声息。
+- **Notification**：带标题、说明和最多三个按钮的通知卡片。
+
+**默认实现**：Lumi 本身不画界面。Admin 用 Lumi UI 的 `toaster`（顶部居中）和 `notifier`（右上角）。不设置时这两个动作什么也不做。
+
+**接口**：两者形状相同。
+
+| 方法 | 说明 |
+| --- | --- |
+| `open(params)` | 打开，返回 key，必填。 |
+| `close(key)` | 关闭，可选。 |
+
+| Toast 参数 | Notification 参数 |
+| --- | --- |
+| `message`（必填）、`tone`、`duration`、`key` | `title`（必填）、`description`、`actions: [{ label, onPress }]`、`tone`、`duration`、`key` |
+
+`tone` 是 `neutral`、`success`、`info`、`warning`、`danger`。`duration` 为 `0` 时不自动关闭；同一个 `key` 会更新已有的提示，而不是再叠一个。
+
+在 JSON 里：
+
+```jsonc
+{
+  "root": "save",
+  "elements": {
+    "save": {
+      "type": "Button",
+      "props": { "label": "发布" },
+      "on": {
+        "press": {
+          // 通知卡片，按钮运行注册过的动作
+          "action": "notify",
+          "params": {
+            // 标题和语义色
+            "title": "订单已发布",
+            "tone": "success",
+            // 卡片上的按钮：点击后跳到订单列表
+            "actions": [
+              {
+                "label": "查看",
+                "action": "navigate",
+                "params": { "to": "/orders" }
+              }
+            ]
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+**自定义**：接 sonner 之类的库：
+
+```ts
+import type { ToastProvider } from '@duxweb/lumi'
+
+// 已有的 sonner
+declare const toast: {
+  (message: string, options?: { id?: string; duration?: number }): string | number
+  error: (
+    message: string,
+    options?: { id?: string; duration?: number },
+  ) => string | number
+  dismiss: (id?: string) => void
+}
+
+export const toastProvider: ToastProvider = {
+  // 显示一条提示，返回它的 key
+  open: ({ key, tone, message, duration }) => {
+    // duration 为 0 表示一直显示，直到手动关闭
+    const options = {
+      id: key,
+      duration: duration === 0 ? Number.POSITIVE_INFINITY : duration,
+    }
+    return String(
+      tone === 'danger' ? toast.error(message, options) : toast(message, options),
+    )
+  },
+  // 关闭一条提示
+  close: (key) => toast.dismiss(key),
+}
+```
+
+**相关**：动作 [toast](/protocol/actions/toast/)、[notify](/protocol/actions/notify/)、[closeNotice](/protocol/actions/close-notice/)；hooks `useToast`、`useNotify`。
+
+## Validator：业务校验
+
+**干什么**：`submitForm` 保存前，先用它按 `rules` 校验整个表单的值，不通过就不发请求，错误显示在对应字段下面。字段自己的 `checks`（必填、邮箱格式）是 json-render 原生的前端检查；`rules` 适合跨字段、和业务有关的规则。
+
+**默认实现**：没有内置的规则。不写 `rules` 时什么也不检查；写了 `rules` 却没有配置 Validator 会报错 `validator is not configured`。CDN 版也一样：要在页面里用 `rules`，先在扩展模块里返回 `validator`。
+
+`@duxweb/lumi/validation-json-schema` 提供 `createJsonSchemaValidator()`，把 `rules` 当作 JSON Schema（2020-12，带 `format`）检查。它需要另外安装 `ajv` 和 `ajv-formats`，CDN 版的脚本里不包含：
+
+```ts
+import { createLumi } from '@duxweb/lumi'
+import { createJsonSchemaValidator } from '@duxweb/lumi/validation-json-schema'
+
+// 把 rules 当作 JSON Schema 检查
+const context = createLumi({ validator: createJsonSchemaValidator() })
+```
+
+```jsonc
+{
+  "type": "Form",
+  "props": {},
+  "on": {
+    "submit": {
+      "action": "submitForm",
+      "params": {
+        "resource": "customers",
+        // 表单值在页面状态里的位置
+        "valuesPath": "/form",
+        // 校验结果和字段错误写到这里
+        "validationPath": "/formStatus",
+        // 保存前按这份 JSON Schema 检查
+        "rules": {
+          "type": "object",
+          // name 必填，email 要符合邮箱格式
+          "required": ["name"],
+          "properties": { "email": { "type": "string", "format": "email" } }
+        }
+      }
+    }
+  },
+  "children": []
+}
+```
+
+**接口**：只有一个方法。
+
+```ts
+import type { ValidationIssue, ValidationRules } from '@duxweb/lumi'
+
+export interface MyValidator {
+  // 返回不通过的字段；可以是异步的
+  validate: (
+    rules: ValidationRules,
+    values: Record<string, unknown>,
+  ) => ValidationIssue[] | Promise<ValidationIssue[]>
+}
+```
+
+`ValidationIssue` 是 `{ path, code, params?, message? }`：`path` 指向字段，嵌套字段用 `.` 分隔（如 `items.0.sku`），没给 `message` 时按 `code` 取翻译键 `lumi.validation.{code}` 的文字。可以是异步的，例如请求后端检查名称是否重复。
+
+**自定义**：
+
+```ts
+import type { Validator } from '@duxweb/lumi'
+
+export const validator: Validator = {
+  validate: (rules, values) => {
+    // 不通过的字段
+    const issues = []
+    // 这里的 rules 是页面 JSON 里写的 { "endAfterStart": true }
+    if (
+      (rules as { endAfterStart?: boolean } | undefined)?.endAfterStart &&
+      String(values.end) <= String(values.start)
+    )
+      // path 指向字段，错误会显示在这个字段下面
+      issues.push({
+        path: 'end',
+        code: 'end_before_start',
+        message: '结束时间要晚于开始时间',
+      })
+    return issues
+  },
+}
+```
+
+**后端的字段错误**不经过 Validator：保存时后端返回 422 和 `errors: [{ path, message }]`，`submitForm` 同样把它们写到字段下面，见 [CRUD 页面](/guide/crud/#后端返回的字段错误)。
+
+**相关**：hook `useValidator`、`useForm`；动作 [submitForm](/protocol/actions/submit-form/)。
+
+## upload：上传
+
+上传不是 Provider，而是 `createLumi` 的 `upload` 选项（扩展模块里同名的键），作为所有上传的默认值。`Upload`、`ImageGrid` 组件和 `useUpload` 每次上传时，再用自己的参数覆盖它。
+
+| 选项 | 说明 |
+| --- | --- |
+| `url` | 上传地址，默认 `/upload`，相对于 DataProvider 的 API 地址。 |
+| `sign` | 直传对象存储：`{ url, data?, complete? }`，先向后端要凭证，再把文件直接传给 S3、OSS 等，见 [直传对象存储](/guide/backend-files/#直传对象存储)。 |
+| `method` | `POST`（默认）、`PUT`、`PATCH`。 |
+| `fieldName` | 文件在表单里的字段名，默认 `file`。 |
+| `data` | 和文件一起提交的其他字段。 |
+| `headers` | 额外的请求头，对象或返回对象的函数。登录凭证不用写在这里。 |
+| `withCredentials` | 带 cookie。 |
+| `dataProviderName` | 用哪个 DataProvider 的地址和请求客户端。 |
+| `trustedOrigins` | 允许带请求头的其他域名，例如直接传到对象存储。 |
+| `signal` | 取消上传。 |
+
+- **签名**：上传请求和数据请求用同一个 `HttpClient` 签名，登录凭证、语言和工作区都会带上；cookie 模式下自动带 cookie。
+- **返回**：后端返回 `{ "data": { "url", "name", "size", "type" } }`（或 `src` 代替 `url`），见 [对接后端](/guide/backend-files/#上传)。
+- **取消**：组件卸载或调用 `signal` 时中止上传；同一个 `useUpload` 正在上传时不能再开始一次。
+
+```ts
+import { createLumi } from '@duxweb/lumi'
+
+const context = createLumi({
+  upload: {
+    // 上传地址，相对于后端地址
+    url: '/files',
+    // 文件在表单里的字段名
+    fieldName: 'upload',
+    // 和文件一起提交的其他字段，比如放到哪个目录
+    data: { folder: 'products' },
+  },
+})
+```
+
+## agent：AI 助手
+
+AI 助手同样是 `createLumi` 的 `agent` 选项，不是 Provider。它决定助手的对话请求发到哪里，以及助手可以直接执行哪些页面动作。助手怎么读取当前页面、怎么操作页面，见 [AI 助手](/guide/assistant/)。
+
+| 选项 | 说明 |
+| --- | --- |
+| `endpoint` | 对话接口，默认 `/agent/chat`，相对于 DataProvider 的 API 地址。Admin 里通常写在 manifest 的 `app.assistant.endpoint`。 |
+| `dataProviderName` | 用哪个 DataProvider 的地址和请求客户端。 |
+| `headers` | 额外的请求头；登录凭证由 `HttpClient` 签名，不用写在这里。 |
+| `approvalMode` | `ask`：助手触发写入类动作前先问用户；`auto`：直接执行。这是用户自己选之前的默认值。 |
+| `safeActions` | `ask` 模式下也不用确认的动作，默认只包括切换视图、改页面状态这类不写数据的动作。 |
+
+**相关**：hooks `useAgentChat`、`useAgentApprovalMode`。
+
+## env：环境值
+
+`createLumi({ env })` 和扩展模块的 `env` 键接受一个 `{ 名称: 字符串 | 数字 | 布尔 | null }` 对象，保存在 `context.config.env` 里，供你自己的组件和动作读取（例如当前环境名、功能开关）。Lumi 和 Admin 本身目前不读取它，也不会自动出现在页面 JSON 的状态里，需要时在自己的代码里读。
+
+```ts
+import { createLumi } from '@duxweb/lumi'
+
+// 环境值：当前环境、功能开关
+const context = createLumi({ env: { stage: 'staging', betaReports: true } })
+// 在自己的组件或动作里读取
+const stage = context.config.env?.stage
+```
+
+## 汇总
+
+| 配置 | 默认 | config.json 对应 |
+| --- | --- | --- |
+| `i18nProvider` | `createI18nProvider` | `i18n` |
+| `routerProvider` | Admin 自带 | `basename` |
+| `tenantProvider` | `createTenantProvider` | manifest 的 `app.workspaces`、`cacheKey` |
+| `liveProvider` | `createSseLiveProvider` | `data[].live` |
+| `auditLogProvider` | `createDataAuditLogProvider` | `panels[].auditLog` |
+| `toastProvider`、`notificationProvider` | Lumi UI 的 `toaster`、`notifier` | 无 |
+| `validator` | 有 `rules` 时报错 | 无 |
+| `upload` | `/upload` | 无 |
+| `agent` | `/agent/chat` | manifest 的 `app.assistant` |
+| `env` | 无 | 无 |
+
+完整的类型签名见 [Lumi API](/api/packages/lumi/)。

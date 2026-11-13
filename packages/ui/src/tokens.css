@@ -1,0 +1,157 @@
+/* Public design tokens shared by JSX, native registries and Admin. Theme seeds
+   are resolved here so individual components never own competing scales.
+
+   Every component reads these by role, never by a raw scale step:
+   - type:     --lumi-fs-*            (control text is --lumi-fs-control)
+   - size:     --lumi-control-*       (one height per size, shared by every control)
+   - inset:    --lumi-control-px-*    (a control's inline padding at that size)
+   - radius:   --lumi-radius-control / -item / -panel / -overlay / -full
+   - state:    --lumi-hover-*, --lumi-selected-*, --lumi-choice-*, --lumi-focus-bg
+   - status:   --lumi-success / -warning / -info / -danger and --lumi-text-* */
+:root,
+[data-theme] {
+  /* A dense admin scale: 13px labels and controls, 14px running text, and
+     titles carried by weight rather than size. */
+  --lumi-fs-caption: var(--lumi-theme-font-caption, .75rem);
+  --lumi-fs-label: var(--lumi-theme-font-label, .8125rem);
+  /* Between caption and label: column heads, filter options, badges' peers. */
+  --lumi-fs-meta: calc((var(--lumi-fs-caption) + var(--lumi-fs-label)) / 2);
+  --lumi-fs-body: var(--lumi-theme-font-body, .875rem);
+  --lumi-fs-title: var(--lumi-theme-font-title, .875rem);
+  --lumi-fs-section: var(--lumi-theme-font-section, 1rem);
+  --lumi-fs-page: var(--lumi-theme-font-page, 1.375rem);
+  --lumi-fs-metric: var(--lumi-theme-font-metric, 1.875rem);
+  /* A metric in a compact tile or strip. */
+  --lumi-fs-metric-sm: calc(var(--lumi-fs-metric) * 0.8);
+  /* Chart axes and counter badges: the one size below caption. */
+  --lumi-fs-micro: calc(var(--lumi-fs-caption) - 1px);
+  /* What a control shows: an input's value, a button's label, an option. One
+     size, so a button and the field beside it read as one row. */
+  --lumi-fs-control: var(--lumi-theme-font-control, var(--lumi-fs-label));
+  --lumi-font-weight-normal: 400;
+  --lumi-font-weight-medium: 500;
+  --lumi-font-weight-semibold: 600;
+  --lumi-font-weight-bold: 700;
+  --lumi-leading-tight: 1.25;
+  --lumi-leading-body: 1.5;
+  --lumi-leading-copy: 1.65;
+
+  /* Radius scale, derived from the one `--radius` seed. */
+  --lumi-radius-sm: max(0px, calc(var(--radius) - 4px));
+  --lumi-radius-md: max(0px, calc(var(--radius) - 2px));
+  --lumi-radius-xl: calc(var(--radius) + 5px);
+  --lumi-radius-full: 9999px;
+  /* Radius roles. A control keeps one radius at every size. An item inside a
+     padded container (an option, a tab, a chip) is concentric with it: the
+     container redeclares `--lumi-radius-item` as its own radius minus its
+     inset, and its items inherit that. This root value is the fallback. */
+  --lumi-radius-control: var(--radius);
+  --lumi-radius-item: var(--lumi-radius-md);
+  --lumi-radius-panel: calc(var(--radius) + 3px);
+  --lumi-radius-overlay: var(--lumi-radius-xl);
+
+  --lumi-space-1: 0.25rem;
+  --lumi-space-2: 0.5rem;
+  --lumi-space-3: 0.75rem;
+  --lumi-space-4: 1rem;
+  --lumi-space-5: 1.25rem;
+  --lumi-space-6: 1.5rem;
+  --lumi-space-8: 2rem;
+
+  /* One height per size, shared by inputs, selects, pickers and buttons. */
+  --lumi-control-xs: 1.5rem;
+  --lumi-control-sm: 1.75rem;
+  --lumi-control-md: 2rem;
+  --lumi-control-lg: 2.25rem;
+  --lumi-control-touch: 2.75rem;
+  --lumi-control-px-xs: 0.375rem;
+  --lumi-control-px-sm: 0.5rem;
+  --lumi-control-px-md: 0.625rem;
+  --lumi-control-px-lg: 0.75rem;
+  --lumi-layout-aside: 280px;
+  /* A table row: a md row action with room either side, enough for an entity's
+     two lines. Loading placeholders keep it so the table does not jump. */
+  --lumi-row-height: calc(var(--lumi-control-md) + 0.875rem);
+  /* A toolbar or action band holding one row of md controls. */
+  --lumi-band-height: calc(var(--lumi-control-md) + 2 * var(--lumi-space-2));
+  /* An underline tab strip. */
+  --lumi-tabbar-height: calc(var(--lumi-control-md) + var(--lumi-space-2));
+
+  /* Surface spacing. A card, a dialog and a drawer share one inset; their
+     header and footer bands are shorter so the title sits close to its body.
+     Popovers are lighter panels with a tighter inset. */
+  --lumi-surface-padding: var(--lumi-space-4);
+  --lumi-surface-band: var(--lumi-space-3);
+  --lumi-popover-padding: var(--lumi-space-3);
+  /* A list panel (options, menu items, cascader columns) hugs its rows: the
+     inset is small so a row's hover reaches nearly to the edge. */
+  --lumi-menu-padding: var(--lumi-space-1);
+  --lumi-menu-min-width: 11rem;
+
+  /* The canvas sits behind floating panels; the workspace is the panel the
+     page itself is laid on. Both derive from the adapter's neutrals. */
+  --lumi-surface-canvas: color-mix(in oklab, var(--muted) 45%, var(--border));
+  --lumi-surface-workspace: var(--background);
+  /* Secondary text: navigation at rest, option labels, pager copy. It sits
+     between body text and muted so a resting list still reads as content. */
+  --lumi-fg-secondary: color-mix(in oklab, var(--muted-foreground) 72%, var(--foreground));
+
+  /* Pointing at a row, an option or a ghost control. */
+  --lumi-hover-bg: var(--accent);
+  --lumi-hover-fg: var(--accent-foreground);
+  /* The chosen item among peers: an option, a day, a time, a choice card. A
+     brand tint with a brand edge, never a solid fill. The tints are
+     translucent, so they read the same on a card, a popover or the page. */
+  --lumi-selected-bg: color-mix(in oklab, var(--brand) 8%, transparent);
+  --lumi-selected-border: color-mix(in oklab, var(--brand) 55%, transparent);
+  --lumi-selected-fg: color-mix(in oklab, var(--brand) 82%, var(--foreground));
+  /* Days between the ends of a chosen range: the tint without the edge. */
+  --lumi-selected-range-bg: color-mix(in oklab, var(--brand) 5%, transparent);
+  /* A focused field: a 2px brand edge (`--ring`) over a faint brand tint. No halo. */
+  --lumi-focus-bg: color-mix(in oklab, var(--brand) 8%, var(--background));
+  /* An invalid field: the focus geometry in the danger colour, focused or not. */
+  --lumi-invalid-bg: color-mix(in oklab, var(--destructive) 8%, var(--background));
+  /* The chosen one of a set of button-like choices (a tab, a segmented option,
+     a preset, a filter chip): inverse, the primary fill with its foreground
+     (black in light, white in dark). The brand is kept for focus and for rows
+     chosen in a list. */
+  --lumi-choice-bg: var(--primary);
+  --lumi-choice-fg: var(--primary-foreground);
+  --lumi-choice-border: var(--primary);
+  /* The chosen option on a track (tabs, segmented control, list presets): a
+     pill of the surface lifted off the muted track by a soft shadow, no edge. */
+  --lumi-segment-bg: var(--background);
+  --lumi-segment-fg: var(--foreground);
+  --lumi-segment-shadow: 0 1px 2px oklch(0 0 0 / 0.1), 0 1px 1px oklch(0 0 0 / 0.04);
+
+  /* Status fills (bars, dots, markers) and their text-safe tiers. */
+  --lumi-success: var(--success);
+  /* The warning seed is dark enough for text; a bar or a dot needs the bright
+     amber the design uses for fills, lifted from the same seed. */
+  --lumi-warning: oklch(from var(--warning) calc(l + 0.17) calc(c + 0.03) calc(h + 6));
+  --lumi-info: var(--info);
+  --lumi-danger: var(--destructive);
+  --lumi-text-success: var(--lumi-ui-tone-success);
+  --lumi-text-warning: var(--lumi-ui-tone-warning);
+  --lumi-text-info: var(--lumi-ui-tone-info);
+  --lumi-text-danger: var(--lumi-ui-tone-danger);
+}
+
+[data-theme="dark"] {
+  /* The dark warning seed is already the bright fill amber. */
+  --lumi-warning: var(--warning);
+  --lumi-surface-canvas: var(--background);
+  --lumi-surface-workspace: var(--card);
+  --lumi-selected-bg: color-mix(in oklab, var(--brand) 16%, transparent);
+  --lumi-selected-border: color-mix(in oklab, var(--brand) 60%, transparent);
+  /* Lifted toward the foreground so it clears 4.5:1 on the tint over muted tracks too. */
+  --lumi-selected-fg: color-mix(in oklab, var(--brand) 55%, var(--foreground));
+  --lumi-selected-range-bg: color-mix(in oklab, var(--brand) 9%, transparent);
+  --lumi-focus-bg: color-mix(in oklab, var(--brand) 14%, var(--card));
+  --lumi-invalid-bg: color-mix(in oklab, var(--destructive) 14%, var(--card));
+  /* On dark the chosen option takes the primary pair: the eased white of the
+     main button (never pure white) with dark type, so both read as one step. */
+  --lumi-segment-bg: var(--primary);
+  --lumi-segment-fg: var(--primary-foreground);
+  --lumi-segment-shadow: none;
+}

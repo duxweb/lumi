@@ -1,0 +1,48 @@
+---
+title: "Avatar"
+description: "一个人或账号：图片或首字母，底色按名字选取，没有描边。"
+---
+
+<ComponentPreview name="Avatar" />
+
+一个人或账号：图片或首字母，底色按名字选取，没有描边。`sm`/`md`/`lg` 与控件高度一致；`xl` 用于个人资料页头。`showName` 在旁边加上名字和可选的说明。
+
+## 示例
+
+```json
+{
+  "root": "avatar-1",
+  "elements": {
+    "avatar-1": {
+      "type": "Avatar",
+      "props": {
+        "name": "Mia Chen",
+        "showName": true,
+        "description": "Gold member, 4th order",
+        "size": "lg"
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `name`（必填） | 名字，也用于生成首字母。 | `string` |  |
+| `src` | 头像图片地址；没有时显示名字首字母。 | `string \| null` |  |
+| `description` | 名字下方的说明，如角色或邮箱。 | `string \| null` |  |
+| `showName` | 在头像旁显示名字和说明。 | `boolean \| null` | `false` |
+| `size` | 头像尺寸：`sm` / `md` / `lg` 与同尺寸控件等高，`xl` 用于个人资料头部。默认无描边。 | `"sm" \| "md" \| "lg" \| "xl" \| null` | `"md"` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

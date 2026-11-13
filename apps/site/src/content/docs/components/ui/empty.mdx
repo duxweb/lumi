@@ -1,0 +1,57 @@
+---
+title: "Empty"
+description: "空状态：浅色底上的图形、说明区域为什么是空的标题，以及下一步该做什么的说明，居中在内容本应占据的位置。"
+---
+
+<ComponentPreview name="Empty" />
+
+空状态：浅色底上的图形、说明区域为什么是空的标题，以及下一步该做什么的说明，居中在内容本应占据的位置。子元素（通常是一个 Button）放在下方，作为继续操作的入口。
+
+## 示例
+
+```json
+{
+  "root": "empty-50",
+  "elements": {
+    "empty-50": {
+      "type": "Empty",
+      "props": {
+        "title": "No orders yet",
+        "description": "Orders show up here as soon as a customer checks out"
+      },
+      "children": ["empty-50-action"]
+    },
+    "empty-50-action": {
+      "type": "Button",
+      "props": {
+        "label": "Create order",
+        "appearance": "outline",
+        "size": "sm",
+        "icon": "plus"
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `title` | 说明为什么为空，如“暂无订单”。 | `string \| null` | `"暂无数据"` |
+| `description` | 下一步可以做什么，如“试试清除筛选条件”。 | `string \| null` |  |
+| `icon` | HugeIcons 图标名，显示在柔和底色的方块里。 | `string \| null` | `"inbox"` |
+| `tone` | 图标底色：`neutral` 一般的空，`danger` 加载失败，`warning` 无权限或离线，`success` 已全部处理，`info` 提示。 | `"neutral" \| "info" \| "success" \| "warning" \| "danger" \| null` | `"neutral"` |
+| `size` | `sm` 放在表格、卡片和面板里；`md` 代表整页或整块区域；`xs` 只有一行，用于下拉面板和窄列。 | `"xs" \| "sm" \| "md" \| null` | `"sm"` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：`default`

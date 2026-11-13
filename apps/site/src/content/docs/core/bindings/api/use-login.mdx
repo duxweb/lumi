@@ -1,0 +1,12 @@
+---
+title: "useLogin"
+description: "useLogin React hook 的签名、参数和返回值。"
+---
+
+Signs in through `authProvider.login`; once it succeeds the previous session's cached data is dropped. Returns a mutation: `mutate({ username, password })`.
+
+```typescript
+useLogin(): UseMutationResult<AuthActionResponse, Error, any>
+```
+
+返回 `UseMutationResult<AuthActionResponse, Error, any>`。

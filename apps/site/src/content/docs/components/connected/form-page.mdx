@@ -1,0 +1,28 @@
+---
+title: "FormPage"
+description: "Admin 表单，带业务校验、未保存离开提醒，值只存在一个原生路径中。"
+---
+
+Admin 表单，带业务校验、未保存离开提醒，值只存在一个原生路径中。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `resource`（必填） | 数据资源名，如 `orders`。DataProvider 据此拼出接口地址。 | `string` |  |
+| `dataProviderName` | 使用哪个 DataProvider。只有一个时不用填。 | `string` |  |
+| `meta` | 原样传给 DataProvider 的附加参数，如自定义请求头或查询字段。 | `object` |  |
+| `title`（必填） | 页面标题。 | `string` |  |
+| `description` | 标题下方的一行说明。 | `string` |  |
+| `state` | 页面状态：加载中、空、出错、无权限等，`{ kind, title?, reason?, nextStep? }`。不填时正常显示内容。 字段：`kind`、`title`、`reason`、`nextStep`、`actionLabel?`、`disabled?` | `object` |  |
+| `id` | 记录 ID。填写时先按 ID 读取记录，保存时更新它；不填时是新建。 | `string \| number` |  |
+| `valuesPath`（必填） | 表单值存放在页面状态里的路径。 | `string` |  |
+| `initialValues` | 表单的初始值。编辑已有记录时会被接口返回的数据覆盖。 | `object` |  |
+| `rules` | 业务校验规则，按字段名组织，保存前执行。 | `unknown` |  |
+| `saveLabel` | 保存按钮文字。 | `string` |  |
+| `layout` | `centered` 表单居中；`publish` 右侧带元信息栏，适合文章发布。 | `"centered" \| "publish"` | `"centered"` |
+
+## 事件与插槽
+
+- 事件：`saved`
+- 插槽：`default`、`aside`、`actions`

@@ -1,0 +1,2010 @@
+{
+  "root": "page",
+  "state": {
+    "values": {
+      "volume": 40,
+      "price": [
+        200,
+        800
+      ],
+      "quality": 50,
+      "temperature": 22,
+      "plan": "team",
+      "billing": "yearly",
+      "addons": [
+        "backup"
+      ],
+      "channels": [
+        "email",
+        "push"
+      ],
+      "category": "design",
+      "rating": 3.5,
+      "score": 8,
+      "color": "",
+      "accent": "",
+      "tagColor": "#e8590c",
+      "themeAccent": "#2d5bff",
+      "highlight": "",
+      "labelColor": "#16a34a",
+      "swatchRequired": "",
+      "otp": "",
+      "pin": "",
+      "invite": "",
+      "phone": "",
+      "card": "",
+      "signature": "",
+      "icon": "rocket-01",
+      "menuIcon": ""
+    }
+  },
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "More form controls"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "form"
+      ]
+    },
+    "slider-volume": {
+      "type": "Slider",
+      "props": {
+        "value": {
+          "$bindState": "/values/volume"
+        },
+        "tooltip": true,
+        "suffix": "%",
+        "ariaLabel": {
+          "$t": "Volume"
+        }
+      },
+      "children": []
+    },
+    "slider-price": {
+      "type": "Slider",
+      "props": {
+        "value": {
+          "$bindState": "/values/price"
+        },
+        "min": 0,
+        "max": 1000,
+        "step": 10,
+        "minStepsBetweenThumbs": 5,
+        "input": true,
+        "prefix": "¥",
+        "tooltip": true,
+        "ariaLabel": {
+          "$t": "Price range"
+        }
+      },
+      "children": []
+    },
+    "slider-quality": {
+      "type": "Slider",
+      "props": {
+        "value": {
+          "$bindState": "/values/quality"
+        },
+        "step": 25,
+        "tooltip": true,
+        "ariaLabel": {
+          "$t": "Quality"
+        },
+        "marks": [
+          {
+            "value": 0,
+            "label": {
+              "$t": "Low"
+            }
+          },
+          {
+            "value": 25
+          },
+          {
+            "value": 50,
+            "label": {
+              "$t": "Medium"
+            }
+          },
+          {
+            "value": 75
+          },
+          {
+            "value": 100,
+            "label": {
+              "$t": "High"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "slider-vertical": {
+      "type": "Slider",
+      "props": {
+        "value": {
+          "$bindState": "/values/temperature"
+        },
+        "min": 16,
+        "max": 30,
+        "orientation": "vertical",
+        "tooltip": true,
+        "suffix": "°C",
+        "ariaLabel": {
+          "$t": "Temperature"
+        },
+        "marks": [
+          {
+            "value": 16,
+            "label": "16°"
+          },
+          {
+            "value": 23,
+            "label": "23°"
+          },
+          {
+            "value": 30,
+            "label": "30°"
+          }
+        ]
+      },
+      "children": []
+    },
+    "slider-sm": {
+      "type": "Slider",
+      "props": {
+        "defaultValue": 30,
+        "size": "sm",
+        "ariaLabel": {
+          "$t": "Small"
+        }
+      },
+      "children": []
+    },
+    "slider-lg": {
+      "type": "Slider",
+      "props": {
+        "defaultValue": [
+          20,
+          70
+        ],
+        "size": "lg",
+        "ariaLabel": {
+          "$t": "Large"
+        }
+      },
+      "children": []
+    },
+    "slider-disabled": {
+      "type": "Slider",
+      "props": {
+        "defaultValue": 45,
+        "disabled": true,
+        "ariaLabel": {
+          "$t": "Disabled"
+        }
+      },
+      "children": []
+    },
+    "slider-readonly": {
+      "type": "Slider",
+      "props": {
+        "defaultValue": 65,
+        "readonly": true,
+        "tooltip": true,
+        "ariaLabel": {
+          "$t": "Readonly"
+        }
+      },
+      "children": []
+    },
+    "f-volume": {
+      "type": "FormField",
+      "props": {
+        "name": "volume",
+        "label": {
+          "$t": "Volume"
+        },
+        "help": {
+          "$t": "Hover or drag the thumb to see its value"
+        }
+      },
+      "children": [
+        "slider-volume"
+      ]
+    },
+    "f-price": {
+      "type": "FormField",
+      "props": {
+        "name": "price",
+        "label": {
+          "$t": "Price range"
+        },
+        "help": {
+          "$t": "Two thumbs with number boxes; they stay 50 apart"
+        }
+      },
+      "children": [
+        "slider-price"
+      ]
+    },
+    "f-quality": {
+      "type": "FormField",
+      "props": {
+        "name": "quality",
+        "label": {
+          "$t": "Quality"
+        }
+      },
+      "children": [
+        "slider-quality"
+      ]
+    },
+    "f-temperature": {
+      "type": "FormField",
+      "props": {
+        "name": "temperature",
+        "label": {
+          "$t": "Temperature"
+        }
+      },
+      "children": [
+        "slider-vertical"
+      ]
+    },
+    "f-slider-sm": {
+      "type": "FormField",
+      "props": {
+        "name": "slider-sm",
+        "label": {
+          "$t": "Small"
+        }
+      },
+      "children": [
+        "slider-sm"
+      ]
+    },
+    "f-slider-lg": {
+      "type": "FormField",
+      "props": {
+        "name": "slider-lg",
+        "label": {
+          "$t": "Large range"
+        }
+      },
+      "children": [
+        "slider-lg"
+      ]
+    },
+    "f-slider-disabled": {
+      "type": "FormField",
+      "props": {
+        "name": "slider-disabled",
+        "label": {
+          "$t": "Disabled"
+        }
+      },
+      "children": [
+        "slider-disabled"
+      ]
+    },
+    "f-slider-readonly": {
+      "type": "FormField",
+      "props": {
+        "name": "slider-readonly",
+        "label": {
+          "$t": "Readonly"
+        }
+      },
+      "children": [
+        "slider-readonly"
+      ]
+    },
+    "slider-states": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "f-slider-sm",
+        "f-slider-lg",
+        "f-slider-disabled",
+        "f-slider-readonly"
+      ]
+    },
+    "slider-split": {
+      "type": "Grid",
+      "props": {
+        "columns": 2,
+        "gap": "lg"
+      },
+      "children": [
+        "f-temperature",
+        "slider-states"
+      ]
+    },
+    "slider-card": {
+      "type": "Example",
+      "props": {
+        "id": "slider",
+        "title": {
+          "$t": "Slider"
+        },
+        "description": {
+          "$t": "Single values, ranges, marks, number boxes and vertical orientation"
+        }
+      },
+      "children": [
+        "slider-stack"
+      ]
+    },
+    "slider-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "f-volume",
+        "f-price",
+        "f-quality",
+        "slider-split"
+      ]
+    },
+    "cards-plan": {
+      "type": "RadioCards",
+      "props": {
+        "value": {
+          "$bindState": "/values/plan"
+        },
+        "ariaLabel": {
+          "$t": "Plan"
+        },
+        "checks": [
+          {
+            "type": "required",
+            "message": {
+              "$t": "Choose a plan"
+            }
+          }
+        ],
+        "options": [
+          {
+            "value": "starter",
+            "label": {
+              "$t": "Starter"
+            },
+            "description": {
+              "$t": "One workspace for personal projects"
+            },
+            "icon": "user",
+            "extra": "¥0"
+          },
+          {
+            "value": "team",
+            "label": {
+              "$t": "Team"
+            },
+            "description": {
+              "$t": "Shared projects and roles for up to 20 people"
+            },
+            "icon": "user-group",
+            "badge": {
+              "$t": "Popular"
+            },
+            "extra": "¥99"
+          },
+          {
+            "value": "business",
+            "label": {
+              "$t": "Business"
+            },
+            "description": {
+              "$t": "SSO, audit history and priority support"
+            },
+            "icon": "building-03",
+            "extra": "¥399"
+          }
+        ]
+      },
+      "children": []
+    },
+    "cards-addons": {
+      "type": "CheckboxCards",
+      "props": {
+        "value": {
+          "$bindState": "/values/addons"
+        },
+        "columns": 2,
+        "ariaLabel": {
+          "$t": "Add-ons"
+        },
+        "checks": [
+          {
+            "type": "required",
+            "message": {
+              "$t": "Choose at least one add-on"
+            }
+          }
+        ],
+        "options": [
+          {
+            "value": "backup",
+            "label": {
+              "$t": "Daily backups"
+            },
+            "description": {
+              "$t": "Snapshots kept for 30 days"
+            },
+            "icon": "database",
+            "extra": "¥20"
+          },
+          {
+            "value": "sso",
+            "label": {
+              "$t": "Single sign-on"
+            },
+            "description": {
+              "$t": "SAML and OIDC providers"
+            },
+            "icon": "security-check",
+            "badge": {
+              "$t": "New"
+            },
+            "extra": "¥60"
+          },
+          {
+            "value": "audit",
+            "label": {
+              "$t": "Audit log"
+            },
+            "description": {
+              "$t": "Every change with who and when"
+            },
+            "icon": "file-search",
+            "extra": "¥30"
+          },
+          {
+            "value": "support",
+            "label": {
+              "$t": "Priority support"
+            },
+            "description": {
+              "$t": "Included with Business"
+            },
+            "icon": "customer-support",
+            "disabled": true
+          }
+        ]
+      },
+      "children": []
+    },
+    "cards-billing": {
+      "type": "RadioCards",
+      "props": {
+        "value": {
+          "$bindState": "/values/billing"
+        },
+        "size": "sm",
+        "ariaLabel": {
+          "$t": "Billing"
+        },
+        "options": [
+          {
+            "value": "monthly",
+            "label": {
+              "$t": "Monthly"
+            },
+            "extra": "¥99"
+          },
+          {
+            "value": "yearly",
+            "label": {
+              "$t": "Yearly"
+            },
+            "badge": {
+              "$t": "Save 20%"
+            },
+            "extra": "¥950"
+          }
+        ]
+      },
+      "children": []
+    },
+    "cards-readonly": {
+      "type": "RadioCards",
+      "props": {
+        "defaultValue": "team",
+        "readonly": true,
+        "columns": 2,
+        "size": "sm",
+        "ariaLabel": {
+          "$t": "Current plan"
+        },
+        "options": [
+          {
+            "value": "starter",
+            "label": {
+              "$t": "Starter"
+            }
+          },
+          {
+            "value": "team",
+            "label": {
+              "$t": "Team"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "f-plan": {
+      "type": "FormField",
+      "props": {
+        "name": "plan",
+        "label": {
+          "$t": "Plan"
+        },
+        "required": true
+      },
+      "children": [
+        "cards-plan"
+      ]
+    },
+    "f-addons": {
+      "type": "FormField",
+      "props": {
+        "name": "addons",
+        "label": {
+          "$t": "Add-ons"
+        },
+        "required": true
+      },
+      "children": [
+        "cards-addons"
+      ]
+    },
+    "f-billing": {
+      "type": "FormField",
+      "props": {
+        "name": "billing",
+        "label": {
+          "$t": "Billing (small)"
+        }
+      },
+      "children": [
+        "cards-billing"
+      ]
+    },
+    "f-cards-readonly": {
+      "type": "FormField",
+      "props": {
+        "name": "cards-readonly",
+        "label": {
+          "$t": "Current plan (readonly)"
+        }
+      },
+      "children": [
+        "cards-readonly"
+      ]
+    },
+    "cards-split": {
+      "type": "Grid",
+      "props": {
+        "columns": 2,
+        "gap": "lg"
+      },
+      "children": [
+        "f-billing",
+        "f-cards-readonly"
+      ]
+    },
+    "cards-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "f-plan",
+        "f-addons",
+        "cards-split"
+      ]
+    },
+    "cards-card": {
+      "type": "Example",
+      "props": {
+        "id": "choice-cards",
+        "title": {
+          "$t": "Choice cards"
+        },
+        "description": {
+          "$t": "Radio and checkbox cards with icons, descriptions, badges and prices"
+        }
+      },
+      "children": [
+        "cards-stack"
+      ]
+    },
+    "tags-channels": {
+      "type": "TagSelect",
+      "props": {
+        "value": {
+          "$bindState": "/values/channels"
+        },
+        "multiple": true,
+        "ariaLabel": {
+          "$t": "Channels"
+        },
+        "options": [
+          {
+            "value": "email",
+            "label": {
+              "$t": "Email"
+            },
+            "icon": "mail-01"
+          },
+          {
+            "value": "sms",
+            "label": {
+              "$t": "SMS"
+            },
+            "icon": "message-01"
+          },
+          {
+            "value": "push",
+            "label": {
+              "$t": "Push"
+            },
+            "icon": "notification-01"
+          },
+          {
+            "value": "webhook",
+            "label": {
+              "$t": "Webhook"
+            },
+            "icon": "webhook"
+          }
+        ]
+      },
+      "children": []
+    },
+    "tags-category": {
+      "type": "TagSelect",
+      "props": {
+        "value": {
+          "$bindState": "/values/category"
+        },
+        "clearable": true,
+        "ariaLabel": {
+          "$t": "Category"
+        },
+        "options": [
+          {
+            "value": "design",
+            "label": {
+              "$t": "Design"
+            },
+            "count": 12
+          },
+          {
+            "value": "engineering",
+            "label": {
+              "$t": "Engineering"
+            },
+            "count": 48
+          },
+          {
+            "value": "marketing",
+            "label": {
+              "$t": "Marketing"
+            },
+            "count": 7
+          },
+          {
+            "value": "archived",
+            "label": {
+              "$t": "Archived"
+            },
+            "count": 0,
+            "disabled": true
+          }
+        ]
+      },
+      "children": []
+    },
+    "tags-md": {
+      "type": "TagSelect",
+      "props": {
+        "defaultValue": "week",
+        "size": "md",
+        "ariaLabel": {
+          "$t": "Period"
+        },
+        "options": [
+          {
+            "value": "day",
+            "label": {
+              "$t": "Day"
+            }
+          },
+          {
+            "value": "week",
+            "label": {
+              "$t": "Week"
+            }
+          },
+          {
+            "value": "month",
+            "label": {
+              "$t": "Month"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "tags-disabled": {
+      "type": "TagSelect",
+      "props": {
+        "defaultValue": [
+          "a"
+        ],
+        "multiple": true,
+        "disabled": true,
+        "ariaLabel": {
+          "$t": "Disabled"
+        },
+        "options": [
+          {
+            "value": "a",
+            "label": {
+              "$t": "Selected"
+            }
+          },
+          {
+            "value": "b",
+            "label": {
+              "$t": "Not selected"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "f-channels": {
+      "type": "FormField",
+      "props": {
+        "name": "channels",
+        "label": {
+          "$t": "Channels (multiple)"
+        }
+      },
+      "children": [
+        "tags-channels"
+      ]
+    },
+    "f-category": {
+      "type": "FormField",
+      "props": {
+        "name": "category",
+        "label": {
+          "$t": "Category (single, clearable)"
+        }
+      },
+      "children": [
+        "tags-category"
+      ]
+    },
+    "f-period": {
+      "type": "FormField",
+      "props": {
+        "name": "period",
+        "label": {
+          "$t": "Period (medium)"
+        }
+      },
+      "children": [
+        "tags-md"
+      ]
+    },
+    "f-tags-disabled": {
+      "type": "FormField",
+      "props": {
+        "name": "tags-disabled",
+        "label": {
+          "$t": "Disabled"
+        }
+      },
+      "children": [
+        "tags-disabled"
+      ]
+    },
+    "tags-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "f-channels",
+        "f-category",
+        "tags-states"
+      ]
+    },
+    "tags-card": {
+      "type": "Example",
+      "props": {
+        "id": "tag-select",
+        "title": {
+          "$t": "Tag select"
+        },
+        "description": {
+          "$t": "Checkable tags for one or several values"
+        }
+      },
+      "children": [
+        "tags-stack"
+      ]
+    },
+    "rating-main": {
+      "type": "Rating",
+      "props": {
+        "value": {
+          "$bindState": "/values/rating"
+        },
+        "allowHalf": true,
+        "clearable": true,
+        "ariaLabel": {
+          "$t": "Overall"
+        }
+      },
+      "children": []
+    },
+    "rating-score": {
+      "type": "Rating",
+      "props": {
+        "value": {
+          "$bindState": "/values/score"
+        },
+        "count": 10,
+        "icon": "favourite",
+        "tone": "brand",
+        "size": "sm",
+        "ariaLabel": {
+          "$t": "Score"
+        }
+      },
+      "children": []
+    },
+    "rating-readonly": {
+      "type": "Rating",
+      "props": {
+        "defaultValue": 4.5,
+        "allowHalf": true,
+        "readonly": true,
+        "size": "lg",
+        "ariaLabel": {
+          "$t": "Average"
+        }
+      },
+      "children": []
+    },
+    "rating-disabled": {
+      "type": "Rating",
+      "props": {
+        "defaultValue": 2,
+        "disabled": true,
+        "ariaLabel": {
+          "$t": "Disabled"
+        }
+      },
+      "children": []
+    },
+    "f-rating": {
+      "type": "FormField",
+      "props": {
+        "name": "rating",
+        "label": {
+          "$t": "Overall (half steps, clearable)"
+        },
+        "help": {
+          "$t": "Arrow keys change it; Delete clears it"
+        }
+      },
+      "children": [
+        "rating-main"
+      ]
+    },
+    "f-score": {
+      "type": "FormField",
+      "props": {
+        "name": "score",
+        "label": {
+          "$t": "Score (10 hearts, small)"
+        }
+      },
+      "children": [
+        "rating-score"
+      ]
+    },
+    "f-rating-readonly": {
+      "type": "FormField",
+      "props": {
+        "name": "rating-readonly",
+        "label": {
+          "$t": "Average (readonly, large)"
+        }
+      },
+      "children": [
+        "rating-readonly"
+      ]
+    },
+    "f-rating-disabled": {
+      "type": "FormField",
+      "props": {
+        "name": "rating-disabled",
+        "label": {
+          "$t": "Disabled"
+        }
+      },
+      "children": [
+        "rating-disabled"
+      ]
+    },
+    "rating-grid": {
+      "type": "Grid",
+      "props": {
+        "columns": 2,
+        "gap": "lg"
+      },
+      "children": [
+        "f-rating",
+        "f-score",
+        "f-rating-readonly",
+        "f-rating-disabled",
+        "f-rating-invalid"
+      ]
+    },
+    "rating-card": {
+      "type": "Example",
+      "props": {
+        "id": "rating",
+        "title": {
+          "$t": "Rating"
+        },
+        "description": {
+          "$t": "Stars or any icon, half steps and a readonly display"
+        }
+      },
+      "children": [
+        "rating-grid"
+      ]
+    },
+    "color-main": {
+      "type": "ColorPicker",
+      "props": {
+        "value": {
+          "$bindState": "/values/color"
+        },
+        "clearable": true,
+        "ariaLabel": {
+          "$t": "Label color"
+        }
+      },
+      "children": []
+    },
+    "color-filled": {
+      "type": "ColorPicker",
+      "props": {
+        "value": {
+          "$bindState": "/values/accent"
+        },
+        "appearance": "filled",
+        "size": "sm",
+        "ariaLabel": {
+          "$t": "Accent"
+        }
+      },
+      "children": []
+    },
+    "color-disabled": {
+      "type": "ColorPicker",
+      "props": {
+        "defaultValue": "#3b82f6",
+        "disabled": true,
+        "ariaLabel": {
+          "$t": "Disabled"
+        }
+      },
+      "children": []
+    },
+    "color-invalid": {
+      "type": "ColorPicker",
+      "props": {
+        "value": {
+          "$bindState": "/values/tagColor"
+        },
+        "clearable": true,
+        "ariaLabel": {
+          "$t": "Required color"
+        },
+        "checks": [
+          {
+            "type": "required",
+            "message": {
+              "$t": "Pick a color"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "f-color": {
+      "type": "FormField",
+      "props": {
+        "name": "color",
+        "label": {
+          "$t": "Label color (clearable)"
+        },
+        "help": {
+          "$t": "Presets come from the theme; any hex can be typed or picked"
+        }
+      },
+      "children": [
+        "color-main"
+      ]
+    },
+    "f-accent": {
+      "type": "FormField",
+      "props": {
+        "name": "accent",
+        "label": {
+          "$t": "Accent (filled, small)"
+        }
+      },
+      "children": [
+        "color-filled"
+      ]
+    },
+    "f-color-disabled": {
+      "type": "FormField",
+      "props": {
+        "name": "color-disabled",
+        "label": {
+          "$t": "Disabled"
+        }
+      },
+      "children": [
+        "color-disabled"
+      ]
+    },
+    "f-color-required": {
+      "type": "FormField",
+      "props": {
+        "name": "color-required",
+        "label": {
+          "$t": "Required"
+        },
+        "required": true,
+        "help": {
+          "$t": "Clear it and submit to see the check"
+        }
+      },
+      "children": [
+        "color-invalid"
+      ]
+    },
+    "color-grid": {
+      "type": "Grid",
+      "props": {
+        "columns": 2,
+        "gap": "lg"
+      },
+      "children": [
+        "f-color",
+        "f-accent",
+        "f-color-disabled",
+        "f-color-required"
+      ]
+    },
+    "color-card": {
+      "type": "Example",
+      "props": {
+        "id": "color-picker",
+        "title": {
+          "$t": "Color picker"
+        },
+        "description": {
+          "$t": "A swatch trigger with a color area, hue strip, theme presets and a hex field"
+        }
+      },
+      "children": [
+        "color-grid"
+      ]
+    },
+    "swatches-accent": {
+      "type": "ColorSwatches",
+      "props": {
+        "value": {
+          "$bindState": "/values/themeAccent"
+        },
+        "swatches": [
+          {
+            "value": "#2d5bff",
+            "label": {
+              "$t": "Blue"
+            }
+          },
+          {
+            "value": "#7c3aed",
+            "label": {
+              "$t": "Violet"
+            }
+          },
+          {
+            "value": "#0891b2",
+            "label": {
+              "$t": "Cyan"
+            }
+          },
+          {
+            "value": "#16a34a",
+            "label": {
+              "$t": "Green"
+            }
+          },
+          {
+            "value": "#ea580c",
+            "label": {
+              "$t": "Orange"
+            }
+          },
+          {
+            "value": "#db2777",
+            "label": {
+              "$t": "Pink"
+            }
+          },
+          {
+            "value": "#171717",
+            "label": {
+              "$t": "Black"
+            }
+          }
+        ],
+        "allowCustom": true,
+        "ariaLabel": {
+          "$t": "Theme accent"
+        }
+      },
+      "children": []
+    },
+    "swatches-highlight": {
+      "type": "ColorSwatches",
+      "props": {
+        "value": {
+          "$bindState": "/values/highlight"
+        },
+        "swatches": [
+          {
+            "value": "#fde68a",
+            "label": {
+              "$t": "Butter"
+            }
+          },
+          {
+            "value": "#bbf7d0",
+            "label": {
+              "$t": "Mint"
+            }
+          },
+          {
+            "value": "#bfdbfe",
+            "label": {
+              "$t": "Sky"
+            }
+          },
+          {
+            "value": "#fbcfe8",
+            "label": {
+              "$t": "Blush"
+            }
+          },
+          {
+            "value": "#ffffff",
+            "label": {
+              "$t": "White"
+            }
+          }
+        ],
+        "clearable": true,
+        "ariaLabel": {
+          "$t": "Highlight"
+        }
+      },
+      "children": []
+    },
+    "swatches-label": {
+      "type": "ColorSwatches",
+      "props": {
+        "value": {
+          "$bindState": "/values/labelColor"
+        },
+        "swatches": [
+          "#2d5bff",
+          "#16a34a",
+          "#ea580c",
+          "#dc2626",
+          "#7c3aed",
+          "#71717a"
+        ],
+        "shape": "square",
+        "size": "sm",
+        "ariaLabel": {
+          "$t": "Label tag"
+        }
+      },
+      "children": []
+    },
+    "swatches-required": {
+      "type": "ColorSwatches",
+      "props": {
+        "value": {
+          "$bindState": "/values/swatchRequired"
+        },
+        "swatches": [
+          "#2d5bff",
+          "#16a34a",
+          "#ea580c",
+          "#dc2626",
+          "#7c3aed",
+          "#71717a"
+        ],
+        "ariaLabel": {
+          "$t": "Required swatch"
+        },
+        "checks": [
+          {
+            "type": "required",
+            "message": {
+              "$t": "Pick a color"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "f-swatches-accent": {
+      "type": "FormField",
+      "props": {
+        "name": "themeAccent",
+        "label": {
+          "$t": "Theme accent (custom colors)"
+        },
+        "help": {
+          "$t": "The + tile opens the full picker; the color you pick joins the row"
+        }
+      },
+      "children": [
+        "swatches-accent"
+      ]
+    },
+    "f-swatches-highlight": {
+      "type": "FormField",
+      "props": {
+        "name": "highlight",
+        "label": {
+          "$t": "Highlight (clearable)"
+        },
+        "help": {
+          "$t": "The slashed swatch stores no color"
+        }
+      },
+      "children": [
+        "swatches-highlight"
+      ]
+    },
+    "f-swatches-label": {
+      "type": "FormField",
+      "props": {
+        "name": "labelColor",
+        "label": {
+          "$t": "Label tag (square, small)"
+        }
+      },
+      "children": [
+        "swatches-label"
+      ]
+    },
+    "f-swatches-required": {
+      "type": "FormField",
+      "props": {
+        "name": "swatchRequired",
+        "label": {
+          "$t": "Required"
+        },
+        "required": true,
+        "help": {
+          "$t": "Submit without a choice to see the check"
+        }
+      },
+      "children": [
+        "swatches-required"
+      ]
+    },
+    "swatches-grid": {
+      "type": "Grid",
+      "props": {
+        "columns": 2,
+        "gap": "lg"
+      },
+      "children": [
+        "f-swatches-accent",
+        "f-swatches-highlight",
+        "f-swatches-label",
+        "f-swatches-required"
+      ]
+    },
+    "swatches-card": {
+      "type": "Example",
+      "props": {
+        "id": "color-swatches",
+        "title": {
+          "$t": "Color swatches"
+        },
+        "description": {
+          "$t": "A short palette laid out inline: arrow keys move the choice, a slashed swatch clears it and the + tile opens the full picker"
+        }
+      },
+      "children": [
+        "swatches-grid"
+      ]
+    },
+    "otp-main": {
+      "type": "InputOTP",
+      "props": {
+        "value": {
+          "$bindState": "/values/otp"
+        },
+        "length": 6,
+        "group": 3,
+        "ariaLabel": {
+          "$t": "Verification code"
+        },
+        "checks": [
+          {
+            "type": "required",
+            "message": {
+              "$t": "Enter the code"
+            }
+          },
+          {
+            "type": "minLength",
+            "args": {
+              "min": 6
+            },
+            "message": {
+              "$t": "Enter all six digits"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "otp-pin": {
+      "type": "InputOTP",
+      "props": {
+        "value": {
+          "$bindState": "/values/pin"
+        },
+        "length": 4,
+        "mask": true,
+        "ariaLabel": {
+          "$t": "PIN"
+        }
+      },
+      "children": []
+    },
+    "otp-invite": {
+      "type": "InputOTP",
+      "props": {
+        "value": {
+          "$bindState": "/values/invite"
+        },
+        "length": 8,
+        "type": "alphanumeric",
+        "group": 4,
+        "size": "sm",
+        "ariaLabel": {
+          "$t": "Invite code"
+        }
+      },
+      "children": []
+    },
+    "otp-disabled": {
+      "type": "InputOTP",
+      "props": {
+        "defaultValue": "1234",
+        "length": 4,
+        "disabled": true,
+        "ariaLabel": {
+          "$t": "Disabled"
+        }
+      },
+      "children": []
+    },
+    "f-otp": {
+      "type": "FormField",
+      "props": {
+        "name": "otp",
+        "label": {
+          "$t": "Verification code"
+        },
+        "required": true,
+        "help": {
+          "$t": "Type or paste a code; focus moves on by itself"
+        }
+      },
+      "children": [
+        "otp-main"
+      ]
+    },
+    "f-pin": {
+      "type": "FormField",
+      "props": {
+        "name": "pin",
+        "label": {
+          "$t": "PIN (masked)"
+        }
+      },
+      "children": [
+        "otp-pin"
+      ]
+    },
+    "f-invite": {
+      "type": "FormField",
+      "props": {
+        "name": "invite",
+        "label": {
+          "$t": "Invite code (letters and digits, small)"
+        }
+      },
+      "children": [
+        "otp-invite"
+      ]
+    },
+    "f-otp-disabled": {
+      "type": "FormField",
+      "props": {
+        "name": "otp-disabled",
+        "label": {
+          "$t": "Disabled"
+        }
+      },
+      "children": [
+        "otp-disabled"
+      ]
+    },
+    "f-phone": {
+      "type": "FormField",
+      "props": {
+        "name": "phone",
+        "label": {
+          "$t": "Mobile"
+        },
+        "mask": "999 9999 9999",
+        "placeholder": "138 0000 0000",
+        "value": {
+          "$bindState": "/values/phone"
+        },
+        "help": {
+          "$t": "Shown and stored with spaces"
+        }
+      },
+      "children": []
+    },
+    "f-card": {
+      "type": "FormField",
+      "props": {
+        "name": "card",
+        "label": {
+          "$t": "Card number"
+        },
+        "mask": "9999 9999 9999 9999",
+        "unmask": true,
+        "placeholder": "6222 0000 0000 0000",
+        "value": {
+          "$bindState": "/values/card"
+        },
+        "help": {
+          "$t": "Shown grouped, stored as digits only"
+        }
+      },
+      "children": []
+    },
+    "f-plate": {
+      "type": "FormField",
+      "props": {
+        "name": "plate",
+        "label": {
+          "$t": "Plate"
+        },
+        "mask": "A-*****",
+        "placeholder": {
+          "$t": "A-12345"
+        },
+        "help": {
+          "$t": "A letter, then five letters or digits"
+        }
+      },
+      "children": []
+    },
+    "otp-grid": {
+      "type": "Grid",
+      "props": {
+        "columns": 2,
+        "gap": "lg"
+      },
+      "children": [
+        "f-pin",
+        "f-otp-disabled"
+      ]
+    },
+    "mask-grid": {
+      "type": "Grid",
+      "props": {
+        "columns": 3,
+        "gap": "lg"
+      },
+      "children": [
+        "f-phone",
+        "f-card",
+        "f-plate"
+      ]
+    },
+    "otp-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "f-otp",
+        "otp-grid",
+        "f-invite",
+        "mask-separator",
+        "mask-grid"
+      ]
+    },
+    "mask-separator": {
+      "type": "Separator",
+      "props": {},
+      "children": []
+    },
+    "otp-card": {
+      "type": "Example",
+      "props": {
+        "id": "one-time-code",
+        "title": {
+          "$t": "One-time code and masks"
+        },
+        "description": {
+          "$t": "Code boxes with paste and keyboard navigation, and masked text inputs"
+        }
+      },
+      "children": [
+        "otp-stack"
+      ]
+    },
+    "signature-main": {
+      "type": "SignaturePad",
+      "props": {
+        "value": {
+          "$bindState": "/values/signature"
+        },
+        "ariaLabel": {
+          "$t": "Signature"
+        },
+        "checks": [
+          {
+            "type": "required",
+            "message": {
+              "$t": "Please sign"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "signature-disabled": {
+      "type": "SignaturePad",
+      "props": {
+        "height": 96,
+        "disabled": true,
+        "placeholder": {
+          "$t": "Signing is locked"
+        },
+        "ariaLabel": {
+          "$t": "Disabled"
+        }
+      },
+      "children": []
+    },
+    "f-signature": {
+      "type": "FormField",
+      "props": {
+        "name": "signature",
+        "label": {
+          "$t": "Signature"
+        },
+        "required": true,
+        "help": {
+          "$t": "Draw with a mouse, pen or finger; undo removes the last stroke"
+        }
+      },
+      "children": [
+        "signature-main"
+      ]
+    },
+    "f-signature-disabled": {
+      "type": "FormField",
+      "props": {
+        "name": "signature-disabled",
+        "label": {
+          "$t": "Disabled"
+        }
+      },
+      "children": [
+        "signature-disabled"
+      ]
+    },
+    "signature-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "f-signature",
+        "f-signature-readonly",
+        "f-signature-disabled"
+      ]
+    },
+    "signature-card": {
+      "type": "Example",
+      "props": {
+        "id": "signature-pad",
+        "title": {
+          "$t": "Signature pad"
+        },
+        "description": {
+          "$t": "Smooth strokes saved as a PNG data URL"
+        }
+      },
+      "children": [
+        "signature-stack"
+      ]
+    },
+    "icon-main": {
+      "type": "IconPicker",
+      "props": {
+        "value": {
+          "$bindState": "/values/icon"
+        },
+        "clearable": true,
+        "ariaLabel": {
+          "$t": "Menu icon"
+        }
+      },
+      "children": []
+    },
+    "icon-filled": {
+      "type": "IconPicker",
+      "props": {
+        "value": {
+          "$bindState": "/values/menuIcon"
+        },
+        "appearance": "filled",
+        "size": "sm",
+        "ariaLabel": {
+          "$t": "Shortcut icon"
+        }
+      },
+      "children": []
+    },
+    "icon-readonly": {
+      "type": "IconPicker",
+      "props": {
+        "defaultValue": "home-01",
+        "readonly": true,
+        "ariaLabel": {
+          "$t": "Readonly"
+        }
+      },
+      "children": []
+    },
+    "icon-invalid": {
+      "type": "IconPicker",
+      "props": {
+        "invalid": true,
+        "error": {
+          "$t": "Choose an icon for the shortcut"
+        },
+        "ariaLabel": {
+          "$t": "Invalid"
+        }
+      },
+      "children": []
+    },
+    "f-icon": {
+      "type": "FormField",
+      "props": {
+        "name": "icon",
+        "label": {
+          "$t": "Menu icon (clearable)"
+        },
+        "help": {
+          "$t": "Search thousands of HugeIcons by name"
+        }
+      },
+      "children": [
+        "icon-main"
+      ]
+    },
+    "f-menu-icon": {
+      "type": "FormField",
+      "props": {
+        "name": "menu-icon",
+        "label": {
+          "$t": "Shortcut icon (filled, small)"
+        }
+      },
+      "children": [
+        "icon-filled"
+      ]
+    },
+    "f-icon-readonly": {
+      "type": "FormField",
+      "props": {
+        "name": "icon-readonly",
+        "label": {
+          "$t": "Readonly"
+        }
+      },
+      "children": [
+        "icon-readonly"
+      ]
+    },
+    "f-icon-invalid": {
+      "type": "FormField",
+      "props": {
+        "name": "icon-invalid",
+        "label": {
+          "$t": "Invalid"
+        }
+      },
+      "children": [
+        "icon-invalid"
+      ]
+    },
+    "icon-grid": {
+      "type": "Grid",
+      "props": {
+        "columns": 2,
+        "gap": "lg"
+      },
+      "children": [
+        "f-icon",
+        "f-menu-icon",
+        "f-icon-readonly",
+        "f-icon-invalid"
+      ]
+    },
+    "icon-card": {
+      "type": "Example",
+      "props": {
+        "id": "icon-picker",
+        "title": {
+          "$t": "Icon picker"
+        },
+        "description": {
+          "$t": "A searchable grid of icon names, loaded on first open"
+        }
+      },
+      "children": [
+        "icon-grid"
+      ]
+    },
+    "submit": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Submit"
+        },
+        "type": "submit"
+      },
+      "children": []
+    },
+    "reset": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Reset"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": [
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/values",
+              "value": {
+                "volume": 40,
+                "price": [
+                  200,
+                  800
+                ],
+                "quality": 50,
+                "temperature": 22,
+                "plan": "team",
+                "billing": "yearly",
+                "addons": [
+                  "backup"
+                ],
+                "channels": [
+                  "email",
+                  "push"
+                ],
+                "category": "design",
+                "rating": 3.5,
+                "score": 8,
+                "color": "",
+                "accent": "",
+                "tagColor": "#e8590c",
+                "themeAccent": "#2d5bff",
+                "highlight": "",
+                "labelColor": "#16a34a",
+                "swatchRequired": "",
+                "otp": "",
+                "pin": "",
+                "invite": "",
+                "phone": "",
+                "card": "",
+                "signature": "",
+                "icon": "rocket-01",
+                "menuIcon": ""
+              }
+            }
+          }
+        ]
+      }
+    },
+    "actions": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm"
+      },
+      "children": [
+        "submit",
+        "reset"
+      ]
+    },
+    "controls-grid": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 480,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "slider-card",
+        "cards-card",
+        "tags-card",
+        "rating-card",
+        "color-card",
+        "icon-card",
+        "otp-card",
+        "signature-card"
+      ]
+    },
+    "form": {
+      "type": "Form",
+      "props": {},
+      "children": [
+        "controls-grid",
+        "swatches-card",
+        "actions"
+      ],
+      "on": {
+        "submit": [
+          {
+            "action": "toast",
+            "params": {
+              "message": {
+                "$t": "Form submitted"
+              },
+              "tone": "success"
+            }
+          }
+        ]
+      }
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "More form controls"
+        },
+        "description": {
+          "$t": "Sliders, choice cards, tags, ratings, color and icon pickers, one-time codes, masks and signatures, bound to page state and submitted together"
+        }
+      },
+      "children": []
+    },
+    "tags-states": {
+      "type": "Grid",
+      "props": {
+        "columns": 2,
+        "gap": "lg"
+      },
+      "children": [
+        "f-period",
+        "f-tags-disabled"
+      ]
+    },
+    "f-rating-invalid": {
+      "type": "FormField",
+      "props": {
+        "name": "rating-invalid",
+        "label": {
+          "$t": "Invalid"
+        }
+      },
+      "children": [
+        "rating-invalid"
+      ]
+    },
+    "rating-invalid": {
+      "type": "Rating",
+      "props": {
+        "invalid": true,
+        "error": {
+          "$t": "Please rate the delivery"
+        },
+        "ariaLabel": {
+          "$t": "Delivery rating"
+        }
+      },
+      "children": []
+    },
+    "f-signature-readonly": {
+      "type": "FormField",
+      "props": {
+        "name": "signature-readonly",
+        "label": {
+          "$t": "Approved (readonly)"
+        }
+      },
+      "children": [
+        "signature-readonly"
+      ]
+    },
+    "signature-readonly": {
+      "type": "SignaturePad",
+      "props": {
+        "height": 96,
+        "readonly": true,
+        "defaultValue": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='88' viewBox='0 0 300 88'><path d='M18 62c8-26 18-40 26-36s-4 34-14 40 6-22 22-26 10 18 20 14 10-22 16-20-2 22 8 22 14-24 22-22-4 20 6 20 16-14 24-16 6 12 14 12 20-10 30-14' fill='none' stroke='%23000' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'/><path d='M40 72c60-6 140-8 230-14' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'/></svg>",
+        "ariaLabel": {
+          "$t": "Approval signature"
+        }
+      },
+      "children": []
+    }
+  }
+}

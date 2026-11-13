@@ -1,0 +1,12 @@
+---
+title: "useTranslate"
+description: "useTranslate React hook 的签名、参数和返回值。"
+---
+
+The translate function `t(key, params?, defaultMessage?)` of the i18n provider, renewed when the locale changes; without a provider it returns the default message, else the key.
+
+```typescript
+useTranslate(): (key: string, params?: Record<string, unknown>, defaultMessage?: string) => string
+```
+
+返回 `(key: string, params?: Record<string, unknown>, defaultMessage?: string) => string`。

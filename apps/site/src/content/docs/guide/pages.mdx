@@ -1,0 +1,168 @@
+---
+title: "页面 JSON"
+description: "Lumi 页面的结构：元素、子元素、页面状态、读取与双向绑定、条件显示和循环。"
+---
+
+一个页面就是一个 json-render Spec：`root` 指定根元素，`elements` 按 id 存放所有元素，`state` 是页面的初始状态。示例里的注释只为说明，真实的 `.json` 文件里不能写注释。
+
+```jsonc
+{
+  // 根元素
+  "root": "profile",
+  // 页面状态：页面打开时的初始数据
+  "state": { "user": { "name": "陈米亚", "vip": true } },
+  // 元素集
+  "elements": {
+    // 资料卡片，包住下面两个元素
+    "profile": {
+      "type": "Card",
+      "props": { "title": "资料" },
+      "children": ["name", "vip"]
+    },
+    // 输入框，内容和 /user/name 同步
+    "name": {
+      "type": "Input",
+      // 双向绑定：显示状态值，输入时写回
+      "props": { "ariaLabel": "姓名", "value": { "$bindState": "/user/name" } },
+      "children": []
+    },
+    // VIP 标记
+    "vip": {
+      "type": "Badge",
+      "props": { "label": "VIP", "tone": "success" },
+      // /user/vip 为真时才显示
+      "visible": { "$state": "/user/vip" },
+      "children": []
+    }
+  }
+}
+```
+
+## 元素
+
+每个元素有：
+
+- `type`：组件名，必须是目录里有的。全部组件见 [组件](/components/)。
+- `props`：组件参数，每个组件页面都有参数表。
+- `children`：子元素 id 的数组，没有子元素也写 `[]`。
+- 可选：`on`（事件）、`visible`（条件显示）、`repeat`（循环）、`watch`（状态变化时执行动作）。
+
+## 读取和绑定状态
+
+| 写法 | 作用 |
+| --- | --- |
+| `{ "$state": "/user/name" }` | 读取状态，状态变了自动更新 |
+| `{ "$bindState": "/user/name" }` | 双向绑定，输入控件改了就写回状态 |
+| `{ "$item": "title" }` | 循环里读取当前这一项的字段 |
+| `{ "$index": true }` | 循环里当前项的序号 |
+| `{ "$template": "订单 ${/order/number}" }` | 把状态拼进一段文字；循环里 `${name}` 读当前这一项的字段 |
+| `{ "$cond": …, "$then": …, "$else": … }` | 按条件二选一 |
+| `{ "$t": "Orders" }` | 按当前语言翻译，见 [翻译文件](/guide/i18n/#翻译文件) |
+
+这里的 `/user/name` 不是网址，是**状态路径**（JSON Pointer，json-render 原生写法，见 [Data Binding](https://json-render.dev/docs/data-binding)）：开头的 `/` 表示 `state` 的根，后面每一段往里走一层。
+
+```jsonc
+{
+  "root": "name",
+  "state": {
+    // /user 指这个对象，/user/name 指 "Ada"
+    "user": { "name": "Ada" },
+    // 数组用序号：/tags/0 指 "vip"
+    "tags": ["vip"]
+  },
+  "elements": {
+    "name": {
+      "type": "Text",
+      // 显示 state.user.name
+      "props": { "text": { "$state": "/user/name" } },
+      "children": []
+    }
+  }
+}
+```
+
+`statePath`、`resultPath`、`valuesPath` 这类以 `Path` 结尾的参数，写的也是状态路径：`"resultPath": "/orders"` 表示把结果写到 `state.orders`，之后用 `/orders/data` 读出来。
+
+后台会往页面状态里放三个值，页面自己的 `state` 不要用这几个名字：
+
+| 路径 | 内容 | 什么时候有 |
+| --- | --- | --- |
+| `/route/params` | 地址里的参数，如路由 `/orders/:id` 的 `/route/params/id` | 路由打开的页面，见 [地址里的参数](/guide/menus/#地址里的参数) |
+| `/drawer/id`、`/drawer/params` | `openDrawer` 传进来的记录和参数 | 弹窗里打开的页面，见 [共用弹窗](/guide/reuse/#共用弹窗) |
+| `/include/params` | `Include` 传进来的值 | 被引用的页面，见 [复用页面片段](/guide/reuse/#复用页面片段) |
+
+`$template` 和 `$cond` 用在任何参数上，结果跟着状态变：
+
+```jsonc
+{
+  "root": "title",
+  "state": { "order": { "number": "ORD-2031", "paid": true } },
+  "elements": {
+    "title": {
+      "type": "Alert",
+      "props": {
+        // 拼成“订单 ORD-2031”
+        "title": { "$template": "订单 ${/order/number}" },
+        // /order/paid 为真显示“已付款”，否则“待付款”
+        "message": {
+          "$cond": { "$state": "/order/paid" },
+          "$then": "已付款",
+          "$else": "待付款"
+        },
+        // 颜色也可以按条件选
+        "tone": {
+          "$cond": { "$state": "/order/paid" },
+          "$then": "success",
+          "$else": "warning"
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+`$cond` 的条件和下面 `visible` 的写法相同。
+
+## 条件显示
+
+写在元素的 `visible` 上，如 `{ "$state": "/order/status", "eq": "paid" }` 表示状态等于 `paid` 时才显示。数组表示"全部满足"，`{ "$or": [...] }` 表示"满足一个"。
+
+## 循环
+
+```jsonc
+{
+  "root": "list",
+  // 列表数据放在状态里
+  "state": {
+    "todos": [
+      { "id": 1, "title": "核对库存" },
+      { "id": 2, "title": "发货" }
+    ]
+  },
+  "elements": {
+    // 列表容器
+    "list": {
+      "type": "Stack",
+      "props": {},
+      // 按 /todos 每一项渲染一次子元素，id 作 key
+      "repeat": { "statePath": "/todos", "key": "id" },
+      "children": ["todo"]
+    },
+    // 每一行的文字
+    "todo": {
+      "type": "Text",
+      // 读当前这一项的 title
+      "props": { "text": { "$item": "title" } },
+      "children": []
+    }
+  }
+}
+```
+
+## 注意
+
+- JSON 里只有数据和已注册的动作名，不能写函数或表达式。要计算（求和、换算、格式化），让后端算好再返回，或者写成 [自定义组件](/guide/extend-components/#加一个组件)。自己用 React 渲染页面时还可以注册函数，在 JSON 里用 `$computed` 调用，见 [算出来的值](/guide/advanced/react/#算出来的值)；后台页面里目前用不了。
+- 不确定一个组件有哪些参数时，不要猜：`npx -y @duxweb/lumi-check describe Table` 列出它的参数、插槽和事件，`npx -y @duxweb/lumi-check catalog` 列出全部组件和动作，见 [lumi-check](/ai/checker/)。也可以查本站的 [组件](/components/)。
+- 写完用 [lumi-check](/ai/checker/) 或 [Playground](/playground/) 校验，错误会指到具体字段。页面不按预期工作时，见 [调试页面](/guide/faq/#调试页面)。
+- 语法细节见 [json-render 官方文档](https://json-render.dev/docs)，Lumi 没有改动它。

@@ -1,0 +1,279 @@
+---
+title: "列表与筛选"
+description: "用 ListPage 写一个完整的列表页：列的显示方式、排序和分页、筛选栏、勾选和批量操作，以及把列表状态写进地址。"
+---
+
+[读取数据](/guide/data/) 里用 `Query` 加 `Table` 拼出了一个列表。真正的列表页还要排序、分页、筛选、勾选，这些 `ListPage` 都带了：给它资源名和列，它自己请求数据。
+
+```jsonc
+{
+  "root": "list",
+  "elements": {
+    "list": {
+      "type": "ListPage",
+      "props": {
+        "title": "订单",
+        // 请求 GET /orders?page=1&pageSize=20
+        "resource": "orders",
+        // 页码、每页条数、排序存在页面状态的这个路径下
+        "statePath": "/list",
+        "pageSize": 20,
+        "columns": [
+          { "field": "number", "label": "订单号" },
+          { "field": "customer", "label": "客户" },
+          { "field": "total", "label": "金额" }
+        ]
+      },
+      "children": []
+    }
+  }
+}
+```
+
+后端要返回的格式见 [对接后端](/guide/backend/#增删改查)。请求失败、没有数据时，列表自己显示对应的状态，不用另外处理。
+
+## 列
+
+`columns` 的每一项是一列。`kind` 决定这一列怎么显示：
+
+```jsonc
+{
+  "type": "ListPage",
+  "props": {
+    "title": "订单",
+    "resource": "orders",
+    "statePath": "/list",
+    "columns": [
+      // 等宽字体，适合编号
+      {
+        "field": "number",
+        "label": "订单号",
+        "kind": "code",
+        "width": "140px"
+      },
+      // 主文字下面一行小字，前面带头像或首字母
+      {
+        "field": "customer",
+        "label": "客户",
+        "kind": "entity",
+        "descriptionField": "email"
+      },
+      // 徽标：valueMap 把值换成文字，toneMap 决定颜色
+      {
+        "field": "status",
+        "label": "状态",
+        "kind": "badge",
+        "valueMap": { "paid": "已付款", "shipped": "已发货" },
+        "toneMap": { "paid": "warning", "shipped": "success" }
+      },
+      // 金额，靠右对齐，点表头可以排序
+      {
+        "field": "total",
+        "label": "金额",
+        "kind": "currency",
+        "currency": "CNY",
+        "align": "right",
+        "sortable": true
+      },
+      {
+        "field": "createdAt",
+        "label": "下单时间",
+        "kind": "date",
+        "sortable": true
+      },
+      // 操作列：按钮放在 rowActions 插槽里
+      { "field": "actions", "kind": "actions" }
+    ]
+  },
+  "children": []
+}
+```
+
+- 点可排序的表头，列表带着 `sort=-total` 重新请求。
+- 操作列里的按钮怎么写、怎么拿到“这一行”，见 [CRUD 页面](/guide/crud/#每一行的按钮)。
+- 列的全部字段见 [Table](/components/ui/table/)。
+
+## 筛选栏
+
+筛选栏放在 `ListPage` 的 `toolbar` 插槽里，显示在标题和结果之间。它和列表通过页面状态连起来：`FilterBar` 把值写进状态，`ListPage` 的 `filters` 读这些值，值一变列表就重新请求。
+
+```jsonc
+{
+  "root": "list",
+  // 筛选栏的值：每个筛选项一个键
+  "state": { "filters": {} },
+  "elements": {
+    "filters": {
+      "type": "FilterBar",
+      "props": {
+        // 改动后立即生效；explicit 是点“应用”后才生效
+        "applyMode": "immediate",
+        "value": { "$bindState": "/filters" },
+        "schema": {
+          "fields": [
+            // 搜索框，primary 表示一直显示在工具栏上
+            {
+              "field": "keyword",
+              "label": "订单号",
+              "widget": "search",
+              "primary": true
+            },
+            // 下拉选择
+            {
+              "field": "status",
+              "label": "状态",
+              "widget": "select",
+              "options": [
+                { "label": "已付款", "value": "paid" },
+                { "label": "已发货", "value": "shipped" }
+              ]
+            },
+            // 日期范围，值是 [开始, 结束]
+            { "field": "createdAt", "label": "下单时间", "widget": "dateRange" }
+          ]
+        }
+      },
+      "children": []
+    },
+    "list": {
+      "type": "ListPage",
+      "props": {
+        "title": "订单",
+        "resource": "orders",
+        "statePath": "/list",
+        // 每个条件的 value 读筛选栏写进状态的值
+        "filters": [
+          {
+            "field": "number",
+            "operator": "like",
+            "value": { "$state": "/filters/keyword" }
+          },
+          {
+            "field": "status",
+            "operator": "eq",
+            "value": { "$state": "/filters/status" }
+          },
+          {
+            "field": "createdAt",
+            "operator": "between",
+            "value": { "$state": "/filters/createdAt" }
+          }
+        ],
+        "columns": [
+          { "field": "number", "label": "订单号" },
+          { "field": "status", "label": "状态" }
+        ]
+      },
+      // 筛选栏放在标题和结果之间
+      "slots": { "toolbar": ["filters"] },
+      "children": []
+    }
+  }
+}
+```
+
+选了“已付款”、搜索“ORD”之后，请求是 `GET /orders?number[like]=ORD&status=paid&page=1&pageSize=10`。
+
+- 还没选的筛选项没有值，默认的后端约定不会把它发出去。
+- 筛选条件变了，列表回到第一页。
+- 筛选项的控件有 `search`、`select`、`chips`（一排标签，单选）、`tags`（多选）、`cascader`、`dateRange`、`numberRange`。
+- 只需要一个搜索框时，不用筛选栏，放一个 `Input` 就够了，见 [CRUD 页面](/guide/crud/#列表和搜索)。
+- 操作符和后端收到的参数名见 [对接后端](/guide/backend/#增删改查)。
+
+## 勾选和批量操作
+
+`selectable` 显示勾选列，`bulkActions` 是勾选后出现在列表上方的按钮。点批量按钮时，被点的按钮写进 `activeAction`，勾选的行在 `selectedKeys` 里，再由 `bulkAction` 事件里的动作去执行：
+
+```jsonc
+{
+  "root": "list",
+  "state": { "selection": { "keys": [], "action": null } },
+  "elements": {
+    "list": {
+      "type": "ListPage",
+      "props": {
+        "title": "订单",
+        "resource": "orders",
+        "statePath": "/list",
+        "columns": [{ "field": "number", "label": "订单号" }],
+        // 显示勾选列
+        "selectable": true,
+        // 勾选的行的 id 写到这里
+        "selectedKeys": { "$bindState": "/selection/keys" },
+        // 点了哪个批量按钮写到这里
+        "activeAction": { "$bindState": "/selection/action" },
+        "bulkActions": [
+          { "value": "ship", "label": "批量发货", "tone": "primary" },
+          { "value": "archive", "label": "归档" }
+        ]
+      },
+      "on": {
+        // 点了任意一个批量按钮时执行
+        "bulkAction": [
+          // 把按钮的值和勾选的 id 发给后端的批量接口
+          {
+            "action": "request",
+            "params": {
+              "url": "/orders/batch",
+              "method": "POST",
+              "payload": {
+                "action": { "$state": "/selection/action" },
+                "ids": { "$state": "/selection/keys" }
+              }
+            }
+          },
+          // 清掉勾选
+          {
+            "action": "setState",
+            "params": { "statePath": "/selection/keys", "value": [] }
+          },
+          // 自定义接口改了数据，让列表重新请求
+          { "action": "invalidate", "params": { "resource": "orders" } }
+        ]
+      },
+      "children": []
+    }
+  }
+}
+```
+
+后端收到 `POST /orders/batch`，请求体是 `{ "action": "ship", "ids": [1, 2] }`。
+
+- JSON 动作里的 `update`、`delete` 一次只处理一条记录，所以批量操作走后端的一个批量接口。接口失败时后面两步不执行，勾选还在。
+- 删除这类不可恢复的批量操作，先让用户确认：把批量按钮换成 `actions` 插槽里的 [Popconfirm](/components/ui/popconfirm/)，在它的 `confirm` 事件里发请求。
+
+## 把列表状态写进地址
+
+加上 `syncWithLocation`，页码、每页条数和排序会写进地址（`?page=2&pageSize=20&sort=total:desc`），刷新、分享链接、浏览器的前进后退都能还原：
+
+```jsonc
+{
+  "type": "ListPage",
+  "props": {
+    "title": "订单",
+    "resource": "orders",
+    "statePath": "/list",
+    // 一个页面上有两个列表时，写成字符串作为参数名的前缀，如 "orders"
+    "syncWithLocation": true,
+    "columns": [{ "field": "number", "label": "订单号" }]
+  },
+  "children": []
+}
+```
+
+## 插槽
+
+| 插槽 | 位置 | 常放什么 |
+| --- | --- | --- |
+| `actions` | 标题右边 | 新建按钮、导出按钮、搜索框 |
+| `toolbar` | 标题和结果之间 | 筛选栏 |
+| `rowActions` | 操作列的每一行 | 编辑、删除 |
+| `aside` | 列表旁边 | 分类树、统计 |
+
+导出和导入按钮的写法见 [exportList](/protocol/actions/export-list/) 和 [importList](/protocol/actions/import-list/)。
+
+## 相关
+
+- 新建、编辑、删除串起来的完整例子：[CRUD 页面](/guide/crud/)。
+- 全部参数：[ListPage](/components/connected/list-page/)、[FilterBar](/components/connected/filter-bar/)。
+- 只要表格、不要整页的外壳时，用 [DataGrid](/components/connected/data-grid/) 或 [Table](/components/ui/table/) 加 `Query`。

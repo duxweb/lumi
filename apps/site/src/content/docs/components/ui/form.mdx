@@ -1,0 +1,51 @@
+---
+title: "Form"
+description: "把字段编成一组，跟踪校验状态并触发提交事件。"
+---
+
+<ComponentPreview name="Form" />
+
+把字段编成一组，跟踪校验状态并触发提交事件。
+
+## 示例
+
+```json
+{
+  "root": "form-14",
+  "elements": {
+    "form-14": { "type": "Form", "props": {}, "children": ["formfield-15"] },
+    "formfield-15": {
+      "type": "FormField",
+      "props": {
+        "name": "name",
+        "label": "Name",
+        "fieldType": "string",
+        "value": { "$bindState": "/form-14/name" }
+      },
+      "children": []
+    }
+  },
+  "state": { "form-14": { "name": "Lumi" } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `layout` | 标签位置：`vertical` 在上方，`horizontal` 在左侧，`inline` 横排一行。 | `"vertical" \| "horizontal" \| "inline"` | `"vertical"` |
+| `value` | 整个表单的值对象。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `object` |  |
+| `defaultValue` | 初始值，只在没有绑定 `value` 时生效。 | `object` |  |
+| `rules` | 业务校验规则，按字段名组织，保存前执行。 | `object` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`submit`
+- 插槽：`default`

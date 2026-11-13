@@ -1,0 +1,34 @@
+/* SKU editor: specification rows over the generated combination table. */
+[data-slot="sku-editor"] { display: flex; min-width: 0; flex-direction: column; gap: 1.25rem; }
+[data-slot="sku-attributes"] { display: flex; flex-direction: column; gap: 0.625rem; }
+[data-slot="sku-attribute"] {
+  display: grid;
+  grid-template-columns: minmax(8rem, 12rem) minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.5rem;
+  padding: 0.625rem;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+}
+[data-slot="sku-attribute-name"] { display: flex; min-width: 0; flex-direction: column; gap: 0.25rem; }
+[data-slot="sku-error"] { color: var(--destructive); font-size: var(--lumi-fs-caption); }
+[data-slot="sku-variants"] { display: flex; min-width: 0; flex-direction: column; gap: 0.625rem; }
+[data-slot="sku-section-header"] { display: flex; min-height: var(--lumi-control-sm); flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; }
+[data-slot="sku-section-title"] { display: flex; align-items: baseline; gap: 0.5rem; color: var(--foreground); font-size: var(--lumi-fs-title); font-weight: var(--lumi-font-weight-medium); }
+[data-slot="sku-variants-count"] { color: var(--muted-foreground); font-size: var(--lumi-fs-caption); font-weight: var(--lumi-font-weight-normal); }
+/* Option text starts where the controls' text does, like the Repeater's column labels: past the 1px border and the control inset. */
+[data-slot="sku-editor"] { --sku-text-inset: calc(1px + var(--lumi-control-px-md)); }
+[data-slot="sku-option"] { display: flex; height: var(--lumi-control-md); align-items: center; padding-inline-start: var(--sku-text-inset); color: var(--foreground); white-space: nowrap; }
+[data-slot="sku-empty"] {
+  margin: 0;
+  padding: 1.5rem 1rem;
+  border: 1px dashed var(--input);
+  border-radius: var(--lumi-radius-control);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  text-align: center;
+}
+@media (max-width: 640px) {
+  [data-slot="sku-attribute"] { grid-template-columns: minmax(0, 1fr) auto; }
+  [data-slot="sku-attribute"] > [data-slot="tags-input"] { grid-column: 1 / -1; grid-row: 2; }
+}

@@ -1,0 +1,808 @@
+/* Kanban board and schedule calendar. Colours come from the theme tokens only;
+   tinted chips follow the soft badge recipe: lightness pinned per theme, hue
+   and chroma taken from the tone, so every pair clears AA in light and dark. */
+
+.lumi-kanban__count[data-tone],
+.lumi-schedule__event {
+  --lumi-board-tone: var(--muted-foreground);
+  --lumi-board-tone-sc: 0;
+  --lumi-board-tone-tc: 0;
+  --lumi-board-tone-tl: 0.53;
+  background: oklch(from var(--lumi-board-tone) 0.966 var(--lumi-board-tone-sc) h);
+  color: oklch(from var(--lumi-board-tone) var(--lumi-board-tone-tl) var(--lumi-board-tone-tc) h);
+}
+
+:is(.lumi-kanban__count, .lumi-schedule__event)[data-tone='success'] {
+  --lumi-board-tone: var(--lumi-text-success);
+  --lumi-board-tone-sc: 0.030;
+  --lumi-board-tone-tc: 0.126;
+}
+
+:is(.lumi-kanban__count, .lumi-schedule__event)[data-tone='warning'] {
+  --lumi-board-tone: var(--lumi-text-warning);
+  --lumi-board-tone-sc: 0.026;
+  --lumi-board-tone-tc: 0.115;
+}
+
+:is(.lumi-kanban__count, .lumi-schedule__event)[data-tone='danger'] {
+  --lumi-board-tone: var(--lumi-text-danger);
+  --lumi-board-tone-sc: 0.020;
+  --lumi-board-tone-tc: 0.160;
+}
+
+:is(.lumi-kanban__count, .lumi-schedule__event)[data-tone='info'] {
+  --lumi-board-tone: var(--lumi-text-info);
+  --lumi-board-tone-sc: 0.022;
+  --lumi-board-tone-tc: 0.115;
+}
+
+/* A calendar's default chip is the brand accent, not the near-black primary. */
+.lumi-schedule__event[data-tone='primary'] {
+  --lumi-board-tone: var(--brand);
+  --lumi-board-tone-sc: 0.030;
+  --lumi-board-tone-tc: 0.160;
+  --lumi-board-tone-tl: 0.50;
+}
+
+[data-theme='dark'] :is(.lumi-kanban__count[data-tone], .lumi-schedule__event) {
+  background: color-mix(in oklab, var(--lumi-board-tone) 13%, var(--card));
+  color: var(--lumi-board-tone);
+}
+
+[data-theme='dark'] .lumi-schedule__event[data-tone='neutral'] {
+  background: var(--muted);
+}
+
+/* ------------------------------------------------------------------ Kanban */
+
+/* A lane is the canvas showing through the page, so it reads as recessed on
+   any surface; a card is the raised surface on it. Dark cards lift toward
+   muted (card < muted, as everywhere), so a card never reads darker than its
+   lane. */
+.lumi-kanban {
+  --lumi-kanban-lane: color-mix(in oklab, var(--lumi-surface-canvas) 65%, transparent);
+  --lumi-kanban-card: var(--card);
+  min-width: 0;
+}
+
+[data-theme='dark'] .lumi-kanban {
+  --lumi-kanban-card: color-mix(in oklab, var(--muted) 30%, var(--card));
+}
+
+.lumi-kanban__board {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lumi-space-3);
+  overflow-x: auto;
+  padding-block-end: var(--lumi-space-2);
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+}
+
+.lumi-kanban__column {
+  display: flex;
+  min-width: 0;
+  max-width: 20rem;
+  flex: 1 0 16rem;
+  flex-direction: column;
+  align-self: stretch;
+  border: 1px solid transparent;
+  border-radius: var(--lumi-radius-panel);
+  background: var(--lumi-kanban-lane);
+  scroll-snap-align: start;
+  transition: border-color 120ms ease-out;
+}
+
+.lumi-kanban__column[data-target] {
+  border-color: var(--lumi-selected-border);
+  background-image: linear-gradient(var(--lumi-selected-range-bg), var(--lumi-selected-range-bg));
+}
+
+.lumi-kanban__header {
+  display: flex;
+  min-height: 2.5rem;
+  align-items: center;
+  padding: var(--lumi-space-1) var(--lumi-space-2) var(--lumi-space-1) var(--lumi-space-1);
+  gap: 6px;
+}
+
+.lumi-kanban__toggle {
+  position: relative;
+  display: grid;
+  width: var(--lumi-control-xs);
+  height: var(--lumi-control-xs);
+  flex: none;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--lumi-radius-item);
+  background: none;
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
+
+.lumi-kanban__toggle:hover {
+  background: var(--lumi-hover-bg);
+  color: var(--foreground);
+}
+
+.lumi-kanban__toggle:focus-visible,
+.lumi-kanban__card:focus-visible,
+.lumi-schedule__day:focus-visible,
+.lumi-schedule__event:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.lumi-kanban__toggle svg {
+  transition: transform 120ms ease-out;
+}
+
+.lumi-kanban__toggle[aria-expanded='true'] svg {
+  transform: rotate(90deg);
+}
+
+.lumi-kanban__title {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--foreground);
+  font-size: var(--lumi-fs-label);
+  font-weight: var(--lumi-font-weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Secondary text rather than muted: the pill is a tint, and muted text on a
+   tint drops below AA. */
+.lumi-kanban__count {
+  display: inline-grid;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  flex: none;
+  place-items: center;
+  padding: 0 5px;
+  border-radius: var(--lumi-radius-full);
+  background: color-mix(in oklab, var(--foreground) 7%, transparent);
+  color: var(--lumi-fg-secondary);
+  font-size: var(--lumi-fs-micro);
+  font-weight: var(--lumi-font-weight-medium);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.lumi-kanban__add {
+  position: relative;
+  margin-inline-start: auto;
+  color: var(--muted-foreground);
+}
+
+.lumi-kanban__add:hover {
+  color: var(--foreground);
+}
+
+.lumi-kanban__cards {
+  display: flex;
+  min-height: 4rem;
+  flex: 1;
+  flex-direction: column;
+  margin: 0;
+  padding: 0 var(--lumi-space-2) var(--lumi-space-2);
+  gap: var(--lumi-space-2);
+  list-style: none;
+}
+
+.lumi-kanban__item {
+  position: relative;
+}
+
+.lumi-kanban__card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--lumi-space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+  background: var(--lumi-kanban-card);
+  color: var(--card-foreground);
+  cursor: grab;
+  gap: var(--lumi-space-2);
+  transition: border-color 120ms ease-out, box-shadow 120ms ease-out, background-color 120ms ease-out;
+  user-select: none;
+}
+
+/* The lift a card shows when pointed at is the one a segmented pill has over
+   its track: the card is something to pick up. */
+.lumi-kanban__card:hover {
+  border-color: color-mix(in oklab, var(--foreground) 18%, var(--border));
+  box-shadow: var(--lumi-segment-shadow);
+}
+
+.lumi-kanban__card[data-lift],
+.lumi-kanban__card[data-active='keyboard'] {
+  border-color: var(--ring);
+  box-shadow: var(--shadow-overlay);
+}
+
+/* The card left behind while dragging is a placeholder slot in the selection
+   tint; the drag image itself is taken with the lift above. */
+.lumi-kanban__card[data-active='pointer']:not([data-lift]) {
+  border-style: dashed;
+  border-color: var(--lumi-selected-border);
+  background: var(--lumi-selected-range-bg);
+  box-shadow: none;
+}
+
+.lumi-kanban__card[data-active='pointer']:not([data-lift]) > * {
+  opacity: 0.4;
+}
+
+.lumi-kanban__body {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--lumi-space-1);
+}
+
+.lumi-kanban__card-title {
+  display: flex;
+  align-items: flex-start;
+  padding-inline-end: 1.75rem;
+  font-size: var(--lumi-fs-body);
+  font-weight: var(--lumi-font-weight-medium);
+  line-height: 1.4;
+  gap: var(--lumi-space-2);
+}
+
+.lumi-kanban__card-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Centred on the first line of the title, however many lines follow. */
+.lumi-kanban__priority {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  margin-block-start: calc((1lh - 8px) / 2);
+  border-radius: var(--lumi-radius-full);
+  background: var(--muted-foreground);
+}
+
+.lumi-kanban__priority[data-tone='info'] {
+  background: var(--lumi-info);
+}
+
+.lumi-kanban__priority[data-tone='warning'] {
+  background: var(--lumi-warning);
+}
+
+.lumi-kanban__priority[data-tone='danger'] {
+  background: var(--lumi-danger);
+}
+
+.lumi-kanban__description {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.lumi-kanban__footer {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--lumi-space-2);
+}
+
+.lumi-kanban__meta {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--lumi-space-2);
+}
+
+/* The last meta line is as tall as the avatar beside it, so both centre on
+   one row. */
+.lumi-kanban__footer:has(> .lumi-kanban__assignee) .lumi-kanban__meta > :last-child {
+  min-height: var(--lumi-control-xs);
+}
+
+.lumi-kanban__tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.lumi-kanban__tags [data-slot='badge'] {
+  height: 1.25rem;
+  padding-inline: 6px;
+}
+
+.lumi-kanban__due {
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  font-variant-numeric: tabular-nums;
+  gap: 4px;
+}
+
+.lumi-kanban__due[data-overdue] {
+  color: var(--lumi-text-danger);
+}
+
+.lumi-kanban__assignee {
+  flex: none;
+  margin-inline-start: auto;
+}
+
+.lumi-kanban__assignee [data-slot='avatar'] {
+  width: var(--lumi-control-xs);
+  height: var(--lumi-control-xs);
+}
+
+/* Shown on hover and focus; a touch screen has no hover to reveal it, so
+   there it stays. */
+.lumi-kanban__menu {
+  position: absolute;
+  top: var(--lumi-space-2);
+  right: var(--lumi-space-2);
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+}
+
+.lumi-kanban__item:is(:hover, :focus-within) .lumi-kanban__menu,
+.lumi-kanban__menu[data-state='open'] {
+  opacity: 1;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .lumi-kanban__menu {
+    opacity: 1;
+  }
+}
+
+/* Zero height with negative margins, so showing it never shifts the cards. */
+.lumi-kanban__indicator {
+  position: relative;
+  height: 0;
+  margin-block: calc(var(--lumi-space-2) / -2);
+}
+
+.lumi-kanban__indicator::before {
+  position: absolute;
+  top: -1px;
+  right: 0;
+  left: 0;
+  height: 2px;
+  border-radius: var(--lumi-radius-full);
+  background: var(--brand);
+  content: '';
+}
+
+.lumi-kanban__indicator::after {
+  position: absolute;
+  top: -4px;
+  left: -2px;
+  width: 8px;
+  height: 8px;
+  box-sizing: border-box;
+  border: 2px solid var(--brand);
+  border-radius: var(--lumi-radius-full);
+  background: var(--lumi-kanban-card);
+  content: '';
+}
+
+.lumi-kanban__empty {
+  display: grid;
+  min-height: 4rem;
+  place-items: center;
+  border: 1px dashed var(--border);
+  border-radius: var(--lumi-radius-control);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-meta);
+}
+
+/* A folded column is a narrow lane of the same surface: its toggle lines up
+   with the open columns' toggles, then the title runs down the lane and the
+   count follows it, in reading order. */
+.lumi-kanban__column[data-collapsed] {
+  max-width: 2.5rem;
+  flex: 0 0 2.5rem;
+}
+
+.lumi-kanban__column[data-collapsed] .lumi-kanban__header {
+  flex-direction: column;
+  padding: var(--lumi-space-2) 0;
+  gap: var(--lumi-space-2);
+}
+
+.lumi-kanban__column[data-collapsed] .lumi-kanban__title {
+  overflow: visible;
+  writing-mode: vertical-rl;
+}
+
+/* Narrow Admin pages raise every button to the touch size. The board keeps
+   its chrome at the drawn size, so the header and the card menu stay aligned,
+   and widens the hit area to 44px on touch screens instead. */
+.lumi-kanban .lumi-kanban__board button:is(.lumi-kanban__toggle, .lumi-kanban__add, .lumi-kanban__menu) {
+  min-width: 0;
+  min-height: 0;
+}
+
+@media (pointer: coarse) {
+  .lumi-kanban :is(.lumi-kanban__toggle, .lumi-kanban__add, .lumi-kanban__menu)::after {
+    position: absolute;
+    inset: calc((var(--lumi-control-touch) - 100%) / -2);
+    content: '';
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lumi-kanban__column,
+  .lumi-kanban__card,
+  .lumi-kanban__menu,
+  .lumi-kanban__toggle svg {
+    transition: none;
+  }
+}
+
+/* --------------------------------------------------------------- Schedule */
+
+.lumi-schedule {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  container-type: inline-size;
+  gap: var(--lumi-space-3);
+}
+
+.lumi-schedule__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lumi-space-2);
+}
+
+.lumi-schedule__nav {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--lumi-space-1);
+}
+
+.lumi-schedule__back {
+  transform: scaleX(-1);
+}
+
+.lumi-schedule__title {
+  margin: 0 0 0 var(--lumi-space-2);
+  font-size: var(--lumi-fs-section);
+  font-weight: var(--lumi-font-weight-semibold);
+  white-space: nowrap;
+}
+
+.lumi-schedule__scroll {
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.lumi-schedule__month {
+  width: 100%;
+  min-width: 40rem;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-panel);
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+
+.lumi-schedule__month th {
+  height: 2rem;
+  padding: 0 var(--lumi-space-2);
+  border-bottom: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  font-weight: var(--lumi-font-weight-medium);
+  text-align: start;
+}
+
+.lumi-schedule__month abbr {
+  text-decoration: none;
+}
+
+.lumi-schedule__month td {
+  height: 7rem;
+  padding: 4px;
+  vertical-align: top;
+}
+
+.lumi-schedule__month td + td,
+.lumi-schedule__month th + th {
+  border-left: 1px solid var(--border);
+}
+
+.lumi-schedule__month tr + tr td {
+  border-top: 1px solid var(--border);
+}
+
+.lumi-schedule__month td[data-outside] {
+  background: color-mix(in oklab, var(--muted) 45%, transparent);
+}
+
+.lumi-schedule__month tbody tr:last-child td:first-child {
+  border-bottom-left-radius: calc(var(--lumi-radius-panel) - 1px);
+}
+
+.lumi-schedule__month tbody tr:last-child td:last-child {
+  border-bottom-right-radius: calc(var(--lumi-radius-panel) - 1px);
+}
+
+.lumi-schedule__day {
+  display: inline-grid;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  place-items: center;
+  padding: 0 4px;
+  border: 0;
+  border-radius: var(--lumi-radius-full);
+  background: none;
+  color: var(--foreground);
+  cursor: pointer;
+  font-size: var(--lumi-fs-label);
+  font-variant-numeric: tabular-nums;
+}
+
+.lumi-schedule__day:hover {
+  background: var(--lumi-hover-bg);
+}
+
+td[data-outside] > .lumi-schedule__day {
+  color: var(--muted-foreground);
+}
+
+.lumi-schedule__day[data-today],
+.lumi-schedule__day[data-today]:hover {
+  background: var(--brand);
+  color: var(--brand-foreground);
+  font-weight: var(--lumi-font-weight-medium);
+}
+
+.lumi-schedule__events {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2px;
+  gap: 2px;
+}
+
+.lumi-schedule__event {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  height: 1.375rem;
+  align-items: center;
+  padding: 0 6px;
+  border: 0;
+  border-radius: var(--lumi-radius-item);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--lumi-fs-caption);
+  gap: 4px;
+  text-align: start;
+}
+
+.lumi-schedule__event:hover {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, currentColor 35%, transparent);
+}
+
+.lumi-schedule__time {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+
+.lumi-schedule__event-title {
+  min-width: 0;
+  overflow: hidden;
+  font-weight: var(--lumi-font-weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lumi-schedule__more {
+  height: 1.375rem;
+  align-self: flex-start;
+  padding-inline: 6px;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+}
+
+/* Narrow months keep every day legible: chips shrink to tone dots and the
+   titles stay in the accessible name. */
+@container (max-width: 34rem) {
+  .lumi-schedule__month {
+    min-width: 0;
+  }
+
+  .lumi-schedule__month th {
+    padding: 0 2px;
+    text-align: center;
+  }
+
+  .lumi-schedule__month td {
+    height: 4rem;
+    padding: 2px;
+    text-align: center;
+  }
+
+  .lumi-schedule__events {
+    flex-flow: row wrap;
+    justify-content: center;
+  }
+
+  .lumi-schedule__month .lumi-schedule__event {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border-radius: var(--lumi-radius-full);
+    background: oklch(from var(--lumi-board-tone) 0.62 calc(var(--lumi-board-tone-tc) * 1.2) h);
+  }
+
+  [data-theme='dark'] .lumi-schedule__month .lumi-schedule__event {
+    background: var(--lumi-board-tone);
+  }
+
+  .lumi-schedule__month .lumi-schedule__event > * {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .lumi-schedule__more {
+    height: auto;
+    padding: 0 2px;
+  }
+
+  .lumi-schedule__more [data-icon] {
+    display: none;
+  }
+}
+
+.lumi-schedule__week {
+  display: grid;
+  min-width: 46rem;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-panel);
+  grid-template-columns: 3.5rem repeat(7, minmax(0, 1fr));
+}
+
+.lumi-schedule__head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  gap: 6px;
+}
+
+.lumi-schedule__weekday {
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+}
+
+.lumi-schedule__corner,
+.lumi-schedule__gutter {
+  border-bottom: 1px solid var(--border);
+}
+
+.lumi-schedule__all-day-label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 var(--lumi-space-2);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-micro);
+  text-align: end;
+}
+
+.lumi-schedule__all-day {
+  display: flex;
+  min-height: 2rem;
+  flex-direction: column;
+  padding: 4px;
+  border-bottom: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  gap: 2px;
+}
+
+.lumi-schedule__hours {
+  display: grid;
+  border-bottom: 0;
+  grid-auto-rows: var(--lumi-schedule-hour);
+}
+
+.lumi-schedule__hours span {
+  padding: 2px var(--lumi-space-2) 0 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-micro);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.lumi-schedule__column {
+  position: relative;
+  height: calc(var(--lumi-schedule-hours) * var(--lumi-schedule-hour));
+  border-left: 1px solid var(--border);
+  background-image: linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 100% var(--lumi-schedule-hour);
+}
+
+:is(.lumi-schedule__column, .lumi-schedule__all-day, .lumi-schedule__head)[data-today] {
+  background-color: color-mix(in oklab, var(--brand) 4%, transparent);
+}
+
+.lumi-schedule__slot {
+  position: absolute;
+  padding: 2px 2px 1px;
+}
+
+.lumi-schedule__slot > .lumi-schedule__event {
+  height: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 3px 6px;
+  overflow: hidden;
+  gap: 0;
+}
+
+/* A short slot has room for one or two lines; the title matters more. */
+.lumi-schedule__slot .lumi-schedule__event-title {
+  order: -1;
+  max-width: 100%;
+  white-space: normal;
+}
+
+.lumi-schedule__slot .lumi-schedule__time {
+  max-width: 100%;
+  overflow: hidden;
+  font-weight: var(--lumi-font-weight-normal);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Narrow Admin pages raise every button to the touch size; calendar chips are
+   sized by their cell or time slot instead, and day numbers get a wider hit
+   area than they draw. */
+.lumi-schedule .lumi-schedule__scroll button:is(.lumi-schedule__event, .lumi-schedule__day, .lumi-schedule__more) {
+  min-width: 0;
+  min-height: 0;
+}
+
+.lumi-schedule .lumi-schedule__day {
+  position: relative;
+}
+
+.lumi-schedule .lumi-schedule__day::after {
+  position: absolute;
+  inset: -6px;
+  content: '';
+}
+
+.lumi-schedule__note {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-meta);
+}

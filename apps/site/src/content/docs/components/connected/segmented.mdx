@@ -1,0 +1,19 @@
+---
+title: "Segmented"
+description: "同一份数据的少量互斥视图；用 $bindState 绑定 value。"
+---
+
+同一份数据的少量互斥视图；用 $bindState 绑定 value。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `options`（必填） | 选项列表，每项 `{ label, value }`。 字段：`value`、`label` | `object[]` |  |
+| `value`（必填） | 当前选中的 value。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string` |  |
+| `ariaLabel`（必填） | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：无

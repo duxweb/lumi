@@ -1,0 +1,258 @@
+---
+title: "Agent 消息契约"
+description: "Lumi UI Agent 组件使用的消息数据格式：message、parts、流式状态、交互事件，以及与 Vercel AI SDK UIMessage 的对应关系。"
+---
+
+Lumi UI 的 Agent 组件只负责显示和交互：按下面这份消息契约渲染，用户的操作通过回调（React）或已注册动作与 `$bindState`（JSON）交还给页面。连接后端、接收流式回复由 `@duxweb/lumi` 的会话服务完成（`AgentSession` 元素、`useAgentChat`），见下面的 [流式输出](#流式输出)；你也可以不用它，自己把数据整理成这份契约。模型调用始终在你的后端。
+
+契约的 zod 定义从 `@duxweb/lumi-ui/catalog` 导出（`agentMessageSchema`、`agentMessagePartSchema` 等），不依赖 React，Node 端可以直接用它校验后端输出。对应的 TypeScript 类型从 `@duxweb/lumi-ui` 导出（`AgentMessage`、`AgentMessagePart`）。
+
+## 消息
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `id` | `string` | 消息 ID，交互事件里的 `messageId` |
+| `role` | `"user" \| "assistant" \| "system"` | 用户消息是右侧气泡；助手消息按顺序渲染各部分；系统消息是居中小字 |
+| `parts` | `AgentMessagePart[]` | 消息内容，见下表 |
+| `status` | `"streaming" \| "done" \| "error"` | 生成中时文末显示光标、暂不显示操作；失败时显示 `errorText` 与重试 |
+| `errorText` | `string` | 失败说明 |
+| `createdAt` | `string` | 可选的时间戳 |
+| `feedback` | `"up" \| "down" \| null` | 用户对回答的评价 |
+| `suggestions` | `{ label, prompt?, icon? }[]` | 回答完成后显示的追问建议 |
+
+## 消息部分（parts）
+
+`type` 是判别字段。未知的 `type` 不能通过校验，组件也不会渲染它。
+
+| `type` | 主要字段 | 渲染为 |
+| --- | --- | --- |
+| `text` | `text`、`state?` | Markdown 正文。只支持安全子集，不解析 HTML；只有 http(s)、mailto、tel 和站内相对地址会成为链接。`[1]` 引用第一个 `source` |
+| `reasoning` | `label?`、`steps?`、`text?`、`state?`、`duration?` | Thinking：处理中的阶段与计时，完成后显示用时，步骤可展开 |
+| `tool-call` | `toolCallId`、`toolName`、`title?`、`status`、`input?`、`output?`、`errorText?`、`duration?` | ToolCall：`pending` / `running` / `success` / `error`，展开查看 JSON 输入输出 |
+| `approval` | `id`、`title`、`action?`、`items?`、`tone?`、`status`、`reason?` | Approval：执行已注册动作前的人工确认 |
+| `plan` | `steps: { id, label, status, detail? }[]` | AgentPlan：`pending` / `running` / `done` / `failed` / `skipped` 与进度 |
+| `diff` | `fields?` 或 `before?` + `after?`、`language?` | ChangeDiff：记录字段改动，或两段文本（如 Spec）的逐行对比 |
+| `source` | `sourceId`、`title`、`url?`、`snippet?`、`kind?` | 引用标签，悬停或聚焦时预览来源，点击打开 |
+| `file` | `mediaType`、`filename?`、`url?`、`size?` | 文件标签 |
+| `context` | `items: { id, label, kind? }[]` | 用户随消息共享的页面、记录或选区 |
+| `question` | `id`、`title`、`description?`、`mode?`、`options?`、`status`、`answer?` | AgentQuestion：继续之前向用户提问。`mode` 是 `single`（默认，选一个）、`multiple`（选多个）或 `text`（填写） |
+
+## 示例
+
+```ts
+import type { AgentMessage } from '@duxweb/lumi-ui'
+
+// 一条已经完成的助手消息，各部分按顺序显示
+export const reply: AgentMessage = {
+  id: 'msg_42',
+  role: 'assistant',
+  status: 'done',
+  parts: [
+    {
+      // 思考过程：用时 3.8 秒，有一个步骤
+      type: 'reasoning',
+      state: 'done',
+      duration: 3800,
+      steps: [{ label: 'Filtered unshipped orders', icon: 'filter' }],
+    },
+    {
+      // 一次工具调用：输入、输出和用时
+      type: 'tool-call',
+      toolCallId: 'call_1',
+      toolName: 'orders.search',
+      title: 'Search orders',
+      status: 'success',
+      duration: 640,
+      input: { status: 'paid', unshippedHours: { gt: 24 } },
+      output: { total: 3 },
+    },
+    // 正文（Markdown）；[1] 引用下面的第一个来源
+    {
+      type: 'text',
+      text: 'Three paid orders are still unshipped, all from **Chengdu** [1].',
+    },
+    {
+      // 执行动作前的人工确认，等用户决定
+      type: 'approval',
+      id: 'remind',
+      title: 'Send shipping reminders',
+      action: 'orders.remind',
+      status: 'pending',
+      items: [
+        { id: 'ORD-00017', label: 'ORD-00017' },
+        { id: 'ORD-00020', label: 'ORD-00020' },
+      ],
+    },
+    {
+      // 引用的来源
+      type: 'source',
+      sourceId: 'orders',
+      title: 'Orders · unshipped',
+      kind: 'page',
+      snippet: '3 orders over 24 hours',
+    },
+  ],
+  // 回答完成后显示的追问建议
+  suggestions: [{ label: 'Why is Chengdu slower?' }],
+}
+```
+
+## 流式输出
+
+**用 Lumi 的会话服务**（`AgentSession`、`useAgentChat`）时，后端不用自己拼消息。前端 `POST` 到 `agent.endpoint`（默认 `{后端地址}/agent/chat`），请求体是 `{ "id", "messages", "trigger", "messageId"? }`，再加上当前页面的快照 `ui`、前端工具的定义 `clientTools` 和确认模式 `approvalMode`（见 [助手能看到什么](/guide/assistant/#助手能看到什么)），带登录凭证；后端用 [AI SDK 的 UI 消息流](https://ai-sdk.dev/docs/ai-sdk-ui/stream-protocol)（v1）回复：响应是 Server-Sent Events，每个 `data:` 行一个 JSON，最后是 `data: [DONE]`。Lumi 把这些片段合并成上面的消息：
+
+| 片段 `type` | 作用 |
+| --- | --- |
+| `start`、`finish`、`abort`、`error` | 一次回复的开始、结束、中止和失败（`error` 带 `errorText`） |
+| `start-step`、`finish-step`、`message-metadata` | 步骤边界和元数据，不产生内容 |
+| `text-start` / `text-delta` / `text-end` | 正文，按 `id` 累加 `delta` |
+| `reasoning-start` / `reasoning-delta` / `reasoning-end` | 思考过程 |
+| `tool-input-start` / `tool-input-delta` / `tool-input-available` / `tool-input-error` | 工具调用及其输入 |
+| `tool-output-available` / `tool-output-error` / `tool-output-denied` | 工具调用的结果 |
+| `tool-approval-request` | 某次工具调用需要用户确认，生成一张 `approval` 卡片 |
+| `source-url`、`source-document`、`file` | 引用来源和文件 |
+| `data-approval`、`data-question`、`data-plan`、`data-diff`、`data-context`、`data-reasoning` | 直接新增或按 `id` 替换同名的消息部分；其他 `data-*` 交给页面的 `onData` |
+
+`trigger` 是 `submit-message`（新消息）、`regenerate-message`（重新生成）、`approval-response`、`question-answer`（用户做了决定）或 `tool-output`（前端执行完工具）。用户确认或回答后，前端把带着决定的整段对话再发一次，后端据此继续。
+
+**不用会话服务**时，后端每收到一段内容，就更新同一条消息并重新下发（或在前端合并后写入状态）：
+
+1. 先发送 `status: "streaming"` 且 `parts` 为空的助手消息，组件显示思考中的占位。
+2. 追加或更新 `reasoning` 的 `steps`、`label`；文字到达时增长 `text` 部分的 `text`。
+3. 工具调用依次把 `status` 从 `pending` 改为 `running`，再改为 `success` 或 `error`，并补上 `output` / `errorText`。
+4. 结束时把消息 `status` 改为 `done`（失败改为 `error`）。`reasoning` 写入 `duration`，否则组件显示它看到的处理时长。
+
+UI 组件只渲染数据，不建立连接。停止生成由 PromptInput 的 `stop` 事件（或 `onStop`）交给页面处理；用会话服务时对应 `agentStop` 动作。
+
+## 与 Vercel AI SDK UIMessage 的对应
+
+字段名在含义相同的地方与 AI SDK 保持一致，转换只需少量映射：
+
+| AI SDK | Lumi |
+| --- | --- |
+| `{ type: 'text', text, state }` | 相同 |
+| `{ type: 'reasoning', text, state }` | 相同，可另加 `label`、`steps`、`duration` |
+| `tool-${name}` / `dynamic-tool` 的 `toolCallId`、`input`、`output`、`errorText` | `type: 'tool-call'`，`toolName` 为工具名 |
+| `state: 'input-streaming'` | `status: 'pending'` |
+| `state: 'input-available'` | `status: 'running'` |
+| `state: 'output-available'` | `status: 'success'` |
+| `state: 'output-error'` / `'output-denied'` | `status: 'error'`，原因写入 `errorText` |
+| `state: 'approval-requested'` / `'approval-responded'` | 单独的 `approval` 部分，用 `toolCallId` 关联工具调用 |
+| `source-url` / `source-document` 的 `sourceId`、`url`、`title` | `type: 'source'` |
+| `file` 的 `mediaType`、`filename`、`url` | 相同 |
+| `step-start`、`data-*` | 不渲染；需要时转换成上面的部分 |
+
+## JSON 中的交互
+
+在 JSON 中用 `$bindState` 绑定消息，ChatThread 会把评价和确认结果写回消息；每次操作前把 `{ type, messageId, partId?, value? }` 写入绑定的 `activeEvent`，再触发对应事件，动作参数可以读取它。
+
+```jsonc
+{
+  "root": "chat",
+  // 消息列表、输入框内容、是否在回复、最近一次操作
+  "state": {
+    "chat": { "messages": [], "draft": "", "streaming": false, "event": null }
+  },
+  "elements": {
+    "chat": {
+      "type": "Stack",
+      "props": { "gap": "md" },
+      "children": ["thread", "prompt"]
+    },
+    // 消息列表
+    "thread": {
+      "type": "ChatThread",
+      "props": {
+        // 双向绑定：评价和确认结果会写回消息
+        "messages": { "$bindState": "/chat/messages" },
+        "streaming": { "$state": "/chat/streaming" },
+        // 每次操作的 { type, messageId, … } 先写到这里
+        "activeEvent": { "$bindState": "/chat/event" }
+      },
+      "on": {
+        // 用户点了批准
+        "approve": {
+          "action": "toast",
+          "params": { "message": "Approved", "tone": "success" }
+        }
+      },
+      "children": []
+    },
+    // 输入框
+    "prompt": {
+      "type": "PromptInput",
+      "props": {
+        "value": { "$bindState": "/chat/draft" },
+        "streaming": { "$state": "/chat/streaming" }
+      },
+      "on": {
+        // 发送：把用户消息加进列表，并清空输入框
+        "submit": {
+          "action": "pushState",
+          "params": {
+            "statePath": "/chat/messages",
+            "value": {
+              "id": "draft",
+              "role": "user",
+              "parts": [{ "type": "text", "text": { "$state": "/chat/draft" } }]
+            },
+            "clearStatePath": "/chat/draft"
+          }
+        },
+        // 停止生成
+        "stop": {
+          "action": "setState",
+          "params": { "statePath": "/chat/streaming", "value": false }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+批准后真正执行的动作应当是已注册的 handler（例如调用后端的 `orders.remind`），并在服务端再次校验权限；`approval.action` 只用于向用户说明将要执行什么。
+
+## React 中使用
+
+```tsx
+import type { AgentMessage } from '@duxweb/lumi-ui'
+import { LumiChatThread, LumiPromptInput } from '@duxweb/lumi-ui'
+import { useState } from 'react'
+
+export function Chat({ initial }: { initial: AgentMessage[] }) {
+  // 消息列表和输入框的内容都放在组件状态里
+  const [messages, setMessages] = useState(initial)
+  const [draft, setDraft] = useState('')
+  return (
+    <>
+      <LumiChatThread
+        // 按消息契约渲染
+        messages={messages}
+        // 用户点了赞或踩：写回这条消息
+        onFeedback={(id, feedback) =>
+          setMessages((list) => list.map((m) => (m.id === id ? { ...m, feedback } : m)))
+        }
+        // 用户确认了：在这里执行真正的动作
+        onApprove={(id, approvalId, selected) =>
+          console.info('run the action for', id, approvalId, selected)
+        }
+      />
+      <LumiPromptInput
+        value={draft}
+        onChange={setDraft}
+        // 发送：把用户消息加进列表，清空输入框
+        onSubmit={(text) => {
+          setMessages((list) => [
+            ...list,
+            { id: String(list.length), role: 'user', parts: [{ type: 'text', text }] },
+          ])
+          setDraft('')
+        }}
+      />
+    </>
+  )
+}
+```
+
+Admin 的 `LumiAssistantPanel` 由同一组组件组成（ContextChips、ChatThread、PromptInput），`messages` 直接使用本契约，`thread` 参数透传评价、引用和确认等回调。

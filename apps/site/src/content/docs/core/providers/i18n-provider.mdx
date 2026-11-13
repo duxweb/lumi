@@ -1,0 +1,27 @@
+---
+title: "I18nProvider"
+description: "I18nProvider 接口的方法、参数和返回值。"
+---
+
+Translation, the current locale and locale-aware formats. `$t` in page JSON
+and every text a component ships go through it; `translate`, `changeLocale`
+and `getLocale` are required, the rest refine what components show.
+
+```typescript
+interface I18nProvider
+```
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `changeLocale` | `(locale: string, params?: unknown) => Promise<void> \| void` | 是 | Switches the locale. |
+| `formatCurrency` | `((value: number, options?: Intl.NumberFormatOptions, locale?: string) => string) \| undefined` | 否 | An amount in the configured currency and unit. |
+| `formatDate` | `((value: I18nDateValue, options?: Intl.DateTimeFormatOptions, locale?: string) => string) \| undefined` | 否 | A date in the locale's form. |
+| `formatDateTime` | `((value: string, options?: Intl.DateTimeFormatOptions, locale?: string) => string) \| undefined` | 否 | An ISO 8601 UTC string shown in the configured time zone. |
+| `formatNumber` | `((value: number, options?: Intl.NumberFormatOptions, locale?: string) => string) \| undefined` | 否 | A number in the locale's form; components use `Intl` without it. |
+| `formatRelativeTime` | `((value: number, unit: Intl.RelativeTimeFormatUnit, options?: Intl.RelativeTimeFormatOptions, locale?: string) => string) \| undefined` | 否 | A relative time such as "3 days ago". |
+| `getDirection` | `(() => LumiDirection) \| undefined` | 否 | The current locale's text direction. |
+| `getFallbackLocale` | `(() => string \| undefined) \| undefined` | 否 | The locale a missing translation falls back to, when there is one. |
+| `getFormatConfig` | `(() => I18nFormatConfig) \| undefined` | 否 | The currency and time zone settings. |
+| `getLocale` | `() => string` | 是 | The current locale, e.g. `zh-CN`. |
+| `subscribe` | `((listener: () => void) => () => void) \| undefined` | 否 | Notifies when the locale changes; with it `$t` and component text follow the switch. |
+| `translate` | `(key: string, params?: Record<string, unknown>, defaultMessage?: string) => string` | 是 | The text for `key` in the current locale, with `{name}` placeholders filled from `params`; `defaultMessage`, else the key, when there is none. |

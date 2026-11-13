@@ -1,0 +1,66 @@
+---
+title: "Calendar"
+description: "绑定到状态的内嵌月历。"
+---
+
+<ComponentPreview name="Calendar" />
+
+绑定到状态的内嵌月历。`mode` 决定选一个日期、一个 `[start, end]` 范围还是多个日期（都是 `yyyy-MM-dd`）。`min`/`max`、`disabledDates` 和 `disabledWeekdays` 禁用日期；`marks` 在有事件的日期下方加色点。点月份标题可切换到月份和年份网格，`captionLayout` 为 `label` 时不切换。
+
+## 示例
+
+```json
+{
+  "root": "calendar-38",
+  "elements": {
+    "calendar-38": {
+      "type": "Calendar",
+      "props": {
+        "mode": "single",
+        "value": { "$bindState": "/calendar-38/value" },
+        "disabledWeekdays": [0, 6],
+        "marks": [
+          { "date": "2026-11-12", "tone": "brand", "label": "Release" },
+          { "date": "2026-11-19", "tone": "warning", "label": "Audit" }
+        ],
+        "ariaLabel": "Delivery date"
+      },
+      "children": []
+    }
+  },
+  "state": { "calendar-38": { "value": "2026-11-10" } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `mode` | `single` 单个日期，`range` 起止范围，`multiple` 多个日期。 | `"single" \| "range" \| "multiple" \| null` | `"single"` |
+| `value` | 当前值。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `null \| string \| string[]` |  |
+| `defaultValue` | 初始值，只在没有绑定 `value` 时生效。 | `null \| string \| string[]` |  |
+| `min` | 允许的最小值。 | `string \| null` |  |
+| `max` | 允许的最大值。 | `string \| null` |  |
+| `disabledDates` | 不可选的日期列表，`yyyy-MM-dd`。 | `string[] \| null` |  |
+| `disabledWeekdays` | 不可选的星期，0 是周日，如 `[0, 6]` 禁用周末。 | `integer[] \| null` |  |
+| `marks` | 日期下方的事件圆点，每项 `{ date, tone?, label? }`。 字段：`date`、`tone?`、`label?` | `object[] \| null` |  |
+| `months` | 并排显示几个月（1–3）。 | `integer \| null` | `1` |
+| `month` | 没有值时首先显示的月份，`yyyy-MM` 或某个日期。 | `string \| null` |  |
+| `captionLayout` | `panel`：点击月份标题切换到月份网格，再点年份切换到年份网格，选中后逐级返回，Esc 返回上一级；超出 `min`/`max` 的月份和年份不可选。`label`：只显示标题。 | `"panel" \| "label" \| null` | `"panel"` |
+| `appearance` | 外观：`outline` 描边，`filled` 浅色填充。 | `"outline" \| "plain" \| null` | `"outline"` |
+| `disabled` | 禁用，不可操作。 | `boolean \| null` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean \| null` | `false` |
+| `invalid` | 标记为校验未通过，显示错误样式。通常由 FormField 自动设置。 | `boolean \| null` | `false` |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string \| null` |  |
+
+通用参数：
+
+- `checks`：json-render 原生校验规则，如 `{ "type": "required", "message": "请填写" }`，提交或失焦时执行。
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：无

@@ -1,0 +1,127 @@
+---
+title: "组件和动作"
+description: "用扩展模块给页面 JSON 加一个自己的组件或动作：参数用 zod 描述，页面里和内置的一样使用、一样校验。"
+---
+
+内置组件拼不出来的一块界面，或者内置动作做不了的一件事，写成[扩展模块](/guide/modules/)注册进来。注册之后，页面 JSON 里和内置的组件、动作一样使用，参数同样会被校验。
+
+## 加一个组件
+
+模块默认导出一个函数，参数里有 Lumi 自带的 React、数据 hooks、UI 组件和 zod，返回要注册的组件：
+
+```js
+// public/ext/order-summary.js
+// 默认导出一个函数：参数是 Lumi 自带的 React、数据 hooks、UI 组件和 zod
+export default ({ React, lumi, ui, z }) => {
+  // 不用 JSX：h(组件, 参数, ...子元素)
+  const h = React.createElement
+
+  // 组件本身。props 是页面 JSON 里写的参数
+  function OrderSummary({ props }) {
+    // 读最新的几条订单，和 JSON 页面共用同一份缓存
+    const orders = lumi.useList({
+      resource: 'orders',
+      pagination: { page: 1, pageSize: props.limit ?? 5 },
+    })
+    // 还没返回时先显示占位文字
+    if (orders.isPending) return h(ui.LumiText, { text: '加载中…', variant: 'muted' })
+    return h(
+      // 用 Lumi 自带的卡片和表格，外观和内置组件一致
+      ui.LumiCard,
+      { title: props.title, description: `共 ${orders.data?.total ?? 0} 单` },
+      h(ui.LumiTable, {
+        rows: orders.data?.data ?? [],
+        rowKey: 'id',
+        columns: [
+          { field: 'number', label: '订单号' },
+          { field: 'customer', label: '客户' },
+        ],
+      }),
+    )
+  }
+
+  return {
+    // 返回要注册的组件：键名就是页面 JSON 里的 type
+    components: {
+      OrderSummary: {
+        // 给 AI 和校验工具看的说明
+        description: 'Latest orders.',
+        // 参数的结构：页面里写错参数时，校验会指出来
+        props: z.object({
+          title: z.string(),
+          limit: z.number().int().positive().optional(),
+        }),
+        // 组件的实现
+        render: OrderSummary,
+      },
+    },
+  }
+}
+```
+
+页面里就能用了，参数同样会被校验：
+
+```jsonc
+{
+  "root": "summary",
+  "elements": {
+    "summary": {
+      // 扩展模块注册的组件
+      "type": "OrderSummary",
+      // 参数按模块里的 zod 结构校验
+      "props": { "title": "最新订单", "limit": 5 },
+      "children": []
+    }
+  }
+}
+```
+
+组件读写数据用 `lumi` 里的 hooks（`useList`、`useOne`、`useCreate`…），和 JSON 页面共用同一份缓存。
+
+## 加一个动作
+
+页面里 `on` 能调用的动作也可以由模块提供：`handlers` 写实现，`actions` 写参数结构，页面加载时按它校验参数：
+
+```js
+// public/ext/copy-text.js
+// 只用到 zod，所以只取 z
+export default ({ z }) => ({
+  // 动作的实现：键名就是页面 JSON 里的 action
+  handlers: {
+    // params 已经解析好：$state 引用到这里就是它的值
+    copyText: async (params) => {
+      await navigator.clipboard.writeText(String(params.text))
+    },
+  },
+  // 动作的定义：页面加载时按它校验参数
+  actions: {
+    copyText: {
+      description: 'Copies text to the clipboard.',
+      params: z.object({ text: z.string() }),
+    },
+  },
+})
+```
+
+页面里像内置动作一样使用：
+
+```jsonc
+{
+  "type": "Button",
+  "props": { "label": "复制单号" },
+  // 点击时把 /order/number 复制到剪贴板
+  "on": {
+    "press": {
+      "action": "copyText",
+      "params": { "text": { "$state": "/order/number" } }
+    }
+  },
+  "children": []
+}
+```
+
+- 没写 `actions` 定义的 handler 也能用，只是参数不校验。建议都写上，`lumi-check catalog` 和 AI 助手也靠它知道动作怎么用。
+- 名字不能和内置动作重名。handler 抛错就是失败，页面会弹出错误提示，同一事件后面的动作不再执行。
+- 要读写后端，handler 里不要自己 `fetch`：页面上用 `request` 动作，或者在组件里用 `lumi` 的 hooks，这样登录凭证、错误提示和缓存刷新都是统一的。
+
+用 npm 和 TypeScript 写组件，见进阶的 [自定义组件](/guide/advanced/components/)。

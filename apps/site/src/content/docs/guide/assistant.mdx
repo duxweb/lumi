@@ -1,0 +1,140 @@
+---
+title: "AI 助手"
+description: "每个页面旁边的助手面板：在 manifest 里打开它，配置推荐问题、@ 引用和 / 命令；助手能看到页面的什么、能替用户做什么，以及后端的对话接口。"
+---
+
+助手是后台外壳里的一个面板：读者在任何页面都能打开它提问，助手能看到当前页面，也能替读者填表单、切换筛选、打开页面。模型调用在你的后端，Lumi 负责界面、把页面交给助手，以及执行助手对页面的操作。
+
+## 打开助手
+
+在 manifest 的 `app.assistant` 里填上对话接口，每个页面旁边就有助手面板：
+
+```jsonc
+{
+  "app": {
+    "id": "shop",
+    // 侧边 AI 助手
+    "assistant": {
+      // 助手对话的接口
+      "endpoint": "/agent/chat",
+      "title": "助手",
+      // 输入框上方的推荐问题
+      "suggestions": [{ "label": "今天有哪些待发货订单？" }]
+    }
+  },
+  "routes": []
+}
+```
+
+`endpoint` 相对于后端地址（`data` 的 `url`），按 AI SDK 的 UI 消息流（SSE）返回，请求和数据请求一样带登录凭证。
+
+| 字段 | 说明 |
+| --- | --- |
+| `endpoint`（必填） | 对话接口。 |
+| `title`、`placeholder` | 面板标题、输入框占位文字。 |
+| `resource` | 对话记录保存在哪个资源，默认 `agent-sessions`。 |
+| `suggestions` | 推荐问题：`[{ "label", "prompt", "icon" }]`，`prompt` 不写时用 `label`。 |
+| `mentions` | 输入 `@` 时的引用面板，见下文。 |
+| `commands` | 输入 `/` 时的命令：`[{ "value", "label", "description", "icon", "prompt" }]`。有 `prompt` 时填进输入框；没有时作为 `assistant.command` 事件发给扩展模块的 `onEvent`。 |
+| `defaultOpen` | 读者没手动开关过时，面板是否默认打开。 |
+| `shareContext` | 是否把当前页面一起发给助手，默认 `true`。 |
+
+`@` 引用让读者把记录挑进对话，每个标签页从一个资源里搜索：
+
+```jsonc
+{
+  "app": {
+    "id": "shop",
+    "assistant": {
+      // 助手对话的接口
+      "endpoint": "/agent/chat",
+      "mentions": {
+        // 引用面板里的标签页
+        "types": [
+          { "value": "order", "label": "订单", "icon": "shopping-cart" },
+          { "value": "customer", "label": "客户", "icon": "users" }
+        ],
+        // 每个标签页搜索哪个资源，按 types 的 value 对应
+        "sources": {
+          // 订单标签页：在 orders 里按订单号搜索
+          "order": {
+            "resource": "orders",
+            "labelField": "number",
+            "searchField": "number"
+          },
+          // 客户标签页：在 customers 里搜索，第二行显示邮箱
+          "customer": {
+            "resource": "customers",
+            "labelField": "name",
+            "descriptionField": "email"
+          }
+        }
+      },
+      // 输入 / 时的命令：选中后把 prompt 填进输入框
+      "commands": [
+        {
+          "value": "summary",
+          "label": "总结本页",
+          "prompt": "总结当前页面的数据"
+        }
+      ]
+    }
+  },
+  "routes": []
+}
+```
+
+
+## 助手能看到什么
+
+每次请求都会附带 `ui` 快照：
+
+- 当前路由和可去的路由列表（Admin 外壳注册）；
+- 当前工作区；
+- 当前页面的元素：只包括有 `$bindState` 绑定或有 `on` 事件的元素，带上它们绑定的状态路径、可以触发的事件，以及会改数据的事件（`writes`）；
+- 页面状态的缩略版：长文本截断，长数组只保留前 10 项和总数；
+- 当前的确认模式（`ask` 或 `auto`）。
+
+请求体还带上 `clientTools`（前端工具的定义）。后端拿到这些就知道页面上有什么、能做什么。
+
+## 助手能做什么
+
+前端只提供三个工具：
+
+| 工具 | 作用 | 限制 |
+| --- | --- | --- |
+| `ui_navigate` | 打开某个路由。 | 有未保存改动时，等用户决定是否离开。 |
+| `ui_set_state` | 改页面上被绑定的值：筛选条件、选中项、表单值、弹窗开关。 | 路径必须是某个元素绑定的路径；用户正在输入的字段和刚改过的值不会被覆盖。表单只填写，不替用户提交。 |
+| `ui_trigger` | 触发元素的一个事件，像用户点了一下：切换标签、打开抽屉、刷新列表。 | 只能触发"轻"事件。 |
+
+"轻"事件指事件里的动作全部在安全名单里，且没有 `confirm`。默认的安全名单是：`setState`、`pushState`、`removeState`、`validateForm`、`navigate`、`openDrawer`、`closeDrawer`、`invalidate`、`toast`、`notify`、`closeNotice`。可以用 `agent.safeActions` 替换这个名单。
+
+会改数据的事件（如绑定了 `delete`、`submitForm` 的按钮）助手不能触发：要么用户自己点，要么由后端工具在服务端完成。前端工具在 `ask` 模式下会先弹出确认卡片；`auto` 模式直接执行。用户在助手面板里可以切换模式，选择会保存在浏览器里。
+
+## 页面主动提供上下文
+
+页面可以告诉助手"这页正在看什么"，例如表格里选中的行。它们显示成输入框上方可移除的标签：
+
+```jsonc
+{
+  "type": "AssistantContext",
+  "props": {
+    // 绑定到选中的行，换算成上下文条目
+    "items": { "$state": "/assistant/items" }
+  }
+}
+```
+
+每个条目是 `{ id, label, kind?, icon?, description?, data? }`，`data` 发给助手但不显示。页面关闭或条目变化时自动移除。React 组件里用 `useAssistantContext(items)`，效果相同。
+
+## 对话接口
+
+- 地址是 manifest 的 `app.assistant.endpoint`，或 `agent.endpoint`，默认 `/agent/chat`，相对于 DataProvider 的地址。
+- 请求体是 `{ id, messages, trigger, messageId, ui, clientTools, approvalMode }`，返回 AI SDK 的 UI 消息流（SSE）。
+- 请求通过同一个 `http` 发出，登录凭证、语言、工作区和 401 续期都和数据请求一样，不用单独配置。
+
+## 相关
+
+- 后端返回的消息格式、流式片段：[Agent 消息契约](/components/integration/agent-messages/)。
+- 在页面里放自己的对话界面：[AgentSession](/components/connected/agent-session/)、[ChatThread](/components/ui/chat-thread/)、[PromptInput](/components/ui/prompt-input/)。
+- `createLumi` 的 `agent` 选项（安全名单、默认确认模式）：[其他 Provider](/guide/advanced/providers/#agentai-助手)。

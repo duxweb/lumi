@@ -1,0 +1,54 @@
+---
+title: "submitForm"
+description: "保存表单：先校验页面状态里的表单值，等业务校验通过，只提交一次，保存成功后才应用 successState。"
+---
+
+保存表单：先校验页面状态里的表单值，等业务校验通过，只提交一次，保存成功后才应用 `successState`。没有 `id` 新建，有 `id` 更新。字段错误会写回对应字段。
+
+## 用法
+
+```jsonc
+{
+  "root": "form",
+  "elements": {
+    "form": {
+      "type": "Form",
+      "props": {},
+      "on": {
+        // 提交表单时执行
+        "submit": {
+          "action": "submitForm",
+          "params": {
+            // 数据资源名，如 orders
+            "resource": "orders",
+            // 有值时更新这条记录，为空时新建
+            "id": { "$state": "/order/id" },
+            // 表单值在页面状态里的路径，如 /form
+            "valuesPath": "/form",
+            // 提交中、字段错误写到这里
+            "validationPath": "/formStatus",
+            // 保存成功才关闭抽屉
+            "successState": { "/drawer/open": false }
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| `resource`（必填） | 数据资源名，如 `orders`。 | `string` |
+| `dataProviderName` | 使用哪个数据源；省略时用当前范围的数据源，没有就是 default。 | `string` |
+| `meta` | 原样传给 DataProvider 的扩展数据。 | `object` |
+| `id` | 有值时更新这条记录，没有时新建。 | `string \| number` |
+| `values` | 不使用：提交的是 `valuesPath` 里的值。 | `object` |
+| `resultPath` | 把保存结果 `{ data }` 写进页面状态的路径。 | `string` |
+| `valuesPath`（必填） | 表单值在页面状态里的路径，如 `/form`。 | `string` |
+| `validationPath` | 保存状态写进页面状态的路径：`{ pending, valid, errors, fieldErrors }`。省略时写在内部路径里。 | `string` |
+| `rules` | 业务校验规则，交给注册的 Validator；没有注册 Validator 时不要写。 | `unknown` |
+| `successState` | 保存成功后写入的状态，键是状态路径，如 `{ "/drawer/open": false }`。 | `object` |

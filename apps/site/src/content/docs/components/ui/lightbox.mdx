@@ -1,0 +1,65 @@
+---
+title: "Lightbox"
+description: "全屏看图：缩放（按钮、滚轮、双击；拖动平移）、上一张/下一张、计数和说明文字。"
+---
+
+<ComponentPreview name="Lightbox" />
+
+全屏看图：缩放（按钮、滚轮、双击；拖动平移）、上一张/下一张、计数和说明文字。键盘：Escape 关闭，←/→ 切换，+/− 缩放，0 复位。绑定 `open` 和 `index`（`{ "$bindState": "/path" }`），由 Button 的动作打开；切换图片时触发 `change`。Image 和 ImageGrid 会自己打开它。
+
+## 示例
+
+```json
+{
+  "root": "lightbox-43",
+  "elements": {
+    "lightbox-43": {
+      "type": "Lightbox",
+      "props": {
+        "items": [
+          {
+            "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90'><rect width='160' height='90' fill='%230ea5e9'/><circle cx='118' cy='30' r='14' fill='%23e0f2fe'/><path d='M0 90 L52 42 L92 78 L118 58 L160 90 Z' fill='%23e0f2fe' opacity='0.7'/></svg>",
+            "alt": "Lake at dawn",
+            "caption": "Lake at dawn"
+          },
+          {
+            "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90'><rect width='160' height='90' fill='%2316a34a'/><circle cx='118' cy='30' r='14' fill='%23dcfce7'/><path d='M0 90 L52 42 L92 78 L118 58 L160 90 Z' fill='%23dcfce7' opacity='0.7'/></svg>",
+            "alt": "Forest trail",
+            "caption": "Forest trail"
+          },
+          {
+            "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90'><rect width='160' height='90' fill='%23d97706'/><circle cx='118' cy='30' r='14' fill='%23fef3c7'/><path d='M0 90 L52 42 L92 78 L118 58 L160 90 Z' fill='%23fef3c7' opacity='0.7'/></svg>",
+            "alt": "Desert dunes",
+            "caption": "Desert dunes"
+          }
+        ],
+        "open": true,
+        "index": { "$bindState": "/lightbox-43/index" },
+        "loop": true
+      },
+      "children": []
+    }
+  },
+  "state": { "lightbox-43": { "open": false, "index": 0 } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `items`（必填） | 要显示的条目列表。 字段：`url`、`alt?`、`caption?` | `object[]` |  |
+| `open` | 是否打开。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `boolean \| null` |  |
+| `index` | 当前显示第几张，从 0 开始。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `integer \| null` | `0` |
+| `loop` | 到最后一张后可以继续回到第一张。 | `boolean \| null` | `false` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`openChange`、`change`
+- 插槽：无

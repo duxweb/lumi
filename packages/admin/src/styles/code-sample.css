@@ -1,0 +1,180 @@
+/* A documented example: title and explanation, then source and result in one
+   frame. The frame is a container, so the panes split by the width the page
+   gives the example rather than by the viewport. */
+.lumi-code-example {
+  container: lumi-code-example / inline-size;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--lumi-space-3);
+  scroll-margin-top: var(--lumi-space-4);
+}
+
+/* Examples follow one another as sections, a step further apart than cards. */
+.lumi-code-example + .lumi-code-example {
+  margin-block-start: var(--lumi-space-4);
+}
+
+.lumi-code-example__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--lumi-space-4);
+}
+
+.lumi-code-example__copy {
+  min-width: 0;
+}
+
+.lumi-code-example__title {
+  margin: 0;
+  font-size: var(--lumi-fs-section);
+  font-weight: var(--lumi-font-weight-semibold);
+  line-height: var(--lumi-leading-tight);
+}
+
+.lumi-code-example__description {
+  max-width: 80ch;
+  margin-block-start: var(--lumi-space-1);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-body);
+  line-height: var(--lumi-leading-copy);
+  overflow-wrap: anywhere;
+}
+
+.lumi-code-example__description :is(p, ul) {
+  margin: 0;
+}
+
+.lumi-code-example__description code {
+  padding: 0.0625rem 0.3125rem;
+  border-radius: var(--lumi-radius-sm);
+  background: var(--muted);
+  color: var(--foreground);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.875em;
+}
+
+.lumi-code-example__actions {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lumi-space-2);
+}
+
+.lumi-code-example__body {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
+  border-radius: var(--lumi-radius-panel);
+  background: var(--card);
+  box-shadow: 0 0 0 1px var(--lumi-hairline);
+}
+
+/* The source fills its pane edge to edge; the code block brings its own
+   background and toolbar, so its frame is dropped here. */
+.lumi-code-example__code {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.lumi-code-example__code > :not(.lumi-code-example__bar) {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.lumi-code-example__code > [data-slot='code-block'],
+.lumi-code-example__code > [data-slot='code-editor'] > [data-slot='code-editor-frame'] {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Without its own border, the editor marks focus on the inside edge. */
+.lumi-code-example__code > [data-slot='code-editor'] > [data-slot='code-editor-frame']:focus-within {
+  box-shadow: inset 0 0 0 2px var(--ring);
+}
+
+.lumi-code-example__code > [data-slot='code-editor'] {
+  gap: 0;
+}
+
+.lumi-code-example__code > [data-slot='code-editor'] > [data-slot='code-editor-error'] {
+  padding: var(--lumi-space-2) var(--lumi-space-3);
+  border-block-start: 1px solid var(--border);
+}
+
+.lumi-code-example__preview {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  border-block-start: 1px solid var(--border);
+  background: var(--lumi-surface-workspace);
+}
+
+/* Level with the code block's header, so the captions of both panes read as one band. */
+.lumi-code-example__bar {
+  display: flex;
+  min-height: var(--lumi-control-lg);
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lumi-space-1) var(--lumi-space-2);
+  padding-inline: var(--lumi-space-3) var(--lumi-space-1);
+  border-block-end: 1px solid var(--border);
+  background: color-mix(in oklab, var(--muted) 80%, var(--card));
+}
+
+.lumi-code-example__bar-label {
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  font-weight: var(--lumi-font-weight-medium);
+}
+
+.lumi-code-example__bar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lumi-space-1);
+}
+
+/* The result reads like a page: controls and cards stack with the page gap. */
+.lumi-code-example__result {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--lumi-space-4);
+  padding: var(--lumi-space-5);
+}
+
+.lumi-code-example[data-align='center'] .lumi-code-example__result {
+  justify-content: center;
+}
+
+@container lumi-code-example (width >= 52rem) {
+  .lumi-code-example[data-layout='split'] .lumi-code-example__body {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .lumi-code-example[data-layout='split'] .lumi-code-example__preview {
+    border-block-start: 0;
+    border-inline-start: 1px solid var(--border);
+  }
+}
+
+@media (width < 640px) {
+  .lumi-code-example__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lumi-code-example__result {
+    padding: var(--lumi-space-4);
+  }
+}

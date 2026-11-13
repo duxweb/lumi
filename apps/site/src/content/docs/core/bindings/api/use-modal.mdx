@@ -1,0 +1,18 @@
+---
+title: "useModal"
+description: "useModal React hook 的签名、参数和返回值。"
+---
+
+Opens a modal with content rendered by `render`; the handle's `close(value)` resolves its `result`.
+
+```typescript
+useModal(): { open: (options: OverlayOpenOptions) => OverlayHandle; }
+```
+
+返回 `{ open: (options: OverlayOpenOptions) => OverlayHandle; }`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `open` | `(options: OverlayOpenOptions) => OverlayHandle` | 是 |  |

@@ -1,0 +1,72 @@
+---
+title: "数据接口"
+description: "Lumi 默认的 REST 约定：列表、详情、增删改的请求与返回格式，字段错误怎么返回，以及多个后端和自定义接口。"
+---
+
+页面里写 `"resource": "orders"`，Lumi 就按下面的约定请求 `config.json` 里 `data` 的 `url` 下的接口。后端照这个格式返回，前端不用写一行代码。
+
+后端要提供的接口分三类，各有一页：这一页是数据接口，另外两页是 [登录和权限](/guide/backend-auth/)、[上传和导入导出](/guide/backend-files/)。
+
+## 增删改查
+
+| 操作 | 请求 | 返回 |
+| --- | --- | --- |
+| 列表 | `GET /orders?page=1&pageSize=20` | `{ "data": [...], "meta": { "total": 128 } }` |
+| 详情 | `GET /orders/12` | `{ "data": { ... } }` |
+| 按 ID 取多条 | `GET /orders?ids[]=1&ids[]=2` | `{ "data": [...] }` |
+| 新建 | `POST /orders`，请求体是字段 | `{ "data": { ...新记录 } }` |
+| 修改 | `PUT /orders/12`，请求体是字段 | `{ "data": { ...新记录 } }` |
+| 删除 | `DELETE /orders/12` | `{ "data": { "id": 12 } }` |
+
+列表的筛选和排序也在查询参数里：
+
+- 等于：`status=paid`
+- 其他操作符：`字段[操作符]=值`，如 `total[gte]=100`、`name[like]=米`。操作符有 `ne`、`lt`、`lte`、`gt`、`gte`、`like`、`nlike`、`in`、`nin`、`between`、`null`、`nnull`；数组值写成 `status[in][]=paid&status[in][]=shipped`
+- 排序：`sort=-createdAt,name`，按顺序写字段，用逗号分隔，前面加 `-` 表示倒序
+
+这只是默认约定的写法。后端已经有自己的参数格式（比如 `total__gte=100`、`filters[total][$gte]=100`）时不用改后端：页面交给 DataProvider 的是 `{ field, operator, value }` 这样的条件数组，拼成什么查询参数由 DataProvider 决定，见 [适配自己的后端格式](/guide/extend-backend/#适配自己的后端格式)。
+
+每个请求都带上登录凭证（默认是 `Authorization: Bearer <token>`，见 [登录和权限](/guide/backend-auth/)）、`Accept-Language` 和当前工作区的 `X-Tenant`。返回非 2xx 时，页面显示 `message` 字段的内容。
+
+## 字段错误
+
+保存表单时，后端返回 422 和下面的格式，错误会显示在对应字段下面，表单保持打开：
+
+```text
+HTTP/1.1 422 Unprocessable Entity
+
+{
+  "message": "请检查表单",
+  "errors": [{ "path": "email", "message": "邮箱已被使用" }]
+}
+```
+
+任何非 2xx 的返回都按这个格式读：`message` 是提示，`code` 是错误码，`errors` 是字段错误（`path` 用 `.` 分隔嵌套字段，例如 `items.0.sku`）。后端的错误格式不同时，用 `parseError` 转换，见 [错误格式](/guide/advanced/auth/#错误格式)。
+
+## 另一个后端
+
+页面要读另一个地址的数据，而它也遵循这一页的格式时，不用写代码，把 `data` 改成数组加上它：
+
+```jsonc
+{
+  // 多个后端，按 name 引用
+  "data": [
+    { "name": "main", "url": "/api" },
+    // 共用后台的登录凭证
+    { "name": "crm", "url": "https://crm.example.com/api" },
+    // auth: false 不带后台凭证
+    { "name": "open", "url": "https://open.example.com", "auth": false }
+  ],
+  "panels": { "manifest": "/manifest.json" }
+}
+```
+
+页面里用 `"dataProviderName": "crm"` 读它。默认它和后台共用登录凭证；`"auth": false` 表示不带后台的凭证，它返回 401 也不会让后台退出。
+
+## 自定义接口
+
+不属于增删改查的接口用 `request` 动作，地址同样相对于后端地址，返回 `{ "data": ... }`。详见 [request](/protocol/actions/request/)。
+
+## 格式不一样怎么办
+
+后端已经有自己的格式时，不用改后端：写一个 DataProvider 适配它。CDN 用法见 [适配自己的后端格式](/guide/extend-backend/#适配自己的后端格式)，npm 用法见 [React 集成](/guide/advanced/react/)。

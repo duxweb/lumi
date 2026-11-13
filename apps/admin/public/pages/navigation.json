@@ -1,0 +1,665 @@
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Tabs & steps"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "sections"
+      ]
+    },
+    "tab-alpha": {
+      "type": "Alert",
+      "props": {
+        "message": {
+          "$t": "Alpha tab content"
+        },
+        "tone": "neutral"
+      },
+      "children": [],
+      "visible": {
+        "$state": "/tabs/value",
+        "eq": "alpha"
+      }
+    },
+    "tab-beta": {
+      "type": "Alert",
+      "props": {
+        "message": {
+          "$t": "Beta tab content"
+        },
+        "tone": "neutral"
+      },
+      "children": [],
+      "visible": {
+        "$state": "/tabs/value",
+        "eq": "beta"
+      }
+    },
+    "tabs": {
+      "type": "Tabs",
+      "props": {
+        "value": {
+          "$bindState": "/tabs/value"
+        },
+        "items": [
+          {
+            "label": {
+              "$t": "Alpha"
+            },
+            "value": "alpha"
+          },
+          {
+            "label": {
+              "$t": "Beta"
+            },
+            "value": "beta"
+          },
+          {
+            "label": {
+              "$t": "Locked"
+            },
+            "value": "gamma",
+            "disabled": true
+          }
+        ]
+      },
+      "children": [
+        "tab-alpha",
+        "tab-beta"
+      ]
+    },
+    "card-1": {
+      "type": "Example",
+      "props": {
+        "id": "tabs",
+        "title": {
+          "$t": "Tabs"
+        },
+        "description": {
+          "$t": "Tabs switch content in place; the current tab lives in page state"
+        }
+      },
+      "children": [
+        "tabs"
+      ]
+    },
+    "period": {
+      "type": "Segmented",
+      "props": {
+        "ariaLabel": {
+          "$t": "Period"
+        },
+        "value": {
+          "$bindState": "/period/value"
+        },
+        "options": [
+          {
+            "value": "day",
+            "label": {
+              "$t": "Day"
+            }
+          },
+          {
+            "value": "week",
+            "label": {
+              "$t": "Week"
+            }
+          },
+          {
+            "value": "month",
+            "label": {
+              "$t": "Month"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "period-value": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$cond": {
+            "$state": "/period/value",
+            "eq": "day"
+          },
+          "$then": {
+            "$t": "42 orders today"
+          },
+          "$else": {
+            "$cond": {
+              "$state": "/period/value",
+              "eq": "week"
+            },
+            "$then": {
+              "$t": "318 orders this week"
+            },
+            "$else": {
+              "$t": "1,284 orders this month"
+            }
+          }
+        },
+        "variant": "lead"
+      },
+      "children": []
+    },
+    "stack-2": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "period",
+        "period-value"
+      ]
+    },
+    "card-3": {
+      "type": "Example",
+      "props": {
+        "id": "segmented",
+        "title": {
+          "$t": "Segmented control"
+        },
+        "description": {
+          "$t": "A compact choice between views of the same data"
+        }
+      },
+      "children": [
+        "stack-2"
+      ]
+    },
+    "steps": {
+      "type": "Stepper",
+      "props": {
+        "value": {
+          "$bindState": "/steps/value"
+        },
+        "items": [
+          {
+            "key": "account",
+            "label": {
+              "$t": "Account"
+            },
+            "description": {
+              "$t": "Who this is for"
+            },
+            "status": "complete"
+          },
+          {
+            "key": "details",
+            "label": {
+              "$t": "Details"
+            },
+            "description": {
+              "$t": "What it contains"
+            },
+            "status": "current"
+          },
+          {
+            "key": "review",
+            "label": {
+              "$t": "Review"
+            },
+            "status": "upcoming"
+          }
+        ]
+      },
+      "children": []
+    },
+    "steps-vertical": {
+      "type": "Stepper",
+      "props": {
+        "value": {
+          "$bindState": "/steps-vertical/value"
+        },
+        "orientation": "vertical",
+        "items": [
+          {
+            "key": "account",
+            "label": {
+              "$t": "Account"
+            },
+            "description": {
+              "$t": "Who this is for"
+            },
+            "status": "complete"
+          },
+          {
+            "key": "details",
+            "label": {
+              "$t": "Details"
+            },
+            "description": {
+              "$t": "Saving your answers"
+            },
+            "status": "loading"
+          },
+          {
+            "key": "payment",
+            "label": {
+              "$t": "Payment"
+            },
+            "description": {
+              "$t": "Card declined"
+            },
+            "status": "error"
+          },
+          {
+            "key": "review",
+            "label": {
+              "$t": "Review"
+            },
+            "status": "upcoming"
+          }
+        ]
+      },
+      "children": []
+    },
+    "stack-4": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "steps",
+        "steps-vertical"
+      ]
+    },
+    "card-5": {
+      "type": "Example",
+      "props": {
+        "id": "stepper",
+        "title": {
+          "$t": "Steppers"
+        },
+        "description": {
+          "$t": "Horizontal for a wizard header, vertical beside a long form"
+        }
+      },
+      "children": [
+        "stack-4"
+      ]
+    },
+    "pages-full": {
+      "type": "Pagination",
+      "props": {
+        "ariaLabel": {
+          "$t": "Orders pages"
+        },
+        "page": {
+          "$bindState": "/pages-full/page"
+        },
+        "pageSize": {
+          "$bindState": "/pages-full/pageSize"
+        },
+        "total": 128,
+        "showTotal": true,
+        "pageSizeOptions": [
+          10,
+          20,
+          50
+        ]
+      },
+      "children": []
+    },
+    "pages-plain": {
+      "type": "Pagination",
+      "props": {
+        "ariaLabel": {
+          "$t": "Simple pages"
+        },
+        "page": {
+          "$bindState": "/pages-plain/page"
+        },
+        "pageSize": {
+          "$bindState": "/pages-plain/pageSize"
+        },
+        "total": 32,
+        "variant": "simple"
+      },
+      "children": []
+    },
+    "pages-disabled": {
+      "type": "Pagination",
+      "props": {
+        "ariaLabel": {
+          "$t": "Disabled pages"
+        },
+        "page": {
+          "$bindState": "/pages-disabled/page"
+        },
+        "pageSize": {
+          "$bindState": "/pages-disabled/pageSize"
+        },
+        "total": 32,
+        "disabled": true
+      },
+      "children": []
+    },
+    "stack-6": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "pages-full",
+        "pages-plain",
+        "pages-disabled"
+      ]
+    },
+    "card-7": {
+      "type": "Example",
+      "props": {
+        "id": "pagination",
+        "title": {
+          "$t": "Pagination"
+        },
+        "description": {
+          "$t": "Numbered pages with a total and page sizes, simple pages, and disabled while loading"
+        }
+      },
+      "children": [
+        "stack-6"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Tabs & steps"
+        },
+        "description": {
+          "$t": "Tabs, segmented controls, steppers, breadcrumbs and pagination, each bound to page state"
+        }
+      },
+      "children": []
+    },
+    "sections": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "sections-grid",
+        "card-7"
+      ]
+    },
+    "sections-grid": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "card-1",
+        "card-3",
+        "card-5",
+        "card-breadcrumb"
+      ]
+    },
+    "card-breadcrumb": {
+      "type": "Example",
+      "props": {
+        "id": "breadcrumb",
+        "title": {
+          "$t": "Breadcrumb"
+        },
+        "description": {
+          "$t": "The path to the current page. Items report their key to an action; a long path folds its middle into a menu"
+        }
+      },
+      "children": [
+        "card-breadcrumb-body"
+      ]
+    },
+    "card-breadcrumb-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "v-bc-short",
+        "v-bc-long",
+        "v-bc-slash"
+      ]
+    },
+    "v-bc-short": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-bc-short-label",
+        "bc-short"
+      ]
+    },
+    "v-bc-short-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "With icon"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "bc-short": {
+      "type": "Breadcrumb",
+      "props": {
+        "items": [
+          {
+            "key": "home",
+            "label": {
+              "$t": "Home"
+            },
+            "icon": "home-01"
+          },
+          {
+            "key": "orders",
+            "label": {
+              "$t": "Orders"
+            }
+          },
+          {
+            "key": "detail",
+            "label": "ORD-01086"
+          }
+        ],
+        "value": {
+          "$bindState": "/breadcrumb/key"
+        }
+      },
+      "children": [],
+      "on": {
+        "select": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Breadcrumb item chosen"
+            },
+            "tone": "info"
+          }
+        }
+      }
+    },
+    "v-bc-long": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-bc-long-label",
+        "bc-long"
+      ]
+    },
+    "v-bc-long-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Collapsed"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "bc-long": {
+      "type": "Breadcrumb",
+      "props": {
+        "items": [
+          {
+            "key": "workspace",
+            "label": {
+              "$t": "Workspace"
+            }
+          },
+          {
+            "key": "catalog",
+            "label": {
+              "$t": "Catalog"
+            }
+          },
+          {
+            "key": "apparel",
+            "label": {
+              "$t": "Apparel"
+            }
+          },
+          {
+            "key": "shoes",
+            "label": {
+              "$t": "Shoes"
+            }
+          },
+          {
+            "key": "running",
+            "label": {
+              "$t": "Running"
+            }
+          },
+          {
+            "key": "product",
+            "label": {
+              "$t": "Trail runner X"
+            }
+          }
+        ],
+        "maxItems": 4,
+        "value": {
+          "$bindState": "/breadcrumb/key"
+        }
+      },
+      "children": [],
+      "on": {
+        "select": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Breadcrumb item chosen"
+            },
+            "tone": "info"
+          }
+        }
+      }
+    },
+    "v-bc-slash": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm",
+        "align": "start"
+      },
+      "children": [
+        "v-bc-slash-label",
+        "bc-slash"
+      ]
+    },
+    "v-bc-slash-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Slash separator"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "bc-slash": {
+      "type": "Breadcrumb",
+      "props": {
+        "items": [
+          {
+            "key": "home",
+            "label": {
+              "$t": "Home"
+            },
+            "icon": "home-01"
+          },
+          {
+            "key": "orders",
+            "label": {
+              "$t": "Orders"
+            }
+          },
+          {
+            "key": "detail",
+            "label": "ORD-01086"
+          }
+        ],
+        "separator": "slash",
+        "value": {
+          "$bindState": "/breadcrumb/key"
+        }
+      },
+      "children": [],
+      "on": {
+        "select": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Breadcrumb item chosen"
+            },
+            "tone": "info"
+          }
+        }
+      }
+    }
+  },
+  "state": {
+    "tabs": {
+      "value": "alpha"
+    },
+    "period": {
+      "value": "week"
+    },
+    "steps": {
+      "value": "details"
+    },
+    "steps-vertical": {
+      "value": "details"
+    },
+    "pages-full": {
+      "page": 1,
+      "pageSize": 10
+    },
+    "pages-plain": {
+      "page": 2,
+      "pageSize": 10
+    },
+    "pages-disabled": {
+      "page": 1,
+      "pageSize": 10
+    },
+    "breadcrumb": {
+      "key": null
+    }
+  }
+}

@@ -1,0 +1,1161 @@
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Modals & drawers"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "sections"
+      ]
+    },
+    "confirm-dialog": {
+      "type": "Dialog",
+      "props": {
+        "title": {
+          "$t": "Delete product"
+        },
+        "description": {
+          "$t": "Lumi Shade and its 3 variants are removed from the store. This cannot be undone"
+        },
+        "tone": "danger",
+        "icon": "delete-02",
+        "confirmText": {
+          "$t": "Delete"
+        },
+        "cancelText": {
+          "$t": "Keep"
+        },
+        "open": {
+          "$bindState": "/confirm-dialog/open"
+        }
+      },
+      "children": [],
+      "on": {
+        "confirm": {
+          "action": "setState",
+          "params": {
+            "statePath": "/confirm-dialog/open",
+            "value": false
+          }
+        }
+      }
+    },
+    "confirm-dialog-trigger": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Open confirmation"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/confirm-dialog/open",
+            "value": true
+          }
+        }
+      }
+    },
+    "warning-confirm": {
+      "type": "Dialog",
+      "props": {
+        "title": {
+          "$t": "Archive 12 products?"
+        },
+        "description": {
+          "$t": "Archived products leave the storefront but keep their orders and history"
+        },
+        "tone": "warning",
+        "confirmText": {
+          "$t": "Archive"
+        },
+        "cancelText": {
+          "$t": "Cancel"
+        },
+        "open": {
+          "$bindState": "/warning-confirm/open"
+        }
+      },
+      "children": [],
+      "on": {
+        "confirm": {
+          "action": "setState",
+          "params": {
+            "statePath": "/warning-confirm/open",
+            "value": false
+          }
+        }
+      }
+    },
+    "warning-confirm-trigger": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Open warning"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/warning-confirm/open",
+            "value": true
+          }
+        }
+      }
+    },
+    "info-confirm": {
+      "type": "Dialog",
+      "props": {
+        "title": {
+          "$t": "Sync prices now?"
+        },
+        "description": {
+          "$t": "Prices are refreshed from the supplier feed; this takes about a minute"
+        },
+        "tone": "info",
+        "confirmText": {
+          "$t": "Sync"
+        },
+        "cancelText": {
+          "$t": "Later"
+        },
+        "open": {
+          "$bindState": "/info-confirm/open"
+        }
+      },
+      "children": [],
+      "on": {
+        "confirm": {
+          "action": "setState",
+          "params": {
+            "statePath": "/info-confirm/open",
+            "value": false
+          }
+        }
+      }
+    },
+    "info-confirm-trigger": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Open info"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/info-confirm/open",
+            "value": true
+          }
+        }
+      }
+    },
+    "success-notice": {
+      "type": "Dialog",
+      "props": {
+        "title": {
+          "$t": "Import finished"
+        },
+        "description": {
+          "$t": "128 products were imported; 3 rows were skipped"
+        },
+        "tone": "success",
+        "confirmText": {
+          "$t": "OK"
+        },
+        "open": {
+          "$bindState": "/success-notice/open"
+        }
+      },
+      "children": [],
+      "on": {
+        "confirm": {
+          "action": "setState",
+          "params": {
+            "statePath": "/success-notice/open",
+            "value": false
+          }
+        }
+      }
+    },
+    "success-notice-trigger": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Open success"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/success-notice/open",
+            "value": true
+          }
+        }
+      }
+    },
+    "info-dialog-content": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "12 prices change; the previous ones stay in the history"
+        },
+        "variant": "body"
+      },
+      "children": []
+    },
+    "info-dialog": {
+      "type": "Dialog",
+      "props": {
+        "title": {
+          "$t": "Publish changes"
+        },
+        "description": {
+          "$t": "Customers see the new prices right away"
+        },
+        "confirmText": {
+          "$t": "Publish"
+        },
+        "cancelText": {
+          "$t": "Cancel"
+        },
+        "open": {
+          "$bindState": "/info-dialog/open"
+        }
+      },
+      "children": [
+        "info-dialog-content"
+      ],
+      "on": {
+        "confirm": {
+          "action": "setState",
+          "params": {
+            "statePath": "/info-dialog/open",
+            "value": false
+          }
+        }
+      }
+    },
+    "info-dialog-trigger": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Open dialog"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/info-dialog/open",
+            "value": true
+          }
+        }
+      }
+    },
+    "large-dialog": {
+      "type": "Dialog",
+      "props": {
+        "title": {
+          "$t": "Import products"
+        },
+        "description": {
+          "$t": "3 of 128 rows shown. Rows without a price are skipped"
+        },
+        "size": "lg",
+        "confirmText": {
+          "$t": "Import"
+        },
+        "cancelText": {
+          "$t": "Cancel"
+        },
+        "open": {
+          "$bindState": "/large-dialog/open"
+        }
+      },
+      "children": [
+        "large-dialog-table"
+      ],
+      "on": {
+        "confirm": [
+          {
+            "action": "toast",
+            "params": {
+              "message": {
+                "$t": "Import started"
+              },
+              "tone": "info"
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/large-dialog/open",
+              "value": false
+            }
+          }
+        ]
+      }
+    },
+    "large-dialog-trigger": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Open large dialog"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/large-dialog/open",
+            "value": true
+          }
+        }
+      }
+    },
+    "stack-1": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "confirm-dialog-trigger",
+        "warning-confirm-trigger",
+        "info-confirm-trigger",
+        "success-notice-trigger",
+        "info-dialog-trigger",
+        "large-dialog-trigger"
+      ]
+    },
+    "stack-2": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "stack-1",
+        "confirm-dialog",
+        "warning-confirm",
+        "info-confirm",
+        "success-notice",
+        "info-dialog",
+        "large-dialog"
+      ]
+    },
+    "card-3": {
+      "type": "Example",
+      "props": {
+        "id": "dialogs",
+        "title": {
+          "$t": "Dialogs"
+        },
+        "description": {
+          "$t": "A dialog asks for one decision; a danger dialog names what is lost"
+        }
+      },
+      "children": [
+        "stack-2"
+      ]
+    },
+    "side-drawer": {
+      "type": "Drawer",
+      "props": {
+        "title": {
+          "$t": "Edit product"
+        },
+        "description": {
+          "$t": "The list stays behind"
+        },
+        "side": "right",
+        "open": {
+          "$bindState": "/side-drawer/open"
+        }
+      },
+      "children": [
+        "side-drawer-form"
+      ],
+      "slots": {
+        "footerEnd": [
+          "side-drawer-cancel",
+          "side-drawer-save"
+        ]
+      }
+    },
+    "side-drawer-trigger": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Open side drawer"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/side-drawer/open",
+            "value": true
+          }
+        }
+      }
+    },
+    "wide-drawer": {
+      "type": "Drawer",
+      "props": {
+        "title": {
+          "$t": "Order details"
+        },
+        "side": "right",
+        "size": "lg",
+        "open": {
+          "$bindState": "/wide-drawer/open"
+        },
+        "description": {
+          "$t": "ORD-01086 · three lines, paid by card"
+        }
+      },
+      "children": [
+        "wide-drawer-table"
+      ]
+    },
+    "wide-drawer-trigger": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Open wide drawer"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/wide-drawer/open",
+            "value": true
+          }
+        }
+      }
+    },
+    "left-drawer": {
+      "type": "Drawer",
+      "props": {
+        "title": {
+          "$t": "Filters"
+        },
+        "side": "left",
+        "open": {
+          "$bindState": "/left-drawer/open"
+        },
+        "description": {
+          "$t": "Filters can slide in from the start edge"
+        }
+      },
+      "children": [
+        "left-drawer-form"
+      ],
+      "slots": {
+        "footerEnd": [
+          "left-drawer-reset",
+          "left-drawer-apply"
+        ]
+      }
+    },
+    "left-drawer-trigger": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Open left drawer"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/left-drawer/open",
+            "value": true
+          }
+        }
+      }
+    },
+    "bottom-drawer": {
+      "type": "Drawer",
+      "props": {
+        "title": {
+          "$t": "Bulk edit"
+        },
+        "side": "bottom",
+        "size": "sm",
+        "open": {
+          "$bindState": "/bottom-drawer/open"
+        },
+        "description": {
+          "$t": "A bottom drawer suits a short task on a narrow screen"
+        }
+      },
+      "children": [
+        "bottom-drawer-status"
+      ],
+      "slots": {
+        "footerEnd": [
+          "bottom-drawer-cancel",
+          "bottom-drawer-apply"
+        ]
+      }
+    },
+    "bottom-drawer-trigger": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Open bottom drawer"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/bottom-drawer/open",
+            "value": true
+          }
+        }
+      }
+    },
+    "stack-4": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "side-drawer-trigger",
+        "wide-drawer-trigger",
+        "left-drawer-trigger",
+        "bottom-drawer-trigger"
+      ]
+    },
+    "stack-5": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "stack-4",
+        "side-drawer",
+        "wide-drawer",
+        "left-drawer",
+        "bottom-drawer"
+      ]
+    },
+    "card-6": {
+      "type": "Example",
+      "props": {
+        "id": "drawers",
+        "title": {
+          "$t": "Drawers"
+        },
+        "description": {
+          "$t": "A drawer keeps the page in view for side tasks: edit, inspect, filter"
+        }
+      },
+      "children": [
+        "stack-5"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Modals & drawers"
+        },
+        "description": {
+          "$t": "Dialogs for decisions and drawers for side tasks, opened from buttons through page state"
+        }
+      },
+      "children": []
+    },
+    "sections": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "card-3",
+        "card-6"
+      ]
+    },
+    "side-drawer-name": {
+      "type": "FormField",
+      "props": {
+        "name": "name",
+        "label": {
+          "$t": "Product name"
+        },
+        "widget": "Input",
+        "fieldType": "string",
+        "value": {
+          "$bindState": "/product/name"
+        },
+        "required": true
+      },
+      "children": []
+    },
+    "side-drawer-sku": {
+      "type": "FormField",
+      "props": {
+        "name": "sku",
+        "label": {
+          "$t": "SKU"
+        },
+        "widget": "Input",
+        "fieldType": "string",
+        "value": {
+          "$bindState": "/product/sku"
+        }
+      },
+      "children": []
+    },
+    "side-drawer-price": {
+      "type": "FormField",
+      "props": {
+        "name": "price",
+        "label": {
+          "$t": "Price"
+        },
+        "widget": "NumberInput",
+        "fieldType": "number",
+        "value": {
+          "$bindState": "/product/price"
+        },
+        "min": 0,
+        "precision": 2
+      },
+      "children": []
+    },
+    "side-drawer-status": {
+      "type": "FormField",
+      "props": {
+        "name": "status",
+        "label": {
+          "$t": "Status"
+        },
+        "widget": "Select",
+        "fieldType": "enum",
+        "value": {
+          "$bindState": "/product/status"
+        },
+        "options": [
+          {
+            "value": "active",
+            "label": {
+              "$t": "Active"
+            }
+          },
+          {
+            "value": "draft",
+            "label": {
+              "$t": "Draft"
+            }
+          },
+          {
+            "value": "archived",
+            "label": {
+              "$t": "Archived"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "side-drawer-form": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "side-drawer-name",
+        "side-drawer-sku",
+        "side-drawer-price",
+        "side-drawer-status"
+      ]
+    },
+    "side-drawer-cancel": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Cancel"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/side-drawer/open",
+            "value": false
+          }
+        }
+      }
+    },
+    "side-drawer-save": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Save"
+        },
+        "appearance": "solid"
+      },
+      "children": [],
+      "on": {
+        "press": [
+          {
+            "action": "toast",
+            "params": {
+              "message": {
+                "$t": "Product saved"
+              },
+              "tone": "success"
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/side-drawer/open",
+              "value": false
+            }
+          }
+        ]
+      }
+    },
+    "wide-drawer-table": {
+      "type": "Table",
+      "props": {
+        "rowKey": "id",
+        "columns": [
+          {
+            "field": "name",
+            "label": {
+              "$t": "Product"
+            },
+            "kind": "entity",
+            "descriptionField": "sku",
+            "initials": true
+          },
+          {
+            "field": "qty",
+            "label": {
+              "$t": "Qty"
+            },
+            "align": "right",
+            "width": "80px"
+          },
+          {
+            "field": "price",
+            "label": {
+              "$t": "Price"
+            },
+            "kind": "currency",
+            "currency": "USD",
+            "width": "110px"
+          },
+          {
+            "field": "amount",
+            "label": {
+              "$t": "Amount"
+            },
+            "kind": "currency",
+            "currency": "USD",
+            "width": "120px"
+          }
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "name": "Lumi Lamp",
+            "sku": "SKU-0001",
+            "qty": 2,
+            "price": 27,
+            "amount": 54
+          },
+          {
+            "id": 2,
+            "name": "Lumi Shade",
+            "sku": "SKU-0002",
+            "qty": 1,
+            "price": 42,
+            "amount": 42
+          },
+          {
+            "id": 3,
+            "name": "Lumi Cord",
+            "sku": "SKU-0004",
+            "qty": 3,
+            "price": 9.5,
+            "amount": 28.5
+          }
+        ],
+        "totals": [
+          {
+            "label": {
+              "$t": "Total"
+            },
+            "value": "$124.50",
+            "emphasis": true
+          }
+        ]
+      },
+      "children": []
+    },
+    "left-drawer-status": {
+      "type": "FormField",
+      "props": {
+        "name": "status",
+        "label": {
+          "$t": "Status"
+        },
+        "widget": "RadioGroup",
+        "fieldType": "enum",
+        "value": {
+          "$bindState": "/filters/status"
+        },
+        "direction": "column",
+        "options": [
+          {
+            "value": "all",
+            "label": {
+              "$t": "All"
+            }
+          },
+          {
+            "value": "paid",
+            "label": {
+              "$t": "Paid"
+            }
+          },
+          {
+            "value": "shipped",
+            "label": {
+              "$t": "Shipped"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "left-drawer-channel": {
+      "type": "FormField",
+      "props": {
+        "name": "channel",
+        "label": {
+          "$t": "Channel"
+        },
+        "widget": "CheckboxGroup",
+        "fieldType": "enumMulti",
+        "value": {
+          "$bindState": "/filters/channel"
+        },
+        "direction": "column",
+        "options": [
+          {
+            "value": "web",
+            "label": {
+              "$t": "Web"
+            }
+          },
+          {
+            "value": "app",
+            "label": {
+              "$t": "App"
+            }
+          },
+          {
+            "value": "store",
+            "label": {
+              "$t": "Store"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "left-drawer-form": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "left-drawer-status",
+        "left-drawer-channel"
+      ]
+    },
+    "left-drawer-reset": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Reset"
+        },
+        "appearance": "ghost"
+      },
+      "children": [],
+      "on": {
+        "press": [
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/filters/status",
+              "value": "all"
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/filters/channel",
+              "value": []
+            }
+          }
+        ]
+      }
+    },
+    "left-drawer-apply": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Apply"
+        },
+        "appearance": "solid"
+      },
+      "children": [],
+      "on": {
+        "press": [
+          {
+            "action": "toast",
+            "params": {
+              "message": {
+                "$t": "Filters applied"
+              },
+              "tone": "success"
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/left-drawer/open",
+              "value": false
+            }
+          }
+        ]
+      }
+    },
+    "bottom-drawer-status": {
+      "type": "FormField",
+      "props": {
+        "name": "status",
+        "label": {
+          "$t": "New status for 12 products"
+        },
+        "widget": "Select",
+        "fieldType": "enum",
+        "value": {
+          "$bindState": "/bulk/status"
+        },
+        "options": [
+          {
+            "value": "active",
+            "label": {
+              "$t": "Active"
+            }
+          },
+          {
+            "value": "draft",
+            "label": {
+              "$t": "Draft"
+            }
+          },
+          {
+            "value": "archived",
+            "label": {
+              "$t": "Archived"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "bottom-drawer-cancel": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Cancel"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/bottom-drawer/open",
+            "value": false
+          }
+        }
+      }
+    },
+    "bottom-drawer-apply": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Apply"
+        },
+        "appearance": "solid"
+      },
+      "children": [],
+      "on": {
+        "press": [
+          {
+            "action": "toast",
+            "params": {
+              "message": {
+                "$t": "12 products updated"
+              },
+              "tone": "success"
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/bottom-drawer/open",
+              "value": false
+            }
+          }
+        ]
+      }
+    },
+    "large-dialog-table": {
+      "type": "Table",
+      "props": {
+        "rowKey": "sku",
+        "columns": [
+          {
+            "field": "sku",
+            "label": {
+              "$t": "SKU"
+            },
+            "kind": "code",
+            "width": "120px"
+          },
+          {
+            "field": "name",
+            "label": {
+              "$t": "Product"
+            }
+          },
+          {
+            "field": "price",
+            "label": {
+              "$t": "Price"
+            },
+            "kind": "currency",
+            "currency": "USD",
+            "width": "110px"
+          }
+        ],
+        "rows": [
+          {
+            "sku": "SKU-0101",
+            "name": "Lumi Desk",
+            "price": 129
+          },
+          {
+            "sku": "SKU-0102",
+            "name": "Lumi Stool",
+            "price": 59
+          },
+          {
+            "sku": "SKU-0103",
+            "name": "Lumi Rug",
+            "price": 88
+          }
+        ]
+      },
+      "children": []
+    }
+  },
+  "state": {
+    "confirm-dialog": {
+      "open": false
+    },
+    "warning-confirm": {
+      "open": false
+    },
+    "info-confirm": {
+      "open": false
+    },
+    "success-notice": {
+      "open": false
+    },
+    "info-dialog": {
+      "open": false
+    },
+    "large-dialog": {
+      "open": false
+    },
+    "side-drawer": {
+      "open": false
+    },
+    "wide-drawer": {
+      "open": false
+    },
+    "left-drawer": {
+      "open": false
+    },
+    "bottom-drawer": {
+      "open": false
+    },
+    "product": {
+      "name": "Lumi Shade",
+      "sku": "SKU-0002",
+      "price": 42,
+      "status": "draft"
+    },
+    "filters": {
+      "status": "all",
+      "channel": []
+    },
+    "bulk": {
+      "status": "active"
+    }
+  }
+}

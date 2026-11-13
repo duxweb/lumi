@@ -1,0 +1,62 @@
+/* Playground: what to open, its JSON and the page it renders, filling the window below the header. */
+.pg {
+  display: grid;
+  grid-template-columns: 208px minmax(0, 5fr) minmax(0, 7fr);
+  height: calc(100dvh - 82px);
+  min-height: 520px;
+  border-top: 1px solid var(--site-line);
+}
+.pg__nav, .pg__pane { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.pg__nav + .pg__pane, .pg__pane + .pg__pane { border-left: 1px solid var(--site-line); }
+/* One strip across the three columns: the same height whatever it holds. */
+.pg__bar { display: flex; align-items: center; gap: 10px; height: 53px; flex: none; padding: 0 16px; border-bottom: 1px solid var(--site-line); font-size: 14px; }
+.pg__title { font-weight: 600; }
+.pg__spacer { flex: 1; }
+
+/* First column: examples, then every component by family. */
+.pg__search {
+  width: 100%; height: 32px; padding: 0 10px; border: 1px solid var(--site-line); border-radius: 8px;
+  background: var(--site-paper); color: var(--site-ink); font: inherit;
+}
+.pg__list { flex: 1; min-height: 0; overflow: auto; padding: 8px 8px 16px; font-size: 14px; }
+.pg__list h2 { margin: 12px 8px 4px; color: var(--site-muted); font-size: 12px; font-weight: 600; letter-spacing: .02em; }
+.pg__list section:first-of-type h2 { margin-top: 4px; }
+.pg__list button {
+  display: block; width: 100%; padding: 6px 8px; border: 0; border-radius: 6px;
+  background: none; color: var(--site-muted); font: inherit; text-align: left; cursor: pointer;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pg__list button:hover { background: var(--site-tint); color: var(--site-ink); }
+.pg__list button[aria-current] { background: var(--site-tint); color: var(--site-ink); font-weight: 600; }
+.pg__shared, .pg__none { margin: 4px 8px 8px; color: var(--site-muted); font-size: 13px; }
+.pg__shared { padding: 6px 8px; margin-inline: 0; border-radius: 6px; background: var(--site-tint); color: var(--site-ink); font-weight: 600; font-size: 14px; }
+
+.pg__status { color: #16a34a; font-weight: 600; }
+.pg__status--error { color: #dc2626; }
+.pg__button {
+  height: 32px; padding: 0 12px; border: 1px solid var(--site-line); border-radius: 8px;
+  background: var(--site-paper); color: var(--site-ink); font: inherit; cursor: pointer; white-space: nowrap;
+}
+.pg__button:hover:not(:disabled) { background: var(--site-tint); }
+.pg__button:disabled { opacity: .5; cursor: default; }
+.pg__editor { flex: 1; min-height: 0; overflow: auto; }
+/* The editor is the column: no frame of its own, and it reaches the bottom however short the JSON. */
+.pg__editor [data-slot='code-editor'] { min-height: 100%; }
+.pg__editor [data-slot='code-editor-frame'] { display: flex; flex: 1; flex-direction: column; border: 0; border-radius: 0; box-shadow: none; }
+.pg__editor .lumi-code-host { flex: 1; border-radius: 0; }
+.pg__editor .cm-editor { flex: 1; }
+.pg__issues { max-height: 40%; overflow: auto; margin: 0; padding: 12px 16px; list-style: none; border-top: 1px solid var(--site-line); background: var(--site-tint); font-size: 13.5px; }
+.pg__issues li { display: grid; gap: 2px; padding-block: 6px; }
+.pg__issues li + li { border-top: 1px solid var(--site-line); }
+.pg__issues code { font-family: var(--site-mono); color: #dc2626; }
+.pg__issues small { color: var(--site-muted); font-size: 13px; }
+.pg__stage { flex: 1; min-height: 0; overflow: auto; padding: 24px; background: var(--site-tint); }
+.pg__empty { color: var(--site-muted); }
+
+/* Narrow window: the list sits on top with its own scroll, then the JSON, then the page. */
+@media (max-width: 900px) {
+  .pg { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(320px, 1fr) minmax(360px, 1fr); height: auto; }
+  .pg__nav + .pg__pane, .pg__pane + .pg__pane { border-left: 0; border-top: 1px solid var(--site-line); }
+  .pg__list { max-height: 208px; }
+  .pg__bar { height: auto; min-height: 53px; padding-block: 10px; flex-wrap: wrap; }
+}

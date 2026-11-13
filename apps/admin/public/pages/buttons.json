@@ -1,0 +1,706 @@
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Buttons"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "sections"
+      ]
+    },
+    "button-1": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Solid"
+        },
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "button-2": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Brand"
+        },
+        "appearance": "brand"
+      },
+      "children": []
+    },
+    "button-3": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Soft"
+        },
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "button-4": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Outline"
+        },
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "button-5": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Ghost"
+        },
+        "appearance": "ghost"
+      },
+      "children": []
+    },
+    "button-6": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Link"
+        },
+        "appearance": "link"
+      },
+      "children": []
+    },
+    "button-7": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Danger"
+        },
+        "appearance": "danger"
+      },
+      "children": []
+    },
+    "stack-8": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "stack-8-filled",
+        "stack-8-quiet"
+      ]
+    },
+    "stack-8-filled": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "button-1",
+        "button-2",
+        "button-7"
+      ]
+    },
+    "stack-8-quiet": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "button-3",
+        "button-4",
+        "button-5",
+        "button-6"
+      ]
+    },
+    "card-9": {
+      "type": "Example",
+      "props": {
+        "id": "appearances",
+        "title": {
+          "$t": "Appearances"
+        },
+        "description": {
+          "$t": "Solid leads a page; soft and outline sit beside it; ghost and link stay quiet; danger is for destructive steps"
+        }
+      },
+      "children": [
+        "stack-8"
+      ]
+    },
+    "button-10": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Small"
+        },
+        "size": "sm"
+      },
+      "children": []
+    },
+    "button-11": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Medium"
+        },
+        "size": "md"
+      },
+      "children": []
+    },
+    "button-12": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Large"
+        },
+        "size": "lg"
+      },
+      "children": []
+    },
+    "stack-13": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true,
+        "align": "center"
+      },
+      "children": [
+        "button-10",
+        "button-11",
+        "button-12"
+      ]
+    },
+    "button-14": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Small"
+        },
+        "size": "sm",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "button-15": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Medium"
+        },
+        "size": "md",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "button-16": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Large"
+        },
+        "size": "lg",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "stack-17": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true,
+        "align": "center"
+      },
+      "children": [
+        "button-14",
+        "button-15",
+        "button-16"
+      ]
+    },
+    "stack-18": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "stack-13",
+        "stack-17"
+      ]
+    },
+    "card-19": {
+      "type": "Example",
+      "props": {
+        "id": "sizes",
+        "title": {
+          "$t": "Sizes"
+        },
+        "description": {
+          "$t": "Three heights that line up with fields of the same size"
+        }
+      },
+      "children": [
+        "stack-18"
+      ]
+    },
+    "button-20": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "New order"
+        },
+        "icon": "plus"
+      },
+      "children": []
+    },
+    "button-21": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Export"
+        },
+        "icon": "download",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "button-22": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Next step"
+        },
+        "icon": "arrow-right",
+        "iconPosition": "right",
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "button-23": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Delete"
+        },
+        "icon": "delete-02",
+        "appearance": "danger"
+      },
+      "children": []
+    },
+    "stack-24": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "button-20",
+        "button-21",
+        "button-22",
+        "button-23"
+      ]
+    },
+    "card-25": {
+      "type": "Example",
+      "props": {
+        "id": "with-icons",
+        "title": {
+          "$t": "With icons"
+        },
+        "description": {
+          "$t": "An icon before the label names the action; after it, where it leads"
+        }
+      },
+      "children": [
+        "stack-24"
+      ]
+    },
+    "button-26": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Default"
+        }
+      },
+      "children": []
+    },
+    "button-27": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Pill"
+        },
+        "shape": "pill"
+      },
+      "children": []
+    },
+    "button-28": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Add"
+        },
+        "icon": "plus",
+        "shape": "circle"
+      },
+      "children": []
+    },
+    "button-29": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Settings"
+        },
+        "icon": "settings-01",
+        "shape": "square",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "button-30": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Search"
+        },
+        "icon": "search",
+        "shape": "circle",
+        "appearance": "ghost"
+      },
+      "children": []
+    },
+    "stack-31": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true,
+        "align": "center"
+      },
+      "children": [
+        "button-26",
+        "button-27",
+        "button-28",
+        "button-29",
+        "button-30"
+      ]
+    },
+    "card-32": {
+      "type": "Example",
+      "props": {
+        "id": "shapes",
+        "title": {
+          "$t": "Shapes"
+        },
+        "description": {
+          "$t": "Pill for prominent calls to action; circle and square hold a single icon"
+        }
+      },
+      "children": [
+        "stack-31"
+      ]
+    },
+    "button-33": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Saving"
+        },
+        "loading": true
+      },
+      "children": []
+    },
+    "button-34": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Saving"
+        },
+        "loading": true,
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "button-35": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Disabled"
+        },
+        "disabled": true
+      },
+      "children": []
+    },
+    "button-36": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Disabled"
+        },
+        "disabled": true,
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "button-loading-icon": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Refresh"
+        },
+        "icon": "rotate-ccw",
+        "shape": "circle",
+        "appearance": "outline",
+        "loading": true
+      },
+      "children": []
+    },
+    "button-disabled-danger": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Delete"
+        },
+        "icon": "delete-02",
+        "appearance": "danger",
+        "disabled": true
+      },
+      "children": []
+    },
+    "text-states-loading": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Loading"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "stack-states-loading": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true,
+        "align": "center"
+      },
+      "children": [
+        "button-33",
+        "button-34",
+        "button-loading-icon"
+      ]
+    },
+    "text-states-disabled": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Disabled"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "stack-states-disabled": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true,
+        "align": "center"
+      },
+      "children": [
+        "button-35",
+        "button-36",
+        "button-disabled-danger"
+      ]
+    },
+    "stack-states-loading-group": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "text-states-loading",
+        "stack-states-loading"
+      ]
+    },
+    "stack-states-disabled-group": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "text-states-disabled",
+        "stack-states-disabled"
+      ]
+    },
+    "stack-37": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "stack-states-loading-group",
+        "stack-states-disabled-group"
+      ]
+    },
+    "card-38": {
+      "type": "Example",
+      "props": {
+        "id": "states",
+        "title": {
+          "$t": "States"
+        },
+        "description": {
+          "$t": "Loading keeps the width and blocks a second press; disabled explains itself elsewhere on the page"
+        }
+      },
+      "children": [
+        "stack-37"
+      ]
+    },
+    "button-39": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Open orders"
+        },
+        "appearance": "outline",
+        "icon": "shopping-cart-01"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Opens Orders"
+            },
+            "tone": "info"
+          }
+        }
+      }
+    },
+    "button-40": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Read the docs"
+        },
+        "appearance": "link",
+        "icon": "link-square-02",
+        "iconPosition": "right"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Opens the docs"
+            },
+            "tone": "info"
+          }
+        }
+      }
+    },
+    "stack-41": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "button-39",
+        "button-40"
+      ]
+    },
+    "button-42": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Continue"
+        },
+        "block": true
+      },
+      "children": []
+    },
+    "button-43": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Cancel"
+        },
+        "block": true,
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "stack-44": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "stack-41",
+        "button-42",
+        "button-43"
+      ]
+    },
+    "card-45": {
+      "type": "Example",
+      "props": {
+        "id": "links-and-block",
+        "title": {
+          "$t": "Links and block"
+        },
+        "description": {
+          "$t": "Here a press shows a toast instead of leaving the page; block fills its container, as in a narrow panel or a sign-in form"
+        }
+      },
+      "children": [
+        "stack-44"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Buttons"
+        },
+        "description": {
+          "$t": "Every button appearance, size, shape and state, with and without icons"
+        }
+      },
+      "children": []
+    },
+    "sections": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "card-9",
+        "card-19",
+        "card-25",
+        "card-32",
+        "card-38",
+        "card-45"
+      ]
+    }
+  }
+}

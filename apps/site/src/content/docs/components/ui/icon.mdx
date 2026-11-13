@@ -1,0 +1,42 @@
+---
+title: "Icon"
+description: "按名称显示图标：Lumi 名称如 search，或任意 HugeIcons 免费图标如 delivery-truck-01（或 DeliveryTruck01Icon）；不在内置集合里的名称首次使用时加载。"
+---
+
+<ComponentPreview name="Icon" />
+
+按名称显示图标：Lumi 名称如 `search`，或任意 HugeIcons 免费图标如 `delivery-truck-01`（或 `DeliveryTruck01Icon`）；不在内置集合里的名称首次使用时加载。图标单独表达含义时要给 `label`。
+
+## 示例
+
+```json
+{
+  "root": "icon-search",
+  "elements": {
+    "icon-search": {
+      "type": "Icon",
+      "props": { "name": "search", "label": "Search, medium" },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `name`（必填） | 图标名，来自内置 HugeIcons 图标集。 | `string` |  |
+| `label` | 图标的含义。纯装饰图标可以不填，读屏软件会跳过。 | `string \| null` |  |
+| `size` | 图标大小。 | `"sm" \| "md" \| "lg" \| null` | `"md"` |
+| `tone` | 颜色：`muted` 弱化，`brand` 品牌色，其余为语义色。 | `"default" \| "muted" \| "brand" \| "success" \| "warning" \| "danger" \| "info" \| null` | `"neutral"` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

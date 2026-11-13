@@ -1,0 +1,27 @@
+---
+title: "PageFrame"
+description: "带组合插槽的 Admin 页面框架。"
+---
+
+带组合插槽的 Admin 页面框架。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `title` | 框的标题。 | `string` |  |
+| `description` | 标题下方的一行说明。 | `string` |  |
+| `summary` | 标题旁的简短摘要。 | `string` |  |
+| `content` | 纯文本内容，没有子元素时显示。 | `string` |  |
+| `appearance` | 外观：`outline` 描边，`filled` 浅色填充。 | `"outline" \| "filled"` | `"outline"` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：`default`、`titleEnd`、`headerStart`、`headerEnd`、`aside`、`body`、`summary`

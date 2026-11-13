@@ -1,0 +1,69 @@
+---
+title: "Carousel"
+description: "滚动吸附轨道上的幻灯片，带上一张/下一张按钮和圆点。"
+---
+
+<ComponentPreview name="Carousel" />
+
+滚动吸附轨道上的幻灯片，带上一张/下一张按钮和圆点。幻灯片来自 `items`（图片，可在上面叠加标题和说明）或子元素，每个一张。`perView` 同时显示多张。`autoplay` 每隔 `interval` 毫秒（默认 5000）前进，悬停和聚焦时暂停，提供暂停按钮，偏好减少动效时不自动播放。把 `value` 绑定到当前幻灯片序号；切换时触发 `change`。
+
+## 示例
+
+```json
+{
+  "root": "carousel-44",
+  "elements": {
+    "carousel-44": {
+      "type": "Carousel",
+      "props": {
+        "items": [
+          {
+            "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90'><rect width='160' height='90' fill='%230ea5e9'/><circle cx='118' cy='30' r='14' fill='%23e0f2fe'/><path d='M0 90 L52 42 L92 78 L118 58 L160 90 Z' fill='%23e0f2fe' opacity='0.7'/></svg>",
+            "alt": "Lake at dawn",
+            "title": "Lake at dawn"
+          },
+          {
+            "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90'><rect width='160' height='90' fill='%2316a34a'/><circle cx='118' cy='30' r='14' fill='%23dcfce7'/><path d='M0 90 L52 42 L92 78 L118 58 L160 90 Z' fill='%23dcfce7' opacity='0.7'/></svg>",
+            "alt": "Forest trail",
+            "title": "Forest trail"
+          },
+          {
+            "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90'><rect width='160' height='90' fill='%23d97706'/><circle cx='118' cy='30' r='14' fill='%23fef3c7'/><path d='M0 90 L52 42 L92 78 L118 58 L160 90 Z' fill='%23fef3c7' opacity='0.7'/></svg>",
+            "alt": "Desert dunes",
+            "title": "Desert dunes"
+          }
+        ],
+        "aspectRatio": "16/9",
+        "loop": true,
+        "aria-label": "Destinations"
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `items` | 要显示的条目列表。 字段：`url`、`alt?`、`title?`、`description?` | `object[] \| null` |  |
+| `aspectRatio` | 每张幻灯片的比例。 | `"1/1" \| "4/3" \| "3/2" \| "16/9" \| "21/9" \| null` | `"16/9"` |
+| `perView` | 同时显示几张（1–4）。 | `integer \| null` | `1` |
+| `autoplay` | 自动播放；悬停或聚焦时暂停，偏好减少动效时不播放。 | `boolean \| null` | `false` |
+| `interval` | 自动播放的间隔（毫秒），至少 2000。 | `integer \| null` | `5000` |
+| `loop` | 到最后一张后回到第一张。 | `boolean \| null` | `false` |
+| `arrows` | 显示上一张/下一张按钮。 | `boolean \| null` | `true` |
+| `dots` | 显示底部的分页圆点。 | `boolean \| null` | `true` |
+| `value` | 当前值。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `integer \| null` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：`default`

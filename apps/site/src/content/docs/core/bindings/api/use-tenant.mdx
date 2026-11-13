@@ -1,0 +1,21 @@
+---
+title: "useTenant"
+description: "useTenant React hook 的签名、参数和返回值。"
+---
+
+The current tenant and a way to switch it; inert without a `tenantProvider`.
+
+```typescript
+useTenant(): UseTenantResult
+```
+
+返回 `UseTenantResult`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `current` | `TenantOption \| undefined` | 是 | The option of the current tenant, when the provider lists them. |
+| `options` | `readonly TenantOption[]` | 是 | The tenants the reader may switch between. |
+| `setTenant` | `(value: string) => void` | 是 | Switches the tenant; every query is then fetched again for it. |
+| `tenant` | `string \| undefined` | 是 | The current tenant's value, undefined before one is chosen. |

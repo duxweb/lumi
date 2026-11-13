@@ -1,0 +1,50 @@
+{
+  "name": "@duxweb/lumi-check",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Native json-render Catalog validation CLI.",
+  "author": "DuxWeb",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duxweb/lumi.git",
+    "directory": "packages/check"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "lumi:source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "lumi-check": "./dist/cli.js"
+  },
+  "files": [
+    "LICENSE",
+    "LICENSES",
+    "README.md",
+    "THIRD_PARTY_NOTICES.md",
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run --root ../.. packages/check/test",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@duxweb/lumi": "workspace:*",
+    "@duxweb/lumi-admin": "workspace:*",
+    "@duxweb/lumi-ui": "workspace:*",
+    "@json-render/core": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@json-render/react": "catalog:",
+    "@types/node": "catalog:"
+  }
+}

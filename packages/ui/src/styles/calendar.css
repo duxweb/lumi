@@ -1,0 +1,98 @@
+/* Calendar, date-time and date-range panel layout. Unlayered on purpose: the
+   direction switches must hold against utility classes such as `.flex-col`
+   that a host stylesheet may redeclare after the UI stylesheet. */
+
+/* Months: stacked on phones, side by side once the panel has room. */
+[data-slot="calendar"] .rdp-months { flex-direction: column; }
+@media (width >= 40rem) {
+  [data-slot="calendar"] .rdp-months { flex-direction: row; }
+}
+
+/* Range band: one tone per cell. The ends carry the selected chip on the
+   button and the band fills only the cell beyond the chip, so the translucent
+   selected tokens never stack. A one-day range is the chip alone. */
+[data-slot="calendar"] :where(.rdp-range_start, .rdp-range_middle, .rdp-range_end):not(.rdp-outside)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--lumi-selected-range-bg);
+  pointer-events: none;
+}
+[data-slot="calendar"] .rdp-range_start::before { inset-inline-start: calc(100% - 1px); }
+[data-slot="calendar"] .rdp-range_end::before { inset-inline-end: calc(100% - 1px); }
+[data-slot="calendar"] .rdp-range_start.rdp-range_end::before { content: none; }
+[data-slot="calendar"] :is(.rdp-range_middle:first-of-type, .rdp-outside + .rdp-range_middle)::before {
+  border-start-start-radius: var(--cell-radius);
+  border-end-start-radius: var(--cell-radius);
+}
+[data-slot="calendar"] :is(.rdp-range_middle:last-of-type, .rdp-range_middle:has(+ .rdp-outside))::before {
+  border-start-end-radius: var(--cell-radius);
+  border-end-end-radius: var(--cell-radius);
+}
+/* The end chips join the band: the start squares off toward the days after
+   it, the end toward the days before. Where the week breaks the band, or the
+   range is one day, the chip keeps that corner round. */
+[data-slot="calendar"] .rdp-range_start:not(.rdp-range_end, :last-of-type) [data-range-start="true"] {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+[data-slot="calendar"] .rdp-range_end:not(.rdp-range_start, :first-of-type) [data-range-end="true"] {
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+/* Days of a neighbouring month repeat dates another grid already shows. */
+[data-slot="calendar"] .rdp-outside [data-range-start="true"],
+[data-slot="calendar"] .rdp-outside [data-range-end="true"] {
+  background: transparent;
+  color: var(--muted-foreground);
+}
+
+/* Date-time and date-range panels: the calendar beside the time columns or
+   presets, separated by one divider spaced like the popover padding. */
+[data-slot="datetime-panel"],
+[data-slot="date-range-panel"] { display: flex; align-items: stretch; }
+[data-slot="datetime-time"] {
+  margin-inline-start: var(--lumi-popover-padding);
+  padding-inline-start: var(--lumi-popover-padding);
+  border-inline-start: 1px solid var(--border);
+}
+[data-slot="date-range-presets"] {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 7rem;
+  margin-inline-end: var(--lumi-popover-padding);
+  padding-inline-end: var(--lumi-popover-padding);
+  border-inline-end: 1px solid var(--border);
+}
+@media (width < 40rem) {
+  [data-slot="datetime-panel"],
+  [data-slot="date-range-panel"] { flex-direction: column; }
+  [data-slot="datetime-time"] {
+    margin: var(--lumi-popover-padding) 0 0;
+    padding: var(--lumi-popover-padding) 0 0;
+    border-inline-start: 0;
+    border-top: 1px solid var(--border);
+  }
+  [data-slot="date-range-presets"] {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 0 0 var(--lumi-popover-padding);
+    padding: 0 0 var(--lumi-popover-padding);
+    border-inline-end: 0;
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+/* Time columns: a fixed list height on their own; beside a calendar the lists
+   take the calendar's height. The mask fades items scrolled under the edges. */
+[data-slot="time-column-list"] {
+  height: 14rem;
+  mask-image: linear-gradient(to bottom, transparent, #000 0.5rem, #000 calc(100% - 0.5rem), transparent);
+}
+[data-slot="time-columns"][data-fill] [data-slot="time-column-list"] { height: 8.5rem; }
+@media (width >= 40rem) {
+  [data-slot="time-columns"][data-fill] { height: 0; min-height: 100%; }
+  [data-slot="time-columns"][data-fill] [data-slot="time-column"] { height: 100%; }
+  [data-slot="time-columns"][data-fill] [data-slot="time-column-list"] { flex: 1 1 0; height: auto; min-height: 0; }
+}

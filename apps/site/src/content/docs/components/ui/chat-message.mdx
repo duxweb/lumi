@@ -1,0 +1,56 @@
+---
+title: "ChatMessage"
+description: "对话中的一条消息，按智能体消息约定绘制。"
+---
+
+<ComponentPreview name="ChatMessage" />
+
+对话中的一条消息，按智能体消息约定绘制。用户消息是一个气泡，带文件和上下文块；助手消息按顺序渲染各部分——Markdown 文字（流式输出时带光标）、连续的思考和工具调用收在一行活动记录下（进行中闪烁，完成后折叠）、计划、差异、确认和提问——然后是来源行（悬停或聚焦时预览引用），再是复制、重新生成、评价操作和后续推荐问题。绑定 `feedback` 保存评价；`activeEvent` 在对应事件触发前收到被点击的内容。
+
+## 示例
+
+```json
+{
+  "root": "chat-message",
+  "elements": {
+    "chat-message": {
+      "type": "ChatMessage",
+      "props": {
+        "id": "e1",
+        "role": "assistant",
+        "status": "error",
+        "parts": [
+          { "type": "text", "text": "Checking the courier status for ORD-1024" }
+        ],
+        "errorText": "The courier service did not respond"
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `id` | 消息 ID，写入 `activeEvent.messageId`。 | `string` |  |
+| `role`（必填） | `user` 用户（右侧气泡），`assistant` 助手（按顺序渲染各部分），`system` 系统提示（居中小字）。 | `"user" \| "assistant" \| "system"` |  |
+| `parts`（必填） | 消息内容，按 Agent 消息契约排列：`text`、`reasoning`、`tool-call`、`approval`、`plan`、`diff`、`source`、`file`、`context`。`source` 统一显示为引用标签，正文里的 `[1]` 指向第一个来源。 | `object[]` |  |
+| `status` | `streaming` 生成中（文末显示光标、暂不显示操作）、`done` 完成、`error` 失败（显示错误与重试）。 | `"streaming" \| "done" \| "error"` | `"done"` |
+| `errorText` | `status` 为 `error` 时显示的说明。 | `string` |  |
+| `feedback` | 回答评价：`up`、`down` 或 `null`。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `"up" \| "down" \| null` |  |
+| `suggestions` | 回答完成后显示的追问建议，每项 `{ label, prompt?, icon? }`，点击触发 `suggestion`。 字段：`id?`、`label`、`prompt?`、`icon?` | `object[]` |  |
+| `actions` | 回答下方显示哪些操作：`copy` 复制、`regenerate` 重新生成、`feedback` 评价。传 `[]` 不显示。 | `("copy" \| "regenerate" \| "feedback")[]` | `["copy","regenerate","feedback"]` |
+| `activeEvent` | 最近一次操作 `{ type, messageId, partId?, value? }`，在对应事件触发前写入，动作参数可以读取。 字段：`type`、`messageId?`、`partId?`、`value?` | `object \| null` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`copy`、`regenerate`、`feedback`、`suggestion`、`openSource`、`approve`、`reject`、`edit`、`answer`、`skip`
+- 插槽：无

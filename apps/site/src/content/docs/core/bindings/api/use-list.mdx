@@ -1,0 +1,30 @@
+---
+title: "useList"
+description: "useList React hook 的签名、参数和返回值。"
+---
+
+Reads one page of a resource through `getList`. While the next page or filter loads, the rows of the previous one stay on screen.
+
+```typescript
+useList<T = any>(input: UseListOptions): UseQueryResult<GetListResult<T>, Error>
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `input` | `UseListOptions` | 是 |  |
+
+`input` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `dataProviderName` | `string \| undefined` | 否 | 多数据源名称；省略时使用 default。 |
+| `enabled` | `boolean \| undefined` | 否 | 是否允许自动执行查询。 |
+| `filters` | `Filter[] \| undefined` | 否 | 筛选条件数组。 |
+| `liveMode` | `LiveMode \| undefined` | 否 | Defaults to the context's `liveMode`, which is `auto` with a liveProvider. |
+| `meta` | `Meta \| undefined` | 否 | 原样传给 DataProvider 的扩展数据。 |
+| `onLiveEvent` | `((event: LiveEvent) => void) \| undefined` | 否 | Called for each event of the resource, in `auto` and `manual` mode. |
+| `pagination` | `false \| Pagination \| undefined` | 否 | `{ page, pageSize }`, pages counted from 1; `false` asks for every record. |
+| `resource` | `string` | 是 | 交给 DataProvider 解释的数据目标，如 `orders`。 |
+| `sorters` | `Sorter[] \| undefined` | 否 | 排序条件数组。 |
+
+返回 `UseQueryResult<GetListResult<T>, Error>`。

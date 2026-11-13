@@ -1,0 +1,426 @@
+---
+title: "表单与保存"
+description: "用 Form、FormField 和 submitForm 写新建与编辑表单：校验规则、后端选项、明细行、上传、整页表单，以及服务器字段错误。"
+---
+
+表单值放在页面状态里，字段用 `$bindState` 绑定；提交时用 `submitForm` 动作保存。
+
+```jsonc
+{
+  // 根元素
+  "root": "form",
+  // 状态数据：表单初始值
+  "state": {
+    "customer": { "name": "", "level": "standard", "active": true },
+    // 保存成功后变成 true
+    "saved": false
+  },
+  // 元素集
+  "elements": {
+    // 表单：提交时校验字段再保存
+    "form": {
+      "type": "Form",
+      "props": {},
+      "on": {
+        // 按下提交按钮或回车时触发
+        "submit": {
+          // 保存：没有 id 新建（POST），有 id 更新（PUT）
+          "action": "submitForm",
+          "params": {
+            "resource": "customers",
+            // 要提交的值在状态里的位置
+            "valuesPath": "/customer",
+            // 保存成功后写入这些状态
+            "successState": { "/saved": true }
+          }
+        }
+      },
+      "children": ["name", "level", "active", "save", "saved"]
+    },
+    // 名称字段，必填
+    "name": {
+      "type": "FormField",
+      "props": {
+        "name": "name",
+        "label": "名称",
+        // 和 /customer/name 双向绑定
+        "value": { "$bindState": "/customer/name" },
+        // 前端校验规则
+        "checks": [{ "type": "required", "message": "请填写名称" }]
+      },
+      "children": []
+    },
+    // 等级字段，下拉选择
+    "level": {
+      "type": "FormField",
+      "props": {
+        "name": "level",
+        "label": "等级",
+        "fieldType": "enum",
+        "widget": "Select",
+        "value": { "$bindState": "/customer/level" },
+        "options": [
+          { "label": "标准", "value": "standard" },
+          { "label": "企业", "value": "enterprise" }
+        ]
+      },
+      "children": []
+    },
+    // 启用字段，开关
+    "active": {
+      "type": "FormField",
+      "props": {
+        "name": "active",
+        "label": "启用",
+        "fieldType": "boolean",
+        "widget": "Switch",
+        "value": { "$bindState": "/customer/active" }
+      },
+      "children": []
+    },
+    // 提交按钮
+    "save": {
+      "type": "Button",
+      // submit 按钮会触发表单的 submit
+      "props": { "label": "保存", "type": "submit", "appearance": "solid" },
+      "children": []
+    },
+    // 保存成功的提示
+    "saved": {
+      "type": "Alert",
+      "props": { "tone": "success", "message": "已保存" },
+      // /saved 为真时才显示
+      "visible": { "$state": "/saved" },
+      "children": []
+    }
+  }
+}
+```
+
+点保存时 `submitForm` 依次做三件事：检查字段规则（`checks`），等业务校验通过，再 `POST /customers` 一次。成功后才写入 `successState`；失败时表单保持原样，服务器返回的[字段错误](/guide/backend/#字段错误)显示在对应字段下。
+
+## 编辑已有记录
+
+先用 Query 读出记录，表单直接绑定读到的数据，`submitForm` 带上 `id` 就会改用 `PUT /customers/12`：
+
+```jsonc
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "Stack",
+      "props": {},
+      "children": ["customer-query", "form"]
+    },
+    // 先按 id 读出这条客户
+    "customer-query": {
+      "type": "Query",
+      "props": {
+        "resource": "customers",
+        // 读一条记录
+        "operation": "one",
+        "id": 12,
+        // 结果写到 /customer，记录在 /customer/data
+        "resultPath": "/customer"
+      },
+      "children": []
+    },
+    // 编辑表单
+    "form": {
+      "type": "Form",
+      "props": {},
+      "on": {
+        "submit": {
+          "action": "submitForm",
+          "params": {
+            "resource": "customers",
+            // 带 id，保存时更新这条记录
+            "id": 12,
+            // 提交读到的记录本身
+            "valuesPath": "/customer/data"
+          }
+        }
+      },
+      "children": ["name", "save"]
+    },
+    // 直接绑定到读出的记录上
+    "name": {
+      "type": "FormField",
+      "props": {
+        "name": "name",
+        "label": "名称",
+        "value": { "$bindState": "/customer/data/name" }
+      },
+      "children": []
+    },
+    "save": {
+      "type": "Button",
+      "props": { "label": "保存", "type": "submit" },
+      "children": []
+    }
+  }
+}
+```
+
+## 校验规则
+
+`checks` 是一个数组，按顺序检查，第一条不通过的 `message` 显示在字段下面。可用的 `type`：
+
+| `type` | 检查什么 | `args` |
+| --- | --- | --- |
+| `required` | 不能为空 | 无 |
+| `requiredIf` | 另一个值为真时才必填 | `{ "field": { "$state": "/form/needInvoice" } }` |
+| `email`、`url`、`numeric` | 邮箱、网址、数字的格式 | 无 |
+| `minLength`、`maxLength` | 文字的长度 | `{ "min": 2 }`、`{ "max": 50 }` |
+| `min`、`max` | 数值的大小 | `{ "min": 1 }`、`{ "max": 999 }` |
+| `pattern` | 符合一个正则 | `{ "pattern": "^[A-Z]{3}-\\d+$" }` |
+| `lessThan`、`greaterThan` | 和另一个字段比大小，日期字符串也能比 | `{ "other": { "$state": "/form/start" } }` |
+
+```jsonc
+{
+  "type": "FormField",
+  "props": {
+    "name": "end",
+    "label": "结束日期",
+    "fieldType": "date",
+    "value": { "$bindState": "/form/end" },
+    "checks": [
+      { "type": "required", "message": "请选择结束日期" },
+      // 和另一个字段比较：args 里用 $state 读它的值
+      {
+        "type": "greaterThan",
+        "args": { "other": { "$state": "/form/start" } },
+        "message": "结束日期要晚于开始日期"
+      }
+    ]
+  },
+  "children": []
+}
+```
+
+`checks` 在浏览器里检查格式。“名称不能重复”这类要查数据库的规则交给后端：保存时返回 [字段错误](/guide/backend/#字段错误)，同样显示在字段下面。
+
+## 选项来自后端
+
+下拉的选项不写死、从一个资源里读时，用 `Select` 的 `source`：打开时请求，输入文字时在后端搜索，滚动到底加载下一页。
+
+```jsonc
+{
+  "type": "Select",
+  "props": {
+    "ariaLabel": "负责人",
+    "value": { "$bindState": "/form/ownerId" },
+    "source": {
+      // 选项来自 members：GET /members?name[like]=…&page=1&pageSize=10
+      "resource": "members",
+      // 显示 name，值取 id（valueField 默认就是 id）
+      "labelField": "name",
+      // 输入文字时按 name 搜索
+      "searchField": "name",
+      "pageSize": 10
+    },
+    "clearable": true
+  },
+  "children": []
+}
+```
+
+选项依赖另一个字段时（先选省再选市），用 `dependsOn` 把那个字段的值作为筛选条件：
+
+```jsonc
+{
+  "type": "Select",
+  "props": {
+    "ariaLabel": "城市",
+    "value": { "$bindState": "/form/city" },
+    "source": {
+      "resource": "regions",
+      "labelField": "name",
+      // 请求带上 parentId=省份的值；省份变了，城市的选项跟着换
+      "dependsOn": { "parentId": "/form/province" }
+    }
+  },
+  "children": []
+}
+```
+
+- 编辑已有记录时，已选的值不在第一页也能显示出名字：组件会按 id 单独取回它。
+- `MultiSelect`、`AutoComplete` 的 `source` 写法相同；树形的数据（分类、部门）用 [TreeSelect](/components/ui/tree-select/) 或 [Cascader](/components/ui/cascader/) 的 `source`。
+
+## 明细行
+
+订单的商品行这类“一张表单里有多行”的数据，用 `Repeater`：值是一个数组，每一行是数组里的一项，行里的控件用 `$bindItem` 绑定这一行的字段。
+
+```jsonc
+{
+  "root": "items",
+  "state": {
+    "order": { "items": [{ "id": "1", "product": "", "qty": 1, "price": 0 }] }
+  },
+  "elements": {
+    "items": {
+      "type": "Repeater",
+      "props": {
+        "ariaLabel": "商品明细",
+        "value": { "$bindState": "/order/items" },
+        // 这组明细在表单里的字段名，和下面的 errors 一起把后端的字段错误对到行上
+        "name": "items",
+        "errors": { "$state": "/formStatus/fieldErrors" },
+        "layout": "table",
+        "rowKey": "id",
+        // 至少一行，最多八行
+        "min": 1,
+        "max": 8,
+        // 点“添加”时新行的初始值
+        "newRow": { "product": "", "qty": 1, "price": 0 },
+        "columns": [
+          { "key": "product", "label": "商品", "required": true },
+          { "key": "qty", "label": "数量", "width": 120 },
+          {
+            "key": "price",
+            "label": "单价",
+            "width": 160,
+            "prefix": "¥",
+            "precision": 2
+          },
+          // 计算列：数量 × 单价，不用自己绑定控件
+          {
+            "key": "total",
+            "label": "小计",
+            "width": 140,
+            "align": "end",
+            "compute": { "op": "product", "fields": ["qty", "price"] },
+            "prefix": "¥",
+            "precision": 2
+          }
+        ],
+        // 表格底部的合计
+        "summary": [{ "key": "total", "op": "sum" }]
+      },
+      // 对数组的每一项渲染一行
+      "repeat": { "statePath": "/order/items", "key": "id" },
+      "children": ["row"]
+    },
+    // 一行：里面的控件按 columns 的顺序排
+    "row": {
+      "type": "RepeaterRow",
+      "props": {},
+      "children": ["product", "qty", "price"]
+    },
+    "product": {
+      "type": "Input",
+      // $bindItem 绑定这一行的 product
+      "props": { "ariaLabel": "商品", "value": { "$bindItem": "product" } },
+      "children": []
+    },
+    "qty": {
+      "type": "NumberInput",
+      "props": {
+        "ariaLabel": "数量",
+        "value": { "$bindItem": "qty" },
+        "min": 1
+      },
+      "children": []
+    },
+    "price": {
+      "type": "NumberInput",
+      "props": {
+        "ariaLabel": "单价",
+        "value": { "$bindItem": "price" },
+        "precision": 2
+      },
+      "children": []
+    }
+  }
+}
+```
+
+把 `/order` 作为 `submitForm` 的 `valuesPath`，明细行就和其他字段一起提交；`validationPath` 写 `/formStatus`。后端对某一行返回字段错误时，`path` 写成 `items.0.product`，错误显示在第一行的商品上。
+
+## 上传文件
+
+`Upload` 的值是文件地址的数组，选了文件就上传，成功后把地址写进绑定的状态，和其他字段一起提交：
+
+```jsonc
+{
+  "type": "Upload",
+  "props": {
+    "ariaLabel": "附件",
+    "value": { "$bindState": "/form/attachments" },
+    // 可以选多个，最多 5 个
+    "multiple": true,
+    "maxFiles": 5,
+    // 只接受图片和 PDF，单个不超过 5 MB（单位是字节）
+    "accept": "image/*,.pdf",
+    "maxSize": 5242880
+  },
+  "children": []
+}
+```
+
+- 头像、封面这类单张图片用 `"variant": "image"`；商品图册用 [ImageGrid](/components/ui/image-grid/)。
+- 文件发到哪个接口、后端返回什么格式、怎么直传对象存储，见 [对接后端](/guide/backend-files/#上传)。
+
+## 整页表单
+
+上面的表单都放在页面的一部分里。新建、编辑占一整页时用 `FormPage`：它自己读记录、保存、显示保存按钮，有未保存的改动时离开会先提醒。
+
+```jsonc
+{
+  "root": "form",
+  "elements": {
+    "form": {
+      "type": "FormPage",
+      "props": {
+        "resource": "articles",
+        "title": "编辑文章",
+        // 有 id 先读出这条记录，保存时更新；没有 id 是新建
+        "id": { "$state": "/route/params/id" },
+        // 表单值放在这里，字段绑定它下面的路径
+        "valuesPath": "/values",
+        // publish 布局右侧多一栏，适合放状态、分类这类元信息
+        "layout": "publish"
+      },
+      // 保存成功后回到列表
+      "on": {
+        "saved": { "action": "navigate", "params": { "to": "/articles" } }
+      },
+      "slots": { "aside": ["status"] },
+      "children": ["title"]
+    },
+    "title": {
+      "type": "FormField",
+      "props": {
+        "name": "title",
+        "label": "标题",
+        "value": { "$bindState": "/values/title" },
+        "checks": [{ "type": "required", "message": "请填写标题" }]
+      },
+      "children": []
+    },
+    "status": {
+      "type": "FormField",
+      "props": {
+        "name": "status",
+        "label": "状态",
+        "fieldType": "enum",
+        "widget": "Select",
+        "value": { "$bindState": "/values/status" },
+        "options": [
+          { "label": "草稿", "value": "draft" },
+          { "label": "已发布", "value": "published" }
+        ]
+      },
+      "children": []
+    }
+  }
+}
+```
+
+`FormPage` 不用再写 `Form` 和 `submitForm`。路由怎么带上 `id`，见 [地址里的参数](/guide/menus/#地址里的参数)。
+
+## 注意
+
+- 表单值只放一处。不要再复制一份到别的路径里编辑。
+- 用 `submitForm` 保存，不要把 `validateForm`、`create`、关闭抽屉写成动作数组：原生 `validateForm` 校验不通过并不会拦住后面的动作，数组也不是事务，已经执行的步骤不会撤回。数组里某个动作出错时，后面的动作不再执行。
+- 字段控件由 `widget` 决定，可用的控件见 [FormField](/components/ui/form-field/)。

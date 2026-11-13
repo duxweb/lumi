@@ -1,0 +1,1695 @@
+@import "tailwindcss" source(none);
+@import "./tokens.css";
+@import "./styles/async-select.css";
+@import "./styles/form-controls-plus.css";
+@import "./styles/tree.css";
+@import "./styles/overlays-media.css";
+@import "./styles/feedback-display.css";
+@import "./styles/upload.css";
+@import "./styles/repeater.css";
+@import "./styles/field-error.css";
+@import "./styles/calendar.css";
+@import "./styles/code.css";
+@import "./styles/content.css";
+@import "./styles/agent.css";
+@import "../../../config/lumi-state-variants.css";
+
+/* Optional chart capability; all colors resolve from the host theme. */
+.lumi-chart { margin: 0; min-width: 0; width: 100%; container-type: inline-size; }
+.lumi-chart__body { display: grid; min-width: 0; gap: 12px; }
+.lumi-chart__visual { position: relative; min-width: 0; }
+.lumi-chart__canvas { position: absolute; inset: 0; }
+.lumi-chart__status, .lumi-chart__center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--muted-foreground); font-size: var(--lumi-fs-caption); pointer-events: none; }
+.lumi-chart__center strong { color: var(--foreground); font-size: var(--lumi-fs-metric); font-weight: var(--lumi-font-weight-semibold); font-variant-numeric: tabular-nums; }
+/* A donut is as tall as its siblings: beside a wide panel the legend moves to
+   the right of the ring instead of stacking a second block under it. */
+.lumi-chart__legend { list-style: none; display: grid; align-content: center; gap: 4px; margin: 0; padding: 0; }
+.lumi-chart__legend li { display: grid; grid-template-columns: minmax(0, 1fr) auto 3.5em; align-items: center; gap: 12px; padding: 6px 8px; border-radius: var(--lumi-radius-item); font-size: var(--lumi-fs-label); }
+.lumi-chart__legend li:hover { background: var(--muted); }
+.lumi-chart__legend li > span { display: flex; min-width: 0; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lumi-chart__legend i { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+.lumi-chart__legend b { font-weight: var(--lumi-font-weight-medium); font-variant-numeric: tabular-nums; }
+.lumi-chart__legend small { color: var(--muted-foreground); font-size: var(--lumi-fs-caption); font-variant-numeric: tabular-nums; text-align: right; }
+@container (min-width: 440px) {
+  .lumi-chart[data-chart-type="donut"] .lumi-chart__body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 24px; }
+}
+/* Bars: label, solid bar on a track, reading — one row each, spread over the
+   same height a canvas chart would take, so neighbouring panels line up. */
+.lumi-chart__bars { list-style: none; display: flex; flex-direction: column; justify-content: space-around; margin: 0; padding: 0; gap: 6px; }
+.lumi-chart__bars li { display: grid; grid-template-columns: minmax(3rem, max-content) minmax(0, 1fr) minmax(3rem, max-content); align-items: center; gap: 12px; padding: 6px 8px; border-radius: var(--lumi-radius-item); }
+.lumi-chart__bars li:hover { background: var(--muted); }
+.lumi-chart__bar-track { display: block; height: 8px; overflow: hidden; border-radius: var(--lumi-radius-full); background: color-mix(in oklab, var(--muted-foreground) 12%, transparent); }
+.lumi-chart__bar-fill { display: block; height: 100%; min-width: 6px; border-radius: inherit; background: var(--lumi-chart-bar-fill, var(--chart-1)); transition: filter 0.15s ease; }
+.lumi-chart__bars li:hover .lumi-chart__bar-fill { filter: brightness(1.08); }
+.lumi-chart__bar-label { color: var(--muted-foreground); font-size: var(--lumi-fs-label); white-space: nowrap; }
+.lumi-chart__bar-value { font-size: var(--lumi-fs-label); font-weight: var(--lumi-font-weight-medium); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+@import "tw-animate-css";
+@source "./**/*.{ts,tsx}";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/*
+ * Stacking layers. Every floating surface takes one of these, never a literal,
+ * so Admin and host apps line up with the components.
+ * - sticky: chrome that stays in view while page content scrolls under it.
+ * - overlay: modal surfaces with their backdrops: Dialog, Drawer, routed
+ *   drawers, the Admin mobile navigation.
+ * - popover: every anchored panel: Popover, Popconfirm, Select lists, menus,
+ *   pickers, autocomplete, mention. They share one layer and portal to the end
+ *   of <body> when they open, so the panel opened last wins: a select inside a
+ *   popover, a picker inside a drawer or a confirm inside a panel always sits
+ *   over its parent. It is above overlay, so no panel lands under a backdrop.
+ *   A Radix popper copies its content's z-index onto the positioned wrapper
+ *   that forms the stacking context, so the layer is set inline on the content.
+ * - tooltip: hints, field errors included, read over the panel they describe.
+ * - notice, toast: feedback stays visible over an open dialog or panel. They
+ *   use different corners; where a narrow screen makes them meet, the
+ *   short-lived toast reads over a lingering notice.
+ * - lightbox: the full-screen viewer covers everything, feedback included: its
+ *   toolbar sits on the top edge where toasts and notices land.
+ */
+:root {
+  --lumi-z-sticky: 20;
+  --lumi-z-overlay: 50;
+  --lumi-z-popover: 60;
+  --lumi-z-tooltip: 70;
+  --lumi-z-notice: 90;
+  --lumi-z-toast: 100;
+  --lumi-z-lightbox: 110;
+}
+
+/*
+ * Neutral ramp. The steps follow the shadcn neutral scale; the comment after
+ * a line is the lightness it resolves to. The default seed is zinc-500, so
+ * the ramp carries a faint cool tint; `--lumi-theme-neutral` replaces it.
+ * Oklab interpolates lightness linearly, so mixing a seed of lightness `L` at
+ * `p%` into white gives `L*p + (1 - p)`, and into black gives `L*p`.
+ *
+ * Surfaces are NOT a hand-built ladder any more. Light is white on white with
+ * a hairline; dark keeps shadcn's order, where `muted` sits ABOVE `card`.
+ */
+:root,
+[data-theme="light"] {
+  --background: white;
+  --foreground: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 26.1%, black); /* oklch(0.145 0 0) */
+  --card: white;
+  --card-foreground: var(--foreground);
+  --popover: white;
+  --lumi-glass: color-mix(in oklab, var(--popover) 68%, transparent);
+  --lumi-glass-filter: blur(14px) saturate(1.5);
+  /* Menus, dropdowns and popovers hold rows of text, so they frost with more
+     body and a wider blur than a one-line hint. 86% keeps secondary text and
+     the selected row above 4.5:1 even over black, brand and white bands. */
+  --lumi-glass-panel: color-mix(in oklab, var(--popover) 86%, transparent);
+  --lumi-glass-panel-filter: blur(20px) saturate(1.6);
+  --lumi-glass-border: color-mix(in oklab, var(--foreground) 10%, transparent);
+  /* Hover and resting fills on glass: the accent step as a foreground alpha. */
+  --lumi-glass-tint: color-mix(in oklab, var(--foreground) 6%, transparent);
+  --popover-foreground: var(--foreground);
+  /* Primary is the high-contrast neutral of the main action; brand is the
+     theme colour for emphasis, selection, focus and data. Each has its own
+     seed so a host can rebrand without recolouring every main button. */
+  --primary: var(--lumi-theme-primary, color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 36.9%, black)); /* oklch(0.205 0 0) */
+  /* A seeded primary picks light or dark text by its own lightness, so any seed keeps AA text. */
+  --lumi-ui-primary-foreground-seeded: oklch(from var(--lumi-theme-primary) clamp(0.205, (0.62 - l) * 1000, 0.985) 0 0);
+  --primary-foreground: var(--lumi-ui-primary-foreground-seeded, color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 3.4%, white)); /* oklch(0.985 0 0) */
+  --brand: var(--lumi-theme-brand, #2d5bff);
+  --brand-foreground: white;
+  --secondary: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 6.8%, white); /* oklch(0.97 0 0) */
+  --secondary-foreground: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 36.9%, black); /* oklch(0.205 0 0) */
+  --muted: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 6.8%, white); /* oklch(0.97 0 0) */
+  --muted-foreground: var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)); /* oklch(0.552 0.016 285.938) */
+  --accent: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 6.8%, white); /* oklch(0.97 0 0) */
+  --accent-foreground: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 36.9%, black); /* oklch(0.205 0 0) */
+  --destructive: var(--lumi-theme-danger, oklch(0.577 0.245 27.325));
+  /* The adapter publishes the three remaining status colours the same way it
+     publishes `--destructive`, so the seed has exactly one literal in the repo.
+     The shared base and the Admin package read these back rather than keeping
+     fallbacks of their own — four separate literals is how the pipeline bar
+     ended up a different amber from the badge next to it. */
+  --success: var(--lumi-theme-success, #16814b);
+  --warning: var(--lumi-theme-warning, #b66a00);
+  /* Informational status is the brand, as in the design: an Agent hint, an
+     enterprise tier and a primary action share one blue. */
+  --info: var(--lumi-theme-info, var(--brand));
+  --destructive-foreground: white;
+  --border: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 17.6%, white); /* oklch(0.922 0 0) */
+  /* Control edges sit one step darker than layout rules. */
+  --input: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 25%, white);
+  /* A focused control's edge is the info colour (the brand blue by default;
+     primary stays black and white), softened so a 2px edge reads as a line
+     rather than a frame. It sits over --lumi-focus-bg. */
+  --ring: color-mix(in oklab, var(--info) 85%, transparent);
+  --chart-1: var(--brand);
+  --chart-2: var(--success);
+  --chart-3: var(--warning);
+  /* Charts need a fourth hue distinct from the brand series. */
+  --chart-4: var(--lumi-theme-chart-4, #0e7490);
+  --chart-5: var(--destructive);
+  --sidebar: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 5.6%, white);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  /* One clear step under the sidebar: the resting row and the current one must
+     not be mistaken for each other. */
+  --sidebar-accent: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 12.5%, white);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+  --radius: var(--lumi-theme-radius, 0.4375rem);
+  --lumi-ui-tone-neutral: var(--muted-foreground);
+  --lumi-ui-tone-primary: var(--primary);
+  --lumi-ui-tone-success: var(--chart-2);
+  /* The raw warning hue reads below 4.5:1 as text on light and tinted surfaces; text uses a deeper step of it. */
+  --lumi-ui-tone-warning: color-mix(in oklab, var(--chart-3) 82%, black);
+  --lumi-ui-tone-danger: var(--destructive);
+  --lumi-ui-tone-info: var(--info);
+  --lumi-ui-tone-brand: var(--brand);
+  --lumi-ui-tone-brand-foreground: var(--brand-foreground);
+  --lumi-ui-tone-neutral-foreground: white;
+  --lumi-ui-tone-primary-foreground: var(--primary-foreground);
+  --lumi-ui-tone-success-foreground: white;
+  /* Amber is the one tone light enough that white fails on it: 4.16:1 against
+     the seed, where black clears at 5.05:1. */
+  --lumi-ui-tone-warning-foreground: white;
+  --lumi-ui-tone-danger-foreground: var(--destructive-foreground);
+  --lumi-ui-tone-info-foreground: white;
+  /* Where the two soft steps sit. Mixing a tone toward black in oklab scales
+     chroma along with lightness, so the darker the label the greyer it got —
+     that is what turned the amber into mud. These pin their own lightness and
+     take only the hue from the tone, the way a 12-step scale does. Chroma is
+     set per tone, since a neutral has none to keep. Only the numbers are
+     inherited; the `oklch(from …)` happens where the tone is known, because a
+     property reading `--lumi-ui-current-tone` here would resolve against the
+     root rather than the element. */
+  --lumi-ui-tone-surface-l: 0.966;
+  --lumi-ui-tone-text-l: 0.53;
+  /* The brand is theme-supplied, so its label has to clear 4.5:1 at any hue, not just the seed's. */
+  --lumi-ui-tone-brand-text-l: 0.50;
+  --shadow-overlay: 0 16px 48px rgb(0 0 0 / 0.18);
+}
+
+/*
+ * Dark keeps shadcn's own order: `muted` / `accent` / `secondary` sit ABOVE
+ * `card`, so a card reads as raised against the page and a hover row reads as
+ * raised against the card. `border` and `input` are translucent white, so they
+ * track whatever surface is behind them instead of being one flat grey line.
+ */
+[data-theme="dark"] {
+  --background: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 26.1%, black); /* oklch(0.145 0 0) */
+  /* Text stops short of white: a near-white on near-black haloes on dark screens. */
+  --foreground: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 15.6%, white); /* oklch(0.93 0 0) */
+  --card: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 36.9%, black); /* oklch(0.205 0 0) */
+  --card-foreground: var(--foreground);
+  --popover: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 36.9%, black); /* oklch(0.205 0 0) */
+  --lumi-glass: color-mix(in oklab, var(--popover) 68%, transparent);
+  --lumi-glass-panel: color-mix(in oklab, var(--popover) 86%, transparent);
+  --lumi-glass-border: color-mix(in oklab, var(--foreground) 12%, transparent);
+  --lumi-glass-tint: color-mix(in oklab, var(--foreground) 8%, transparent);
+  --popover-foreground: var(--foreground);
+  /*
+   * A primary seed is lifted far enough that its text clears AA on card, but
+   * the lift must not touch the unseeded default. Referencing an unset custom
+   * property with no fallback makes the declaration invalid at computed-value
+   * time, so `var()` falls through to the stock neutral.
+   */
+  --lumi-ui-primary-seeded: color-mix(in oklab, var(--lumi-theme-primary) 74%, white);
+  --primary: var(--lumi-ui-primary-seeded, color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 29%, white)); /* oklch(0.87 0 0) */
+  /* A seeded primary picks light or dark text by its own lightness, so any seed keeps AA text. */
+  --lumi-ui-primary-foreground-seeded: oklch(from var(--lumi-ui-primary-seeded) clamp(0.205, (0.62 - l) * 1000, 0.985) 0 0);
+  --primary-foreground: var(--lumi-ui-primary-foreground-seeded, color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 36.9%, black)); /* oklch(0.205 0 0) */
+  --secondary: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 48.4%, black); /* oklch(0.269 0 0) */
+  --secondary-foreground: var(--foreground);
+  --muted: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 48.4%, black); /* oklch(0.269 0 0) */
+  --muted-foreground: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 65.8%, white); /* oklch(0.708 0 0) */
+  --accent: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 48.4%, black); /* oklch(0.269 0 0) */
+  --accent-foreground: var(--foreground);
+  --lumi-ui-destructive-seeded: color-mix(in oklab, var(--lumi-theme-danger) 78%, white);
+  --destructive: var(--lumi-ui-destructive-seeded, oklch(0.704 0.191 22.216));
+  --destructive-foreground: black;
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 12%);
+  --brand: color-mix(in oklab, var(--lumi-theme-brand, #2d5bff) 74%, white);
+  /* Status seeds are re-lit for a dark ground, as the design draft does:
+     the default seeds land on #4ade80 and #fbbf24. */
+  --success: oklch(from var(--lumi-theme-success, #16814b) 0.8 calc(c * 1.4) calc(h - 4));
+  --warning: oklch(from var(--lumi-theme-warning, #b66a00) 0.84 calc(c + 0.02) calc(h + 18));
+  --brand-foreground: color-mix(in oklab, var(--lumi-theme-neutral, oklch(0.552 0.016 285.938)) 26.1%, black);
+  --ring: color-mix(in oklab, var(--info) 90%, transparent);
+  --sidebar: var(--card);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+  --lumi-ui-tone-neutral: var(--muted-foreground);
+  --lumi-ui-tone-primary: var(--primary);
+  --lumi-ui-tone-success: var(--success);
+  --lumi-ui-tone-warning: var(--warning);
+  --lumi-ui-tone-danger: var(--destructive);
+  --lumi-ui-tone-info: var(--info);
+  --lumi-ui-tone-brand: var(--brand);
+  /* Solid fills step back down to seed depth on dark (see the solid badge
+     rule), so they keep white type; only the amber stays light under dark type. */
+  --lumi-ui-tone-brand-foreground: var(--foreground);
+  --lumi-ui-tone-neutral-foreground: var(--foreground);
+  --lumi-ui-tone-success-foreground: var(--foreground);
+  --lumi-ui-tone-warning-foreground: black;
+  --lumi-ui-tone-danger-foreground: var(--foreground);
+  --lumi-ui-tone-info-foreground: var(--foreground);
+  /* The same two steps inverted: a dark ground barely above the card, and a
+     light label that keeps its chroma. */
+  --lumi-ui-tone-surface-l: 0.29;
+  --lumi-ui-tone-text-l: 0.70;
+  --lumi-ui-tone-brand-text-l: 0.70;
+}
+
+@theme inline {
+  --text-xs: var(--lumi-fs-caption);
+  --text-sm: var(--lumi-fs-body);
+  --text-base: var(--lumi-fs-title);
+  --font-weight-normal: var(--lumi-font-weight-normal);
+  --font-weight-medium: var(--lumi-font-weight-medium);
+  --font-weight-semibold: var(--lumi-font-weight-semibold);
+  --font-weight-bold: var(--lumi-font-weight-bold);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: var(--lumi-radius-sm);
+  --radius-md: var(--lumi-radius-md);
+  --radius-lg: var(--radius);
+  --radius-xl: var(--lumi-radius-xl);
+  --radius-control: var(--lumi-radius-control);
+  --radius-item: var(--lumi-radius-item);
+  --radius-panel: var(--lumi-radius-panel);
+  --radius-overlay: var(--lumi-radius-overlay);
+  --text-control: var(--lumi-fs-control);
+  --text-label: var(--lumi-fs-label);
+  --text-meta: var(--lumi-fs-meta);
+  --spacing-control-xs: var(--lumi-control-xs);
+  --spacing-control-sm: var(--lumi-control-sm);
+  --spacing-control-md: var(--lumi-control-md);
+  --spacing-control-lg: var(--lumi-control-lg);
+  --spacing-control-touch: var(--lumi-control-touch);
+  --spacing-inset-xs: var(--lumi-control-px-xs);
+  --spacing-inset-sm: var(--lumi-control-px-sm);
+  --spacing-inset-md: var(--lumi-control-px-md);
+  --spacing-inset-lg: var(--lumi-control-px-lg);
+  --color-hover: var(--lumi-hover-bg);
+  --color-hover-foreground: var(--lumi-hover-fg);
+  --color-selected: var(--lumi-selected-bg);
+  --color-selected-border: var(--lumi-selected-border);
+  --color-selected-foreground: var(--lumi-selected-fg);
+  --color-selected-range: var(--lumi-selected-range-bg);
+  --color-choice: var(--lumi-choice-bg);
+  --color-choice-foreground: var(--lumi-choice-fg);
+  --color-choice-border: var(--lumi-choice-border);
+  --color-focus: var(--lumi-focus-bg);
+  --color-invalid: var(--lumi-invalid-bg);
+}
+
+/* Concentric corners: each padded container hands its items its own radius
+   minus its inset. */
+[data-slot="popover-content"], [data-slot="select-content"] {
+  --lumi-radius-item: max(var(--lumi-radius-sm), calc(var(--lumi-radius-overlay) - var(--lumi-menu-padding)));
+}
+[data-slot="tabs-list"] { --lumi-radius-item: max(var(--lumi-radius-sm), calc(var(--lumi-radius-control) - 3px)); }
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  :root { font-size: var(--lumi-theme-font-size, 16px); }
+  /* `[data-theme]` also matches the root element, and setting the running font
+     size there would rescale every rem-based utility shadcn ships. The root
+     keeps the rem base; only the running text is stepped down to `text-sm`. */
+  body, [data-theme]:not(:root) { @apply bg-background text-foreground; font-size: var(--lumi-fs-body); }
+  :root:where([data-theme]) { @apply bg-background text-foreground; }
+  [data-slot="dialog-content"], [data-slot="popover-content"] { box-shadow: var(--shadow-overlay); }
+}
+
+@layer components {
+  [data-lumi-control-size="sm"] { height: var(--lumi-control-sm); min-height: var(--lumi-control-sm); }
+  [data-lumi-control-size="md"] { height: var(--lumi-control-md); min-height: var(--lumi-control-md); }
+  [data-lumi-control-size="lg"] { height: var(--lumi-control-lg); min-height: var(--lumi-control-lg); }
+  /* The size token is a single control's height. A textarea grows past it, and
+     the rich text editor is a toolbar stacked on one — both take it as a floor
+     rather than a fixed height, or the editor collapses to a 32px strip. */
+  textarea[data-lumi-control-size="sm"], [data-slot="lumi-rich-text"][data-lumi-control-size="sm"] { height: auto; min-height: var(--lumi-control-sm); }
+  textarea[data-lumi-control-size="md"], [data-slot="lumi-rich-text"][data-lumi-control-size="md"] { height: auto; min-height: var(--lumi-control-md); }
+  textarea[data-lumi-control-size="lg"], [data-slot="lumi-rich-text"][data-lumi-control-size="lg"] { height: auto; min-height: var(--lumi-control-lg); }
+  [data-lumi-shape="circle"], [data-lumi-shape="square"] { width: var(--lumi-control-md); }
+  [data-lumi-shape="circle"][data-lumi-control-size="sm"], [data-lumi-shape="square"][data-lumi-control-size="sm"] { width: var(--lumi-control-sm); }
+  [data-lumi-shape="circle"][data-lumi-control-size="lg"], [data-lumi-shape="square"][data-lumi-control-size="lg"] { width: var(--lumi-control-lg); }
+}
+
+textarea[data-slot="textarea"]:not([data-auto-resize="true"]) { field-sizing: fixed; }
+
+[data-slot="field-label"] { font-size: var(--lumi-fs-label); }
+[data-slot="tabs-trigger"], [data-slot="button"], [data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"] { font-size: var(--lumi-fs-control); }
+[data-lumi-type="caption"] { font-size: var(--lumi-fs-caption); }
+[data-slot="table-cell"] { font-size: var(--lumi-fs-body); }
+[data-slot="table-head"] { font-size: var(--lumi-fs-meta); }
+[data-slot="card-title"], [data-slot="dialog-title"], [data-slot="drawer-title"], [data-slot="alert-title"] { font-size: var(--lumi-fs-title); }
+[data-lumi-type="section"] { font-size: var(--lumi-fs-section); }
+[data-lumi-type="page"] { font-size: var(--lumi-fs-page); }
+[data-lumi-type="metric"] { font-size: var(--lumi-fs-metric); }
+
+[data-slot="table-head"], [data-slot="frame-description"],
+[data-slot="table-footer"] .text-muted-foreground,
+[data-slot="card"][data-appearance="filled"] [data-slot="card-description"] {
+  color: color-mix(in oklab, var(--muted-foreground) 82%, var(--foreground));
+}
+
+/*
+ * `outline` gets no rule at all: it is already the shared field surface every
+ * control takes from `internal/field-surface.ts` (`border-input`,
+ * `bg-transparent`, `dark:bg-input/30`). An override here
+ * would be unlayered, so it would beat the `focus-visible:` and `aria-invalid:`
+ * utilities and silently disable both states.
+ *
+ * `filled` does swap the surface, so it stays unlayered to beat the component's
+ * own background utility — but it hands the border back to those same states.
+ */
+[data-slot="input"][data-appearance="filled"],
+[data-slot="textarea"][data-appearance="filled"],
+[data-slot="lumi-mention"][data-appearance="filled"],
+[data-slot="select-trigger"][data-appearance="filled"],
+[data-slot="popover-trigger"][data-appearance="filled"],
+[data-slot="button"][data-appearance="filled"],
+[data-slot="tags-input-control"][data-appearance="filled"],
+[data-slot="lumi-rich-text"][data-appearance="filled"] {
+  background: var(--muted);
+}
+
+[data-slot="input"][data-appearance="filled"]:not(:focus-visible, [aria-invalid="true"]),
+[data-slot="textarea"][data-appearance="filled"]:not(:focus-visible, [aria-invalid="true"]),
+[data-slot="lumi-mention"][data-appearance="filled"]:not(:focus-visible, [aria-invalid="true"]),
+[data-slot="select-trigger"][data-appearance="filled"]:not(:focus-visible, [aria-invalid="true"], [aria-expanded="true"]),
+[data-slot="popover-trigger"][data-appearance="filled"]:not(:focus-visible, [aria-invalid="true"], [aria-expanded="true"]),
+[data-slot="button"][data-appearance="filled"]:not(:focus-visible, [aria-invalid="true"], [aria-expanded="true"]),
+[data-slot="tags-input-control"][data-appearance="filled"]:not(:focus-within),
+[data-slot="lumi-rich-text"][data-appearance="filled"]:not(:focus-within, :has([aria-invalid="true"])) {
+  border-color: transparent;
+}
+
+/*
+ * Invalid fields take the focus geometry (1px edge, 0.5px inset ring, tinted
+ * surface) in the danger colour, focused, open or not. Unlayered and after the
+ * `filled` surface so it beats both it and the `focus-visible:` utilities.
+ */
+:is(
+  [data-slot="input"],
+  [data-slot="textarea"],
+  [data-slot="lumi-mention"],
+  [data-slot="select-trigger"],
+  [data-slot="popover-trigger"],
+  [data-slot="button"],
+  [data-slot="choice-card"],
+  [data-slot="upload-dropzone"],
+  [data-slot="upload-image-empty"]
+)[aria-invalid="true"],
+[data-slot="tags-input"][data-invalid] [data-slot="tags-input-control"],
+[data-slot="lumi-rich-text"]:has([aria-invalid="true"]),
+[data-slot="signature-frame"][data-invalid],
+[data-slot="image-grid"][data-invalid] [data-slot="image-grid-add"],
+:is([data-slot="repeater-cell"], [data-slot="repeater-field"])[data-invalid] :is(input, textarea, [data-slot="select-trigger"], [data-slot="tags-input-control"], [data-slot="lumi-rich-text"]) {
+  border-color: var(--destructive);
+  background: var(--lumi-invalid-bg);
+  box-shadow: inset 0 0 0 0.5px var(--destructive);
+}
+
+/* A tinted surface the size of an editor reads as an alarm; only the edge turns. */
+[data-slot="code-editor-frame"][data-invalid] {
+  border-color: var(--destructive);
+  box-shadow: inset 0 0 0 0.5px var(--destructive);
+}
+
+/* The rich text frame shows the invalid state once; its field must not draw a second one inside it. */
+[data-slot="lumi-rich-text"] [data-slot="textarea"][aria-invalid="true"],
+:is([data-slot="repeater-cell"], [data-slot="repeater-field"])[data-invalid] [data-slot="lumi-rich-text"] textarea {
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Small marks keep their own fill; only the edge turns, and focus keeps their halo in the danger colour. */
+:is([data-slot="checkbox"], [data-slot="radio-group-item"], [data-slot="switch"])[aria-invalid="true"]:not([data-state="checked"]) {
+  border-color: var(--destructive);
+  box-shadow: inset 0 0 0 0.5px var(--destructive);
+}
+:is([data-slot="checkbox"], [data-slot="radio-group-item"], [data-slot="switch"])[aria-invalid="true"]:focus-visible {
+  box-shadow: inset 0 0 0 0.5px var(--destructive), 0 0 0 3px color-mix(in oklab, var(--destructive) 30%, transparent);
+}
+
+[data-slot="field-set"][data-appearance="filled"] {
+  border-radius: var(--radius);
+  background: var(--muted);
+  padding: 0.5rem;
+}
+
+[data-slot="radio-group"][data-appearance="filled"] {
+  border-radius: var(--radius);
+  background: var(--muted);
+  padding: 0.5rem;
+}
+
+/* A partial table selection is a filled choice with its own mixed marker. */
+[data-slot="checkbox"][data-state="indeterminate"] {
+  background: var(--brand);
+  color: var(--brand-foreground);
+}
+
+[data-slot="checkbox"][data-state="indeterminate"]:not(:focus-visible, [aria-invalid="true"]) {
+  border-color: var(--brand);
+}
+
+[data-slot="checkbox"][data-state="indeterminate"] [data-slot="checkbox-indicator"] > svg {
+  display: none;
+}
+
+[data-slot="checkbox"][data-state="indeterminate"] [data-slot="checkbox-indicator"]::after {
+  content: "";
+  width: 0.5rem;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+/* Card's `outline` is likewise the stock look (`bg-card` + `ring-1`). */
+[data-slot="card"][data-appearance="filled"] {
+  background: var(--muted);
+  box-shadow: none;
+}
+
+[data-slot="badge"][data-tone="neutral"], [data-slot="alert"][data-tone="neutral"], [data-slot="button"][data-tone="neutral"] { --lumi-ui-current-tone: var(--lumi-ui-tone-neutral); --lumi-ui-current-tone-foreground: var(--lumi-ui-tone-neutral-foreground); --lumi-ui-tone-surface-c: 0; --lumi-ui-tone-text-c: 0; }
+[data-slot="badge"][data-tone="primary"], [data-slot="alert"][data-tone="primary"], [data-slot="button"][data-tone="primary"] { --lumi-ui-current-tone: var(--lumi-ui-tone-primary); --lumi-ui-current-tone-foreground: var(--lumi-ui-tone-primary-foreground); --lumi-ui-tone-surface-c: 0; --lumi-ui-tone-text-c: 0; }
+[data-slot="badge"][data-tone="success"], [data-slot="alert"][data-tone="success"], [data-slot="button"][data-tone="success"] { --lumi-ui-current-tone: var(--lumi-ui-tone-success); --lumi-ui-current-tone-foreground: var(--lumi-ui-tone-success-foreground); --lumi-ui-tone-surface-c: 0.030; --lumi-ui-tone-text-c: 0.126; }
+[data-slot="badge"][data-tone="warning"], [data-slot="alert"][data-tone="warning"], [data-slot="button"][data-tone="warning"] { --lumi-ui-current-tone: var(--lumi-ui-tone-warning); --lumi-ui-current-tone-foreground: var(--lumi-ui-tone-warning-foreground); --lumi-ui-tone-surface-c: 0.026; --lumi-ui-tone-text-c: 0.115; }
+[data-slot="badge"][data-tone="danger"], [data-slot="alert"][data-tone="danger"], [data-slot="button"][data-tone="danger"] { --lumi-ui-current-tone: var(--lumi-ui-tone-danger); --lumi-ui-current-tone-foreground: var(--lumi-ui-tone-danger-foreground); --lumi-ui-tone-surface-c: 0.020; --lumi-ui-tone-text-c: 0.160; }
+[data-slot="badge"][data-tone="info"], [data-slot="alert"][data-tone="info"], [data-slot="button"][data-tone="info"] { --lumi-ui-current-tone: var(--lumi-ui-tone-info); --lumi-ui-current-tone-foreground: var(--lumi-ui-tone-info-foreground); --lumi-ui-tone-surface-c: 0.022; --lumi-ui-tone-text-c: 0.115; }
+[data-slot="badge"][data-tone="brand"] { --lumi-ui-current-tone: var(--lumi-ui-tone-brand); --lumi-ui-current-tone-foreground: var(--lumi-ui-tone-brand-foreground); --lumi-ui-tone-surface-c: 0.030; --lumi-ui-tone-text-c: 0.160; --lumi-ui-tone-text-l: var(--lumi-ui-tone-brand-text-l); }
+
+/* Badge and Tag share one set of appearance rules; Tag declares its tone
+   variables in styles/feedback-display.css. Every appearance keeps the same
+   box, so only colour tells soft, solid and outline apart. */
+:is([data-slot="badge"], [data-slot="tag"])[data-appearance="solid"] {
+  border-color: transparent;
+  background: var(--lumi-ui-current-tone);
+  color: var(--lumi-ui-current-tone-foreground);
+}
+
+/* Dark lifts the tones so they read as text; a fill made of the lifted tone
+   needs black type and glares. A solid steps back down to seed depth with
+   white type instead, at the per-tone label chroma: those values were set to
+   stay inside sRGB at this lightness, where the lifted chroma would clip
+   green to neon. At 0.52 white clears 4.5:1 at any hue a theme seeds. */
+[data-theme="dark"] :is([data-slot="badge"], [data-slot="tag"])[data-appearance="solid"] {
+  background: oklch(from var(--lumi-ui-current-tone) 0.52 min(c, var(--lumi-ui-tone-text-c)) h);
+}
+
+/* Neutral is a strong grey in both themes: dark enough for white type on
+   light, and raised clear of the card on dark rather than a pale slab. */
+:is([data-slot="badge"], [data-slot="tag"])[data-appearance="solid"][data-tone="neutral"] {
+  background: oklch(from var(--lumi-ui-current-tone) 0.42 c h);
+}
+
+/* Primary keeps its inverse pair on dark, like the main button and the
+   choice fill; easing it toward the card only greys it into the old pale slab. */
+[data-theme="dark"] :is([data-slot="badge"], [data-slot="tag"])[data-appearance="solid"][data-tone="primary"] {
+  background: var(--lumi-ui-current-tone);
+}
+
+/* The light warning tone is deepened for text, which turns a solid fill brown.
+   A solid amber reads as amber only when it is light, with a dark label. */
+:is([data-slot="badge"], [data-slot="tag"])[data-appearance="solid"][data-tone="warning"] {
+  background: oklch(from var(--warning) 0.83 0.15 calc(h + 12));
+  color: oklch(from var(--warning) 0.32 0.07 h);
+}
+
+[data-theme="dark"] :is([data-slot="badge"], [data-slot="tag"])[data-appearance="solid"][data-tone="warning"] {
+  background: oklch(from var(--lumi-ui-current-tone) 0.78 0.13 h);
+  color: oklch(from var(--lumi-ui-current-tone) 0.28 0.06 h);
+}
+
+/* A soft badge reads as its own tone, not as body text on a tint. Ground and
+   label are two steps of the tone's own hue — the tone itself does not clear AA
+   at 12px against its own ground. Every pair here measures 4.6:1 or better. */
+:is([data-slot="badge"], [data-slot="tag"])[data-appearance="soft"] {
+  border-color: transparent;
+  background: oklch(from var(--lumi-ui-current-tone) var(--lumi-ui-tone-surface-l) var(--lumi-ui-tone-surface-c) h);
+  color: oklch(from var(--lumi-ui-current-tone) var(--lumi-ui-tone-text-l) var(--lumi-ui-tone-text-c) h);
+}
+
+/* On dark the tones are already bright, so a soft badge is the tone itself
+   over a faint wash of it — the draft's #2e2412 / #fbbf24 pairing. */
+[data-theme="dark"] :is([data-slot="badge"], [data-slot="tag"])[data-appearance="soft"] {
+  background: color-mix(in oklab, var(--lumi-ui-current-tone) 13%, var(--card));
+  color: var(--lumi-ui-current-tone);
+}
+[data-theme="dark"] :is([data-slot="badge"], [data-slot="tag"])[data-appearance="soft"][data-tone="neutral"] {
+  background: var(--muted);
+}
+
+/* Outline is the soft label without its ground: type, dot and icon in the
+   tone, edged by the tone thinned into the border colour. */
+:is([data-slot="badge"], [data-slot="tag"])[data-appearance="outline"] {
+  border-color: color-mix(in oklab, var(--lumi-ui-current-tone) 40%, var(--border));
+  background: transparent;
+  color: oklch(from var(--lumi-ui-current-tone) var(--lumi-ui-tone-text-l) var(--lumi-ui-tone-text-c) h);
+}
+[data-theme="dark"] :is([data-slot="badge"], [data-slot="tag"])[data-appearance="outline"] {
+  color: var(--lumi-ui-current-tone);
+}
+
+/* Neutral labels sit back in grey; primary is the high-contrast neutral and
+   keeps full-strength type, or the two would be the same badge. */
+:is([data-slot="badge"], [data-slot="tag"])[data-tone="primary"]:is([data-appearance="soft"], [data-appearance="outline"]) {
+  color: var(--lumi-ui-current-tone);
+}
+
+/* Alerts follow the soft application style: a faint tint of the tone, the
+   icon in the tone, and title and message in tone-shaded type. Shades mix the
+   tone with the foreground, so they darken on light themes and lighten on
+   dark ones with no per-theme rule, and the message stays above AA. On light
+   the ground pins its lightness like a soft badge: an 8% mix of the deepened
+   amber lands on beige rather than amber. */
+[data-slot="alert"][data-tone] {
+  border-color: oklch(from var(--lumi-ui-current-tone) 0.9 calc(var(--lumi-ui-tone-surface-c) * 2.4) h);
+  background: oklch(from var(--lumi-ui-current-tone) 0.976 var(--lumi-ui-tone-surface-c) h);
+  color: color-mix(in oklab, var(--lumi-ui-current-tone) 45%, var(--foreground));
+}
+
+[data-theme="dark"] [data-slot="alert"][data-tone] {
+  border-color: color-mix(in oklab, var(--lumi-ui-current-tone) 16%, transparent);
+  background: color-mix(in oklab, var(--lumi-ui-current-tone) 8%, var(--card));
+}
+
+/* The icon and title share the tone at the text lightness the badges use,
+   so the title keeps AA contrast on the tinted ground in both themes. */
+[data-slot="alert"][data-tone] > svg,
+[data-slot="alert"][data-tone] [data-slot="alert-title"] {
+  color: oklch(from var(--lumi-ui-current-tone) var(--lumi-ui-tone-text-l) c h);
+}
+
+[data-slot="alert"][data-tone] [data-slot="alert-title"] {
+  font-weight: var(--lumi-font-weight-semibold);
+}
+
+[data-slot="alert"][data-tone] [data-slot="alert-description"] {
+  color: color-mix(in oklab, var(--lumi-ui-current-tone) 30%, var(--foreground));
+}
+
+[data-slot="alert"][data-tone="neutral"] {
+  border-color: var(--border);
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+[data-slot="alert"][data-tone="neutral"] > svg {
+  color: var(--muted-foreground);
+}
+
+/* A step darker than muted text, which falls short of AA on the muted fill. */
+[data-slot="alert"][data-tone="neutral"] [data-slot="alert-description"] {
+  color: color-mix(in oklab, var(--muted-foreground) 80%, var(--foreground));
+}
+
+[data-slot="alert"][data-tone="neutral"] [data-slot="alert-title"] {
+  color: var(--foreground);
+}
+
+/* Primary is the solid, contrast banner: a tint of a near-black (or near-white)
+   tone is only a dirtier neutral. */
+[data-slot="alert"][data-tone="primary"],
+[data-theme="dark"] [data-slot="alert"][data-tone="primary"] {
+  border-color: transparent;
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+[data-slot="alert"][data-tone="primary"] > svg,
+[data-slot="alert"][data-tone="primary"] [data-slot="alert-title"] {
+  color: var(--primary-foreground);
+}
+
+[data-slot="alert"][data-tone="primary"] [data-slot="alert-description"] {
+  color: color-mix(in oklab, var(--primary-foreground) 78%, var(--primary));
+}
+
+[data-slot="alert"][data-tone] [data-slot="alert-action"] [data-slot="button"] {
+  color: inherit;
+}
+
+[data-slot="alert"][data-tone] [data-slot="alert-action"] [data-slot="button"]:hover {
+  background: color-mix(in oklab, var(--lumi-ui-current-tone) 14%, transparent);
+}
+
+/* The shared segment meter: progress, chart bars and proportions all light
+   whole rounded segments, so every amount on a page reads in one pitch. */
+[data-slot="segment-bar"] {
+  --lumi-segment-fill: var(--foreground);
+  /* The unlit part is a pale step of the same tone, not a grey of its own. */
+  --lumi-segment-track: color-mix(in oklab, var(--lumi-segment-fill) 14%, transparent);
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  gap: var(--lumi-segment-gap, 3px);
+}
+
+[data-slot="segment-bar"][data-orientation="horizontal"] {
+  width: 100%;
+  height: var(--lumi-segment-thickness, 14px);
+}
+
+[data-slot="segment-bar"][data-orientation="vertical"] {
+  width: var(--lumi-segment-thickness, 100%);
+  height: 100%;
+  flex-direction: column-reverse;
+}
+
+[data-slot="segment-bar"] > i {
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 0;
+  border-radius: var(--lumi-segment-radius, 999px);
+  background: var(--lumi-segment-track);
+  transition: background-color 0.15s ease;
+}
+
+[data-slot="segment-bar"] > i[data-filled] { background: var(--lumi-segment-fill); }
+[data-slot="segment-bar"][data-tone="brand"], [data-slot="segment-bar"][data-tone="primary"] { --lumi-segment-fill: var(--brand); }
+[data-slot="segment-bar"][data-tone="success"] { --lumi-segment-fill: var(--lumi-success); }
+[data-slot="segment-bar"][data-tone="warning"] { --lumi-segment-fill: var(--lumi-warning); }
+[data-slot="segment-bar"][data-tone="danger"] { --lumi-segment-fill: var(--lumi-danger); }
+[data-slot="segment-bar"][data-tone="info"] { --lumi-segment-fill: var(--lumi-info); }
+[data-slot="segment-bar"][data-tone="neutral"] { --lumi-segment-fill: color-mix(in oklab, var(--muted-foreground) 55%, transparent); }
+
+[data-slot="popover-content"] [data-slot="button"][data-tone] {
+  color: var(--lumi-ui-current-tone);
+}
+
+[data-slot="popover-content"] [data-slot="button"][data-tone]:hover {
+  background: color-mix(in oklab, var(--lumi-ui-current-tone) 10%, transparent);
+}
+
+/* The header carries no fill — a fill would merge with a selected first row.
+   It is framed by one line above and one below, running edge to edge; edge
+   cells keep the same 1rem text inset as body rows, so columns stay aligned. */
+[data-slot="table-head"]:first-child,
+[data-slot="table-cell"]:first-child {
+  padding-inline-start: 1rem;
+}
+
+[data-slot="table-head"]:last-child,
+[data-slot="table-cell"]:last-child {
+  padding-inline-end: 1rem;
+}
+
+[data-slot="table-row"][data-clickable="true"] {
+  cursor: pointer;
+}
+
+[data-slot="table-row"][data-clickable="true"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+/* A highlighted row is flagged for attention, so it takes a wash of warning
+   rather than the selection blue it would otherwise be mistaken for. */
+[data-slot="table-row"][data-highlighted]:not([data-state="selected"]) {
+  background: oklch(from var(--warning) 0.985 0.018 calc(h + 12));
+}
+
+/* A control the agent points at (`data-agent-flash`, set by Lumi for a
+   moment): a ring that pulses three times in the accent. */
+[data-agent-flash] {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  animation: lumi-agent-flash 800ms ease-in-out 3;
+}
+@keyframes lumi-agent-flash {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--brand) 0%, transparent); }
+  50% { box-shadow: 0 0 0 6px color-mix(in oklab, var(--brand) 30%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-agent-flash] { animation: none; }
+}
+
+/* Rows pointed at for a moment (LUMI_HIGHLIGHT_EVENT), e.g. by an agent:
+   an accent bar and wash that fade back once the flag clears. */
+[data-slot="table-row"] { transition: background-color 600ms ease, box-shadow 600ms ease; }
+[data-slot="table-row"][data-agent-highlight] {
+  background: color-mix(in oklab, var(--brand) 9%, transparent);
+  box-shadow: inset 3px 0 0 var(--brand);
+}
+
+[data-slot="table-row"][data-highlighted]:not([data-state="selected"]):hover {
+  background: oklch(from var(--warning) 0.97 0.03 calc(h + 12));
+}
+
+[data-theme="dark"] [data-slot="table-row"][data-highlighted]:not([data-state="selected"]) {
+  background: color-mix(in oklab, var(--warning) 6%, var(--card));
+}
+
+[data-theme="dark"] [data-slot="table-row"][data-highlighted]:not([data-state="selected"]):hover {
+  background: color-mix(in oklab, var(--warning) 10%, var(--card));
+}
+
+/* Upstream destructive is a 10% tint with danger-colored type — 4:1 on the
+   default seed, below AA. The token pair is already a filled surface. */
+[data-slot="button"][data-variant="destructive"] {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+[data-slot="button"][data-variant="destructive"]:hover {
+  background: color-mix(in oklab, var(--destructive) 88%, var(--foreground));
+}
+
+/* Dark lifts brand and danger so they read as text; as a button fill the lifted
+   tone wants black type and looks muddy. Colored buttons step back down to seed
+   depth with the foreground as type (never pure white), like the solid badges. */
+[data-theme="dark"] [data-slot="button"]:is([data-variant="brand"], [data-variant="destructive"]) {
+  --lumi-button-fill: oklch(from var(--brand) 0.52 min(c, 0.2) h);
+  background: var(--lumi-button-fill);
+  color: var(--foreground);
+}
+
+[data-theme="dark"] [data-slot="button"][data-variant="destructive"] {
+  --lumi-button-fill: oklch(from var(--destructive) 0.52 min(c, 0.19) h);
+}
+
+[data-theme="dark"] [data-slot="button"]:is([data-variant="brand"], [data-variant="destructive"]):hover {
+  background: oklch(from var(--lumi-button-fill) calc(l + 0.05) c h);
+}
+
+/* Frame: one surface in rows, not a well holding a panel. Header, panel and
+   footer share the frame's edge and its 16px inset, divided by hairlines, so
+   every line of text starts at the same x and no box sits inside another.
+   `filled` (data-variant="inverse") is the quieter region: the frame takes the
+   muted fill and the panel the card's, so the content still reads as the
+   frame's page. An aside sits beside the panel behind a vertical hairline. */
+[data-slot="frame"] {
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--card);
+}
+
+[data-slot="frame"][data-variant="inverse"] {
+  border-color: var(--border);
+  background-color: var(--muted);
+}
+
+[data-slot="frame"] [data-slot="frame-panel"] {
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+[data-slot="frame"][data-variant="inverse"] [data-slot="frame-panel"] {
+  background-color: var(--card);
+}
+
+[data-slot="frame"] > * + *,
+[data-slot="frame"] > div > [data-slot="frame-panel"] + [data-slot="frame-panel"] {
+  border-top: 1px solid var(--border);
+}
+
+[data-slot="frame"] > div > [data-slot="frame-panel"] + [data-slot="frame-panel"] {
+  border-top: 0;
+  border-inline-start: 1px solid var(--border);
+}
+
+[data-slot="frame"] > div:has(> [data-slot="frame-aside"]) {
+  gap: 0;
+}
+
+[data-slot="frame"] > [data-slot="frame-footer"] {
+  background-color: color-mix(in oklab, var(--foreground) 2.5%, transparent);
+}
+
+/* After the panel reset above, so the row divider survives on the panel too. */
+[data-slot="frame"] > * + :is([data-slot="frame-panel"], div:has(> [data-slot="frame-panel"])) {
+  border-top: 1px solid var(--border);
+}
+
+/* Frame owns its own surfaces in `internal/reui/frame.tsx`, matching upstream:
+   a `bg-muted/50` outer well and a `bg-background` panel. Nothing is projected
+   onto it from here. A panel that carries a data table or a full-bleed toolbar
+   lets those rows reach the panel edge; the rows bring their own padding. Any
+   layer can opt in with the neutral `data-lumi-fill` attribute. */
+[data-slot="frame-panel"]:has(> [data-lumi-fill]) {
+  --frame-panel-p: 0;
+}
+
+/* The nav inside brings its own inset. */
+[data-slot="frame-aside"] {
+  --frame-panel-p: 0;
+}
+
+[data-slot="timeline-title"] { font-size: var(--lumi-fs-title); }
+[data-slot="timeline-content"] { margin-top: 0.125rem; font-size: var(--lumi-fs-label); }
+
+[data-slot="filters"][aria-disabled="true"] { opacity: 0.7; }
+
+/* A filter panel follows its host width, including inside a narrow card. */
+[data-slot="filters"] {
+  container: lumi-filters / inline-size;
+  min-width: 0;
+}
+
+[data-slot="filters-toolbar"],
+[data-slot="filters-advanced"],
+[data-slot="filters-field"],
+[data-slot="filters-range"] {
+  min-width: 0;
+  max-width: 100%;
+}
+
+[data-slot="filters-actions"] {
+  flex-wrap: wrap;
+  min-width: 0;
+  max-width: 100%;
+}
+
+[data-slot="filters-toolbar"] > [data-slot="filters-actions"] {
+  justify-content: flex-end;
+}
+
+/* In the advanced panel a control takes the width its value needs, between
+   the date range's measure and a readable minimum, not the whole row; narrow
+   panels (below) stack the row and let it fill. */
+@container lumi-filters (width >= 560px) {
+  [data-slot="filters-field"][data-layout="row"] > div > :not([data-slot="filters-field-presets"], [data-slot="filters-range"]) {
+    width: auto;
+    min-width: 15rem;
+    max-width: min(100%, 25rem);
+  }
+}
+
+@container lumi-filters (width < 560px) {
+  [data-slot="filters-field"][data-layout="toolbar"] {
+    flex-basis: 100%;
+  }
+
+  [data-slot="filters-field"][data-layout="row"] {
+    flex-direction: column;
+    gap: var(--lumi-space-2);
+    padding-block: var(--lumi-space-3);
+  }
+
+  [data-slot="filters-field"][data-layout="row"] > :is(label, span) {
+    width: auto;
+    padding-block-start: 0;
+  }
+
+  [data-slot="filters-field"][data-layout="row"] > div {
+    width: 100%;
+  }
+
+  [data-slot="filters-range"] > [data-slot="lumi-input"] {
+    min-width: 0;
+  }
+}
+
+@container lumi-filters (width < 320px) {
+  [data-slot="filters-range"][data-kind="date"] {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--lumi-space-2);
+  }
+
+  [data-slot="filters-range"][data-kind="date"] input {
+    width: 100%;
+  }
+
+  [data-slot="filters-range"][data-kind="date"] > [aria-hidden] {
+    display: none;
+  }
+}
+
+[data-slot="stepper"][data-orientation="vertical"] [data-slot="stepper-nav"] { width: fit-content; }
+[data-slot="stepper"][data-orientation="vertical"] [data-slot="stepper-item"] { flex-direction: column; padding-bottom: 1rem; }
+/* A 20px marker aligned with the step's title line (not the middle of title
+   and description), so the connector runs through the marker's centre in
+   either orientation. */
+[data-slot="stepper-indicator"] { width: 1.25rem; height: 1.25rem; }
+[data-slot="stepper-indicator"] svg { width: 0.625rem; height: 0.625rem; }
+[data-slot="stepper-trigger"] { align-items: flex-start; }
+[data-slot="stepper"][data-orientation="horizontal"] [data-slot="stepper-separator"] { margin-top: calc(0.625rem - 0.5px); }
+[data-slot="stepper"][data-orientation="vertical"] [data-slot="stepper-separator"] { position: absolute; top: calc(1.25rem + 0.375rem); bottom: 0.375rem; left: calc(0.625rem - 0.5px); width: 1px; min-width: 0; height: auto; margin: 0; }
+[data-slot="stepper"][data-orientation="vertical"] [data-slot="stepper-item"]:last-child { padding-bottom: 0; }
+/* Used as a progress header the stepper has no step content; empty panels take no room. */
+[data-slot="stepper-panel"]:empty { display: none; }
+/* A horizontal stepper short of room drops the descriptions first, then the
+   names of all but the selected step; every trigger keeps its full accessible name. */
+[data-slot="stepper"][data-orientation="horizontal"] { container: lumi-stepper / inline-size; }
+@container lumi-stepper (width < 28rem) {
+  [data-slot="stepper-label"] + span:not([data-slot]) { display: none; }
+}
+@container lumi-stepper (width < 22rem) {
+  [data-slot="stepper-item"]:not(:has([aria-selected="true"])) [data-slot="stepper-label"] { display: none; }
+  [data-slot="stepper-item"]:has([aria-selected="true"]) { flex-grow: 2; }
+}
+/* Steps: the current one is solid, done ones are a brand tint with a check,
+   later ones are an outlined number; a finished stretch of the rail is brand. */
+[data-slot="stepper-indicator"] { border-color: var(--input); background: var(--card); color: var(--muted-foreground); font-size: var(--lumi-fs-caption); font-weight: var(--lumi-font-weight-medium); font-variant-numeric: tabular-nums; }
+/* One hue for progress: done is filled, current (and loading) is the ring of
+   it, upcoming is grey. */
+[data-slot="stepper-item"][data-state="current"] [data-slot="stepper-indicator"] { border-color: var(--brand); background: var(--card); color: var(--brand); box-shadow: 0 0 0 3px color-mix(in oklab, var(--brand) 16%, transparent); }
+[data-slot="stepper-item"][data-state="complete"] [data-slot="stepper-indicator"] { border-color: var(--brand); background: var(--brand); color: var(--brand-foreground); }
+[data-slot="stepper-item"][data-state="loading"] [data-slot="stepper-indicator"] { border-color: var(--brand); color: var(--brand); }
+[data-slot="stepper-item"][data-state="error"] [data-slot="stepper-indicator"] { border-color: transparent; background: color-mix(in oklab, var(--destructive) 10%, transparent); color: var(--lumi-text-danger); }
+[data-slot="stepper-item"][data-state="complete"] [data-slot="stepper-separator"] { background: var(--brand); }
+[data-slot="stepper-item"][data-state="upcoming"] [data-slot="stepper-label"] { color: var(--muted-foreground); }
+
+/* An activity feed, as in the design: a 16px marker gutter, a 10px marker
+   centred on the title's line, 12px between events. One 1px rule runs from
+   each marker's centre to the next, so it threads every marker without a
+   break; the markers sit on top and are filled with the surface. State and
+   tone are the marker's colour; the words stay in the accessible name. */
+[data-slot="timeline"] {
+  --lumi-ui-timeline-line: 1.25rem;
+  --lumi-ui-timeline-dot: 0.625rem;
+  /* The gutter's centre, measured from the item's content edge. */
+  --lumi-ui-timeline-axis: -1.125rem;
+  --lumi-ui-timeline-surface: var(--card);
+}
+[data-slot="timeline-item"] { margin-inline-start: 1.625rem; padding-bottom: 0.75rem; gap: 0.125rem; }
+[data-slot="timeline-item"]:last-child { padding-bottom: 0; }
+[data-slot="timeline-indicator"] { z-index: 1; top: calc((var(--lumi-ui-timeline-line) - var(--lumi-ui-timeline-dot)) / 2); left: var(--lumi-ui-timeline-axis); width: var(--lumi-ui-timeline-dot); height: var(--lumi-ui-timeline-dot); border: 0; font-size: 0; background: color-mix(in oklab, var(--muted-foreground) 55%, var(--lumi-ui-timeline-surface)); }
+[data-slot="timeline-separator"] { top: calc(var(--lumi-ui-timeline-line) / 2); bottom: calc(var(--lumi-ui-timeline-line) / -2); left: var(--lumi-ui-timeline-axis); width: 1px; background: var(--border); }
+/* What happened leads and the time closes its line in a column of its own, so
+   a long title wraps under itself and the time never drops to a second shape.
+   `datePlacement: "below"` stacks the time under the title for narrow columns. */
+[data-slot="timeline-header"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: var(--lumi-space-3);
+  row-gap: 0.125rem;
+}
+[data-slot="timeline"][data-date-placement="below"] [data-slot="timeline-header"] { grid-template-columns: minmax(0, 1fr); }
+[data-slot="timeline-title"] { min-width: 0; line-height: var(--lumi-ui-timeline-line); font-weight: var(--lumi-font-weight-medium); overflow-wrap: anywhere; }
+[data-slot="timeline-date"] { color: var(--muted-foreground); font-size: var(--lumi-fs-caption); font-variant-numeric: tabular-nums; }
+[data-slot="timeline"]:not([data-date-placement="below"]) [data-slot="timeline-date"] { text-align: end; white-space: nowrap; }
+[data-slot="timeline-item"][data-state="complete"] [data-slot="timeline-indicator"] { background: var(--lumi-success); }
+/* The stepper's current marker in small: a brand ring on a halo. The halo is
+   mixed into the surface so the rule does not show through it. */
+[data-slot="timeline-item"][data-state="current"] [data-slot="timeline-indicator"] { background: var(--lumi-ui-timeline-surface); box-shadow: inset 0 0 0 2px var(--brand), 0 0 0 3px color-mix(in oklab, var(--brand) 20%, var(--lumi-ui-timeline-surface)); }
+[data-slot="timeline-item"][data-state="upcoming"] [data-slot="timeline-indicator"] { background: var(--lumi-ui-timeline-surface); box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--muted-foreground) 55%, transparent); }
+[data-slot="timeline-item"][data-state="loading"] [data-slot="timeline-indicator"] { background: var(--lumi-ui-timeline-surface); box-shadow: inset 0 0 0 1.5px var(--brand); animation: pulse 1.5s ease-in-out infinite; }
+[data-slot="timeline-item"][data-state="error"] [data-slot="timeline-indicator"] { background: var(--lumi-danger); }
+/* A finished stretch of the rule takes the success hue, as a stepper's takes the brand. */
+[data-slot="timeline"][data-marker="status"] [data-slot="timeline-item"][data-state="complete"] > [data-slot="timeline-separator"] { background: color-mix(in oklab, var(--lumi-success) 50%, var(--border)); }
+/* Avatars sit on a clear tint of one of the theme's own hues, with text of the
+   same hue, as in the design. The tint is picked from the name; every tint is a
+   colour, so a row of people never reads as a row of grey placeholders. The
+   tint is its own edge: an avatar draws no outline unless a group overlaps it. */
+[data-slot="avatar"][data-tint] { --lumi-avatar-hue: var(--brand); background: color-mix(in oklab, var(--lumi-avatar-hue) 16%, var(--background)); color: color-mix(in oklab, var(--lumi-avatar-hue) 72%, var(--foreground)); }
+[data-slot="avatar"][data-tint="1"] { --lumi-avatar-hue: var(--chart-2); }
+[data-slot="avatar"][data-tint="2"] { --lumi-avatar-hue: var(--chart-3); }
+[data-slot="avatar"][data-tint="3"] { --lumi-avatar-hue: var(--chart-4); }
+[data-slot="avatar"][data-tint="4"] { --lumi-avatar-hue: var(--chart-5); }
+[data-theme="dark"] [data-slot="avatar"][data-tint] { background: color-mix(in oklab, var(--lumi-avatar-hue) 26%, var(--card)); color: color-mix(in oklab, var(--lumi-avatar-hue) 55%, white); }
+/* A group overlaps its avatars by an eighth; a ring of the surface cuts each
+   one out of the one beneath. Any deeper and the ring eats the last letter of
+   wide initials such as "MM". */
+[data-slot="avatar-group"] [data-slot="avatar"] { box-shadow: 0 0 0 2px var(--card); }
+[data-slot="avatar-group"] > * + * { margin-inline-start: calc(var(--lumi-control-md) / -8); }
+[data-slot="avatar-group"][data-size="sm"] > * + * { margin-inline-start: calc(var(--lumi-control-sm) / -8); }
+[data-slot="avatar-group"][data-size="lg"] > * + * { margin-inline-start: calc(var(--lumi-control-lg) / -8); }
+[data-slot="timeline-item"][data-tone="neutral"] [data-slot="timeline-tone"] { color: var(--lumi-ui-tone-neutral); }
+[data-slot="timeline-item"][data-tone="primary"] [data-slot="timeline-tone"] { color: var(--lumi-ui-tone-primary); }
+[data-slot="timeline-item"][data-tone="success"] [data-slot="timeline-tone"] { color: var(--lumi-ui-tone-success); }
+[data-slot="timeline-item"][data-tone="warning"] [data-slot="timeline-tone"] { color: var(--lumi-ui-tone-warning); }
+[data-slot="timeline-item"][data-tone="danger"] [data-slot="timeline-tone"] { color: var(--lumi-ui-tone-danger); }
+[data-slot="timeline-item"][data-tone="info"] [data-slot="timeline-tone"] { color: var(--lumi-ui-tone-info); }
+
+/* Header and footer stay put; only the middle band scrolls. Losing "Save" off
+   the bottom of a long modal is the classic overlay failure. */
+[data-slot="dialog-content"] {
+  padding: 0;
+  gap: 0;
+  max-height: min(85vh, 48rem);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+/* Design 02 paints a 50% black scrim with no blur. Upstream is 10% + blur,
+   which leaves the shell readable and fails the "must finish this first" read. */
+[data-slot="dialog-overlay"],
+[data-slot="drawer-overlay"] {
+  background: oklch(0 0 0 / 0.5);
+  backdrop-filter: none;
+}
+
+[data-slot="dialog-header"],
+[data-slot="drawer-header"] {
+  padding: var(--lumi-surface-padding);
+  gap: 4px;
+}
+
+[data-slot="dialog-title"],
+[data-slot="drawer-title"] {
+  font-size: var(--lumi-fs-title);
+  font-weight: var(--lumi-font-weight-medium);
+  line-height: 1.45;
+}
+
+[data-slot="lumi-overlay-body"] {
+  min-height: 0;
+  padding: 0 var(--lumi-surface-padding) var(--lumi-surface-padding);
+}
+
+/* A drawer that carries a table lets the rows reach its edges — the same opt-in
+   a Frame panel takes, because the rows bring their own gutters and the body's
+   padding would only add a second one. */
+[data-slot="lumi-overlay-body"]:has(> [data-lumi-fill]) {
+  padding: 0;
+}
+
+/* Upstream tints the footer and uses the dialog's 16px padding as a negative
+   margin. Design 02 is a hairline + 12/16, same surface as the body. */
+[data-slot="dialog-footer"] {
+  margin: 0;
+  padding: var(--lumi-surface-band) var(--lumi-surface-padding);
+  border-radius: 0 0 var(--lumi-radius-overlay) var(--lumi-radius-overlay);
+  background: transparent;
+  gap: 8px;
+}
+
+[data-slot="drawer-footer"] {
+  padding: var(--lumi-surface-band) var(--lumi-surface-padding);
+  border-top: 1px solid var(--border);
+  gap: 8px;
+}
+
+/* Side drawers are flush to the shell edge; a 14px radius leaves a bite. */
+[data-slot="drawer-content"][data-vaul-drawer-direction="left"],
+[data-slot="drawer-content"][data-vaul-drawer-direction="right"] {
+  border-radius: 0;
+}
+
+/* A dialog fits its content between a floor (three quarters of its ceiling)
+   and a ceiling instead of filling a fixed slab: a one-line message stays
+   compact, longer text wraps at the ceiling, and both clamp to the viewport
+   gutter on phones. A confirmation without a size spans 336–448. */
+[data-slot="dialog-content"] {
+  width: max-content;
+  min-width: min(var(--lumi-ui-dialog-max, 28rem) * 0.75, 100% - 2rem);
+  max-width: min(var(--lumi-ui-dialog-max, 28rem), 100% - 2rem);
+  overflow-wrap: break-word;
+}
+/* sm / md / lg / xl ceilings are 384 / 512 / 672 / 896. */
+[data-slot="dialog-content"][data-size="sm"] { --lumi-ui-dialog-max: 24rem; }
+[data-slot="dialog-content"][data-size="md"] { --lumi-ui-dialog-max: 32rem; }
+[data-slot="dialog-content"][data-size="lg"] { --lumi-ui-dialog-max: 42rem; }
+[data-slot="dialog-content"][data-size="xl"] { --lumi-ui-dialog-max: 56rem; }
+/* Forms and tables have no natural width: they take the whole ceiling, so
+   fields don't shrink to their placeholders and arriving rows don't widen the
+   dialog under the pointer. */
+[data-slot="dialog-content"]:has(form, table, [data-lumi-fill]) {
+  width: var(--lumi-ui-dialog-max);
+}
+
+/* A long title wraps before the corner close button, at its touch size too. */
+[data-slot="dialog-content"]:has(> [data-slot="dialog-close"]) > [data-slot="dialog-header"],
+[data-slot="drawer-content"]:has(> [data-slot="drawer-close"]) > [data-slot="drawer-header"] {
+  padding-inline-end: calc(var(--lumi-space-4) + var(--lumi-control-touch));
+}
+/* The corner close centres on the title's first line, its glyph on the content edge. */
+[data-slot="dialog-content"] > [data-slot="dialog-close"],
+[data-slot="drawer-content"] > [data-slot="drawer-close"] {
+  top: calc(var(--lumi-surface-padding) + var(--lumi-fs-title) * .725);
+  right: calc(var(--lumi-surface-padding) - .375rem);
+  transform: translateY(-50%);
+}
+
+/* A confirmation is one compact block: question, consequence, decision. No
+   scrolling band and no footer hairline, since nothing scrolls past it. */
+[data-layout="confirm"] {
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: var(--lumi-space-5);
+  padding: var(--lumi-space-5);
+}
+[data-layout="confirm"] > [data-slot="dialog-header"] {
+  padding: 0;
+  overflow-y: auto;
+}
+/* The tone icon leads, top-aligned with the title and description block beside it. */
+[data-slot="dialog-header"]:has(> [data-slot="dialog-media"]) {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--lumi-space-3);
+}
+[data-layout="confirm"] > [data-slot="dialog-footer"] {
+  flex-flow: row wrap;
+  justify-content: flex-end;
+  padding: 0;
+  border-top-width: 0;
+}
+
+/* 384 / 480 / 720: a short form, a full form, and a table that needs columns. */
+[data-slot="drawer-content"][data-size="sm"] { --lumi-ui-drawer-size: 24rem; }
+[data-slot="drawer-content"][data-size="md"] { --lumi-ui-drawer-size: 30rem; }
+[data-slot="drawer-content"][data-size="lg"] { --lumi-ui-drawer-size: 45rem; }
+[data-slot="drawer-content"][data-vaul-drawer-direction="left"],
+[data-slot="drawer-content"][data-vaul-drawer-direction="right"] {
+  width: min(90vw, var(--lumi-ui-drawer-size));
+  max-width: var(--lumi-ui-drawer-size);
+}
+[data-slot="drawer-content"][data-vaul-drawer-direction="top"],
+[data-slot="drawer-content"][data-vaul-drawer-direction="bottom"] {
+  max-height: min(90vh, var(--lumi-ui-drawer-size));
+}
+
+/* A sheet is a column, not a strip: 512 / 640 / 896 wide and centred, so a
+   short task does not stretch its field and buttons across a wide screen.
+   Drag to dismiss stays; the grip bar does not, the close button is the cue. */
+[data-slot="drawer-content"]:is([data-vaul-drawer-direction="top"], [data-vaul-drawer-direction="bottom"]) {
+  --lumi-ui-sheet-width: 40rem;
+  width: 100%;
+  max-width: var(--lumi-ui-sheet-width);
+  margin-inline: auto;
+  border-inline: 1px solid var(--border);
+}
+[data-slot="drawer-content"][data-size="sm"]:is([data-vaul-drawer-direction="top"], [data-vaul-drawer-direction="bottom"]) { --lumi-ui-sheet-width: 32rem; }
+[data-slot="drawer-content"][data-size="lg"]:is([data-vaul-drawer-direction="top"], [data-vaul-drawer-direction="bottom"]) { --lumi-ui-sheet-width: 56rem; }
+
+/* Off phones the sheet floats one gutter from the edge with every corner rounded. */
+@media (width >= 640px) {
+  [data-slot="drawer-content"]:is([data-vaul-drawer-direction="top"], [data-vaul-drawer-direction="bottom"]) {
+    max-width: min(var(--lumi-ui-sheet-width), 100% - 2 * var(--lumi-space-4));
+    border: 1px solid var(--border);
+    border-radius: var(--lumi-radius-overlay);
+    box-shadow: var(--shadow-overlay);
+  }
+  /* vaul paints a strip past the edge to cover overscroll while dragging; a floating sheet has no edge to cover. */
+  [data-slot="drawer-content"]:is([data-vaul-drawer-direction="top"], [data-vaul-drawer-direction="bottom"])::after { display: none; }
+  [data-slot="drawer-content"][data-vaul-drawer-direction="bottom"] { bottom: var(--lumi-space-4); }
+  [data-slot="drawer-content"][data-vaul-drawer-direction="top"] { top: var(--lumi-space-4); }
+}
+
+/* Pagination owns its layout even when rendered outside an Admin data grid. */
+[data-slot="pagination-controls"] {
+  container: lumi-pagination / inline-size;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+  gap: var(--lumi-space-2) var(--lumi-space-3);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+}
+
+[data-slot="pagination-total"] {
+  white-space: nowrap;
+}
+
+[data-slot="pagination-page-size-label"] {
+  display: flex;
+  align-items: center;
+  gap: var(--lumi-space-2);
+  margin-inline-start: auto;
+  white-space: nowrap;
+}
+
+/* The page size is the Select list at its small size, as narrow as its numbers. */
+.lumi-pagination-size {
+  width: 4.5rem;
+}
+
+/* Page numbers keep one width, so the strip does not shift while paging. */
+[data-slot="pagination-controls"] [data-slot="pagination-link"]:not([aria-label*="previous" i], [aria-label*="next" i]) {
+  min-width: var(--lumi-control-md);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-slot="pagination-controls"] [data-slot="pagination-link"][data-active="true"] {
+  border-color: var(--border);
+  background: var(--card);
+  color: var(--foreground);
+  font-weight: var(--lumi-font-weight-medium);
+}
+
+[data-slot="pagination-controls"] [data-slot="pagination-link"][aria-disabled="true"] {
+  opacity: 0.5;
+}
+
+[data-slot="pagination-controls"] > [data-slot="pagination"] {
+  width: auto;
+  margin: 0;
+  margin-inline-start: auto;
+}
+
+:is([data-slot="dialog-footer"], [data-slot="drawer-footer"]) > [data-slot="pagination-controls"] {
+  width: auto;
+  margin-inline-start: auto;
+}
+
+[data-slot="pagination-page-size-label"] + [data-slot="pagination"] {
+  margin-inline-start: 0;
+}
+
+@container lumi-pagination (width < 480px) {
+  [data-slot="pagination-page-size-label"] + [data-slot="pagination"] {
+    margin-inline-start: auto;
+  }
+}
+
+@media (pointer: coarse) {
+  [data-slot="button"],
+  [data-slot="input"],
+  [data-slot="textarea"],
+  [data-slot="popover-trigger"],
+  [data-slot="select-trigger"],
+  [data-slot="select-item"],
+  [data-slot="tabs-trigger"],
+  [data-slot="toggle-group-item"],
+  [data-slot="stepper-trigger"],
+  [data-slot="pagination-link"],
+  [data-slot="dialog-close"],
+  [data-slot="filters-advanced"] > summary {
+    min-width: var(--lumi-control-touch);
+    min-height: var(--lumi-control-touch);
+  }
+
+  [data-slot="table-row"][data-clickable="true"] {
+    height: var(--lumi-control-touch);
+  }
+
+  /* Its triggers grow to the touch target; a fixed list height would clip them. */
+  [data-slot="tabs-list"] {
+    height: auto;
+  }
+
+  /* The rule meets the indicator's centre, which moves down with the taller trigger. */
+  [data-slot="stepper"][data-orientation="horizontal"] [data-slot="stepper-separator"] {
+    margin-top: calc(var(--lumi-control-touch) / 2);
+  }
+
+  [data-slot="checkbox"]::after,
+  [data-slot="radio-group-item"]::after,
+  [data-slot="switch"]::after {
+    inset: auto;
+    top: 50%;
+    left: 50%;
+    width: var(--lumi-control-touch);
+    height: var(--lumi-control-touch);
+    transform: translate(-50%, -50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-slot],
+  [data-slot]::before,
+  [data-slot]::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Public surfaces use the same role tokens as Admin composition. */
+[data-slot="card"], [data-slot="frame"], [data-slot="frame-panel"] {
+  border-radius: var(--lumi-radius-panel);
+}
+[data-slot="dialog-content"], [data-slot="popover-content"] {
+  border-radius: var(--lumi-radius-overlay);
+}
+
+/* A select is one control; search and option lists live in its dropdown. */
+.lumi-select-trigger[data-lumi-control-size="sm"] { height: var(--lumi-control-sm); }
+.lumi-select-trigger[data-lumi-control-size="md"] { height: var(--lumi-control-md); }
+.lumi-select-trigger[data-lumi-control-size="lg"] { height: var(--lumi-control-lg); }
+.lumi-select-trigger[data-placeholder] { color: var(--muted-foreground); }
+.lumi-select-value { gap: var(--lumi-space-1); }
+.lumi-select-chip { border-radius: var(--lumi-radius-sm); background: var(--muted); color: var(--foreground); padding: 0 var(--lumi-space-1); line-height: 1.6; }
+.lumi-select-control[data-clearable] .lumi-select-trigger { padding-inline-end: 3.5rem; }
+.lumi-select-control[data-clearable] .lumi-select-trigger > svg { position: absolute; right: var(--lumi-space-2); }
+.lumi-select-clear { position: absolute; top: 50%; right: 1.5rem; transform: translateY(-50%); color: var(--muted-foreground); }
+.lumi-select-popover { width: var(--radix-popover-trigger-width); max-width: calc(100vw - var(--lumi-space-4)); max-height: var(--radix-popover-content-available-height); }
+.lumi-select-search { gap: var(--lumi-space-2); padding: var(--lumi-menu-padding) var(--lumi-menu-padding) var(--lumi-menu-padding) var(--lumi-control-px-md); border-bottom: 1px solid var(--border); }
+.lumi-select-options { max-height: 16rem; padding: var(--lumi-menu-padding); display: grid; gap: 2px; }
+.lumi-select-option { min-height: var(--lumi-control-md); gap: var(--lumi-space-2); padding: var(--lumi-space-1) var(--lumi-control-px-md); border-radius: var(--lumi-radius-item); font-size: var(--lumi-fs-control); }
+.lumi-select-option[data-active] { background: var(--lumi-hover-bg); color: var(--lumi-hover-fg); }
+.lumi-select-option[aria-selected="true"] { background: var(--lumi-selected-bg); color: var(--lumi-selected-fg); }
+.lumi-select-option[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
+.lumi-select-option-copy { overflow-wrap: anywhere; }
+.lumi-select-empty { gap: var(--lumi-space-2); padding: var(--lumi-space-4); }
+@media (pointer: coarse) {
+  .lumi-select-control[data-clearable] .lumi-select-trigger { padding-inline-end: calc(var(--lumi-control-touch) + var(--lumi-space-8)); }
+  .lumi-select-clear { min-height: var(--lumi-control-touch); min-width: var(--lumi-control-touch); }
+  .lumi-select-option { min-height: var(--lumi-control-touch); }
+}
+
+/* The search field's leading glyph sits inside the control's own padding. */
+[data-slot="filters-search"] [data-slot="input"] { padding-inline-start: 2rem; }
+
+/* With truncating columns present, every other column shrinks to its content
+   and the truncating ones take what is left, in proportion to their content:
+   their text can break anywhere (so they demand no minimum width) but clamps to
+   one line, so nothing ellipsizes until the row genuinely cannot fit. */
+[data-slot="table"]:has([data-truncate]) :is([data-slot="table-head"], [data-slot="table-cell"]):not([data-truncate]) { width: 1%; }
+[data-slot="table-cell"][data-truncate] :is([data-slot="table-truncate"], [data-slot="table-entity-name"], [data-slot="table-entity-description"]) {
+  display: -webkit-box;
+  overflow: hidden;
+  white-space: normal;
+  word-break: break-all;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+/* On a phone the whole table cannot fit anyway, so a truncating column keeps a
+   readable floor and the table scrolls: a name cut to its initial says nothing. */
+@media (width < 768px) {
+  [data-slot="table-head"][data-truncate] { min-width: 10rem; }
+  /* An entity cell spends about 3.5rem on padding and the avatar before its name starts. */
+  [data-slot="table-cell"][data-truncate][data-kind="entity"] { min-width: 11rem; }
+}
+
+/* Prose columns wrap inside the column instead of widening the table. The floor
+   stops a narrow table squeezing them to a word per line; it scrolls instead. */
+[data-slot="table-cell"][data-wrap] {
+  min-width: 16rem;
+  white-space: normal;
+  text-wrap: pretty;
+}
+
+/* The sort arrow lives in the gutter beside its label, so a sortable column is
+   no wider than its content and showing the arrow never shifts the label. */
+[data-slot="table-head"] [data-table-sort] { position: relative; margin-inline: -0.625rem; padding-inline: 0.625rem; }
+[data-slot="table-head"] [data-table-sort] svg { position: absolute; top: 50%; width: 0.875rem; height: 0.875rem; translate: 0 -50%; }
+[data-slot="table-head"] [data-table-sort] svg[data-icon="inline-end"] { inset-inline-end: -0.5rem; }
+[data-slot="table-head"] [data-table-sort] svg[data-icon="inline-start"] { inset-inline-start: -0.5rem; }
+
+/* Dot markers: an activity feed where each event is a dot in its tone on the
+   hairline, with no state glyph. The neutral dot is opaque so the rule stops at it. */
+[data-slot="timeline"][data-marker="dot"] [data-slot="timeline-indicator"] { background: color-mix(in oklab, var(--muted-foreground) 55%, var(--lumi-ui-timeline-surface)); box-shadow: none; animation: none; }
+[data-slot="timeline"][data-marker="dot"] :is([data-tone="primary"], [data-tone="brand"]) [data-slot="timeline-indicator"] { background: var(--lumi-ui-tone-brand); opacity: 1; }
+[data-slot="timeline"][data-marker="dot"] [data-tone="info"] [data-slot="timeline-indicator"] { background: var(--lumi-ui-tone-info); opacity: 1; }
+[data-slot="timeline"][data-marker="dot"] [data-tone="success"] [data-slot="timeline-indicator"] { background: var(--lumi-ui-tone-success); opacity: 1; }
+[data-slot="timeline"][data-marker="dot"] [data-tone="warning"] [data-slot="timeline-indicator"] { background: var(--lumi-ui-tone-warning); opacity: 1; }
+[data-slot="timeline"][data-marker="dot"] [data-tone="danger"] [data-slot="timeline-indicator"] { background: var(--lumi-ui-tone-danger); opacity: 1; }
+
+/* The selected-row tint drops muted text below 4.5:1; it steps up one tier there. */
+[data-slot="table-row"][data-state="selected"] .text-muted-foreground {
+  color: var(--lumi-fg-secondary);
+}
+
+/* TagsInput: a control-shaped box whose text field sits after the chips. Its
+   surface, focus and disabled states are the shared field classes; the chips
+   are Tags one size per control size, so one row of them is exactly a control:
+   chip + this inset + the border. */
+[data-slot="tags-input-control"] {
+  --lumi-tags-control: var(--lumi-control-md);
+  --lumi-tags-row: 1.5rem;
+  display: flex;
+  min-height: var(--lumi-tags-control);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  padding: calc((var(--lumi-tags-control) - 2px - var(--lumi-tags-row)) / 2) var(--lumi-control-px-xs);
+}
+[data-slot="tags-input-control"][data-size="sm"] { --lumi-tags-control: var(--lumi-control-sm); --lumi-tags-row: 1.25rem; }
+[data-slot="tags-input-control"][data-size="lg"] { --lumi-tags-control: var(--lumi-control-lg); --lumi-tags-row: var(--lumi-control-sm); }
+[data-slot="tags-input-field"] {
+  min-width: 8.75rem;
+  flex: 1;
+  height: var(--lumi-tags-row);
+  padding: 0 0.25rem;
+  border: 0;
+  background: none;
+  font-size: var(--lumi-fs-control);
+  line-height: var(--lumi-tags-row);
+  outline: 0;
+}
+[data-slot="required-mark"] { color: var(--destructive); }
+
+/* On the dark input surface a muted chip disappears; lift chips inside controls a step above the field. */
+[data-theme="dark"] :is([data-slot="tags-input-chip"] > [data-slot="tag"][data-tone="neutral"], .lumi-select-chip) {
+  border-color: color-mix(in oklab, var(--foreground) 10%, transparent);
+  background: color-mix(in oklab, var(--foreground) 14%, transparent);
+  color: var(--foreground);
+}
+[data-theme="dark"] .lumi-select-chip { box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 10%, transparent); }
+[data-slot="tags-input-field"]::placeholder { color: var(--muted-foreground); }
+[data-slot="tags-input-field"]:disabled { cursor: inherit; }
+[data-slot="tags-input-error"] {
+  margin-top: 0.25rem;
+  color: var(--destructive);
+  font-size: var(--lumi-fs-caption);
+}
+/* A fingertip needs more than the glyph. */
+@media (pointer: coarse) {
+  [data-slot="tags-input-chip"] [data-slot="tag-close"] { position: relative; }
+  [data-slot="tags-input-chip"] [data-slot="tag-close"]::after {
+    position: absolute;
+    inset: -0.75rem;
+    content: "";
+  }
+}
+
+/* Toasts are light messages: a single line with a tone icon, centred at the
+   top of the viewport, newest nearest the top edge. They sit above notices. */
+[data-slot="toaster"] {
+  position: fixed;
+  z-index: var(--lumi-z-toast);
+  top: max(16px, env(safe-area-inset-top, 0px));
+  right: 0;
+  left: 0;
+  width: min(560px, calc(100vw - 32px));
+  margin-inline: auto;
+  pointer-events: none;
+}
+
+[data-slot="toast-live"] > ol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  gap: 8px;
+  list-style: none;
+}
+
+[data-slot="toast"] {
+  --lumi-feedback-tone: var(--muted-foreground);
+  display: flex;
+  max-width: 100%;
+  align-items: center;
+  padding: 8px 14px 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control, 8px);
+  background: var(--popover);
+  box-shadow: 0 10px 28px -12px rgb(0 0 0 / 24%), 0 2px 6px -2px rgb(0 0 0 / 8%);
+  color: var(--popover-foreground);
+  gap: 8px;
+  pointer-events: auto;
+  animation: lumi-toast-in 0.18s ease-out;
+}
+
+[data-slot="toast-icon"] { width: 16px; height: 16px; flex: none; color: var(--lumi-feedback-tone); }
+[data-slot="toast-message"] {
+  overflow: hidden;
+  margin: 0;
+  font-size: var(--lumi-fs-label);
+  font-weight: var(--lumi-font-weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A small quiet close at the end of the line; it shares the notice close's look. */
+[data-slot="toast-close"] {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  margin: -2px -6px -2px -2px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--lumi-radius-item, 6px);
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  place-items: center;
+}
+
+[data-slot="toast-close"] svg { width: 12px; height: 12px; }
+
+/* Notices are notification cards: a stack at the top-right, newest on top,
+   on the frosted popover surface. Phones get the full width at the top. */
+[data-slot="notifier"] {
+  position: fixed;
+  z-index: var(--lumi-z-notice);
+  top: max(16px, env(safe-area-inset-top, 0px));
+  right: max(16px, env(safe-area-inset-right, 0px));
+  width: min(360px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+@media (max-width: 639px) {
+  [data-slot="notifier"] {
+    right: 0;
+    left: 0;
+    margin-inline: auto;
+  }
+}
+
+[data-slot="notifier"] > ol {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  gap: 10px;
+  list-style: none;
+}
+
+[data-slot="notice"] {
+  --lumi-feedback-tone: var(--muted-foreground);
+  display: grid;
+  align-items: start;
+  padding: 14px 12px 14px 14px;
+  gap: 10px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  pointer-events: auto;
+  animation: lumi-notice-in 0.22s ease-out;
+}
+
+:is([data-slot="toast"], [data-slot="notice"])[data-tone="success"] { --lumi-feedback-tone: var(--lumi-success); }
+:is([data-slot="toast"], [data-slot="notice"])[data-tone="info"] { --lumi-feedback-tone: var(--lumi-info); }
+:is([data-slot="toast"], [data-slot="notice"])[data-tone="warning"] { --lumi-feedback-tone: var(--lumi-warning); }
+:is([data-slot="toast"], [data-slot="notice"])[data-tone="danger"] { --lumi-feedback-tone: var(--lumi-danger); }
+
+[data-slot="notice-icon"] { width: 18px; height: 18px; margin-top: 1px; color: var(--lumi-feedback-tone); }
+[data-slot="notice-body"] { min-width: 0; }
+[data-slot="notice-title"] { margin: 0; font-size: var(--lumi-fs-label); font-weight: var(--lumi-font-weight-medium); line-height: 20px; }
+[data-slot="notice-description"] {
+  margin: 2px 0 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  overflow-wrap: anywhere;
+}
+[data-slot="notice-actions"] { display: flex; flex-wrap: wrap; margin-top: 10px; gap: 8px; }
+
+/* Past the newest few, a notice shows only its title until the stack is hovered. */
+[data-slot="notice"][data-collapsed] { padding-block: 8px; }
+[data-slot="notice"][data-collapsed] :is([data-slot="notice-description"], [data-slot="notice-actions"]) { display: none; }
+[data-slot="notifier"]:is(:hover, :focus-within) [data-slot="notice"][data-collapsed] { padding-block: 14px; }
+[data-slot="notifier"]:is(:hover, :focus-within) [data-slot="notice"][data-collapsed] [data-slot="notice-description"] { display: block; }
+[data-slot="notifier"]:is(:hover, :focus-within) [data-slot="notice"][data-collapsed] [data-slot="notice-actions"] { display: flex; }
+
+[data-slot="notice-close"] {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  margin: -2px -4px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--lumi-radius-item, 6px);
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  place-items: center;
+}
+
+:is([data-slot="notice-close"], [data-slot="toast-close"]):hover { background: var(--muted); color: var(--foreground); }
+:is([data-slot="notice-close"], [data-slot="toast-close"]):focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
+[data-slot="notice-close"] svg { width: 14px; height: 14px; }
+
+@keyframes lumi-toast-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+}
+
+@keyframes lumi-notice-in {
+  from { opacity: 0; transform: translateX(24px); }
+}
+
+/* On a phone the stack spans the width, so it drops in from above instead. */
+@media (max-width: 639px) {
+  [data-slot="notice"] { animation-name: lumi-toast-in; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is([data-slot="toast"], [data-slot="notice"]) { animation: none; }
+}
+
+/* Hints fade in with a 2px drift away from their trigger and fade out in
+   place. Radix marks an open tooltip `delayed-open` or `instant-open`, and
+   keeps a closing one mounted until its `closed` animation ends. */
+@keyframes lumi-tooltip-in {
+  from { opacity: 0; translate: var(--lumi-tooltip-from, 0 2px); }
+}
+@keyframes lumi-tooltip-out {
+  to { opacity: 0; }
+}
+:is([data-slot="tooltip"], [data-slot="source-preview"]) { --lumi-tooltip-from: 0 2px; }
+:is([data-slot="tooltip"], [data-slot="source-preview"])[data-side="bottom"] { --lumi-tooltip-from: 0 -2px; }
+:is([data-slot="tooltip"], [data-slot="source-preview"])[data-side="left"] { --lumi-tooltip-from: 2px 0; }
+:is([data-slot="tooltip"], [data-slot="source-preview"])[data-side="right"] { --lumi-tooltip-from: -2px 0; }
+:is([data-slot="tooltip"], [data-slot="source-preview"]):is([data-state="delayed-open"], [data-state="instant-open"]) {
+  animation: lumi-tooltip-in 140ms cubic-bezier(0.2, 0, 0, 1);
+}
+:is([data-slot="tooltip"], [data-slot="source-preview"])[data-state="closed"] {
+  animation: lumi-tooltip-out 100ms ease-in forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  :is([data-slot="tooltip"], [data-slot="source-preview"]) { --lumi-tooltip-from: 0 0; }
+}
+
+/* Hints float over content, so they frost what is behind them instead of
+   hiding it. */
+[data-slot="tooltip"], .lumi-chart-tooltip {
+  background: var(--lumi-glass) !important;
+  -webkit-backdrop-filter: var(--lumi-glass-filter);
+  backdrop-filter: var(--lumi-glass-filter);
+}
+
+/* Menus, dropdowns and popovers frost the same way. Over a busy backdrop the
+   frost can darken (light) or lighten (dark) by a seventh, so muted text and
+   danger text step up to their text-safe tiers, and hover and resting fills
+   become foreground alphas: an opaque accent chip would read lighter than
+   the glass in light mode and darker in dark mode. */
+@layer components {
+  .lumi-glass-panel {
+    --muted-foreground: var(--lumi-fg-secondary);
+    --lumi-text-danger: oklch(from var(--destructive) var(--lumi-ui-tone-text-l) c h);
+    --muted: var(--lumi-glass-tint);
+    --accent: var(--lumi-glass-tint);
+    --lumi-hover-bg: var(--lumi-glass-tint);
+    border: 1px solid var(--lumi-glass-border);
+    border-radius: var(--lumi-radius-overlay);
+    background: var(--lumi-glass-panel);
+    -webkit-backdrop-filter: var(--lumi-glass-panel-filter);
+    backdrop-filter: var(--lumi-glass-panel-filter);
+    box-shadow: var(--shadow-overlay);
+    color: var(--popover-foreground);
+  }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .lumi-glass-panel { background: var(--popover); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .lumi-glass-panel { background: var(--popover); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}

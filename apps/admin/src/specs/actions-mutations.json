@@ -1,0 +1,147 @@
+{
+  "root": "stack",
+  "state": {
+    "notes": {
+      "data": [],
+      "total": 0,
+      "loading": true
+    },
+    "selected": null
+  },
+  "elements": {
+    "stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "query",
+        "table",
+        "refresh"
+      ]
+    },
+    "query": {
+      "type": "Query",
+      "props": {
+        "resource": "notes",
+        "pagination": {
+          "page": 1,
+          "pageSize": 5
+        },
+        "sorters": [
+          {
+            "field": "id",
+            "order": "desc"
+          }
+        ],
+        "resultPath": "/notes"
+      },
+      "children": []
+    },
+    "table": {
+      "type": "Table",
+      "props": {
+        "rows": {
+          "$state": "/notes/data"
+        },
+        "loading": {
+          "$state": "/notes/loading"
+        },
+        "activeRow": {
+          "$bindState": "/selected"
+        },
+        "columns": [
+          {
+            "field": "id",
+            "label": "ID",
+            "width": "4rem"
+          },
+          {
+            "field": "title",
+            "label": {
+              "$t": "Title"
+            },
+            "truncate": true
+          },
+          {
+            "field": "priority",
+            "label": {
+              "$t": "Priority"
+            },
+            "kind": "badge",
+            "width": "7rem",
+            "valueMap": {
+              "low": {
+                "$t": "Low"
+              },
+              "normal": {
+                "$t": "Normal"
+              },
+              "high": {
+                "$t": "High"
+              }
+            },
+            "toneMap": {
+              "low": "info",
+              "normal": "neutral",
+              "high": "danger"
+            }
+          },
+          {
+            "field": "actions",
+            "kind": "actions",
+            "width": "3.5rem",
+            "actions": [
+              {
+                "value": "delete",
+                "label": {
+                  "$t": "Delete"
+                },
+                "tone": "danger"
+              }
+            ]
+          }
+        ]
+      },
+      "on": {
+        "rowAction": {
+          "action": "delete",
+          "params": {
+            "resource": "notes",
+            "id": {
+              "$state": "/selected/id"
+            }
+          },
+          "onSuccess": {
+            "action": "toast",
+            "params": {
+              "message": {
+                "$t": "Note deleted"
+              }
+            }
+          }
+        }
+      },
+      "children": []
+    },
+    "refresh": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Refresh notes"
+        },
+        "appearance": "outline",
+        "icon": "refresh"
+      },
+      "on": {
+        "press": {
+          "action": "invalidate",
+          "params": {
+            "resource": "notes"
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}

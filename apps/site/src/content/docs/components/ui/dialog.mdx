@@ -1,0 +1,56 @@
+---
+title: "Dialog"
+description: "模态面板，用于专注完成一项任务或确认；宽度在尺寸范围内跟随内容。"
+---
+
+<ComponentPreview name="Dialog" />
+
+模态面板，用于专注完成一项任务或确认；宽度在尺寸范围内跟随内容。引导文字写在 description 里，显示在头部标题下，不要作为第一个子元素。没有子元素时是紧凑的确认框，大小贴合标题和说明，前面带一个语义色图标（icon 为 false 时不带）。
+
+## 示例
+
+```json
+{
+  "root": "dialog-19",
+  "elements": {
+    "dialog-19": {
+      "type": "Dialog",
+      "props": { "open": true, "title": "Dialog" },
+      "children": [],
+      "on": {
+        "confirm": {
+          "action": "setState",
+          "params": { "statePath": "/dialog-19/open", "value": false }
+        }
+      }
+    }
+  },
+  "state": { "dialog-19": { "open": false } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `open` | 是否打开。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `boolean` |  |
+| `defaultOpen` | 初始是否打开，只在没有绑定 `open` 时生效。 | `boolean` | `false` |
+| `title`（必填） | 对话框标题。 | `string` |  |
+| `description` | 头部标题下方的说明，与正文分开。表格、表单前的说明文字写在这里，不要作为正文第一个子元素。确认框把要确认的后果写在这里，不放子元素。 | `string` |  |
+| `size` | 宽度档位，宽度随内容在区间内自适应，长文字到上限换行：`sm` 288–384、`md` 384–512、`lg` 504–672、`xl` 672–896px（下限为上限的 3/4）；正文是表单或表格时直接取上限。没有子元素的确认框不写 size 时宽 336–448px。 | `"sm" \| "md" \| "lg" \| "xl"` | `"md"` |
+| `tone` | `danger` 用于删除、放弃修改等不可撤销的确认，确认按钮变为红色。确认框的图标和底色也随它变化。 | `"danger" \| "neutral" \| "primary" \| "success" \| "warning" \| "info"` | `"neutral"` |
+| `icon` | 确认框（没有子元素）标题左侧的图标：HugeIcons 图标名，如删除用 `"delete-02"`；`false` 不显示。不写时按 `tone` 选：`danger` / `warning` 警示三角，`info` 信息，`success` 对勾，其余有取消按钮时为问号、只有确认按钮时为信息。 | `string \| false` |  |
+| `confirmText` | 确认按钮文字。 | `string` |  |
+| `cancelText` | 取消按钮文字。 | `string` |  |
+| `loading` | 确认按钮显示加载中，防止重复提交。 | `boolean` | `false` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`openChange`、`confirm`、`cancel`
+- 插槽：`default`、`footerStart`、`footerEnd`

@@ -1,0 +1,419 @@
+{
+  "root": "page",
+  "state": {
+    "tree": {
+      "selected": "components",
+      "checked": ["brand", "frontend"],
+      "lazy": null
+    },
+    "picker": {
+      "category": null,
+      "categories": [10, 17],
+      "path": [1, 3, 8],
+      "region": [],
+      "regions": [["cn", "zj", "hz"], ["jp", "tokyo", "shibuya"]],
+      "customer": 2,
+      "products": [1, 2]
+    },
+    "list": {
+      "page": 1,
+      "pageSize": 10
+    },
+    "filter": {
+      "category": null,
+      "categories": null
+    }
+  },
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": { "$t": "Trees & pickers" },
+        "stack": true
+      },
+      "children": ["header", "grid", "list"]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": { "$t": "Trees & pickers" },
+        "description": { "$t": "Hierarchical controls on static nodes or a category resource, loaded whole or one level at a time, plus record pickers that open a searchable table" }
+      },
+      "children": []
+    },
+    "grid": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": ["card-tree", "card-tree-check", "card-tree-lazy", "card-tree-select", "card-tree-select-multi", "card-cascader", "card-cascader-panel", "card-record-picker"]
+    },
+    "card-tree": {
+      "type": "Example",
+      "props": {
+        "id": "tree",
+        "title": { "$t": "Tree" },
+        "description": { "$t": "Static nodes with guides, icons and search: matches are highlighted and their branches open" }
+      },
+      "children": ["tree-static"]
+    },
+    "tree-static": {
+      "type": "Tree",
+      "props": {
+        "items": [
+          {
+            "label": { "$t": "Design" },
+            "value": "design",
+            "icon": "layers",
+            "children": [
+              { "label": { "$t": "Brand" }, "value": "brand" },
+              {
+                "label": { "$t": "Product UI" },
+                "value": "product-ui",
+                "children": [
+                  { "label": { "$t": "Components" }, "value": "components" },
+                  { "label": { "$t": "Icons" }, "value": "icons" }
+                ]
+              }
+            ]
+          },
+          {
+            "label": { "$t": "Engineering" },
+            "value": "engineering",
+            "icon": "layers",
+            "children": [
+              { "label": { "$t": "Frontend" }, "value": "frontend" },
+              {
+                "label": { "$t": "Backend" },
+                "value": "backend",
+                "children": [
+                  { "label": { "$t": "API" }, "value": "api" },
+                  { "label": { "$t": "Workers" }, "value": "workers", "disabled": true }
+                ]
+              }
+            ]
+          },
+          {
+            "label": { "$t": "Marketing" },
+            "value": "marketing",
+            "icon": "layers",
+            "children": [
+              { "label": { "$t": "Campaigns" }, "value": "campaigns" },
+              { "label": { "$t": "Social" }, "value": "social" }
+            ]
+          }
+        ],
+        "value": { "$bindState": "/tree/selected" },
+        "selectionMode": "single",
+        "defaultExpandedValue": ["design", "product-ui"],
+        "searchable": true,
+        "showLine": true,
+        "ariaLabel": { "$t": "Workspace folders" }
+      },
+      "children": []
+    },
+    "card-tree-check": {
+      "type": "Example",
+      "props": {
+        "id": "checkable-tree",
+        "title": { "$t": "Checkable tree" },
+        "description": { "$t": "A parent is checked when all of its leaves are and mixed when some are; the value lists checked leaves" }
+      },
+      "children": ["tree-check"]
+    },
+    "tree-check": {
+      "type": "Tree",
+      "props": {
+        "items": [
+          {
+            "label": { "$t": "Design" },
+            "value": "design",
+            "children": [
+              { "label": { "$t": "Brand" }, "value": "brand" },
+              { "label": { "$t": "Components" }, "value": "components" },
+              { "label": { "$t": "Icons" }, "value": "icons" }
+            ]
+          },
+          {
+            "label": { "$t": "Engineering" },
+            "value": "engineering",
+            "children": [
+              { "label": { "$t": "Frontend" }, "value": "frontend" },
+              { "label": { "$t": "API" }, "value": "api" },
+              { "label": { "$t": "Workers" }, "value": "workers" }
+            ]
+          }
+        ],
+        "value": { "$bindState": "/tree/checked" },
+        "checkable": true,
+        "checkStrategy": "leaf",
+        "defaultExpandAll": true,
+        "ariaLabel": { "$t": "Team access" }
+      },
+      "children": []
+    },
+    "card-tree-lazy": {
+      "type": "Example",
+      "props": {
+        "id": "lazy-tree",
+        "title": { "$t": "Lazy tree" },
+        "description": { "$t": "Categories from the mock server: each level is requested when its parent first opens" }
+      },
+      "children": ["tree-lazy"]
+    },
+    "tree-lazy": {
+      "type": "Tree",
+      "props": {
+        "source": { "resource": "categories", "labelField": "name", "lazy": true },
+        "value": { "$bindState": "/tree/lazy" },
+        "selectionMode": "single",
+        "showLine": true,
+        "ariaLabel": { "$t": "Categories" }
+      },
+      "children": []
+    },
+    "card-tree-select": {
+      "type": "Example",
+      "props": {
+        "id": "tree-select",
+        "title": { "$t": "TreeSelect" },
+        "description": { "$t": "A select whose panel is a tree of every category, searchable and clearable, showing the full path" }
+      },
+      "children": ["field-tree-select"]
+    },
+    "field-tree-select": {
+      "type": "FormField",
+      "props": { "name": "category", "label": { "$t": "Category" } },
+      "children": ["tree-select"]
+    },
+    "tree-select": {
+      "type": "TreeSelect",
+      "props": {
+        "source": { "resource": "categories", "labelField": "name" },
+        "value": { "$bindState": "/picker/category" },
+        "searchable": true,
+        "clearable": true,
+        "showPath": true,
+        "placeholder": { "$t": "Choose a category" },
+        "ariaLabel": { "$t": "Category" }
+      },
+      "children": []
+    },
+    "card-tree-select-multi": {
+      "type": "Example",
+      "props": {
+        "id": "tree-select-multiple",
+        "title": { "$t": "Lazy TreeSelect, several" },
+        "description": { "$t": "Checkable and loaded level by level; the preselected categories are read by ID and their branches load so the tags show names" }
+      },
+      "children": ["field-tree-select-multi"]
+    },
+    "field-tree-select-multi": {
+      "type": "FormField",
+      "props": { "name": "categories", "label": { "$t": "Categories" } },
+      "children": ["tree-select-multi"]
+    },
+    "tree-select-multi": {
+      "type": "TreeSelect",
+      "props": {
+        "source": { "resource": "categories", "labelField": "name", "lazy": true },
+        "value": { "$bindState": "/picker/categories" },
+        "checkable": true,
+        "clearable": true,
+        "placeholder": { "$t": "Choose categories" },
+        "ariaLabel": { "$t": "Categories" }
+      },
+      "children": []
+    },
+    "card-cascader": {
+      "type": "Example",
+      "props": {
+        "id": "cascader",
+        "title": { "$t": "Remote cascader" },
+        "description": { "$t": "One column per level, requested as you go; the preselected path loads its columns first" }
+      },
+      "children": ["field-cascader"]
+    },
+    "field-cascader": {
+      "type": "FormField",
+      "props": { "name": "path", "label": { "$t": "Category path" } },
+      "children": ["cascader"]
+    },
+    "cascader": {
+      "type": "Cascader",
+      "props": {
+        "source": { "resource": "categories", "labelField": "name", "lazy": true },
+        "value": { "$bindState": "/picker/path" },
+        "clearable": true,
+        "changeOnSelect": true,
+        "placeholder": { "$t": "Choose a category" },
+        "ariaLabel": { "$t": "Category path" }
+      },
+      "children": []
+    },
+    "card-cascader-panel": {
+      "type": "Example",
+      "props": {
+        "id": "cascader-panel",
+        "title": { "$t": "CascaderPanel" },
+        "description": { "$t": "The cascader columns in place: one path, or with multiple, checked leaves across branches" }
+      },
+      "children": ["stack-cascader-panel"]
+    },
+    "stack-cascader-panel": {
+      "type": "Stack",
+      "props": { "gap": "sm" },
+      "children": ["cascader-panel", "cascader-panel-multi"]
+    },
+    "cascader-panel": {
+      "type": "CascaderPanel",
+      "props": {
+        "options": [
+          {
+            "label": { "$t": "China" },
+            "value": "cn",
+            "children": [
+              { "label": { "$t": "Zhejiang" }, "value": "zj", "children": [{ "label": { "$t": "Hangzhou" }, "value": "hz" }, { "label": { "$t": "Ningbo" }, "value": "nb" }] },
+              { "label": { "$t": "Jiangsu" }, "value": "js", "children": [{ "label": { "$t": "Nanjing" }, "value": "nj" }, { "label": { "$t": "Suzhou" }, "value": "sz" }] }
+            ]
+          },
+          {
+            "label": { "$t": "Japan" },
+            "value": "jp",
+            "children": [
+              { "label": { "$t": "Tokyo" }, "value": "tokyo", "children": [{ "label": { "$t": "Shibuya" }, "value": "shibuya" }, { "label": { "$t": "Shinjuku" }, "value": "shinjuku" }] }
+            ]
+          }
+        ],
+        "value": { "$bindState": "/picker/region" },
+        "ariaLabel": { "$t": "Region" }
+      },
+      "children": []
+    },
+    "cascader-panel-multi": {
+      "type": "CascaderPanel",
+      "props": {
+        "options": [
+          {
+            "label": { "$t": "China" },
+            "value": "cn",
+            "children": [
+              { "label": { "$t": "Zhejiang" }, "value": "zj", "children": [{ "label": { "$t": "Hangzhou" }, "value": "hz" }, { "label": { "$t": "Ningbo" }, "value": "nb" }] },
+              { "label": { "$t": "Jiangsu" }, "value": "js", "children": [{ "label": { "$t": "Nanjing" }, "value": "nj" }, { "label": { "$t": "Suzhou" }, "value": "sz" }] }
+            ]
+          },
+          {
+            "label": { "$t": "Japan" },
+            "value": "jp",
+            "children": [
+              { "label": { "$t": "Tokyo" }, "value": "tokyo", "children": [{ "label": { "$t": "Shibuya" }, "value": "shibuya" }, { "label": { "$t": "Shinjuku" }, "value": "shinjuku" }] }
+            ]
+          }
+        ],
+        "value": { "$bindState": "/picker/regions" },
+        "multiple": true,
+        "ariaLabel": { "$t": "Delivery regions" }
+      },
+      "children": []
+    },
+    "card-record-picker": {
+      "type": "Example",
+      "props": {
+        "id": "record-picker",
+        "title": { "$t": "Record picker" },
+        "description": { "$t": "Opens a searchable, paged table; pick one record, or check several and confirm. Preselected keys show their names" }
+      },
+      "children": ["stack-record-picker"]
+    },
+    "stack-record-picker": {
+      "type": "Stack",
+      "props": { "gap": "sm" },
+      "children": ["field-customer", "field-products"]
+    },
+    "field-customer": {
+      "type": "FormField",
+      "props": { "name": "customer", "label": { "$t": "Customer" } },
+      "children": ["picker-customer"]
+    },
+    "picker-customer": {
+      "type": "RecordPicker",
+      "props": {
+        "resource": "customers",
+        "labelField": "name",
+        "searchField": "name",
+        "value": { "$bindState": "/picker/customer" },
+        "title": { "$t": "Choose a customer" },
+        "pageSize": 5,
+        "columns": [
+          { "field": "name", "label": { "$t": "Customer" } },
+          { "field": "email", "label": { "$t": "Email" } },
+          { "field": "tier", "label": { "$t": "Tier" }, "width": "110px", "valueMap": { "enterprise": { "$t": "Enterprise" }, "gold": { "$t": "Gold" }, "standard": { "$t": "Standard" } } }
+        ],
+        "ariaLabel": { "$t": "Customer" }
+      },
+      "children": []
+    },
+    "field-products": {
+      "type": "FormField",
+      "props": { "name": "products", "label": { "$t": "Products" } },
+      "children": ["picker-products"]
+    },
+    "picker-products": {
+      "type": "RecordPicker",
+      "props": {
+        "resource": "products",
+        "labelField": "name",
+        "searchField": "name",
+        "multiple": true,
+        "value": { "$bindState": "/picker/products" },
+        "title": { "$t": "Choose products" },
+        "pageSize": 5,
+        "columns": [
+          { "field": "sku", "label": { "$t": "SKU" }, "width": "120px", "kind": "code" },
+          { "field": "name", "label": { "$t": "Product" } },
+          { "field": "price", "label": { "$t": "Price" }, "width": "100px", "kind": "currency", "currency": "USD", "align": "right" }
+        ],
+        "ariaLabel": { "$t": "Products" }
+      },
+      "children": []
+    },
+    "list": {
+      "type": "ListPage",
+      "props": {
+        "title": { "$t": "Products by category" },
+        "description": { "$t": "The side tree writes the chosen category and its subcategories to state; the list filters on them" },
+        "resource": "products",
+        "statePath": "/list",
+        "pageSize": 10,
+        "syncWithLocation": true,
+        "filters": [
+          { "field": "categoryId", "operator": "in", "value": { "$state": "/filter/categories" } }
+        ],
+        "columns": [
+          { "field": "sku", "label": { "$t": "SKU" }, "width": "120px", "kind": "code" },
+          { "field": "name", "label": { "$t": "Product" } },
+          { "field": "categoryId", "label": { "$t": "Category" }, "width": "130px", "valueMap": { "1": "Electronics", "2": "Cameras", "3": "Audio", "4": "Home", "5": "Kitchen", "6": "Lighting", "7": "Phones", "8": "Headphones", "9": "Speakers", "10": "Mirrorless", "11": "Action cameras", "12": "Cookware", "13": "Small appliances", "14": "Outdoor", "15": "Camping", "16": "Cycling", "17": "Tents", "18": "Lanterns" } },
+          { "field": "price", "label": { "$t": "Price" }, "width": "100px", "kind": "currency", "currency": "USD", "align": "right" }
+        ]
+      },
+      "slots": {
+        "aside": ["tree-filter"]
+      },
+      "children": []
+    },
+    "tree-filter": {
+      "type": "TreeFilter",
+      "props": {
+        "source": { "resource": "categories", "labelField": "name" },
+        "value": { "$bindState": "/filter/category" },
+        "subtree": { "$bindState": "/filter/categories" },
+        "title": { "$t": "Categories" },
+        "allLabel": { "$t": "All products" },
+        "defaultExpandAll": true
+      },
+      "children": []
+    }
+  }
+}

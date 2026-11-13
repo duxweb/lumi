@@ -1,0 +1,12 @@
+---
+title: "useLogout"
+description: "useLogout React hook 的签名、参数和返回值。"
+---
+
+Signs out through `authProvider.logout` and drops the session's cached data.
+
+```typescript
+useLogout(): UseMutationResult<AuthActionResponse, Error, any | undefined>
+```
+
+返回 `UseMutationResult<AuthActionResponse, Error, any>`。

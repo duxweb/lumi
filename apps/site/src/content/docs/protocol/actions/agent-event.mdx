@@ -1,0 +1,43 @@
+---
+title: "agentEvent"
+description: "把 ChatThread 的事件交给会话处理：approve、reject 决定审批，answer、skip 回答问题（没有待回答的就继续回复），regenerate 重试，edit 改写用户消息，suggestion 直接发送建议。"
+---
+
+把 ChatThread 的事件交给会话处理：approve、reject 决定审批，answer、skip 回答问题（没有待回答的就继续回复），regenerate 重试，edit 改写用户消息，suggestion 直接发送建议。
+
+## 用法
+
+```jsonc
+{
+  "root": "thread",
+  "elements": {
+    "thread": {
+      "type": "ChatThread",
+      "props": {
+        "messages": { "$state": "/chat/messages" },
+        "activeEvent": { "$bindState": "/chat/lastEvent" }
+      },
+      "on": {
+        // 用户在消息里点了批准时执行；reject、answer、skip 等事件写法相同
+        "approve": {
+          "action": "agentEvent",
+          "params": {
+            // AgentSession 写入的状态路径，如 /chat
+            "session": "/chat",
+            // ChatThread 把这次操作写在 activeEvent 绑定的路径里
+            "event": { "$state": "/chat/lastEvent" }
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| `session`（必填） | AgentSession 写入的状态路径，如 `/chat`。 | `string` |
+| `event`（必填） | ChatThread 发出的事件。 | `object` |

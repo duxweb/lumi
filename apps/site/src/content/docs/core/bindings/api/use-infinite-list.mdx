@@ -1,0 +1,30 @@
+---
+title: "useInfiniteList"
+description: "useInfiniteList React hook 的签名、参数和返回值。"
+---
+
+Reads a resource page after page for "load more" lists: `fetchNextPage()` loads the next, `data.pages` holds those loaded.
+
+```typescript
+useInfiniteList<T = any>(input: UseInfiniteListOptions): UseInfiniteQueryResult<InfiniteData<GetListResult<T>>, Error>
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `input` | `UseInfiniteListOptions` | 是 |  |
+
+`input` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `dataProviderName` | `string \| undefined` | 否 | 多数据源名称；省略时使用 default。 |
+| `enabled` | `boolean \| undefined` | 否 | 是否允许自动执行查询。 |
+| `filters` | `Filter[] \| undefined` | 否 | 筛选条件数组。 |
+| `liveMode` | `LiveMode \| undefined` | 否 | Defaults to the context's `liveMode`, which is `auto` with a liveProvider. |
+| `meta` | `Meta \| undefined` | 否 | 原样传给 DataProvider 的扩展数据。 |
+| `onLiveEvent` | `((event: LiveEvent) => void) \| undefined` | 否 | Called for each event of the resource, in `auto` and `manual` mode. |
+| `pagination` | `{ pageSize?: number; } \| undefined` | 否 | 分页参数；传 false 关闭分页。 |
+| `resource` | `string` | 是 | 交给 DataProvider 解释的数据目标，如 `orders`。 |
+| `sorters` | `Sorter[] \| undefined` | 否 | 排序条件数组。 |
+
+返回 `UseInfiniteQueryResult<InfiniteData<GetListResult<T>, unknown>, Error>`。

@@ -1,0 +1,40 @@
+---
+title: "agentStop"
+description: "停止正在进行的回复，已经收到的内容保留。"
+---
+
+停止正在进行的回复，已经收到的内容保留。
+
+## 用法
+
+```jsonc
+{
+  "root": "prompt",
+  "elements": {
+    "prompt": {
+      "type": "PromptInput",
+      "props": {
+        "value": { "$bindState": "/prompt" },
+        "streaming": { "$state": "/chat/streaming" }
+      },
+      "on": {
+        // 回复过程中点了停止时执行
+        "stop": {
+          "action": "agentStop",
+          "params": {
+            // AgentSession 写入的状态路径，如 /chat
+            "session": "/chat"
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| `session`（必填） | AgentSession 写入的状态路径，如 `/chat`。 | `string` |

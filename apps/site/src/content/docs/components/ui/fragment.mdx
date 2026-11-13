@@ -1,0 +1,24 @@
+---
+title: "Fragment"
+description: "把子元素编成一组，不带外框。"
+---
+
+把子元素编成一组，不带外框。`stack` 纵向排列，`split` 把最后一个子元素放进侧栏。一般布局用 Stack 和 Grid。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `layout` | `stack` 子元素纵向排列；`split` 左右两栏，第二个子元素做侧栏。 | `"stack" \| "split"` | `"stack"` |
+| `asideWidth` | `split` 布局下侧栏的宽度（像素）。 | `number` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：`default`

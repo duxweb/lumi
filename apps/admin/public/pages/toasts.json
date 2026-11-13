@@ -1,0 +1,962 @@
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Toasts & notifications"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "sections"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Toasts & notifications"
+        },
+        "description": {
+          "$t": "A toast is a light one-line message at the top centre for quick results and errors. A notice is a card at the top right with a title, details and actions for news worth a second look"
+        }
+      },
+      "children": []
+    },
+    "sections": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "toast-card",
+        "notice-card"
+      ]
+    },
+    "toast-card": {
+      "type": "Example",
+      "props": {
+        "id": "toasts",
+        "title": {
+          "$t": "Toast · light message"
+        },
+        "description": {
+          "$t": "One line that closes by itself after 3 seconds. Lumi also raises one for every failed request, save or upload"
+        }
+      },
+      "children": [
+        "toast-body"
+      ]
+    },
+    "toast-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "toast-tones-group",
+        "toast-update-group",
+        "toast-after-group",
+        "toast-fail-group"
+      ]
+    },
+    "toast-tones-group": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "toast-tones-label",
+        "toast-tones"
+      ]
+    },
+    "toast-tones-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Tones"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "toast-tones": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "toast-success",
+        "toast-info",
+        "toast-warning",
+        "toast-danger",
+        "toast-neutral"
+      ]
+    },
+    "toast-success": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Success"
+        },
+        "appearance": "outline",
+        "icon": "circle-check"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Order shipped"
+            },
+            "tone": "success"
+          }
+        }
+      }
+    },
+    "toast-info": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Info"
+        },
+        "appearance": "outline",
+        "icon": "info"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "New version available"
+            },
+            "tone": "info"
+          }
+        }
+      }
+    },
+    "toast-warning": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Warning"
+        },
+        "appearance": "outline",
+        "icon": "triangle-alert"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Only 3 left of SKU-0002"
+            },
+            "tone": "warning"
+          }
+        }
+      }
+    },
+    "toast-danger": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Danger"
+        },
+        "appearance": "outline",
+        "icon": "circle-x"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Payment failed"
+            },
+            "tone": "danger"
+          }
+        }
+      }
+    },
+    "toast-neutral": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Neutral"
+        },
+        "appearance": "outline",
+        "icon": "bell"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Draft saved"
+            }
+          }
+        }
+      }
+    },
+    "toast-update-group": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "toast-update-label",
+        "toast-update"
+      ]
+    },
+    "toast-update-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Update in place"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "toast-update": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "toast-import-start",
+        "toast-import-half",
+        "toast-import-finish"
+      ]
+    },
+    "toast-import-start": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Start import"
+        },
+        "icon": "upload"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Importing products: 0 of 120"
+            },
+            "tone": "info",
+            "key": "import",
+            "duration": 0
+          }
+        }
+      }
+    },
+    "toast-import-half": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Halfway"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Importing products: 60 of 120"
+            },
+            "tone": "info",
+            "key": "import",
+            "duration": 0
+          }
+        }
+      }
+    },
+    "toast-import-finish": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Finish"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Import complete: 120 products"
+            },
+            "tone": "success",
+            "key": "import"
+          }
+        }
+      }
+    },
+    "toast-after-group": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "toast-after-label",
+        "toast-after"
+      ]
+    },
+    "toast-fail-group": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "toast-fail-label",
+        "toast-fail"
+      ]
+    },
+    "toast-fail-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "A failed request without onError raises a danger toast"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "toast-fail": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "toast-failing"
+      ]
+    },
+    "toast-after-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "After an action"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "toast-after": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "toast-refresh"
+      ]
+    },
+    "toast-refresh": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Refresh orders"
+        },
+        "icon": "refresh-cw"
+      },
+      "children": [],
+      "on": {
+        "press": [
+          {
+            "action": "invalidate",
+            "params": {
+              "resource": "orders"
+            }
+          },
+          {
+            "action": "toast",
+            "params": {
+              "message": {
+                "$t": "Orders refreshed"
+              },
+              "tone": "success"
+            }
+          }
+        ]
+      }
+    },
+    "toast-failing": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Failing request"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "request",
+          "params": {
+            "url": "/notes",
+            "query": {
+              "__offline": "1"
+            }
+          }
+        }
+      }
+    },
+    "notice-card": {
+      "type": "Example",
+      "props": {
+        "id": "notices",
+        "title": {
+          "$t": "Notice · notification"
+        },
+        "description": {
+          "$t": "A card with a title, details and up to three actions. It stays 4.5 seconds, pauses while the pointer rests on it and can always be closed"
+        }
+      },
+      "children": [
+        "notice-body"
+      ]
+    },
+    "notice-body": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "notice-tones-group",
+        "notice-actions-group",
+        "notice-sticky-group",
+        "notice-after-group"
+      ]
+    },
+    "notice-after-group": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "notice-after-label",
+        "notice-after"
+      ]
+    },
+    "notice-after-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Only once a request succeeds"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "notice-after": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "notice-sync-ok",
+        "notice-sync-offline"
+      ]
+    },
+    "notice-sync-ok": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Sync drafts"
+        },
+        "appearance": "outline",
+        "icon": "cloud-upload"
+      },
+      "children": [],
+      "on": {
+        "press": [
+          {
+            "action": "request",
+            "params": {
+              "url": "/notes"
+            }
+          },
+          {
+            "action": "notify",
+            "params": {
+              "title": {
+                "$t": "Drafts synced"
+              },
+              "description": {
+                "$t": "Your notes match the server again"
+              },
+              "tone": "success"
+            }
+          }
+        ]
+      }
+    },
+    "notice-sync-offline": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Sync while offline"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": [
+          {
+            "action": "request",
+            "params": {
+              "url": "/notes",
+              "query": {
+                "__offline": "1"
+              }
+            }
+          },
+          {
+            "action": "notify",
+            "params": {
+              "title": {
+                "$t": "Drafts synced"
+              },
+              "description": {
+                "$t": "Your notes match the server again"
+              },
+              "tone": "success"
+            }
+          }
+        ]
+      }
+    },
+    "notice-tones-group": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "notice-tones-label",
+        "notice-tones"
+      ]
+    },
+    "notice-tones-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Tones with a description"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "notice-tones": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "notice-success",
+        "notice-info",
+        "notice-warning",
+        "notice-danger",
+        "notice-neutral"
+      ]
+    },
+    "notice-success": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Success"
+        },
+        "appearance": "outline",
+        "icon": "circle-check"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "notify",
+          "params": {
+            "title": {
+              "$t": "Order shipped"
+            },
+            "description": {
+              "$t": "ORD-01086 left the Hangzhou warehouse"
+            },
+            "tone": "success"
+          }
+        }
+      }
+    },
+    "notice-info": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Info"
+        },
+        "appearance": "outline",
+        "icon": "info"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "notify",
+          "params": {
+            "title": {
+              "$t": "New version available"
+            },
+            "description": {
+              "$t": "Reload to get the latest dashboard widgets"
+            },
+            "tone": "info"
+          }
+        }
+      }
+    },
+    "notice-warning": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Warning"
+        },
+        "appearance": "outline",
+        "icon": "triangle-alert"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "notify",
+          "params": {
+            "title": {
+              "$t": "Stock running low"
+            },
+            "description": {
+              "$t": "Only 3 left of SKU-0002"
+            },
+            "tone": "warning"
+          }
+        }
+      }
+    },
+    "notice-danger": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Danger"
+        },
+        "appearance": "outline",
+        "icon": "circle-x"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "notify",
+          "params": {
+            "title": {
+              "$t": "Payment failed"
+            },
+            "description": {
+              "$t": "The card was declined. Ask for another method"
+            },
+            "tone": "danger"
+          }
+        }
+      }
+    },
+    "notice-neutral": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Neutral"
+        },
+        "appearance": "outline",
+        "icon": "bell"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "notify",
+          "params": {
+            "title": {
+              "$t": "Draft saved"
+            },
+            "description": {
+              "$t": "Your changes are kept on this device"
+            }
+          }
+        }
+      }
+    },
+    "notice-actions-group": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "notice-actions-label",
+        "notice-actions"
+      ]
+    },
+    "notice-actions-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "With actions"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "notice-actions": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "notice-view",
+        "notice-undo"
+      ]
+    },
+    "notice-view": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Export ready"
+        },
+        "appearance": "soft",
+        "icon": "download"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "notify",
+          "params": {
+            "title": {
+              "$t": "Export ready"
+            },
+            "description": {
+              "$t": "orders-2026-08.csv is ready to download"
+            },
+            "tone": "info",
+            "actions": [
+              {
+                "label": {
+                  "$t": "View"
+                },
+                "action": "toast",
+                "params": {
+                  "message": {
+                    "$t": "Opening orders-2026-08.csv"
+                  },
+                  "tone": "info"
+                }
+              },
+              {
+                "label": {
+                  "$t": "Later"
+                },
+                "action": "toast",
+                "params": {
+                  "message": {
+                    "$t": "Kept in Downloads for 7 days"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "notice-undo": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Order archived"
+        },
+        "appearance": "soft",
+        "icon": "archive"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "notify",
+          "params": {
+            "title": {
+              "$t": "Order archived"
+            },
+            "description": {
+              "$t": "ORD-01086 moved to the archive"
+            },
+            "tone": "success",
+            "actions": [
+              {
+                "label": {
+                  "$t": "Undo"
+                },
+                "action": "toast",
+                "params": {
+                  "message": {
+                    "$t": "Order restored"
+                  },
+                  "tone": "success"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "notice-sticky-group": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "notice-sticky-label",
+        "notice-sticky"
+      ]
+    },
+    "notice-sticky-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Sticky, updated in place"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "notice-sticky": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "notice-sync-start",
+        "notice-sync-update",
+        "notice-sync-finish",
+        "notice-sync-close"
+      ]
+    },
+    "notice-sync-start": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Keep open"
+        },
+        "icon": "refresh-cw"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "notify",
+          "params": {
+            "title": {
+              "$t": "Syncing inventory…"
+            },
+            "description": {
+              "$t": "0 of 3 warehouses done"
+            },
+            "tone": "info",
+            "key": "sync",
+            "duration": 0
+          }
+        }
+      }
+    },
+    "notice-sync-update": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Update"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "notify",
+          "params": {
+            "title": {
+              "$t": "Syncing inventory…"
+            },
+            "description": {
+              "$t": "2 of 3 warehouses done"
+            },
+            "tone": "info",
+            "key": "sync",
+            "duration": 0
+          }
+        }
+      }
+    },
+    "notice-sync-finish": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Finish"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "notify",
+          "params": {
+            "title": {
+              "$t": "Inventory synced"
+            },
+            "description": {
+              "$t": "All 3 warehouses are up to date"
+            },
+            "tone": "success",
+            "key": "sync"
+          }
+        }
+      }
+    },
+    "notice-sync-close": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Close it"
+        },
+        "appearance": "ghost"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "closeNotice",
+          "params": {
+            "key": "sync"
+          }
+        }
+      }
+    }
+  }
+}

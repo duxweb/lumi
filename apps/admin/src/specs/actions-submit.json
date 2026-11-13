@@ -1,0 +1,171 @@
+{
+  "root": "stack",
+  "state": {
+    "draft": {
+      "title": "",
+      "priority": "normal"
+    },
+    "created": null,
+    "submitError": null
+  },
+  "elements": {
+    "stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "form",
+        "submit-error",
+        "created"
+      ]
+    },
+    "form": {
+      "type": "Form",
+      "props": {},
+      "on": {
+        "submit": {
+          "action": "submitForm",
+          "params": {
+            "resource": "notes",
+            "valuesPath": "/draft",
+            "resultPath": "/created",
+            "successState": {
+              "/draft": {
+                "title": "",
+                "priority": "normal"
+              },
+              "/submitError": null
+            }
+          },
+          "onError": {
+            "set": {
+              "/submitError": "$error.message"
+            }
+          }
+        }
+      },
+      "children": [
+        "title",
+        "priority",
+        "save"
+      ]
+    },
+    "title": {
+      "type": "FormField",
+      "props": {
+        "name": "title",
+        "label": {
+          "$t": "Title"
+        },
+        "required": true,
+        "value": {
+          "$bindState": "/draft/title"
+        },
+        "checks": [
+          {
+            "type": "required",
+            "message": {
+              "$t": "Title is required"
+            }
+          },
+          {
+            "type": "minLength",
+            "args": {
+              "min": 3
+            },
+            "message": {
+              "$t": "Use at least 3 characters"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "priority": {
+      "type": "FormField",
+      "props": {
+        "name": "priority",
+        "label": {
+          "$t": "Priority"
+        },
+        "fieldType": "enum",
+        "widget": "Select",
+        "options": [
+          {
+            "label": {
+              "$t": "Low"
+            },
+            "value": "low"
+          },
+          {
+            "label": {
+              "$t": "Normal"
+            },
+            "value": "normal"
+          },
+          {
+            "label": {
+              "$t": "High"
+            },
+            "value": "high"
+          }
+        ],
+        "value": {
+          "$bindState": "/draft/priority"
+        }
+      },
+      "children": []
+    },
+    "save": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Create note"
+        },
+        "type": "submit"
+      },
+      "children": []
+    },
+    "submit-error": {
+      "type": "Alert",
+      "props": {
+        "tone": "warning",
+        "title": {
+          "$t": "Backend rejected the save"
+        },
+        "message": {
+          "$state": "/submitError"
+        }
+      },
+      "visible": {
+        "$state": "/submitError"
+      },
+      "children": []
+    },
+    "created": {
+      "type": "Alert",
+      "props": {
+        "tone": "success",
+        "title": {
+          "$t": "Saved"
+        },
+        "message": {
+          "$t": "Created note #{id}: {title}",
+          "params": {
+            "id": {
+              "$state": "/created/data/id"
+            },
+            "title": {
+              "$state": "/created/data/title"
+            }
+          }
+        }
+      },
+      "visible": {
+        "$state": "/created"
+      },
+      "children": []
+    }
+  }
+}

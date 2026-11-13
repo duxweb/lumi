@@ -1,0 +1,62 @@
+---
+title: "Upload"
+description: "上传文件，显示进度，可取消和重试。"
+---
+
+<ComponentPreview name="Upload" />
+
+上传文件，显示进度，可取消和重试。上传本身由宿主服务完成。
+
+## 示例
+
+```json
+{
+  "root": "upload-23",
+  "elements": {
+    "upload-23": {
+      "type": "Upload",
+      "props": {
+        "value": { "$bindState": "/upload-23/value" },
+        "multiple": true,
+        "ariaLabel": "Upload example"
+      },
+      "children": []
+    }
+  },
+  "state": { "upload-23": { "value": [] } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `value` | 已上传文件的地址列表。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string[]` | `[]` |
+| `defaultValue` | 初始值，只在没有绑定 `value` 时生效。 | `string[]` |  |
+| `variant` | `dropzone` 虚线拖放区加文件列表，`button` 紧凑按钮，`image` 单张头像/封面图块。 | `"dropzone" \| "button" \| "image"` | `"dropzone"` |
+| `shape` | `image` 样式的图块形状：`square` 方形，`circle` 圆形（头像）。 | `"square" \| "circle"` | `"square"` |
+| `accept` | 允许的文件类型，同原生 `accept`，如 `image/*,.pdf`。 | `string` |  |
+| `multiple` | 允许选择多个。 | `boolean` | `false` |
+| `maxFiles` | `multiple` 时最多保存几个文件，超出的文件直接拒绝。 | `integer` |  |
+| `maxSize` | 单个文件的最大字节数，超出会提示并拒绝。 | `number` |  |
+| `hint` | 替换自动生成的“类型 · 大小上限”说明文字。 | `string` |  |
+| `preview` | 显示已上传图片的缩略图。 | `boolean` | `false` |
+| `loading` | 为 true 时显示加载状态，并暂停交互。 | `boolean` | `false` |
+| `progress` | 当前上传进度（0–100），通常由上传服务写入。 | `number` |  |
+| `error` | 错误提示文字，显示在控件下方。 | `string` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean` | `false` |
+| `invalid` | 标记为校验未通过，显示错误样式。通常由 FormField 自动设置。 | `boolean` | `false` |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+| `upload` | 上传参数，如 `{ url, fieldName }`，交给 Lumi 上传服务；`sign` 用于直传对象存储，见 [直传对象存储](/guide/backend-files/#直传对象存储)。 字段：`sign?`、`url?`、`method?`、`fieldName?`、`data?`、`dataProviderName?` | `object` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：无

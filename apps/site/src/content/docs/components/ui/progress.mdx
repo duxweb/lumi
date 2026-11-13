@@ -1,0 +1,43 @@
+---
+title: "Progress"
+description: "进度条，与 json-render shadcn 的 Progress 兼容。"
+---
+
+<ComponentPreview name="Progress" />
+
+进度条，与 json-render shadcn 的 Progress 兼容。`value` 从 0 到 `max`（默认 100）；`label` 显示在进度条上方并作为它的名称。
+
+## 示例
+
+```json
+{
+  "root": "progress-a",
+  "elements": {
+    "progress-a": {
+      "type": "Progress",
+      "props": { "label": "Campaign prep", "value": 72 },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `value` | 当前进度。 | `number \| null` |  |
+| `max` | 进度的满值。 | `number \| null` | `100` |
+| `label` | 进度条上方的说明。 | `string \| null` |  |
+| `tone` | 进度条颜色。 | `"default" \| "brand" \| "success" \| "warning" \| "danger" \| null` | `"neutral"` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

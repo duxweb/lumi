@@ -1,0 +1,51 @@
+{
+  "app": {
+    "id": "lumi-foundation-admin",
+    "title": "Lumi Foundation Admin",
+    "subtitle": "Compiled once \u00b7 configured remotely",
+    "layout": "dual",
+    "tabs": true
+  },
+  "routes": [
+    {
+      "name": "home",
+      "path": "/",
+      "page": {
+        "src": "./pages/home.json"
+      },
+      "menu": {
+        "label": "Remote page",
+        "icon": "i-hugeicons-cloud-download",
+        "module": {
+          "name": "foundation",
+          "label": "Foundation",
+          "icon": "i-hugeicons-panels-top-left"
+        },
+        "group": {
+          "name": "delivery",
+          "label": "Delivery"
+        }
+      }
+    },
+    {
+      "name": "workflow",
+      "path": "/workflow",
+      "page": {
+        "src": "./pages/workflow.json"
+      },
+      "menu": {
+        "label": "Compiled extension",
+        "icon": "i-hugeicons-workflow",
+        "module": {
+          "name": "foundation",
+          "label": "Foundation",
+          "icon": "i-hugeicons-panels-top-left"
+        },
+        "group": {
+          "name": "delivery",
+          "label": "Delivery"
+        }
+      }
+    }
+  ]
+}

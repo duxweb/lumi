@@ -1,0 +1,1685 @@
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Form elements"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "elements-card",
+        "detail-grid"
+      ]
+    },
+    "static-text": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "admin@lumi.dev"
+        }
+      },
+      "children": []
+    },
+    "field-static": {
+      "type": "FormField",
+      "props": {
+        "name": "static",
+        "label": {
+          "$t": "Static"
+        }
+      },
+      "children": [
+        "static-text"
+      ]
+    },
+    "field-text": {
+      "type": "FormField",
+      "props": {
+        "name": "text",
+        "label": {
+          "$t": "Text"
+        },
+        "placeholder": {
+          "$t": "Your name"
+        }
+      },
+      "children": []
+    },
+    "field-password": {
+      "type": "FormField",
+      "props": {
+        "name": "password",
+        "label": {
+          "$t": "Password"
+        },
+        "type": "password",
+        "defaultValue": "lumi-secret"
+      },
+      "children": []
+    },
+    "field-disabled": {
+      "type": "FormField",
+      "props": {
+        "name": "disabled",
+        "label": {
+          "$t": "Disabled"
+        },
+        "placeholder": {
+          "$t": "Not editable"
+        },
+        "disabled": true
+      },
+      "children": []
+    },
+    "field-readonly": {
+      "type": "FormField",
+      "props": {
+        "name": "readonly",
+        "label": {
+          "$t": "Readonly"
+        },
+        "defaultValue": "LUMI-2026-0817",
+        "readonly": true
+      },
+      "children": []
+    },
+    "field-required": {
+      "type": "FormField",
+      "props": {
+        "name": "required",
+        "label": {
+          "$t": "Required"
+        },
+        "placeholder": {
+          "$t": "Shown with a marker"
+        },
+        "required": true
+      },
+      "children": []
+    },
+    "field-clearable": {
+      "type": "FormField",
+      "props": {
+        "name": "clearable",
+        "label": {
+          "$t": "Clearable"
+        },
+        "clearable": true,
+        "defaultValue": {
+          "$t": "Clear me"
+        }
+      },
+      "children": []
+    },
+    "field-textarea": {
+      "type": "FormField",
+      "props": {
+        "name": "textarea",
+        "label": {
+          "$t": "Textarea"
+        },
+        "fieldType": "string",
+        "widget": "Textarea",
+        "rows": 3,
+        "placeholder": {
+          "$t": "Tell us about the order…"
+        },
+        "help": {
+          "$t": "Up to 500 characters"
+        }
+      },
+      "children": []
+    },
+    "field-auto-resize-textarea": {
+      "type": "FormField",
+      "props": {
+        "name": "auto-resize-textarea",
+        "label": {
+          "$t": "Auto-resize textarea"
+        },
+        "fieldType": "string",
+        "widget": "Textarea",
+        "autoResize": true,
+        "rows": 2,
+        "defaultValue": {
+          "$t": "Grows as you type more lines"
+        }
+      },
+      "children": []
+    },
+    "field-select": {
+      "type": "FormField",
+      "props": {
+        "name": "select",
+        "label": {
+          "$t": "Select"
+        },
+        "fieldType": "string",
+        "widget": "Select",
+        "options": [
+          {
+            "value": "cn",
+            "label": {
+              "$t": "China"
+            }
+          },
+          {
+            "value": "jp",
+            "label": {
+              "$t": "Japan"
+            }
+          },
+          {
+            "value": "de",
+            "label": {
+              "$t": "Germany"
+            }
+          },
+          {
+            "value": "us",
+            "label": {
+              "$t": "United States"
+            }
+          },
+          {
+            "value": "br",
+            "label": {
+              "$t": "Brazil"
+            },
+            "disabled": true
+          }
+        ],
+        "placeholder": {
+          "$t": "Choose a country"
+        }
+      },
+      "children": []
+    },
+    "field-select-with-search": {
+      "type": "FormField",
+      "props": {
+        "name": "select-with-search",
+        "label": {
+          "$t": "Select with search"
+        },
+        "fieldType": "string",
+        "widget": "Select",
+        "options": [
+          {
+            "value": "cn",
+            "label": {
+              "$t": "China"
+            }
+          },
+          {
+            "value": "jp",
+            "label": {
+              "$t": "Japan"
+            }
+          },
+          {
+            "value": "de",
+            "label": {
+              "$t": "Germany"
+            }
+          },
+          {
+            "value": "us",
+            "label": {
+              "$t": "United States"
+            }
+          },
+          {
+            "value": "br",
+            "label": {
+              "$t": "Brazil"
+            },
+            "disabled": true
+          }
+        ],
+        "filterable": true,
+        "clearable": true,
+        "defaultValue": "jp"
+      },
+      "children": []
+    },
+    "plan-prefix": {
+      "type": "Select",
+      "props": {
+        "ariaLabel": {
+          "$t": "Plan"
+        },
+        "labelPrefix": {
+          "$t": "Plan"
+        },
+        "options": [
+          {
+            "value": "free",
+            "label": {
+              "$t": "Free"
+            }
+          },
+          {
+            "value": "pro",
+            "label": {
+              "$t": "Pro"
+            }
+          },
+          {
+            "value": "team",
+            "label": {
+              "$t": "Team"
+            }
+          }
+        ],
+        "defaultValue": "pro"
+      },
+      "children": []
+    },
+    "field-select-with-prefix": {
+      "type": "FormField",
+      "props": {
+        "name": "select-with-prefix",
+        "label": {
+          "$t": "Select with prefix"
+        }
+      },
+      "children": [
+        "plan-prefix"
+      ]
+    },
+    "notify-by": {
+      "type": "MultiSelect",
+      "props": {
+        "ariaLabel": {
+          "$t": "Notify by"
+        },
+        "options": [
+          {
+            "value": "email",
+            "label": {
+              "$t": "Email"
+            }
+          },
+          {
+            "value": "sms",
+            "label": {
+              "$t": "SMS"
+            }
+          },
+          {
+            "value": "push",
+            "label": {
+              "$t": "Push"
+            }
+          }
+        ],
+        "defaultValue": [
+          "email",
+          "push"
+        ],
+        "clearable": true
+      },
+      "children": []
+    },
+    "field-multiple-select": {
+      "type": "FormField",
+      "props": {
+        "name": "multiple-select",
+        "label": {
+          "$t": "Multiple select"
+        }
+      },
+      "children": [
+        "notify-by"
+      ]
+    },
+    "region": {
+      "type": "Cascader",
+      "props": {
+        "ariaLabel": {
+          "$t": "Region"
+        },
+        "options": [
+          {
+            "value": "east",
+            "label": {
+              "$t": "East China"
+            },
+            "children": [
+              {
+                "value": "sh",
+                "label": {
+                  "$t": "Shanghai"
+                },
+                "children": [
+                  {
+                    "value": "pudong",
+                    "label": {
+                      "$t": "Pudong"
+                    }
+                  },
+                  {
+                    "value": "xuhui",
+                    "label": {
+                      "$t": "Xuhui"
+                    }
+                  }
+                ]
+              },
+              {
+                "value": "zj",
+                "label": {
+                  "$t": "Zhejiang"
+                },
+                "children": [
+                  {
+                    "value": "hz",
+                    "label": {
+                      "$t": "Hangzhou"
+                    }
+                  },
+                  {
+                    "value": "nb",
+                    "label": {
+                      "$t": "Ningbo"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "value": "south",
+            "label": {
+              "$t": "South China"
+            },
+            "children": [
+              {
+                "value": "gd",
+                "label": {
+                  "$t": "Guangdong"
+                },
+                "children": [
+                  {
+                    "value": "gz",
+                    "label": {
+                      "$t": "Guangzhou"
+                    }
+                  },
+                  {
+                    "value": "sz",
+                    "label": {
+                      "$t": "Shenzhen"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "defaultValue": [
+          "east",
+          "zj",
+          "hz"
+        ],
+        "clearable": true
+      },
+      "children": []
+    },
+    "field-cascader": {
+      "type": "FormField",
+      "props": {
+        "name": "cascader",
+        "label": {
+          "$t": "Cascader"
+        }
+      },
+      "children": [
+        "region"
+      ]
+    },
+    "price": {
+      "type": "NumberInput",
+      "props": {
+        "ariaLabel": {
+          "$t": "Price"
+        },
+        "prefix": "$",
+        "min": 0,
+        "step": 0.5,
+        "precision": 2,
+        "defaultValue": 19.9
+      },
+      "children": []
+    },
+    "field-number-with-unit": {
+      "type": "FormField",
+      "props": {
+        "name": "number-with-unit",
+        "label": {
+          "$t": "Number with unit"
+        }
+      },
+      "children": [
+        "price"
+      ]
+    },
+    "quantity": {
+      "type": "NumberInput",
+      "props": {
+        "ariaLabel": {
+          "$t": "Quantity"
+        },
+        "suffix": {
+          "$t": "pcs"
+        },
+        "min": 1,
+        "max": 99,
+        "defaultValue": 3
+      },
+      "children": []
+    },
+    "field-number-with-suffix": {
+      "type": "FormField",
+      "props": {
+        "name": "number-with-suffix",
+        "label": {
+          "$t": "Number with suffix"
+        },
+        "help": {
+          "$t": "Between 1 and 99"
+        }
+      },
+      "children": [
+        "quantity"
+      ]
+    },
+    "tags-input": {
+      "type": "TagsInput",
+      "props": {
+        "ariaLabel": {
+          "$t": "Tags"
+        },
+        "defaultValue": [
+          "wool",
+          "winter"
+        ],
+        "placeholder": {
+          "$t": "Add a tag"
+        },
+        "max": 5
+      },
+      "children": []
+    },
+    "field-tags": {
+      "type": "FormField",
+      "props": {
+        "name": "tags",
+        "label": {
+          "$t": "Tags"
+        }
+      },
+      "children": [
+        "tags-input"
+      ]
+    },
+    "plan-radios": {
+      "type": "RadioGroup",
+      "props": {
+        "ariaLabel": {
+          "$t": "Plan"
+        },
+        "options": [
+          {
+            "value": "free",
+            "label": {
+              "$t": "Free"
+            }
+          },
+          {
+            "value": "pro",
+            "label": {
+              "$t": "Pro"
+            }
+          },
+          {
+            "value": "team",
+            "label": {
+              "$t": "Team"
+            }
+          }
+        ],
+        "defaultValue": "pro"
+      },
+      "children": []
+    },
+    "field-radios": {
+      "type": "FormField",
+      "props": {
+        "name": "radios",
+        "label": {
+          "$t": "Radios"
+        }
+      },
+      "children": [
+        "plan-radios"
+      ]
+    },
+    "plan-inline": {
+      "type": "RadioGroup",
+      "props": {
+        "ariaLabel": {
+          "$t": "Plan inline"
+        },
+        "options": [
+          {
+            "value": "free",
+            "label": {
+              "$t": "Free"
+            }
+          },
+          {
+            "value": "pro",
+            "label": {
+              "$t": "Pro"
+            }
+          },
+          {
+            "value": "team",
+            "label": {
+              "$t": "Team"
+            }
+          }
+        ],
+        "direction": "row",
+        "defaultValue": "free"
+      },
+      "children": []
+    },
+    "field-inline-radios": {
+      "type": "FormField",
+      "props": {
+        "name": "inline-radios",
+        "label": {
+          "$t": "Inline radios"
+        }
+      },
+      "children": [
+        "plan-inline"
+      ]
+    },
+    "channels": {
+      "type": "CheckboxGroup",
+      "props": {
+        "ariaLabel": {
+          "$t": "Channels"
+        },
+        "options": [
+          {
+            "value": "email",
+            "label": {
+              "$t": "Email"
+            }
+          },
+          {
+            "value": "sms",
+            "label": {
+              "$t": "SMS"
+            }
+          },
+          {
+            "value": "push",
+            "label": {
+              "$t": "Push"
+            }
+          }
+        ],
+        "defaultValue": [
+          "email"
+        ]
+      },
+      "children": []
+    },
+    "field-checkboxes": {
+      "type": "FormField",
+      "props": {
+        "name": "checkboxes",
+        "label": {
+          "$t": "Checkboxes"
+        }
+      },
+      "children": [
+        "channels"
+      ]
+    },
+    "channels-inline": {
+      "type": "CheckboxGroup",
+      "props": {
+        "ariaLabel": {
+          "$t": "Channels inline"
+        },
+        "options": [
+          {
+            "value": "email",
+            "label": {
+              "$t": "Email"
+            }
+          },
+          {
+            "value": "sms",
+            "label": {
+              "$t": "SMS"
+            }
+          },
+          {
+            "value": "push",
+            "label": {
+              "$t": "Push"
+            }
+          }
+        ],
+        "direction": "row",
+        "defaultValue": [
+          "sms",
+          "push"
+        ]
+      },
+      "children": []
+    },
+    "field-inline-checkboxes": {
+      "type": "FormField",
+      "props": {
+        "name": "inline-checkboxes",
+        "label": {
+          "$t": "Inline checkboxes"
+        }
+      },
+      "children": [
+        "channels-inline"
+      ]
+    },
+    "terms": {
+      "type": "Checkbox",
+      "props": {
+        "label": {
+          "$t": "I agree to the terms of service"
+        },
+        "defaultValue": true
+      },
+      "children": []
+    },
+    "field-single-checkbox": {
+      "type": "FormField",
+      "props": {
+        "name": "single-checkbox",
+        "label": {
+          "$t": "Single checkbox"
+        }
+      },
+      "children": [
+        "terms"
+      ]
+    },
+    "field-weekly-digest": {
+      "type": "FormField",
+      "props": {
+        "name": "weekly-digest",
+        "label": {
+          "$t": "Weekly digest"
+        },
+        "fieldType": "boolean",
+        "widget": "Switch",
+        "help": {
+          "$t": "A summary of orders every Monday"
+        },
+        "defaultValue": true
+      },
+      "children": []
+    },
+    "field-maintenance-mode": {
+      "type": "FormField",
+      "props": {
+        "name": "maintenance-mode",
+        "label": {
+          "$t": "Maintenance mode"
+        },
+        "fieldType": "boolean",
+        "widget": "Switch",
+        "help": {
+          "$t": "Disabled while a release runs"
+        },
+        "disabled": true
+      },
+      "children": []
+    },
+    "attachments": {
+      "type": "Upload",
+      "props": {
+        "ariaLabel": {
+          "$t": "Attachments"
+        },
+        "accept": "image/*,.pdf",
+        "multiple": true,
+        "maxSize": 5242880
+      },
+      "children": []
+    },
+    "field-upload": {
+      "type": "FormField",
+      "props": {
+        "name": "upload",
+        "label": {
+          "$t": "Upload"
+        }
+      },
+      "children": [
+        "attachments"
+      ]
+    },
+    "column-text": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "field-static",
+        "field-text",
+        "field-password",
+        "field-disabled",
+        "field-readonly",
+        "field-required",
+        "field-textarea",
+        "field-auto-resize-textarea"
+      ]
+    },
+    "column-selection": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "field-select",
+        "field-select-with-search",
+        "field-select-with-prefix",
+        "field-multiple-select",
+        "field-cascader",
+        "field-number-with-unit",
+        "field-number-with-suffix",
+        "field-tags",
+        "field-clearable"
+      ]
+    },
+    "column-choice": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "field-radios",
+        "field-inline-radios",
+        "field-checkboxes",
+        "field-inline-checkboxes",
+        "field-single-checkbox",
+        "field-weekly-digest",
+        "field-maintenance-mode",
+        "field-upload"
+      ]
+    },
+    "elements-grid": {
+      "type": "Grid",
+      "props": {
+        "columns": 3,
+        "gap": "lg"
+      },
+      "children": [
+        "column-text",
+        "column-selection",
+        "column-choice"
+      ]
+    },
+    "elements-card": {
+      "type": "Example",
+      "props": {
+        "id": "elements",
+        "title": {
+          "$t": "Form elements"
+        },
+        "description": {
+          "$t": "Text, selection and choice controls with their common states"
+        }
+      },
+      "children": [
+        "elements-grid"
+      ]
+    },
+    "input-sm": {
+      "type": "Input",
+      "props": {
+        "ariaLabel": {
+          "$t": "Input sm"
+        },
+        "size": "sm",
+        "placeholder": {
+          "$t": "Input · sm"
+        }
+      },
+      "children": []
+    },
+    "select-sm": {
+      "type": "Select",
+      "props": {
+        "ariaLabel": {
+          "$t": "Select sm"
+        },
+        "size": "sm",
+        "options": [
+          {
+            "value": "free",
+            "label": {
+              "$t": "Free"
+            }
+          },
+          {
+            "value": "pro",
+            "label": {
+              "$t": "Pro"
+            }
+          },
+          {
+            "value": "team",
+            "label": {
+              "$t": "Team"
+            }
+          }
+        ],
+        "defaultValue": "team"
+      },
+      "children": []
+    },
+    "number-sm": {
+      "type": "NumberInput",
+      "props": {
+        "ariaLabel": {
+          "$t": "Number sm"
+        },
+        "size": "sm",
+        "defaultValue": 12
+      },
+      "children": []
+    },
+    "size-sm": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 120,
+        "gap": "sm"
+      },
+      "children": [
+        "input-sm",
+        "select-sm",
+        "number-sm"
+      ]
+    },
+    "input-md": {
+      "type": "Input",
+      "props": {
+        "ariaLabel": {
+          "$t": "Input md"
+        },
+        "size": "md",
+        "placeholder": {
+          "$t": "Input · md"
+        }
+      },
+      "children": []
+    },
+    "select-md": {
+      "type": "Select",
+      "props": {
+        "ariaLabel": {
+          "$t": "Select md"
+        },
+        "size": "md",
+        "options": [
+          {
+            "value": "free",
+            "label": {
+              "$t": "Free"
+            }
+          },
+          {
+            "value": "pro",
+            "label": {
+              "$t": "Pro"
+            }
+          },
+          {
+            "value": "team",
+            "label": {
+              "$t": "Team"
+            }
+          }
+        ],
+        "defaultValue": "team"
+      },
+      "children": []
+    },
+    "number-md": {
+      "type": "NumberInput",
+      "props": {
+        "ariaLabel": {
+          "$t": "Number md"
+        },
+        "size": "md",
+        "defaultValue": 12
+      },
+      "children": []
+    },
+    "size-md": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 120,
+        "gap": "sm"
+      },
+      "children": [
+        "input-md",
+        "select-md",
+        "number-md"
+      ]
+    },
+    "input-lg": {
+      "type": "Input",
+      "props": {
+        "ariaLabel": {
+          "$t": "Input lg"
+        },
+        "size": "lg",
+        "placeholder": {
+          "$t": "Input · lg"
+        }
+      },
+      "children": []
+    },
+    "select-lg": {
+      "type": "Select",
+      "props": {
+        "ariaLabel": {
+          "$t": "Select lg"
+        },
+        "size": "lg",
+        "options": [
+          {
+            "value": "free",
+            "label": {
+              "$t": "Free"
+            }
+          },
+          {
+            "value": "pro",
+            "label": {
+              "$t": "Pro"
+            }
+          },
+          {
+            "value": "team",
+            "label": {
+              "$t": "Team"
+            }
+          }
+        ],
+        "defaultValue": "team"
+      },
+      "children": []
+    },
+    "number-lg": {
+      "type": "NumberInput",
+      "props": {
+        "ariaLabel": {
+          "$t": "Number lg"
+        },
+        "size": "lg",
+        "defaultValue": 12
+      },
+      "children": []
+    },
+    "size-lg": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 120,
+        "gap": "sm"
+      },
+      "children": [
+        "input-lg",
+        "select-lg",
+        "number-lg"
+      ]
+    },
+    "sizes-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "size-sm",
+        "size-md",
+        "size-lg"
+      ]
+    },
+    "sizes-card": {
+      "type": "Example",
+      "props": {
+        "id": "sizes",
+        "title": {
+          "$t": "Sizes"
+        },
+        "description": {
+          "$t": "Every field control comes in three heights that line up across a row"
+        }
+      },
+      "children": [
+        "sizes-stack"
+      ]
+    },
+    "outline-input": {
+      "type": "Input",
+      "props": {
+        "ariaLabel": {
+          "$t": "Outline input"
+        },
+        "placeholder": {
+          "$t": "Outline"
+        }
+      },
+      "children": []
+    },
+    "filled-input": {
+      "type": "Input",
+      "props": {
+        "ariaLabel": {
+          "$t": "Filled input"
+        },
+        "appearance": "filled",
+        "placeholder": {
+          "$t": "Filled"
+        }
+      },
+      "children": []
+    },
+    "appearance-input": {
+      "type": "Grid",
+      "props": {
+        "columns": 2,
+        "gap": "sm"
+      },
+      "children": [
+        "outline-input",
+        "filled-input"
+      ]
+    },
+    "outline-select": {
+      "type": "Select",
+      "props": {
+        "ariaLabel": {
+          "$t": "Outline select"
+        },
+        "options": [
+          {
+            "value": "cn",
+            "label": {
+              "$t": "China"
+            }
+          },
+          {
+            "value": "jp",
+            "label": {
+              "$t": "Japan"
+            }
+          },
+          {
+            "value": "de",
+            "label": {
+              "$t": "Germany"
+            }
+          },
+          {
+            "value": "us",
+            "label": {
+              "$t": "United States"
+            }
+          },
+          {
+            "value": "br",
+            "label": {
+              "$t": "Brazil"
+            },
+            "disabled": true
+          }
+        ],
+        "defaultValue": "de"
+      },
+      "children": []
+    },
+    "filled-select": {
+      "type": "Select",
+      "props": {
+        "ariaLabel": {
+          "$t": "Filled select"
+        },
+        "appearance": "filled",
+        "options": [
+          {
+            "value": "cn",
+            "label": {
+              "$t": "China"
+            }
+          },
+          {
+            "value": "jp",
+            "label": {
+              "$t": "Japan"
+            }
+          },
+          {
+            "value": "de",
+            "label": {
+              "$t": "Germany"
+            }
+          },
+          {
+            "value": "us",
+            "label": {
+              "$t": "United States"
+            }
+          },
+          {
+            "value": "br",
+            "label": {
+              "$t": "Brazil"
+            },
+            "disabled": true
+          }
+        ],
+        "defaultValue": "de"
+      },
+      "children": []
+    },
+    "appearance-select": {
+      "type": "Grid",
+      "props": {
+        "columns": 2,
+        "gap": "sm"
+      },
+      "children": [
+        "outline-select",
+        "filled-select"
+      ]
+    },
+    "outline-textarea": {
+      "type": "Textarea",
+      "props": {
+        "ariaLabel": {
+          "$t": "Outline textarea"
+        },
+        "rows": 2,
+        "placeholder": {
+          "$t": "Outline"
+        }
+      },
+      "children": []
+    },
+    "filled-textarea": {
+      "type": "Textarea",
+      "props": {
+        "ariaLabel": {
+          "$t": "Filled textarea"
+        },
+        "appearance": "filled",
+        "rows": 2,
+        "placeholder": {
+          "$t": "Filled"
+        }
+      },
+      "children": []
+    },
+    "appearance-textarea": {
+      "type": "Grid",
+      "props": {
+        "columns": 2,
+        "gap": "sm"
+      },
+      "children": [
+        "outline-textarea",
+        "filled-textarea"
+      ]
+    },
+    "appearance-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "appearance-input",
+        "appearance-select",
+        "appearance-textarea"
+      ]
+    },
+    "appearance-card": {
+      "type": "Example",
+      "props": {
+        "id": "appearance",
+        "title": {
+          "$t": "Appearance"
+        },
+        "description": {
+          "$t": "Outline sits on a card; filled sits on a page or inside a toolbar"
+        }
+      },
+      "children": [
+        "appearance-stack"
+      ]
+    },
+    "field-email": {
+      "type": "FormField",
+      "props": {
+        "name": "email",
+        "label": {
+          "$t": "Email"
+        },
+        "type": "email",
+        "defaultValue": "lumi@",
+        "error": {
+          "$t": "Enter a full email address, like name@example.com"
+        },
+        "required": true
+      },
+      "children": []
+    },
+    "field-country": {
+      "type": "FormField",
+      "props": {
+        "name": "country",
+        "label": {
+          "$t": "Country"
+        },
+        "fieldType": "string",
+        "widget": "Select",
+        "options": [
+          {
+            "value": "cn",
+            "label": {
+              "$t": "China"
+            }
+          },
+          {
+            "value": "jp",
+            "label": {
+              "$t": "Japan"
+            }
+          },
+          {
+            "value": "de",
+            "label": {
+              "$t": "Germany"
+            }
+          },
+          {
+            "value": "us",
+            "label": {
+              "$t": "United States"
+            }
+          },
+          {
+            "value": "br",
+            "label": {
+              "$t": "Brazil"
+            },
+            "disabled": true
+          }
+        ],
+        "placeholder": {
+          "$t": "Choose a country"
+        },
+        "error": {
+          "$t": "Choose where the order ships"
+        },
+        "required": true
+      },
+      "children": []
+    },
+    "field-stock": {
+      "type": "FormField",
+      "props": {
+        "name": "stock",
+        "label": {
+          "$t": "Stock"
+        },
+        "fieldType": "number",
+        "widget": "NumberInput",
+        "defaultValue": -2,
+        "error": {
+          "$t": "Stock cannot be negative"
+        }
+      },
+      "children": []
+    },
+    "field-accept-terms": {
+      "type": "FormField",
+      "props": {
+        "name": "accept-terms",
+        "label": {
+          "$t": "Accept terms"
+        },
+        "fieldType": "boolean",
+        "widget": "Switch",
+        "error": {
+          "$t": "You need to accept the terms to continue"
+        }
+      },
+      "children": []
+    },
+    "validation-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "field-email",
+        "field-country",
+        "field-stock",
+        "field-sku-code",
+        "field-accept-terms"
+      ]
+    },
+    "validation-card": {
+      "type": "Example",
+      "props": {
+        "id": "validation",
+        "title": {
+          "$t": "Validation states"
+        },
+        "description": {
+          "$t": "A field error names the problem and how to fix it"
+        }
+      },
+      "children": [
+        "validation-stack"
+      ]
+    },
+    "date-picker": {
+      "type": "DatePicker",
+      "props": {
+        "ariaLabel": {
+          "$t": "Date"
+        },
+        "defaultValue": "2026-08-10"
+      },
+      "children": []
+    },
+    "field-date": {
+      "type": "FormField",
+      "props": {
+        "name": "date",
+        "label": {
+          "$t": "Date"
+        }
+      },
+      "children": [
+        "date-picker"
+      ]
+    },
+    "time-picker": {
+      "type": "TimePicker",
+      "props": {
+        "ariaLabel": {
+          "$t": "Time"
+        },
+        "defaultValue": "09:30",
+        "step": 15
+      },
+      "children": []
+    },
+    "field-time": {
+      "type": "FormField",
+      "props": {
+        "name": "time",
+        "label": {
+          "$t": "Time"
+        }
+      },
+      "children": [
+        "time-picker"
+      ]
+    },
+    "datetime-picker": {
+      "type": "DateTimePicker",
+      "props": {
+        "ariaLabel": {
+          "$t": "Date and time"
+        },
+        "defaultValue": "2026-08-10T14:00"
+      },
+      "children": []
+    },
+    "field-date-and-time": {
+      "type": "FormField",
+      "props": {
+        "name": "date-and-time",
+        "label": {
+          "$t": "Date and time"
+        }
+      },
+      "children": [
+        "datetime-picker"
+      ]
+    },
+    "range-picker": {
+      "type": "DateRangePicker",
+      "props": {
+        "ariaLabel": {
+          "$t": "Date range"
+        },
+        "presets": [
+          {
+            "label": {
+              "$t": "Today"
+            },
+            "value": [
+              "2026-08-10",
+              "2026-08-10"
+            ]
+          },
+          {
+            "label": {
+              "$t": "Last 7 days"
+            },
+            "value": [
+              "2026-08-03",
+              "2026-08-10"
+            ]
+          },
+          {
+            "label": {
+              "$t": "Last 30 days"
+            },
+            "value": [
+              "2026-07-11",
+              "2026-08-10"
+            ]
+          }
+        ]
+      },
+      "children": []
+    },
+    "field-date-range-with-presets": {
+      "type": "FormField",
+      "props": {
+        "name": "date-range-with-presets",
+        "label": {
+          "$t": "Date range with presets"
+        }
+      },
+      "children": [
+        "range-picker"
+      ]
+    },
+    "disabled-date-picker": {
+      "type": "DatePicker",
+      "props": {
+        "ariaLabel": {
+          "$t": "Disabled date"
+        },
+        "defaultValue": "2026-08-10",
+        "disabled": true
+      },
+      "children": []
+    },
+    "field-disabled-date": {
+      "type": "FormField",
+      "props": {
+        "name": "disabled-date",
+        "label": {
+          "$t": "Disabled date"
+        }
+      },
+      "children": [
+        "disabled-date-picker"
+      ]
+    },
+    "dates-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "field-date",
+        "field-delivery-date",
+        "field-time",
+        "field-date-and-time",
+        "field-date-range-with-presets",
+        "field-disabled-date"
+      ]
+    },
+    "dates-card": {
+      "type": "Example",
+      "props": {
+        "id": "date-and-time",
+        "title": {
+          "$t": "Date and time"
+        },
+        "description": {
+          "$t": "Pickers open from a field and keep the value as ISO text"
+        }
+      },
+      "children": [
+        "dates-stack"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Form elements"
+        },
+        "description": {
+          "$t": "Every Lumi form control in its sizes and states, served as a JSON page and rendered from the public catalog"
+        }
+      },
+      "children": []
+    },
+    "detail-grid": {
+      "type": "Grid",
+      "props": {
+        "columns": 2,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "sizes-card",
+        "appearance-card",
+        "validation-card",
+        "dates-card",
+        "rich-text-card"
+      ]
+    },
+    "field-sku-code": {
+      "type": "FormField",
+      "props": {
+        "name": "skuCode",
+        "label": {
+          "$t": "SKU code"
+        },
+        "defaultValue": "ab 12",
+        "errorDisplay": "tooltip",
+        "error": {
+          "$t": "Use 4–12 letters, digits or dashes"
+        },
+        "help": {
+          "$t": "This field shows its error in a tooltip: hover or focus it to read the message"
+        }
+      },
+      "children": []
+    },
+    "field-delivery-date": {
+      "type": "FormField",
+      "props": {
+        "name": "deliveryDate",
+        "label": {
+          "$t": "Delivery date"
+        },
+        "help": {
+          "$t": "Only the next two weeks can be picked"
+        }
+      },
+      "children": [
+        "delivery-date-picker"
+      ]
+    },
+    "delivery-date-picker": {
+      "type": "DatePicker",
+      "props": {
+        "ariaLabel": {
+          "$t": "Delivery date"
+        },
+        "defaultValue": "2026-08-12",
+        "min": "2026-08-10",
+        "max": "2026-08-24"
+      },
+      "children": []
+    },
+    "rich-text-card": {
+      "type": "Example",
+      "props": {
+        "id": "rich-text",
+        "title": {
+          "$t": "Rich text"
+        },
+        "description": {
+          "$t": "Markdown with a formatting toolbar and a preview toggle"
+        }
+      },
+      "children": [
+        "rich-text-field"
+      ]
+    },
+    "rich-text-field": {
+      "type": "RichText",
+      "props": {
+        "ariaLabel": {
+          "$t": "Release notes"
+        },
+        "rows": 6,
+        "value": {
+          "$bindState": "/richText"
+        }
+      },
+      "children": []
+    }
+  },
+  "state": {
+    "richText": "## Release notes\n\n- Ships **markdown**\n- And `code`"
+  }
+}

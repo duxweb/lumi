@@ -1,0 +1,351 @@
+---
+title: "React 集成"
+description: "在自己的 React 应用里用 Lumi：只渲染 JSON、加上数据服务、加载 JSON 页面、多后端分区，以及 JSX 和 JSON 混用。"
+---
+
+Lumi 没有自己的渲染器。页面由 json-render 原生的 `JSONUIProvider` 和 `Renderer` 渲染，Lumi 往里加三样东西：
+
+| 加什么 | 从哪来 | 作用 |
+| --- | --- | --- |
+| 组件 | `@duxweb/lumi-ui` 的 `uiRegistry` | 按钮、表格、表单这些看得见的组件，不发请求 |
+| 数据元素 | `@duxweb/lumi` 的 `lumiRegistry` | `Query`、`CanAccess`、`AgentSession`，负责取数和权限 |
+| 动作 | `LumiProvider` 自动注册 | `submitForm`、`delete`、`invalidate` 等读写数据的动作 |
+
+按需要选一种接法：
+
+| 需要 | 用法 |
+| --- | --- |
+| 只显示 JSON 界面，数据自己传 | [只渲染 JSON](#只渲染-json) |
+| JSON 里要读写后端 | [加上数据服务](#加上数据服务) |
+| 页面 JSON 放在文件或后端 | [加载 JSON 页面](#加载-json-页面) |
+| 只用 React hooks，不渲染 JSON | [只用 hooks](#只用-hooks) |
+| 完整后台（菜单、登录、布局） | 直接用 [Admin 应用](/guide/advanced/admin/) |
+
+## 目录：先定一个 Catalog
+
+Catalog 规定页面里能写哪些组件和动作，渲染和 `lumi-check` 都读它。把它放在单独的文件里，只从 `/catalog` 子路径导入，这样 Node 工具不装 React 也能加载：
+
+```ts
+// catalog.ts
+// 只从 /catalog 导入：这里没有 React，Node 工具也能加载
+import { lumiActionDefinitions, lumiComponentDefinitions } from '@duxweb/lumi/catalog'
+import { uiComponentDefinitions } from '@duxweb/lumi-ui/catalog'
+import { defineCatalog } from '@json-render/core'
+import { schema } from '@json-render/react/schema'
+
+// 页面里能用的组件和动作
+export const catalog = defineCatalog(schema, {
+  // UI 组件，加上 Query、CanAccess 这些数据元素
+  components: { ...uiComponentDefinitions, ...lumiComponentDefinitions },
+  // submitForm、delete 等数据动作
+  actions: lumiActionDefinitions,
+})
+```
+
+两份定义里有同名组件时，用 `composeDefinitions` 合并：同名会直接报错，确实要替换的名字写进 `override`，后面的覆盖前面的。
+
+```ts
+import { composeDefinitions, lumiComponentDefinitions } from '@duxweb/lumi/catalog'
+import { uiComponentDefinitions } from '@duxweb/lumi-ui/catalog'
+
+// 合并两份定义；有同名组件会直接报错
+const components = composeDefinitions(uiComponentDefinitions, lumiComponentDefinitions)
+```
+
+## 只渲染 JSON
+
+纯 UI 组件不需要任何 Lumi 服务，`uiRegistry` 直接交给 json-render：
+
+```tsx
+import type { Spec } from '@json-render/core'
+import { uiRegistry } from '@duxweb/lumi-ui'
+import { JSONUIProvider, Renderer } from '@json-render/react'
+// 组件的样式，整个应用引入一次
+import '@duxweb/lumi-ui/style.css'
+
+// 一个页面：读状态里的 name 显示成提示
+const spec: Spec = {
+  root: 'hello',
+  state: { name: 'Ada' },
+  elements: {
+    hello: {
+      type: 'Alert',
+      props: { message: { $state: '/name' }, tone: 'success' },
+      children: [],
+    },
+  },
+}
+
+// json-render 原生的 Provider 和 Renderer，只换上 Lumi 的组件
+export function App() {
+  return (
+    <JSONUIProvider registry={uiRegistry} initialState={spec.state}>
+      <Renderer spec={spec} registry={uiRegistry} />
+    </JSONUIProvider>
+  )
+}
+```
+
+这时页面里不能用 `Query` 和数据动作，表格的行、选项列表都要通过状态传进去。状态、绑定、`on`、`visible` 都是 json-render 的原生写法，见 [页面 JSON](/guide/pages/)。
+
+## 加上数据服务
+
+要在 JSON 里读写后端，先用 `createLumi` 建一个**上下文**，再把 `JSONUIProvider` 换成 `LumiProvider`：
+
+```tsx
+import type { Spec } from '@json-render/core'
+import {
+  createLumi,
+  createSimpleDataProvider,
+  LumiProvider,
+  lumiRegistry,
+} from '@duxweb/lumi'
+import { uiRegistry } from '@duxweb/lumi-ui'
+import { Renderer } from '@json-render/react'
+
+// 整个应用共用一个上下文：数据、登录、语言、提示都在里面
+const context = createLumi({
+  // 按默认约定请求 /api
+  dataProvider: createSimpleDataProvider({ apiUrl: '/api' }),
+})
+// UI 组件加上 Lumi 的数据元素
+const registry = { ...uiRegistry, ...lumiRegistry }
+
+// 把 JSONUIProvider 换成 LumiProvider，页面里就能用 Query 和数据动作
+export function OrdersPage({ spec }: { spec: Spec }) {
+  return (
+    <LumiProvider context={context} registry={registry} initialState={spec.state}>
+      <Renderer spec={spec} registry={registry} />
+    </LumiProvider>
+  )
+}
+```
+
+`LumiProvider` 做了这些事：
+
+- 接受 `JSONUIProvider` 的全部属性（`registry`、`initialState`、`store`、`handlers`、`directives`……），里面就是原生 Provider。
+- 注册 Lumi 的数据动作（`submitForm`、`delete`、`invalidate`、`exportList`……），你传的 `handlers` 和它们放在一起。同名会报错，避免无意中替换内置动作。
+- 提供 TanStack Query 的 `QueryClient`。不传 `queryClient` 时自己建一个；应用里已经有一个就传进来，JSON 和 hooks 共用一份缓存。
+- 注册 `$t` 翻译指令，切换语言时页面重新渲染。
+- 动作失败时弹出错误提示，不会静默失败；同一个事件后面的动作不再执行。
+
+上下文里有哪些服务、怎么配置，见 [架构总览](/guide/advanced/architecture/) 和 [其他 Provider](/guide/advanced/providers/)。
+
+### 自己的动作
+
+JSON 里的 `on` 只能写已注册的动作名。自己的动作分两半：实现写成 handler，按 `{ 动作名: 函数 }` 传给 `LumiProvider` 的 `handlers`；定义写进 Catalog 的 `actions`，`lumi-check` 才认它。和内置动作同名会报错。
+
+完整代码（handler、参数校验、Catalog 定义）见 [自定义组件](/guide/advanced/components/#自定义动作)。
+
+### 算出来的值
+
+JSON 里不能写表达式。要在页面上显示算出来的值（合计、换算、拼接），把函数按名字传给 `functions`，页面用 `$computed` 调用：
+
+```tsx
+import type { Spec } from '@json-render/core'
+import { createLumi, LumiProvider, lumiRegistry } from '@duxweb/lumi'
+import { uiRegistry } from '@duxweb/lumi-ui'
+import { Renderer } from '@json-render/react'
+
+const context = createLumi()
+const registry = { ...uiRegistry, ...lumiRegistry }
+// 键名就是 JSON 里 $computed 的名字；args 是已经解析好的参数
+const functions = {
+  lineTotal: (args: Record<string, unknown>) =>
+    (Number(args.price) * Number(args.count)).toFixed(2),
+}
+
+export function Page({ spec }: { spec: Spec }) {
+  return (
+    <LumiProvider
+      context={context}
+      registry={registry}
+      functions={functions}
+      initialState={spec.state}
+    >
+      <Renderer spec={spec} registry={registry} />
+    </LumiProvider>
+  )
+}
+```
+
+```jsonc
+{
+  "type": "Text",
+  "props": {
+    // 调用 lineTotal；args 里可以读状态，状态变了重新计算
+    "text": {
+      "$computed": "lineTotal",
+      "args": {
+        "price": { "$state": "/item/price" },
+        "count": { "$state": "/item/count" }
+      }
+    }
+  },
+  "children": []
+}
+```
+
+- `LumiSpecPage` 同样接受 `functions`。
+- `createAdmin` 和 CDN 版的扩展模块目前没有传 `functions` 的入口，后台页面里用不了 `$computed`。在后台里要显示算出来的值，让后端算好返回，或者写成 [自定义组件](/guide/advanced/components/)。
+- `lumi-check` 只检查 `$computed` 的写法，不知道有哪些函数；名字写错要到页面上才看得出来。
+
+## 加载 JSON 页面
+
+页面 JSON 通常放在文件或后端接口里。`LumiSpecPage` 负责加载、校验和渲染，等于 `LumiProvider` + `Renderer` 再加上加载：
+
+```tsx
+import type { Spec } from '@json-render/core'
+import {
+  createLumi,
+  createSimpleDataProvider,
+  LumiSpecPage,
+  lumiRegistry,
+} from '@duxweb/lumi'
+import { lumiActionDefinitions, lumiComponentDefinitions } from '@duxweb/lumi/catalog'
+import { uiRegistry } from '@duxweb/lumi-ui'
+import { uiComponentDefinitions } from '@duxweb/lumi-ui/catalog'
+import { defineCatalog } from '@json-render/core'
+import { schema } from '@json-render/react/schema'
+
+// 校验用的目录
+const catalog = defineCatalog(schema, {
+  components: { ...uiComponentDefinitions, ...lumiComponentDefinitions },
+  actions: lumiActionDefinitions,
+})
+// 数据服务
+const context = createLumi({
+  dataProvider: createSimpleDataProvider({ apiUrl: '/api' }),
+})
+// 组件的 React 实现
+const registry = { ...uiRegistry, ...lumiRegistry }
+
+// 给地址：请求、按目录校验，再渲染
+export function RemotePage() {
+  return (
+    <LumiSpecPage
+      context={context}
+      catalog={catalog}
+      registry={registry}
+      src="/pages/orders.json"
+    />
+  )
+}
+
+// 给对象：页面已经在代码里时
+export function LocalPage({ spec }: { spec: Spec }) {
+  return (
+    <LumiSpecPage context={context} catalog={catalog} registry={registry} spec={spec} />
+  )
+}
+```
+
+| 属性 | 说明 |
+| --- | --- |
+| `catalog`（必填） | 校验用的 Catalog。JSON 写错时显示错误，指到具体字段，不会渲染出半个页面。 |
+| `spec` / `src` | 直接给对象，或给地址去加载，二选一。 |
+| `loader` | 自己的加载函数，例如加载时带登录凭证或走别的请求库。 |
+| `cacheKey` | 加载结果的缓存键。 |
+| `reloadKey` | 值变了就重新加载，例如后端通知页面已更新。 |
+| `loadOptions` | 传给加载器的选项（`cache`、`signal` 等）。 |
+| `agent` | 是否让 AI 助手看到这个页面，默认 `true`。预览、示例里设成 `false`。 |
+| `agentTitle` | 页面在助手眼里的名字，通常是菜单标题。 |
+
+其余属性和 `LumiProvider` 相同。页面里的组件要读当前渲染的 Spec（例如显示页面源码），用 `useLumiSpec()`。
+
+### 页面和 AI 助手
+
+`LumiSpecPage` 挂载时把页面登记给上下文里的助手桥（`agentBridge`）：助手看到的是**页面的 JSON 结构**和**当前状态**，能做的只有两件事——写入有绑定的状态路径（如填表单），以及触发元素上已写好的 `on` 事件。它不能执行页面上没有的动作，也不能直接调用 DataProvider。所以一个页面能被助手操作到什么程度，完全由页面 JSON 决定。详见 [架构总览](/guide/assistant/)。
+
+## 多个后端
+
+上下文的 `dataProvider` 可以是一个对象，按名字放多个后端，名为 `default` 的是默认：
+
+```ts
+import { createLumi, createSimpleDataProvider } from '@duxweb/lumi'
+
+export const context = createLumi({
+  dataProvider: {
+    // 默认后端：页面没写 dataProviderName 时用它
+    default: createSimpleDataProvider({ apiUrl: '/api' }),
+    // 另一个后端：页面里写 "dataProviderName": "cms"
+    cms: createSimpleDataProvider({ apiUrl: 'https://cms.example.com/api' }),
+  },
+})
+```
+
+JSON 里在 `Query` 或动作上写 `"dataProviderName": "cms"`。如果整片页面都属于另一个后端，用 `LumiDataProviderScope` 包起来，里面没写 `dataProviderName` 的 hooks、`Query` 和数据动作都用它：
+
+```tsx
+import type { ReactNode } from 'react'
+import { LumiDataProviderScope } from '@duxweb/lumi'
+
+// 里面没写 dataProviderName 的 hooks、Query 和动作都用 cms
+export function CmsSection({ children }: { children: ReactNode }) {
+  return <LumiDataProviderScope name="cms">{children}</LumiDataProviderScope>
+}
+```
+
+显式写的 `dataProviderName` 优先；作用域可以嵌套，最里层的生效。名字没注册时直接报错，不会悄悄落到默认后端。
+
+## 只用 hooks
+
+不渲染 JSON、只在 React 组件里用 `useList`、`useOne`、`useCreate` 这些 hooks 时，用 `LumiServicesProvider`。它只提供上下文和 `QueryClient`，不建页面状态：
+
+```tsx
+import type { ReactNode } from 'react'
+import {
+  createLumi,
+  createSimpleDataProvider,
+  LumiServicesProvider,
+  useList,
+} from '@duxweb/lumi'
+
+// 只需要数据服务
+const context = createLumi({
+  dataProvider: createSimpleDataProvider({ apiUrl: '/api' }),
+})
+
+// 只提供上下文和缓存，不建页面状态
+export function Root({ children }: { children: ReactNode }) {
+  return <LumiServicesProvider context={context}>{children}</LumiServicesProvider>
+}
+
+// 组件里直接用 hooks
+export function OrderCount() {
+  // 只要总数，所以每页取 1 条
+  const { data } = useList({ resource: 'orders', pagination: { page: 1, pageSize: 1 } })
+  return <span>{data?.total ?? 0}</span>
+}
+```
+
+hooks 和 JSON 动作走同一个 DataProvider、同一份缓存：JSON 里保存了订单，用 `useList` 的组件也会刷新。全部 hooks 见 [数据 hooks](/guide/advanced/hooks/)。
+
+## 用 JSX 写
+
+每个 JSON 组件都有同名的 React 组件，前缀 `Lumi`，参数和 JSON 的 props 一致：
+
+```tsx
+import { LumiButton, LumiCard } from '@duxweb/lumi-ui'
+
+// 和 JSON 的 Card、Button 是同一套组件，参数名也一样
+export function Welcome() {
+  return (
+    <LumiCard title="欢迎">
+      <LumiButton label="开始" appearance="solid" />
+    </LumiCard>
+  )
+}
+```
+
+同一个界面用 JSX 还是 JSON 写，外观和行为一致。两者可以混用：JSX 页面里放一个 `LumiSpecPage` 渲染后端给的部分；或者把自己的 React 组件注册进 registry，在 JSON 里引用，见 [自定义组件](/guide/advanced/components/)。
+
+JSON 里的数据元素在 JSX 里换成 hooks 和组件：`Query` 对应 `useList` / `useOne`，`CanAccess` 对应 `LumiCanAccess`。
+
+## 常见问题
+
+**`Duplicate handler`**：传给 `LumiProvider` 的 `handlers` 和内置动作重名。要替换内置动作，改用 `LumiServicesProvider` + 原生 `JSONUIProvider`，在原生 Provider 的 `handlers` 里放自己的版本。
+
+**`dataProvider "xxx" not registered`**：`dataProviderName` 或作用域里的名字不在 `createLumi({ dataProvider })` 里。
+
+接下来：[Admin 应用](/guide/advanced/admin/)、[自定义组件](/guide/advanced/components/)。

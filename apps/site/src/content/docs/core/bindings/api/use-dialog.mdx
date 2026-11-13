@@ -1,0 +1,20 @@
+---
+title: "useDialog"
+description: "useDialog React hook 的签名、参数和返回值。"
+---
+
+Confirm, alert and prompt dialogs drawn by the host, following its theme: `confirm` resolves true when the reader accepts.
+
+```typescript
+useDialog(): { confirm: (options: DialogOptions) => Promise<boolean>; alert: (options: DialogOptions) => Promise<void>; prompt: (options: DialogOptions) => Promise<unknown>; }
+```
+
+返回 `{ confirm: (options: DialogOptions) => Promise<boolean>; alert: (options: DialogOptions) => Promise<void>; prompt: (options: DialogOptions) => Promise<unknown>; }`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `alert` | `(options: DialogOptions) => Promise<void>` | 是 |  |
+| `confirm` | `(options: DialogOptions) => Promise<boolean>` | 是 |  |
+| `prompt` | `(options: DialogOptions) => Promise<unknown>` | 是 |  |

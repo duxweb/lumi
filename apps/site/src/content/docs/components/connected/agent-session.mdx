@@ -1,0 +1,22 @@
+---
+title: "AgentSession"
+description: "把一段对话连接到返回 AI SDK UI message stream（SSE）的智能体接口。"
+---
+
+把一段对话连接到返回 AI SDK UI message stream（SSE）的智能体接口。会话 `{ id, messages, status, error, streaming }` 写入 `statePath`：把 ChatThread 的 `messages` 和 PromptInput 的 `streaming` 绑定到它，用 `agentSend` 发送、`agentStop` 停止，并把 ChatThread 的事件（approve、reject、answer、skip、regenerate、edit、suggestion）交给 `agentEvent`。设置 `resource` 时，`sessionId` 指定的会话通过 DataProvider 加载，每次回复后刷新该资源。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `statePath`（必填） | 会话写入页面状态的路径，如 `/chat`，内容为 `{ id, messages, status, error, streaming, loading }`；动作用 `session` 指向它。 | `string` |  |
+| `endpoint` | 对话接口地址，返回 AI SDK UI message stream（SSE）；相对路径按 DataProvider 的 API 地址解析。 | `string` | `"/agent/chat"` |
+| `sessionId` | 要打开的会话 ID；变化时切换并加载该会话，为空则开始新会话。 | `string \| null` |  |
+| `resource` | 数据资源名，如 `orders`。DataProvider 据此拼出接口地址。 | `string` |  |
+| `dataProviderName` | 使用哪个 DataProvider。只有一个时不用填。 | `string` |  |
+| `body` | 每次请求附带的额外字段，如所选模型。 | `object` |  |
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：`default`

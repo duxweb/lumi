@@ -1,0 +1,53 @@
+---
+title: "AvatarGroup"
+description: "一组重叠的头像，表示一条记录涉及的人。"
+---
+
+<ComponentPreview name="AvatarGroup" />
+
+一组重叠的头像，表示一条记录涉及的人。超过 `max` 的部分收成一个“+N”头像。
+
+## 示例
+
+```json
+{
+  "root": "avatar-group",
+  "elements": {
+    "avatar-group": {
+      "type": "AvatarGroup",
+      "props": {
+        "items": [
+          { "name": "Mia Chen" },
+          { "name": "Alex Kim" },
+          { "name": "Sam Rivera" },
+          { "name": "Noor Haddad" },
+          { "name": "Li Wei" },
+          { "name": "Jonas Berg" }
+        ],
+        "max": 4,
+        "label": "Reviewers"
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `items`（必填） | 要显示的人，每项是 `{ name, src? }`。 字段：`name`、`src?` | `object[]` |  |
+| `max` | 最多显示几个头像；超出的折叠成一个“+N”。不填时全部显示。 | `integer \| null` |  |
+| `size` | 头像尺寸，与同尺寸控件等高。 | `"sm" \| "md" \| "lg" \| null` | `"md"` |
+| `label` | 整组的读屏名称；不填时读出所有名字。 | `string \| null` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

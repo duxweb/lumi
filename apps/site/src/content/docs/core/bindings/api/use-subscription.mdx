@@ -1,0 +1,25 @@
+---
+title: "useSubscription"
+description: "useSubscription React hook 的签名、参数和返回值。"
+---
+
+Listens to a live channel while mounted; inert without a liveProvider.
+
+```typescript
+useSubscription(options: UseSubscriptionOptions): void
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `options` | `UseSubscriptionOptions` | 是 |  |
+
+`options` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `channel` | `string` | 是 | The channel to listen on; a resource's is `resources/{resource}`. |
+| `enabled` | `boolean \| undefined` | 否 | `false` does not subscribe. |
+| `onLiveEvent` | `(event: LiveEvent) => void` | 是 | Called for each event. |
+| `types` | `readonly string[] \| undefined` | 否 | Only these event types; all of them when left out. |
+
+返回 `void`。

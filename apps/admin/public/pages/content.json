@@ -1,0 +1,263 @@
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Rich content"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "sections",
+        "card-article"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Rich content"
+        },
+        "description": {
+          "$t": "Long-form typesetting, Markdown, sanitized HTML and a full article view, all in one reading style"
+        }
+      },
+      "children": []
+    },
+    "sections": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "card-prose",
+        "card-markdown",
+        "card-html",
+        "card-sizes"
+      ]
+    },
+    "card-prose": {
+      "type": "Example",
+      "props": {
+        "id": "prose",
+        "title": {
+          "$t": "Prose"
+        },
+        "description": {
+          "$t": "Wraps headings and text in one reading rhythm"
+        }
+      },
+      "children": [
+        "prose"
+      ]
+    },
+    "prose": {
+      "type": "Prose",
+      "props": {},
+      "children": [
+        "prose-heading",
+        "prose-lead",
+        "prose-text"
+      ]
+    },
+    "prose-heading": {
+      "type": "Heading",
+      "props": {
+        "text": {
+          "$t": "Shipping to the Nordics"
+        },
+        "level": "h2"
+      },
+      "children": []
+    },
+    "prose-lead": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Orders to Norway, Sweden and Finland now leave the Oslo warehouse, two days sooner than before"
+        },
+        "variant": "lead"
+      },
+      "children": []
+    },
+    "prose-text": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Customs paperwork is generated with the label, so the carrier no longer holds parcels at the border. Rates and delivery promises update on Monday"
+        }
+      },
+      "children": []
+    },
+    "card-markdown": {
+      "type": "Example",
+      "props": {
+        "id": "markdown",
+        "title": "Markdown",
+        "description": {
+          "$t": "Headings, task lists, quotes, highlighted code and tables; raw HTML stays text"
+        }
+      },
+      "children": [
+        "markdown"
+      ]
+    },
+    "markdown": {
+      "type": "Markdown",
+      "props": {
+        "content": {
+          "$t": "## Release checklist\n\nShip the **orders export** once these steps pass. The [API guide](https://example.com/docs) describes the endpoint.\n\n- [x] Migrate the `orders` table\n- [x] Backfill totals for 2025\n- [ ] Turn the export on for every workspace\n\n> Exports run at 02:00 UTC and pause during maintenance.\n\n```json\n{ \"resource\": \"orders\", \"format\": \"csv\" }\n```\n\n| Region | Orders | Share |\n| :-- | --: | --: |\n| Europe | 1,284 | 42% |\n| Asia | 1,032 | 34% |\n| Americas | 734 | 24% |"
+        }
+      },
+      "children": []
+    },
+    "card-html": {
+      "type": "Example",
+      "props": {
+        "id": "html",
+        "title": "HTML",
+        "description": {
+          "$t": "Saved editor markup, sanitized first: scripts, handlers and unsafe links are removed"
+        }
+      },
+      "children": [
+        "html"
+      ]
+    },
+    "html": {
+      "type": "Html",
+      "props": {
+        "content": {
+          "$t": "<h3>Return policy</h3><p>Items can be returned within <strong>30 days</strong> of delivery. <a href=\"https://example.com/returns\">Read the full policy</a>.</p><ul><li>Unused, in the original box</li><li>With the order number</li></ul><p>This <a href=\"javascript:alert('x')\">unsafe link</a> loses its address, and the script after it never runs.</p><script>alert('xss')</script><table><thead><tr><th>Item</th><th>Window</th></tr></thead><tbody><tr><td>Lamps</td><td>30 days</td></tr><tr><td>Textiles</td><td>14 days</td></tr></tbody></table>"
+        }
+      },
+      "children": []
+    },
+    "card-sizes": {
+      "type": "Example",
+      "props": {
+        "id": "sizes",
+        "title": {
+          "$t": "Sizes"
+        },
+        "description": {
+          "$t": "sm for side panels, md for pages, lg for reading views"
+        }
+      },
+      "children": [
+        "sizes-stack"
+      ]
+    },
+    "sizes-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "size-sm",
+        "size-lg"
+      ]
+    },
+    "size-sm": {
+      "type": "Markdown",
+      "props": {
+        "size": "sm",
+        "content": {
+          "$t": "### Small\n\nA compact body for drawers and side panels, where the text sits beside a form."
+        }
+      },
+      "children": []
+    },
+    "size-lg": {
+      "type": "Markdown",
+      "props": {
+        "size": "lg",
+        "content": {
+          "$t": "### Large\n\nA roomier body for reading views such as release notes and help articles."
+        }
+      },
+      "children": []
+    },
+    "card-article": {
+      "type": "Example",
+      "props": {
+        "id": "article",
+        "title": {
+          "$t": "Article"
+        },
+        "description": {
+          "$t": "Title, byline, cover and body, with a contents list that follows the reading position on wide screens"
+        }
+      },
+      "children": [
+        "article"
+      ]
+    },
+    "article": {
+      "type": "Article",
+      "props": {
+        "title": {
+          "$t": "Designing a calmer order page"
+        },
+        "summary": {
+          "$t": "How we cut the order screen down to the three questions support asks most"
+        },
+        "author": {
+          "name": "Mina Park",
+          "role": {
+            "$t": "Product design"
+          }
+        },
+        "publishedAt": {
+          "$t": "Nov 8, 2026"
+        },
+        "readingTime": {
+          "$t": "4 min read"
+        },
+        "tags": [
+          {
+            "$t": "Design"
+          },
+          {
+            "$t": "Orders"
+          }
+        ],
+        "cover": {
+          "src": "/media/lake.svg",
+          "alt": {
+            "$t": "Abstract lake illustration"
+          },
+          "caption": {
+            "$t": "Illustration: a quieter workspace"
+          }
+        },
+        "content": {
+          "$t": "Most order screens grew one field at a time. We rebuilt ours around the three questions support agents ask most: what was bought, where it is, and what the customer was told.\n\n## What we changed\n\nThe summary now leads with the status and the promised date, so nobody has to scroll to answer \"where is my order?\".\n\n### Fewer columns\n\nWe dropped five columns nobody sorted by and moved them into the detail drawer.\n\n### One timeline\n\nPayments, shipments and messages share a single timeline, newest first.\n\n![A quieter order page](/media/forest.svg \"The new order page, with the timeline beside the summary.\")\n\n## What we measured\n\n| Metric | Before | After |\n| :-- | --: | --: |\n| Time to first answer | 2m 40s | 1m 05s |\n| Tickets reopened | 11% | 6% |\n\n## What comes next\n\n- [x] Ship the new summary\n- [ ] Add saved views for the warehouse team\n- [ ] Bring the timeline to returns"
+        }
+      },
+      "children": [],
+      "slots": {
+        "actions": [
+          "article-share"
+        ]
+      }
+    },
+    "article-share": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Share"
+        },
+        "appearance": "outline",
+        "size": "sm",
+        "icon": "share"
+      },
+      "children": []
+    }
+  }
+}

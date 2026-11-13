@@ -1,0 +1,43 @@
+---
+title: "Spinner"
+description: "不确定进度的活动指示，用于等待中的操作或一小块区域。"
+---
+
+<ComponentPreview name="Spinner" />
+
+不确定进度的活动指示，用于等待中的操作或一小块区域。尺寸与图标尺寸一致；`label` 供读屏软件朗读，设置 `showLabel` 时也显示在旁边。
+
+## 示例
+
+```json
+{
+  "root": "spinner-32",
+  "elements": {
+    "spinner-32": {
+      "type": "Spinner",
+      "props": { "label": "Saving", "showLabel": true },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `size` | 尺寸：`sm` 紧凑，`md` 标准，`lg` 宽松。 | `"sm" \| "md" \| "lg" \| null` | `"md"` |
+| `tone` | 语义色：`success` 成功，`warning` 警告，`danger` 危险，`info` 提示，`neutral` 中性。 | `"default" \| "muted" \| "brand" \| "success" \| "warning" \| "danger" \| "info" \| null` | `"neutral"` |
+| `label` | 显示的文字。 | `string \| null` |  |
+| `showLabel` | 在旋转图标旁显示 `label`；否则只给读屏软件。 | `boolean \| null` | `false` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

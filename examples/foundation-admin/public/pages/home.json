@@ -1,0 +1,41 @@
+{
+  "root": "home",
+  "elements": {
+    "home": {
+      "type": "Card",
+      "props": {
+        "title": "Remote foundation is running",
+        "description": "The compiled React Admin host loads native Spec and theme at runtime."
+      },
+      "children": [
+        "ready",
+        "theme"
+      ]
+    },
+    "ready": {
+      "type": "Alert",
+      "props": {
+        "tone": "success",
+        "title": "One Spec, independently deployed",
+        "message": "Replace remote JSON without rebuilding the host application."
+      }
+    },
+    "theme": {
+      "type": "Card",
+      "props": {
+        "title": "ThemeConfig handoff",
+        "description": "The same theme is consumed by Lumi UI and this compiled foundation."
+      },
+      "children": [
+        "action"
+      ]
+    },
+    "action": {
+      "type": "Button",
+      "props": {
+        "label": "Themed action",
+        "appearance": "solid"
+      }
+    }
+  }
+}

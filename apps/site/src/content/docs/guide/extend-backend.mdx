@@ -1,0 +1,237 @@
+---
+title: "后端和登录"
+description: "后端的返回格式、请求签名或登录接口和默认约定不同时，用扩展模块适配：自己的 DataProvider、onRequest 和 onResponse、自己的登录。"
+---
+
+后端遵循[默认约定](/guide/backend/)时，这一页用不上。格式不同、请求要签名、登录接口不一样时，用[扩展模块](/guide/modules/)把差别补上，页面 JSON 不用改。
+
+## 适配自己的后端格式
+
+后端也遵循[默认约定](/guide/backend/)时，在 `data` 里加一项就行，不用写模块，见[另一个后端](/guide/backend/#另一个后端)。
+
+返回格式不同时，模块提供自己的 DataProvider，用 `dataProviders` 按名称注册。
+
+### config.json 要改什么
+
+只要把模块列进 `modules`，其他不用动：
+
+| 想做什么 | 模块里怎么写 | `config.json` |
+| --- | --- | --- |
+| 换掉后台的主后端 | `dataProviders: { default: … }` | 只加 `modules`。页面不用写 `dataProviderName`，所有请求都走你的 DataProvider。 |
+| 多加一个后端 | `dataProviders: { strapi: … }`，名字自己起 | 只加 `modules`。`data` 里不用有这个名字；把它的地址写进 `data` 只是为了不写死在代码里。 |
+| 只给请求加签名或请求头 | `dataProviders: { default: { onRequest, onResponse } }` | 只加 `modules`。这种写法沿用配置里的地址，所以名字必须是 `default` 或 `data` 里已有的。 |
+
+`data` 的 `url` 始终要写，换掉主后端之后也一样：登录、`/me`、上传和 AI 助手默认还是发到这个地址。登录接口也不一样时，再换掉登录，见下面的 [换成自己的登录](#换成自己的登录)。
+
+换掉主后端的最小写法：
+
+```jsonc
+{
+  // 登录、上传仍然发到这里
+  "data": { "url": "/api" },
+  "panels": { "manifest": "/manifest.json" },
+  // 只多这一行
+  "modules": ["/ext/backend.js"]
+}
+```
+
+```js
+// public/ext/backend.js
+// http 是后台自己的请求客户端，地址就是 config.json 里 data 的 url
+export default (runtime, { http }) => ({
+  dataProviders: {
+    // default：页面里没写 dataProviderName 的请求都走它
+    default: {
+      // 这个后端的列表是 GET /orders/list，返回 { list, total }
+      getList: async ({ resource, pagination }) => {
+        const body = await http.request(`/${resource}/list`, {
+          query: { page: pagination?.page ?? 1, size: pagination?.pageSize ?? 10 },
+        })
+        return { data: body.list, total: body.total }
+      },
+      getOne: async ({ resource, id }) => ({
+        data: await http.request(`/${resource}/detail`, { query: { id } }),
+      }),
+      create: async ({ resource, variables }) => ({
+        data: await http.request(`/${resource}/create`, {
+          method: 'POST',
+          body: variables,
+        }),
+      }),
+      update: async ({ resource, id, variables }) => ({
+        data: await http.request(`/${resource}/update`, {
+          method: 'POST',
+          body: { ...variables, id },
+        }),
+      }),
+      deleteOne: async ({ resource, id }) => ({
+        data: await http.request(`/${resource}/delete`, {
+          method: 'POST',
+          body: { id },
+        }),
+      }),
+    },
+  },
+})
+```
+
+### 多加一个后端
+
+下面的例子接一个 Strapi，地址放在 `config.json` 里。模块函数的第二个参数里有 `config`、`panel` 和 `http`：
+
+- `http` 是后台自己用的请求客户端。它会带上登录凭证、语言和工作区，把对象序列化成 JSON，并把非 2xx 的返回转成统一的错误：422 的字段错误能显示在表单上，401 会让后台退出。
+- `http.extend({ baseUrl })` 换一个地址；再加 `auth: false`，就不带后台的凭证。
+- 地址写在 `config.json` 的 `data` 里，用 `panel.data` 读出来，不写死在代码里。`panel.data` 是全部后端的列表：`data` 写成一个对象还是数组，这里都是带 `name` 的数组（只有一个时名字是 `default`）。
+
+```jsonc
+{
+  "data": [
+    { "name": "main", "url": "/api" },
+    // 另一个后端，不带后台凭证
+    { "name": "strapi", "url": "http://localhost:1337/api", "auth": false }
+  ],
+  "panels": { "manifest": "/manifest.json" },
+  // 扩展脚本里用这个数据源
+  "modules": ["/ext/strapi.js"]
+}
+```
+
+```js
+// public/ext/strapi.js
+// 第二个参数：panel.data 是 config.json 里的全部后端，http 是后台自己的请求客户端
+export default (runtime, { panel, http }) => {
+  // 指向 Strapi 的客户端：地址从 config.json 读，auth: false 不带后台的凭证
+  const strapi = http.extend({
+    baseUrl: panel.data.find((item) => item.name === 'strapi').url,
+    auth: false,
+  })
+  // 单条记录：Strapi 把记录包在 data 里，取出来再包成 Lumi 要的 { data }
+  const one = async (path, options) => ({
+    data: (await strapi.request(path, options)).data,
+  })
+  return {
+    // 按 data 里的名字注册；页面用 "dataProviderName": "strapi" 引用
+    dataProviders: {
+      strapi: {
+        // 列表：把 Lumi 的页码换成 Strapi 的分页参数
+        getList: async ({ resource, pagination }) => {
+          const body = await strapi.request(`/${resource}`, {
+            query: { 'pagination[page]': pagination?.page ?? 1 },
+          })
+          // Lumi 要 { data, total }，总数在 Strapi 的 meta.pagination 里
+          return { data: body.data, total: body.meta.pagination.total }
+        },
+        // 详情、新建、修改、删除：Strapi 的请求体要包在 data 里
+        getOne: ({ resource, id }) => one(`/${resource}/${id}`),
+        create: ({ resource, variables }) =>
+          one(`/${resource}`, { method: 'POST', body: { data: variables } }),
+        update: ({ resource, id, variables }) =>
+          one(`/${resource}/${id}`, { method: 'PUT', body: { data: variables } }),
+        deleteOne: ({ resource, id }) =>
+          one(`/${resource}/${id}`, { method: 'DELETE' }),
+      },
+    },
+  }
+}
+```
+
+页面里写 `"dataProviderName": "strapi"`，或者在路由上写 `"dataProvider": "strapi"` 让整个页面都用它。
+
+`http.request(path, { method, query, body, headers, signal })` 返回解析后的 JSON。这个后端有自己的 API Key 时，写在 `extend` 的 `headers` 里：`http.extend({ baseUrl, auth: false, headers: { 'X-Api-Key': '…' } })`。
+
+## 签名与改写请求
+
+后端要求请求签名、防篡改，或者要加、改请求头时，给 `dataProviders.default` 只写这两个函数（`default` 指当前 panel 的后端，也可以写 `data` 里的名字）。地址等其他设置照旧来自 `config.json`：
+
+```js
+// public/ext/sign.js
+// sign() 是你自己的签名函数：用会话密钥对请求算 HMAC
+import { sign } from './signer.js'
+
+// 不需要 runtime 时，参数可以不写
+export default () => ({
+  dataProviders: {
+    // default 指当前 panel 的后端；只写这两个函数，地址照旧来自 config.json
+    default: {
+      // 发往这个后端的每个请求都会经过：数据、登录、上传、
+      // AI 助手、事件流和后端返回的页面
+      onRequest: async (request) => {
+        // 时间戳和签名放进请求头
+        request.headers['X-Timestamp'] = String(Date.now())
+        request.headers['X-Signature'] = await sign(
+          request.method,
+          request.url,
+          request.body,
+        )
+      },
+      // 返回没有签名时抛错，这次请求就算失败
+      onResponse: (response) => {
+        if (response.ok && !response.headers.get('X-Signature'))
+          throw new Error('Unsigned response')
+      },
+    },
+  },
+})
+```
+
+- `request` 是最终要发出的样子：凭证已经加好，`url` 带着查询参数，`body` 是编码后的 JSON 字符串（上传时是 `FormData`）。401 续期后重发时会再调用一次。
+- `data` 里的其他后端不会经过 `default` 的函数。要单独签名，用它的名字写，如 `dataProviders: { cms: { onRequest } }`；`data` 里没有这个名字会直接报错。
+- 签名密钥要按会话由后端下发，不要写死在模块里。
+- 字段和完整示例见 [签名与改写请求](/guide/advanced/data/#签名与改写请求)。
+
+## 换成自己的登录
+
+后端的登录接口和默认约定不同时，模块用 `authProviders` 按 `auth` 的名字替换内置的登录（只有一个 auth 时名字是 `default`）：
+
+```js
+// public/ext/sso.js
+// http 是后台的请求客户端
+export default (runtime, { http }) => {
+  // 登录请求本身不带凭证
+  const sso = http.extend({ auth: false })
+  // 凭证存在哪里由你决定，这里放在 sessionStorage
+  let token = sessionStorage.getItem('sso_token')
+  return {
+    // 按 auth 的名字替换内置的登录；只有一个 auth 时名字是 default
+    authProviders: {
+      default: {
+        // 登录页提交时调用：换取 token 并记下来
+        login: async ({ username, password }) => {
+          try {
+            token = (
+              await sso.request('/sso/token', {
+                method: 'POST',
+                body: { username, password },
+              })
+            ).access_token
+            sessionStorage.setItem('sso_token', token)
+            return { success: true }
+            // 返回 success: false，登录页会显示 error 的信息
+          } catch (error) {
+            return { success: false, error }
+          }
+        },
+        // 退出：清掉 token，回到登录页
+        logout: async () => {
+          token = null
+          sessionStorage.removeItem('sso_token')
+          return { success: true, redirectTo: '/login' }
+        },
+        // 打开页面前调用：有 token 才算已登录
+        check: async () =>
+          token
+            ? { authenticated: true }
+            : { authenticated: false, redirectTo: '/login' },
+        // 后台发的每个请求都来这里要凭证
+        authorizeRequest: () =>
+          token ? { headers: { Authorization: `Token ${token}` } } : undefined,
+        // 请求返回 401 时退出登录
+        onError: async (error) =>
+          error.status === 401 ? { logout: true, redirectTo: '/login' } : {},
+      },
+    },
+  }
+}
+```
+
+多个后台用不同的登录时，按各自的名字分别给出。凭证存在哪里、怎么带由这个 provider 自己决定：`authorizeRequest` 返回请求头，或者 `{ credentials: 'include' }` 带 cookie。数据、上传、AI 助手和实时推送的请求都会经过它，不用在别处再写一遍。字段说明见[认证](/guide/advanced/auth/)。

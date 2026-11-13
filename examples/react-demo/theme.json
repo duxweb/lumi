@@ -1,0 +1,8 @@
+{
+  "mode": "light",
+  "primary": "#2563eb",
+  "radius": "lg",
+  "fontSizes": {
+    "body": 15
+  }
+}

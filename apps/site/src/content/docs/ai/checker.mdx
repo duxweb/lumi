@@ -1,0 +1,74 @@
+---
+title: "lumi-check"
+description: "lumi-check 在命令行里查组件目录、查组件参数，并校验页面、manifest、主题和 config.json，规则与运行时相同。"
+---
+
+lumi-check 是给 AI 和 CI 用的命令行工具，有三个命令。它只读目录、返回结果，不发业务请求，也不渲染页面。只需要 Node，不需要 React。
+
+| 命令 | 作用 |
+| --- | --- |
+| `lumi-check catalog` | 列出目录里的组件和动作 |
+| `lumi-check describe <组件名>` | 一个组件的参数、插槽和事件 |
+| `lumi-check <文件>` | 校验一份 JSON |
+
+三个命令都接受 `--catalog`，指向项目自己的组件目录。不写时使用默认目录，也就是 CDN 版包含的全部组件和动作。
+
+## 查目录
+
+```sh
+# 全部组件和动作，每个带一句说明
+npx -y @duxweb/lumi-check catalog --catalog src/catalog.mjs
+# 只看组件，或只看动作
+npx -y @duxweb/lumi-check catalog --kind components
+npx -y @duxweb/lumi-check catalog --kind actions
+# 一个动作和它的参数（JSON Schema）
+npx -y @duxweb/lumi-check catalog --kind actions --name submitForm
+```
+
+输出是 JSON：`components`（名字、说明、插槽、事件）、`actions`（名字、说明）和 `builtInActions`。用 `--name` 指定一个动作时，结果里多一个 `params`。指定的名字不存在时退出码是 1。
+
+## 查一个组件
+
+```sh
+npx -y @duxweb/lumi-check describe Table --catalog src/catalog.mjs
+```
+
+输出这个组件的 `description`、`props`（JSON Schema）、`slots` 和 `events`。组件不存在时退出码是 2。
+
+## 校验
+
+```sh
+# 校验一个页面，用项目自己的目录，输出 JSON
+npx -y @duxweb/lumi-check src/pages/orders.json --catalog src/catalog.mjs --json
+# 校验菜单和路由
+npx -y @duxweb/lumi-check manifest.json --kind manifest
+# 校验主题
+npx -y @duxweb/lumi-check theme.json --kind theme
+# 校验 config.json
+npx -y @duxweb/lumi-check config.json --kind config
+# 从标准输入读取
+cat page.json | npx -y @duxweb/lumi-check -
+```
+
+| 退出码 | 含义 |
+| --- | --- |
+| 0 | 通过 |
+| 1 | 有校验错误 |
+| 2 | 文件读不到、JSON 无法解析，或目录加载失败 |
+
+`--json` 输出 `{ valid, issues }`，每个问题有 `path`（如 `/elements/orders/props/columns/0/field`）、`message` 和可选的 `hint`，适合交给 AI 修改。
+
+要校验的文件正好叫 `catalog` 或 `describe` 时，写成 `./catalog`。
+
+## 自定义目录
+
+`--catalog` 指向的模块导出 `catalog`（或默认导出）。用了自定义 directives 时，同一个模块再导出 `directives`，和应用用的是同一份。
+
+## 在 CI 里
+
+```sh
+# 逐个校验页面，有一个不通过就让 CI 失败
+for page in public/pages/*.json; do npx -y @duxweb/lumi-check "$page" || exit 1; done
+```
+
+页面格式由 lumi-check 负责；表单的业务规则（如"邮箱不能重复"）由后端和 Validator 负责。

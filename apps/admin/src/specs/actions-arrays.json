@@ -1,0 +1,114 @@
+{
+  "root": "stack",
+  "state": {
+    "draft": "",
+    "tags": [
+      "VIP",
+      "Wholesale"
+    ]
+  },
+  "elements": {
+    "stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "entry",
+        "tags"
+      ]
+    },
+    "entry": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "align": "center"
+      },
+      "children": [
+        "input",
+        "add"
+      ]
+    },
+    "input": {
+      "type": "Input",
+      "props": {
+        "ariaLabel": {
+          "$t": "New tag"
+        },
+        "placeholder": {
+          "$t": "New tag"
+        },
+        "value": {
+          "$bindState": "/draft"
+        }
+      },
+      "children": []
+    },
+    "add": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Add tag"
+        },
+        "appearance": "outline",
+        "icon": "plus",
+        "disabled": {
+          "$cond": {
+            "$state": "/draft"
+          },
+          "$then": false,
+          "$else": true
+        }
+      },
+      "on": {
+        "press": {
+          "action": "pushState",
+          "params": {
+            "statePath": "/tags",
+            "value": {
+              "$state": "/draft"
+            },
+            "clearStatePath": "/draft"
+          }
+        }
+      },
+      "children": []
+    },
+    "tags": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "repeat": {
+        "statePath": "/tags"
+      },
+      "children": [
+        "tag"
+      ]
+    },
+    "tag": {
+      "type": "Tag",
+      "props": {
+        "label": {
+          "$item": ""
+        },
+        "closable": true
+      },
+      "on": {
+        "close": {
+          "action": "removeState",
+          "params": {
+            "statePath": "/tags",
+            "index": {
+              "$index": true
+            }
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}

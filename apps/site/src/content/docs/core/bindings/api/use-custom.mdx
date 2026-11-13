@@ -1,0 +1,31 @@
+---
+title: "useCustom"
+description: "useCustom React hook 的签名、参数和返回值。"
+---
+
+Reads from an endpoint outside the resource conventions through the provider's `custom`; cached by every parameter.
+
+```typescript
+useCustom<T = any>(input: UseCustomOptions): UseQueryResult<SingleResult<T>, Error>
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `input` | `UseCustomOptions` | 是 |  |
+
+`input` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `dataProviderName` | `string \| undefined` | 否 | 多数据源名称；省略时使用 default。 |
+| `enabled` | `boolean \| undefined` | 否 | 是否允许自动执行查询。 |
+| `filters` | `Filter[] \| undefined` | 否 | 筛选条件数组。 |
+| `headers` | `Record<string, string> \| undefined` | 否 | 请求头。 |
+| `meta` | `Meta \| undefined` | 否 | 原样传给 DataProvider 的扩展数据。 |
+| `method` | `"GET" \| "POST" \| "PUT" \| "PATCH" \| "DELETE" \| undefined` | 否 | `GET` by default. |
+| `payload` | `unknown` | 否 | The request body; not allowed with `GET`. |
+| `query` | `Record<string, unknown> \| undefined` | 否 | Query parameters. |
+| `sorters` | `Sorter[] \| undefined` | 否 | 排序条件数组。 |
+| `url` | `string` | 是 | The endpoint, relative to the API root. |
+
+返回 `UseQueryResult<SingleResult<T>, Error>`。

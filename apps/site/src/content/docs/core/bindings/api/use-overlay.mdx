@@ -1,0 +1,24 @@
+---
+title: "useOverlay"
+description: "useOverlay React hook 的签名、参数和返回值。"
+---
+
+The overlay controller of the nearest `LumiOverlayProvider`, which `useModal`, `useDrawer` and `useDialog` open through.
+
+```typescript
+useOverlay(): OverlayController
+```
+
+返回 `OverlayController`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `dispose` | `() => void` | 是 | Closes every overlay and drops the listeners. |
+| `entries` | `OverlayEntry[]` | 是 | The open overlays, the newest last. |
+| `getSnapshot` | `() => OverlayEntry[]` | 是 | The open overlays as an immutable list, for `useSyncExternalStore`. |
+| `open` | `(options: OverlayOptions) => OverlayHandle` | 是 | Opens an overlay; the handle closes it and carries its `result`. |
+| `registerCloseGuard` | `(id: number, guard: OverlayCloseGuard) => () => void` | 是 | Adds a check that may refuse a close; returns the function removing it. |
+| `requestClose` | `(id: number, request?: { reason?: OverlayCloseReason; value?: unknown; }) => Promise<boolean>` | 是 | Closes an overlay once its close guards agree; resolves whether it closed. |
+| `subscribe` | `(listener: () => void) => () => void` | 是 | Notifies when the open overlays change. |

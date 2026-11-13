@@ -1,0 +1,12 @@
+---
+title: "useRegister"
+description: "useRegister React hook 的签名、参数和返回值。"
+---
+
+Creates an account through `authProvider.register`; when the provider signs it in, cached session data resets as after `login`.
+
+```typescript
+useRegister(): UseMutationResult<AuthActionResponse, Error, any>
+```
+
+返回 `UseMutationResult<AuthActionResponse, Error, any>`。

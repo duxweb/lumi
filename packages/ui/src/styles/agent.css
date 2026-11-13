@@ -1,0 +1,1071 @@
+/* Agent components: prompt input, messages, thinking, tool calls, approvals,
+   plans, diffs and context. Surfaces follow Card (one 1px border, panel
+   radius, no shadow); chips and pills use the item radius; status reads from
+   the shared tone tokens and is always paired with an icon or text. */
+
+.lumi-agent-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-panel);
+  background: var(--card);
+  color: var(--card-foreground);
+  font-size: var(--lumi-fs-body);
+}
+
+.lumi-agent-spacer { flex: 1; }
+
+.lumi-agent-chevron {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex: none;
+  color: var(--muted-foreground);
+  transition: rotate 150ms ease-out;
+}
+.lumi-agent-chevron[data-open] { rotate: 90deg; }
+
+.lumi-agent-chip-icon[data-tone="danger"] { color: var(--lumi-text-danger); }
+
+.lumi-agent-icon-button {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--lumi-control-sm);
+  height: var(--lumi-control-sm);
+  padding: 0;
+  border: 0;
+  border-radius: var(--lumi-radius-control);
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  transition: background-color 120ms, color 120ms;
+}
+.lumi-agent-icon-button svg { width: 1rem; height: 1rem; }
+.lumi-agent-icon-button:hover:not(:disabled) { background: var(--lumi-hover-bg); color: var(--foreground); }
+.lumi-agent-icon-button:disabled { cursor: not-allowed; opacity: 0.4; }
+.lumi-agent-icon-button[aria-pressed="true"] { background: var(--lumi-selected-bg); color: var(--lumi-selected-fg); }
+.lumi-agent-icon-button[data-copied] { color: var(--lumi-text-success); }
+
+:is(.lumi-agent-icon-button, .lumi-agent-send, .lumi-agent-model, .lumi-agent-suggestion, .lumi-agent-source, .lumi-agent-chip-remove, .lumi-agent-tl-row, .lumi-agent-activity-head, .lumi-agent-decided, .lumi-agent-option, .lumi-agent-follow-up, .lumi-agent-text-button, .lumi-agent-approval-more, .lumi-agent-sources-toggle, .lumi-agent-jump-button, .lumi-agent-diff-gap button):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+/* Chips: attachments, context, files and citations share one shape. */
+.lumi-agent-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lumi-agent-chips > li { display: flex; min-width: 0; }
+.lumi-agent-chips[data-align="end"] { justify-content: flex-end; }
+
+:is(.lumi-agent-chip, .lumi-agent-source) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+  max-width: 100%;
+  height: 1.75rem;
+  padding: 0 0.625rem 0 0.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--lumi-radius-item);
+  background: var(--muted);
+  /* Caption-size text on the muted fill needs full contrast. */
+  color: var(--foreground);
+  font: inherit;
+  font-size: var(--lumi-fs-caption);
+  line-height: 1;
+  text-decoration: none;
+}
+/* Files and context sit in the composer as soft filled chips; the icon takes
+   the brand hue so a chip reads as a reference, not a disabled control. */
+.lumi-agent-chip .lumi-agent-chip-icon { color: var(--brand); }
+.lumi-agent-chip:has(.lumi-agent-chip-remove) { padding-inline-end: 2px; }
+.lumi-agent-chip[data-status="error"] { border-color: color-mix(in oklab, var(--destructive) 45%, transparent); background: color-mix(in oklab, var(--destructive) 8%, var(--muted)); }
+.lumi-agent-chip-icon { width: 0.8125rem; height: 0.8125rem; flex: none; color: var(--muted-foreground); }
+.lumi-agent-chip-thumb { width: 1rem; height: 1rem; flex: none; border-radius: var(--lumi-radius-sm); object-fit: cover; }
+.lumi-agent-chip-label {
+  min-width: 0;
+  max-width: 16rem;
+  overflow: hidden;
+  color: var(--foreground);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lumi-agent-chip-meta { flex: none; color: var(--lumi-fg-secondary); font-variant-numeric: tabular-nums; }
+.lumi-agent-chip-remove {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--lumi-radius-sm);
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
+.lumi-agent-chip-remove svg { width: 0.75rem; height: 0.75rem; }
+.lumi-agent-chip-remove:hover { background: var(--lumi-hover-bg); color: var(--foreground); }
+a.lumi-agent-chip:hover { background: var(--lumi-hover-bg); color: var(--foreground); }
+
+.lumi-agent-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+.lumi-agent-suggestion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  min-height: var(--lumi-control-sm);
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-full);
+  background: transparent;
+  color: var(--lumi-fg-secondary);
+  font: inherit;
+  font-size: var(--lumi-fs-caption);
+  text-align: start;
+  cursor: pointer;
+  transition: border-color 120ms, color 120ms;
+}
+.lumi-agent-suggestion:hover:not(:disabled) { border-color: var(--input); color: var(--foreground); }
+.lumi-agent-suggestion:disabled { cursor: default; }
+
+/* PromptInput */
+/* The composer keeps the thread's reading column, centred; narrower hosts fill. */
+.lumi-agent-prompt { display: flex; flex-direction: column; gap: var(--lumi-space-2); width: 100%; max-width: 46rem; min-width: 0; margin-inline: auto; }
+/* Starters stay one row above the box and scroll sideways, so they never
+   push the conversation up in a narrow panel. */
+.lumi-agent-prompt > .lumi-agent-suggestions {
+  flex-wrap: nowrap;
+  margin-inline: -2px;
+  padding: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.lumi-agent-prompt > .lumi-agent-suggestions::-webkit-scrollbar { display: none; }
+.lumi-agent-prompt > .lumi-agent-suggestions > .lumi-agent-suggestion { flex: none; white-space: nowrap; }
+.lumi-agent-prompt-box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lumi-space-2);
+  padding: 0.75rem 0.5rem 0.5rem 0.875rem;
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  background: var(--card);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 4%, transparent), 0 4px 16px -4px color-mix(in oklab, var(--foreground) 8%, transparent);
+  cursor: text;
+  transition: border-color 120ms, box-shadow 120ms;
+}
+[data-theme="dark"] .lumi-agent-prompt-box { background: color-mix(in oklab, var(--input) 30%, var(--card)); box-shadow: none; }
+.lumi-agent-prompt-box:focus-within { border-color: var(--input); }
+.lumi-agent-prompt-box[data-disabled] { cursor: not-allowed; opacity: 0.6; }
+.lumi-agent-prompt-box > .lumi-agent-chips { padding-inline-end: var(--lumi-space-1); }
+.lumi-agent-prompt-text {
+  display: block;
+  width: 100%;
+  min-height: calc(var(--lumi-fs-body) * var(--lumi-leading-body));
+  margin: 0;
+  padding: 0 var(--lumi-space-1) 0 0;
+  overflow-y: hidden;
+  border: 0;
+  outline: none;
+  resize: none;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  font-size: var(--lumi-fs-body);
+  line-height: var(--lumi-leading-body);
+}
+.lumi-agent-prompt-text::placeholder { color: var(--muted-foreground); }
+.lumi-agent-prompt-text:disabled { cursor: not-allowed; }
+.lumi-agent-prompt-bar { display: flex; align-items: center; gap: 2px; min-width: 0; margin-inline-start: -0.375rem; cursor: default; }
+.lumi-agent-prompt-bar .lumi-agent-icon-button { border-radius: 50%; }
+.lumi-agent-model {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 0;
+  height: var(--lumi-control-sm);
+  padding: 0 0.375rem 0 var(--lumi-space-2);
+  border: 0;
+  border-radius: var(--lumi-radius-control);
+  background: transparent;
+  color: var(--lumi-fg-secondary);
+  font: inherit;
+  font-size: var(--lumi-fs-caption);
+  cursor: pointer;
+}
+.lumi-agent-model > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lumi-agent-model svg { width: 0.75rem; height: 0.75rem; flex: none; color: var(--muted-foreground); }
+.lumi-agent-model:hover:not(:disabled), .lumi-agent-model[data-state="open"] { background: var(--lumi-hover-bg); color: var(--foreground); }
+.lumi-agent-model:disabled { cursor: not-allowed; opacity: 0.5; }
+.lumi-agent-send {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  cursor: pointer;
+  transition: opacity 120ms;
+}
+.lumi-agent-send svg { width: 1rem; height: 1rem; }
+.lumi-agent-send:disabled { cursor: not-allowed; background: var(--muted); color: var(--muted-foreground); }
+.lumi-agent-send:hover:not(:disabled) { opacity: 0.85; }
+.lumi-agent-stop-glyph { width: 0.625rem; height: 0.625rem; border-radius: 2px; background: currentColor; }
+
+/* Timeline: thinking steps, tool calls and plan steps share one row shape.
+   The connector runs from under one icon to the next, so it never crosses an
+   icon and needs no left border on the rows. */
+.lumi-agent-timeline {
+  --lumi-tl-icon: 1.25rem;
+  --lumi-tl-row: 2.25rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lumi-agent-tl { position: relative; min-width: 0; }
+.lumi-agent-tl:not(:last-child)::before {
+  position: absolute;
+  top: calc(var(--lumi-tl-row) / 2 + var(--lumi-tl-icon) / 2 + 2px);
+  bottom: calc(-1 * (var(--lumi-tl-row) / 2 - var(--lumi-tl-icon) / 2) + 2px);
+  left: calc(var(--lumi-tl-icon) / 2 - 0.5px);
+  border-inline-start: 1px solid var(--border);
+  content: "";
+}
+.lumi-agent-tl-row {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  min-width: 0;
+  min-height: var(--lumi-tl-row);
+  padding: 0;
+  border: 0;
+  border-radius: var(--lumi-radius-sm);
+  background: transparent;
+  color: var(--lumi-fg-secondary);
+  font: inherit;
+  font-size: var(--lumi-fs-body);
+  line-height: var(--lumi-leading-tight);
+  text-align: start;
+}
+button.lumi-agent-tl-row { cursor: pointer; }
+button.lumi-agent-tl-row:hover { color: var(--foreground); }
+button.lumi-agent-tl-row:hover .lumi-agent-chevron { color: var(--foreground); }
+.lumi-agent-tl-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--lumi-tl-icon);
+  height: var(--lumi-tl-icon);
+  color: var(--muted-foreground);
+}
+.lumi-agent-tl-icon svg { width: 0.875rem; height: 0.875rem; }
+.lumi-agent-tl-name { flex: none; max-width: 60%; overflow: hidden; color: var(--foreground); font-weight: var(--lumi-font-weight-medium); text-overflow: ellipsis; white-space: nowrap; }
+.lumi-agent-tl-summary { flex: 0 1 auto; min-width: 0; overflow: hidden; color: var(--muted-foreground); text-overflow: ellipsis; white-space: nowrap; }
+.lumi-agent-tl-meta { flex: none; margin-inline-start: auto; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.lumi-agent-tl[data-tone="danger"] :is(.lumi-agent-tl-icon, .lumi-agent-tl-name, .lumi-agent-tl-summary) { color: var(--lumi-text-danger); }
+.lumi-agent-tl[data-tone="muted"] .lumi-agent-tl-name { color: var(--muted-foreground); font-weight: var(--lumi-font-weight-normal, 400); }
+.lumi-agent-tl[data-status="done"] .lumi-agent-tl-icon[data-tone="success"],
+.lumi-agent-tl .lumi-agent-tl-icon > [data-tone="success"] { color: var(--lumi-text-success); }
+.lumi-agent-tl[data-status="skipped"] .lumi-agent-tl-name { color: var(--muted-foreground); }
+.lumi-agent-tl-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lumi-space-2);
+  min-width: 0;
+  margin: 0.125rem 0 var(--lumi-space-2) calc(var(--lumi-tl-icon) + 0.625rem);
+}
+.lumi-agent-tl-detail[hidden] { display: none; }
+.lumi-agent-tool-error { margin: 0; color: var(--lumi-text-danger); font-size: var(--lumi-fs-body); line-height: var(--lumi-leading-body); overflow-wrap: anywhere; }
+.lumi-agent-reasoning.lumi-md { color: var(--muted-foreground); font-size: var(--lumi-fs-body); }
+
+/* A running name or phase sweeps a soft highlight across its text. */
+[data-shimmer] {
+  background: linear-gradient(90deg, var(--muted-foreground) 0%, var(--muted-foreground) 40%, var(--foreground) 50%, var(--muted-foreground) 60%, var(--muted-foreground) 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+  animation: lumi-agent-shimmer 2s linear infinite;
+}
+@keyframes lumi-agent-shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -150% 0; }
+}
+
+/* A round: a header with its status and time over a hairline, folding the
+   timeline beneath it. One body size throughout. */
+.lumi-agent-activity { display: flex; flex-direction: column; align-items: stretch; min-width: 0; }
+.lumi-agent-activity-head {
+  display: flex;
+  align-items: center;
+  gap: var(--lumi-space-2);
+  width: 100%;
+  min-height: 2.25rem;
+  padding: 0 0 0.375rem;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted-foreground);
+  font: inherit;
+  font-size: var(--lumi-fs-body);
+  line-height: var(--lumi-leading-tight);
+  text-align: start;
+}
+/* The pill: thinking and tool rounds as a compact capsule of status and time. */
+.lumi-agent-activity-head[data-pill] {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 0.375rem;
+  width: auto;
+  max-width: 100%;
+  min-height: 1.75rem;
+  padding: 0 0.625rem 0 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-full);
+  background: color-mix(in oklab, var(--muted) 60%, transparent);
+  font-size: var(--lumi-fs-caption);
+}
+span.lumi-agent-activity-head[data-pill] { padding-inline-end: 0.75rem; }
+button.lumi-agent-activity-head[data-pill]:hover { background: var(--lumi-hover-bg); }
+.lumi-agent-activity-head[data-pill] .lumi-agent-chevron { width: 0.75rem; height: 0.75rem; }
+.lumi-agent-activity-head[data-pill] + .lumi-agent-activity-panel,
+.lumi-agent-activity-head[data-pill] + [role="status"] + .lumi-agent-activity-panel { padding-top: 0.5rem; }
+button.lumi-agent-activity-head { cursor: pointer; }
+button.lumi-agent-activity-head:hover .lumi-agent-chevron { color: var(--foreground); }
+.lumi-agent-activity-label { flex: none; color: var(--foreground); font-weight: var(--lumi-font-weight-medium); white-space: nowrap; }
+.lumi-agent-activity-time { flex: none; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.lumi-agent-activity-detail { min-width: 0; overflow: hidden; color: var(--muted-foreground); text-overflow: ellipsis; white-space: nowrap; }
+.lumi-agent-activity[data-state="error"] .lumi-agent-activity-label { color: var(--lumi-text-danger); }
+.lumi-agent-activity-panel { min-width: 0; padding-block: 0.375rem 0.125rem; }
+.lumi-agent-activity-panel[hidden] { display: none; }
+.lumi-agent-activity-panel > .lumi-agent-reasoning { margin-top: var(--lumi-space-2); }
+
+/* AgentPlan: a titled activity with a done count; the timeline stays open. */
+.lumi-agent-plan-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 1.125rem;
+  padding: 0 0.375rem;
+  border-radius: 999px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  line-height: 1;
+  white-space: nowrap;
+}
+/* The tag sits right after the step name, ahead of the reason. */
+.lumi-agent-plan .lumi-agent-tl-meta { margin-inline-start: 0; }
+.lumi-agent-plan .lumi-agent-tl-summary { order: 1; }
+.lumi-agent-plan-tag[data-status="failed"] { background: color-mix(in oklab, var(--lumi-ui-tone-danger) 14%, transparent); color: var(--lumi-text-danger); }
+.lumi-agent-plan-count { flex: none; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.lumi-agent-plan .lumi-agent-tl[data-status="done"] .lumi-agent-tl-icon { color: var(--lumi-text-success); }
+.lumi-agent-plan .lumi-agent-tl[data-status="done"] .lumi-agent-tl-name { color: var(--lumi-fg-secondary); font-weight: var(--lumi-font-weight-normal, 400); }
+.lumi-agent-plan .lumi-agent-tl[data-status="failed"] .lumi-agent-tl-icon { color: var(--lumi-text-danger); }
+
+/* Cards: only what the reader acts on. A head, the content, then the
+   decision, with no tinted footer band. */
+.lumi-agent-approval { container: lumi-approval / inline-size; min-width: 0; outline: none; }
+.lumi-agent-approval:focus-visible { border-radius: var(--lumi-radius-panel); box-shadow: 0 0 0 2px var(--ring); }
+.lumi-agent-approval-card { display: flex; flex-direction: column; gap: 0.875rem; padding: 1rem 1.125rem 1.125rem; }
+.lumi-agent-approval-head { display: flex; align-items: flex-start; gap: 0.75rem; }
+.lumi-agent-approval-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--lumi-radius-control);
+  background: var(--muted);
+  color: var(--lumi-fg-secondary);
+}
+.lumi-agent-approval-icon svg { width: 1rem; height: 1rem; }
+.lumi-agent-approval-card[data-tone="warning"] .lumi-agent-approval-icon { background: color-mix(in oklab, var(--lumi-warning) 18%, transparent); color: var(--lumi-text-warning); }
+.lumi-agent-approval-card[data-tone="danger"] .lumi-agent-approval-icon { background: color-mix(in oklab, var(--destructive) 14%, transparent); color: var(--lumi-text-danger); }
+.lumi-agent-approval-card[data-tone="info"] .lumi-agent-approval-icon { background: color-mix(in oklab, var(--brand) 12%, transparent); color: var(--brand); }
+.lumi-agent-approval-copy { display: flex; flex: 1; flex-direction: column; justify-content: center; gap: 0.125rem; min-width: 0; min-height: 2rem; }
+.lumi-agent-approval-title { font-size: var(--lumi-fs-body); font-weight: var(--lumi-font-weight-semibold); line-height: var(--lumi-leading-tight); }
+.lumi-agent-approval-description { margin: 0; color: var(--lumi-fg-secondary); font-size: var(--lumi-fs-caption); line-height: var(--lumi-leading-body); }
+.lumi-md code {
+  padding: 1px 0.3125rem;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-sm);
+  background: var(--muted);
+  color: var(--foreground);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.9em;
+}
+/* Items read like a small table: a rounded frame with a hairline under each row. */
+.lumi-agent-approval-items {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+  list-style: none;
+}
+.lumi-agent-approval-items > li + li { border-top: 1px solid var(--border); }
+.lumi-agent-approval-items label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  padding: 0.5rem var(--lumi-space-3);
+  font-size: var(--lumi-fs-body);
+  cursor: pointer;
+}
+.lumi-agent-approval-items label:hover:not([data-disabled]) { background: var(--lumi-hover-bg); }
+.lumi-agent-approval-items label[data-disabled] { cursor: default; }
+.lumi-agent-approval-item { min-width: 0; overflow: hidden; color: var(--foreground); text-overflow: ellipsis; white-space: nowrap; }
+.lumi-agent-approval-meta { flex: none; margin-inline-start: auto; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.lumi-agent-approval-more { width: 100%; padding: 0.5rem var(--lumi-space-3); border: 0; background: transparent; text-align: start; color: var(--lumi-text-info); font: inherit; font-size: var(--lumi-fs-body); cursor: pointer; }
+.lumi-agent-approval-more:hover { text-decoration: underline; }
+/* Product lines share the items' table frame: rounded, a hairline per row. */
+.lumi-agent-lines {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+  list-style: none;
+}
+.lumi-agent-line { display: flex; align-items: center; gap: var(--lumi-space-3); min-width: 0; padding: 0.625rem var(--lumi-space-3); }
+.lumi-agent-line + .lumi-agent-line { border-top: 1px solid var(--border); }
+.lumi-agent-line-thumb { flex: none; width: 2.75rem; height: 2.75rem; overflow: hidden; border-radius: var(--lumi-radius-control); background: var(--muted); }
+.lumi-agent-line-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.lumi-agent-line-copy { display: flex; flex: 1; flex-direction: column; gap: 2px; min-width: 0; }
+.lumi-agent-line-title { overflow: hidden; font-size: var(--lumi-fs-body); font-weight: var(--lumi-font-weight-medium); text-overflow: ellipsis; white-space: nowrap; }
+.lumi-agent-line-meta { color: var(--muted-foreground); font-size: var(--lumi-fs-body); }
+.lumi-agent-line-amount { flex: none; font-size: var(--lumi-fs-body); font-variant-numeric: tabular-nums; }
+.lumi-agent-fields dd[data-tone="success"] { color: var(--lumi-text-success); }
+.lumi-agent-fields dd[data-tone="danger"] { color: var(--lumi-text-danger); }
+.lumi-agent-fields dd { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+.lumi-agent-field-sub { color: var(--muted-foreground); font-size: var(--lumi-fs-body); }
+.lumi-agent-total { display: flex; align-items: baseline; justify-content: space-between; gap: var(--lumi-space-3); margin: 0; font-size: var(--lumi-fs-body); }
+.lumi-agent-total > span { color: var(--lumi-fg-secondary); }
+.lumi-agent-total > strong { font-size: 1.125rem; font-weight: var(--lumi-font-weight-semibold); letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.lumi-agent-approval-failure { display: flex; align-items: flex-start; gap: var(--lumi-space-2); margin: 0; color: var(--lumi-text-danger); font-size: var(--lumi-fs-body); line-height: var(--lumi-leading-body); }
+.lumi-agent-approval-failure svg { width: 0.875rem; height: 0.875rem; flex: none; margin-top: 0.1875rem; }
+.lumi-agent-approval-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.lumi-agent-approval-card > .lumi-agent-approval-actions { margin-top: 0.125rem; }
+/* A purchase: Reject beside a wider Pay, both full height. */
+.lumi-agent-approval-actions[data-wide] { flex-wrap: nowrap; }
+.lumi-agent-approval-actions[data-wide] > * { flex: 1 1 0; min-width: 0; }
+.lumi-agent-approval-actions[data-wide] > :last-child { flex-grow: 2; }
+
+/* A decided card or answered question folds to one line that opens again. */
+.lumi-agent-decided {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  max-width: 100%;
+  min-height: 1.75rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  font: inherit;
+  font-size: var(--lumi-fs-body);
+  text-align: start;
+  cursor: pointer;
+}
+.lumi-agent-decided:hover { color: var(--foreground); }
+.lumi-agent-decided > svg { width: 0.875rem; height: 0.875rem; flex: none; }
+.lumi-agent-decided > svg[data-tone="success"] { color: var(--lumi-text-success); }
+.lumi-agent-decided-label { flex: none; color: var(--foreground); font-weight: var(--lumi-font-weight-medium); }
+.lumi-agent-decided-reason { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lumi-agent-approval > .lumi-agent-decided + .lumi-agent-card { margin-top: var(--lumi-space-2); }
+
+/* AgentQuestion */
+.lumi-agent-question { min-width: 0; }
+.lumi-agent-options { display: flex; flex-direction: column; gap: 0.5rem; }
+.lumi-agent-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  font-size: var(--lumi-fs-body);
+  text-align: start;
+  cursor: pointer;
+  transition: border-color 120ms, background-color 120ms;
+}
+.lumi-agent-option:hover { border-color: var(--input); background: var(--lumi-hover-bg); }
+.lumi-agent-option[aria-pressed="true"] { border-color: var(--foreground); }
+.lumi-agent-option-key {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  border: 1px solid var(--border);
+  border-radius: 0.3125rem;
+  background: var(--muted);
+  color: var(--lumi-fg-secondary);
+  font-size: var(--lumi-fs-caption);
+  font-weight: var(--lumi-font-weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+/* Several answers: the key is a checkbox, not a numbered key. */
+.lumi-agent-question[data-mode="multiple"] .lumi-agent-option-key { width: 1rem; height: 1rem; border-color: var(--input); border-radius: 0.25rem; background: transparent; }
+.lumi-agent-option-key svg { width: 0.75rem; height: 0.75rem; opacity: 0; }
+.lumi-agent-option[aria-pressed="true"] .lumi-agent-option-key { border-color: var(--primary); background: var(--primary); color: var(--primary-foreground); }
+.lumi-agent-option[aria-pressed="true"] .lumi-agent-option-key svg { opacity: 1; }
+.lumi-agent-option-label { flex: 1; min-width: 0; }
+.lumi-agent-option-meta { flex: none; color: var(--muted-foreground); font-size: var(--lumi-fs-body); }
+.lumi-agent-option-text {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+  outline: none;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  font-size: var(--lumi-fs-body);
+}
+.lumi-agent-option-text::placeholder { color: var(--muted-foreground); }
+.lumi-agent-option-text:focus { border-color: var(--ring); }
+
+/* A text button for quiet inline commands such as Try again. */
+.lumi-agent-text-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  font-weight: var(--lumi-font-weight-medium);
+  cursor: pointer;
+}
+.lumi-agent-text-button svg { width: 0.875rem; height: 0.875rem; }
+.lumi-agent-text-button:hover { text-decoration: underline; }
+
+/* ChangeDiff */
+/* Line backgrounds behind syntax colours stay a light wash. */
+.lumi-agent-diff {
+  --lumi-diff-added-bg: color-mix(in oklab, var(--lumi-success) 14%, transparent);
+  --lumi-diff-removed-bg: color-mix(in oklab, var(--destructive) 12%, transparent);
+}
+.lumi-agent-diff-head {
+  display: flex;
+  align-items: center;
+  gap: var(--lumi-space-2);
+  min-height: 2.5rem;
+  padding: 0.375rem var(--lumi-space-3);
+  border-bottom: 1px solid var(--border);
+}
+.lumi-agent-diff-head > svg { width: 0.9375rem; height: 0.9375rem; flex: none; color: var(--muted-foreground); }
+.lumi-agent-diff-title { flex: 1; min-width: 0; overflow: hidden; font-size: var(--lumi-fs-label); font-weight: var(--lumi-font-weight-semibold); text-overflow: ellipsis; white-space: nowrap; }
+.lumi-agent-diff-count { display: inline-flex; flex: none; gap: var(--lumi-space-2); color: var(--muted-foreground); font-size: var(--lumi-fs-caption); font-variant-numeric: tabular-nums; }
+.lumi-agent-diff-count [data-diff="added"] { color: var(--lumi-text-success); }
+.lumi-agent-diff-count [data-diff="removed"] { color: var(--lumi-text-danger); }
+.lumi-agent-diff-none { margin: 0; padding: var(--lumi-space-3); color: var(--muted-foreground); font-size: var(--lumi-fs-caption); }
+/* Field edits are one table: every row shares the columns label | before |
+   arrow | after through subgrid, so arrows and new values line up. The old
+   value is muted, the new one in body text; colour stays out. */
+.lumi-agent-diff-fields {
+  display: grid;
+  grid-template-columns: minmax(4.5rem, max-content) fit-content(40%) auto minmax(0, 1fr);
+  column-gap: var(--lumi-space-3);
+  margin: 0;
+  font-size: var(--lumi-fs-caption);
+  line-height: 1.5;
+}
+.lumi-agent-diff-field {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: baseline;
+  padding: 0.5rem var(--lumi-space-3);
+}
+.lumi-agent-diff-field + .lumi-agent-diff-field { border-top: 1px solid color-mix(in oklab, var(--border) 60%, transparent); }
+.lumi-agent-diff-field dt { color: var(--muted-foreground); overflow-wrap: anywhere; }
+.lumi-agent-diff-field dd { display: grid; grid-column: 2 / -1; grid-template-columns: subgrid; align-items: baseline; min-width: 0; margin: 0; }
+.lumi-agent-diff-field dd > :not(.sr-only) { min-width: 0; overflow-wrap: anywhere; text-decoration: none; }
+.lumi-agent-diff-field del { color: var(--muted-foreground); }
+.lumi-agent-diff-field ins { color: var(--foreground); font-weight: var(--lumi-font-weight-medium, 500); }
+.lumi-agent-diff-arrow { color: color-mix(in oklab, var(--muted-foreground) 70%, transparent); }
+.lumi-agent-diff-empty { color: color-mix(in oklab, var(--muted-foreground) 70%, transparent); }
+.lumi-agent-diff-code.lumi-code-block { border: 0; border-radius: 0; }
+.lumi-agent-diff-code .lumi-code-scroll { max-height: 22rem; }
+.lumi-agent-diff-code .lumi-code-line[data-diff="added"] { background: var(--lumi-diff-added-bg); }
+.lumi-agent-diff-code .lumi-code-line[data-diff="removed"] { background: var(--lumi-diff-removed-bg); }
+.lumi-agent-diff-code :is(ins, del) { text-decoration: none; }
+/* The gutter: old and new numbers in two equal columns on a quiet band, a
+   hairline after them, then the sign. Changed rows tint their gutter a step
+   deeper than the code so the edit reads from the margin. */
+.lumi-agent-diff-code {
+  --lumi-diff-gutter-bg: color-mix(in oklab, var(--muted) 55%, transparent);
+  --lumi-diff-ln-width: max(2ch, var(--lumi-diff-gutter, 2ch));
+}
+.lumi-agent-diff-ln {
+  flex: none;
+  box-sizing: content-box;
+  width: var(--lumi-diff-ln-width);
+  padding-inline: 0.5rem 0.375rem;
+  background: var(--lumi-diff-gutter-bg);
+  color: var(--muted-foreground);
+  font-size: 0.9em;
+  text-align: right;
+  user-select: none;
+}
+.lumi-agent-diff-ln:first-child { padding-inline-start: var(--lumi-code-pad-x); }
+.lumi-agent-diff-ln + .lumi-agent-diff-ln { padding-inline-end: 0.625rem; border-inline-end: 1px solid var(--border); }
+.lumi-code-line[data-diff="added"] .lumi-agent-diff-ln { background: color-mix(in oklab, var(--lumi-success) 8%, transparent); color: var(--lumi-text-success); }
+.lumi-code-line[data-diff="removed"] .lumi-agent-diff-ln { background: color-mix(in oklab, var(--destructive) 7%, transparent); color: var(--lumi-text-danger); }
+.lumi-agent-diff-sign { flex: none; width: 2.5ch; color: var(--muted-foreground); text-align: center; user-select: none; }
+.lumi-code-line[data-diff="added"] .lumi-agent-diff-sign { color: var(--lumi-text-success); }
+.lumi-code-line[data-diff="removed"] .lumi-agent-diff-sign { color: var(--lumi-text-danger); }
+.lumi-agent-diff-code .lumi-code-text { padding-inline-start: 0; }
+.lumi-agent-diff-code .lumi-code-scroll { padding-block: 0; }
+/* Folded unchanged lines span the gutter and the code as one quiet row. */
+.lumi-agent-diff-gap { background: var(--lumi-diff-gutter-bg); }
+.lumi-agent-diff-gap button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.25rem var(--lumi-code-pad-x);
+  border: 0;
+  border-block: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted-foreground);
+  font: var(--lumi-font-weight-normal, 400) var(--lumi-fs-caption) / 1.5 var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+  text-align: start;
+  cursor: pointer;
+}
+.lumi-agent-diff-gap:first-child button { border-top: 0; }
+.lumi-agent-diff-gap:last-child button { border-bottom: 0; }
+.lumi-agent-diff-gap button:hover { background: var(--lumi-hover-bg); color: var(--foreground); }
+
+/* ContextChips */
+.lumi-agent-context { display: flex; flex-direction: column; gap: var(--lumi-space-2); min-width: 0; }
+.lumi-agent-viewing {
+  display: flex;
+  align-items: center;
+  gap: var(--lumi-space-2);
+  min-height: var(--lumi-control-md);
+  padding: 0.25rem 0.5rem 0.25rem var(--lumi-space-3);
+  border-radius: var(--lumi-radius-control);
+  background: var(--muted);
+  color: var(--lumi-fg-secondary);
+  font-size: var(--lumi-fs-caption);
+}
+.lumi-agent-viewing > svg { width: 0.875rem; height: 0.875rem; flex: none; color: var(--muted-foreground); }
+.lumi-agent-viewing-state { flex: none; }
+.lumi-agent-viewing-label { min-width: 0; overflow: hidden; color: var(--foreground); font-weight: var(--lumi-font-weight-medium); text-overflow: ellipsis; white-space: nowrap; }
+.lumi-agent-viewing[data-shared="false"] .lumi-agent-viewing-label { color: var(--muted-foreground); text-decoration: line-through; }
+.lumi-agent-viewing > :last-child:not(.lumi-agent-viewing-label) { margin-inline-start: auto; }
+.lumi-agent-usage { display: flex; flex-direction: column; gap: 0.375rem; }
+.lumi-agent-usage-label { display: flex; justify-content: space-between; gap: var(--lumi-space-3); color: var(--muted-foreground); font-size: var(--lumi-fs-caption); }
+.lumi-agent-usage-value { color: var(--lumi-fg-secondary); font-variant-numeric: tabular-nums; }
+.lumi-agent-usage[data-level="warning"] .lumi-agent-usage-value { color: var(--lumi-text-warning); }
+.lumi-agent-usage[data-level="danger"] .lumi-agent-usage-value { color: var(--lumi-text-danger); }
+
+/* ChatMessage and ChatThread */
+/* The action rows under each message (shown on hover) already space the turns apart. */
+/* The thread is the scroll box; its list, host children and the jump button stack inside with the same gap. */
+.lumi-agent-thread, .lumi-agent-thread-list { display: flex; flex-direction: column; gap: 0.75rem; min-width: 0; margin: 0; padding: 0; list-style: none; }
+.lumi-agent-thread-list > li { width: 100%; max-width: 46rem; min-width: 0; margin-inline: auto; }
+.lumi-agent-thread[data-empty] { display: grid; place-items: center; }
+.lumi-agent-message { min-width: 0; font-size: var(--lumi-fs-body); }
+.lumi-agent-message[data-role="user"] { display: flex; flex-direction: column; align-items: flex-end; gap: 0.375rem; }
+.lumi-agent-bubble {
+  max-width: min(80%, 36rem);
+  padding: 0.5rem 0.875rem;
+  border-radius: 1.125rem 1.125rem 0.375rem 1.125rem;
+  background: var(--muted);
+  line-height: var(--lumi-leading-body);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.lumi-agent-body { display: flex; flex-direction: column; gap: 0.75rem; min-width: 0; }
+/* Actions stay on the latest answer and show on hover or focus elsewhere. */
+.lumi-agent-thread-list > li:not([data-latest]) .lumi-agent-actions { opacity: 0; transition: opacity 120ms; }
+.lumi-agent-thread-list > li:not([data-latest]):is(:hover, :focus-within) .lumi-agent-actions { opacity: 1; }
+@media (hover: none) { .lumi-agent-thread-list > li:not([data-latest]) .lumi-agent-actions { opacity: 1; } }
+.lumi-agent-follow-ups { display: flex; flex-direction: column; align-items: flex-start; gap: 0.125rem; }
+.lumi-agent-follow-up {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  max-width: 100%;
+  min-height: 1.75rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--lumi-fg-secondary);
+  font: inherit;
+  font-size: var(--lumi-fs-label);
+  text-align: start;
+  cursor: pointer;
+}
+.lumi-agent-follow-up:hover:not(:disabled) { color: var(--foreground); }
+.lumi-agent-follow-up:disabled { cursor: default; }
+.lumi-agent-system { margin: 0; color: var(--muted-foreground); font-size: var(--lumi-fs-caption); text-align: center; }
+.lumi-agent-sources-line { display: flex; flex-direction: column; align-items: flex-start; gap: var(--lumi-space-2); min-width: 0; }
+.lumi-agent-sources-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 1.75rem;
+  padding: 0 0.625rem 0 0.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-full);
+  background: transparent;
+  color: var(--lumi-fg-secondary);
+  font: inherit;
+  font-size: var(--lumi-fs-caption);
+  cursor: pointer;
+  transition: border-color 120ms, color 120ms;
+}
+.lumi-agent-sources-toggle:hover { border-color: var(--input); color: var(--foreground); }
+.lumi-agent-sources-stack { display: inline-flex; }
+.lumi-agent-sources-stack > span {
+  display: grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1.5px solid var(--card);
+  border-radius: 50%;
+  background: var(--muted);
+  color: var(--lumi-fg-secondary);
+}
+.lumi-agent-sources-stack > span + span { margin-inline-start: -0.375rem; }
+.lumi-agent-sources-stack svg { width: 0.6875rem; height: 0.6875rem; }
+.lumi-agent-sources { display: flex; flex-wrap: wrap; gap: 0.375rem; margin: 0; padding: 0; list-style: none; }
+.lumi-agent-sources[hidden] { display: none; }
+.lumi-agent-source { cursor: pointer; transition: border-color 120ms, color 120ms; }
+.lumi-agent-source:hover, .lumi-agent-source[data-state="delayed-open"], .lumi-agent-source[data-state="instant-open"] {
+  border-color: color-mix(in oklab, var(--brand) 40%, var(--border));
+  color: var(--foreground);
+}
+.lumi-agent-source-index {
+  display: inline-grid;
+  place-items: center;
+  min-width: 0.9375rem;
+  height: 0.9375rem;
+  padding: 0 0.1875rem;
+  border-radius: var(--lumi-radius-sm);
+  background: var(--muted);
+  color: var(--lumi-fg-secondary);
+  font-size: var(--lumi-fs-micro);
+  font-variant-numeric: tabular-nums;
+}
+.lumi-agent-source[data-inline] {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  margin: 0 1px;
+  padding: 0 0.25rem;
+  vertical-align: 0.125em;
+  border-radius: var(--lumi-radius-sm);
+  background: var(--muted);
+  font-size: var(--lumi-fs-micro);
+  font-variant-numeric: tabular-nums;
+}
+/* Inline citations and chip remove buttons sit in a line of text or a chip,
+   so on touch they keep their size and reach the touch target through a
+   centred hit area. */
+@media (pointer: coarse) {
+  :is(.lumi-agent-source, .lumi-agent-chip-remove)[data-hit-area] { position: relative; }
+  :is(.lumi-agent-source, .lumi-agent-chip-remove)[data-hit-area]::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--lumi-control-touch);
+    height: var(--lumi-control-touch);
+    transform: translate(-50%, -50%);
+    content: "";
+  }
+}
+.lumi-agent-source-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: max-content;
+  max-width: min(20rem, calc(100vw - 1rem));
+  padding: 0.625rem var(--lumi-space-3);
+  font-size: var(--lumi-fs-caption);
+  line-height: var(--lumi-leading-body);
+}
+.lumi-agent-source-origin { display: inline-flex; align-items: center; gap: 0.3125rem; color: var(--muted-foreground); }
+.lumi-agent-source-title { color: var(--foreground); font-weight: var(--lumi-font-weight-medium); }
+.lumi-agent-source-snippet { display: -webkit-box; overflow: hidden; color: var(--lumi-fg-secondary); -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+.lumi-agent-source-open { display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 0.125rem; color: var(--muted-foreground); font-size: var(--lumi-fs-micro); }
+.lumi-agent-source-open svg { width: 0.75rem; height: 0.75rem; }
+.lumi-agent-actions { display: flex; align-items: center; gap: 2px; margin-inline-start: -0.375rem; }
+.lumi-agent-message[data-role="user"] > .lumi-agent-actions { margin-inline: 0 -0.375rem; opacity: 0; transition: opacity 120ms; }
+.lumi-agent-message[data-role="user"]:is(:hover, :focus-within) > .lumi-agent-actions { opacity: 1; }
+@media (hover: none) { .lumi-agent-message[data-role="user"] > .lumi-agent-actions { opacity: 1; } }
+/* Shown once the reader scrolls up; it rides the bottom edge of the thread. */
+.lumi-agent-thread > .lumi-agent-jump {
+  position: sticky;
+  bottom: var(--lumi-space-2);
+  display: flex;
+  justify-content: center;
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.lumi-agent-jump-button {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  margin-top: -2.5rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: 0 2px 8px color-mix(in oklab, var(--foreground) 12%, transparent);
+  pointer-events: auto;
+  cursor: pointer;
+}
+.lumi-agent-jump-button svg { width: 1rem; height: 1rem; }
+.lumi-agent-error { display: flex; flex-wrap: wrap; align-items: center; gap: var(--lumi-space-2); color: var(--lumi-text-danger); font-size: var(--lumi-fs-label); }
+.lumi-agent-error > svg { width: 0.875rem; height: 0.875rem; flex: none; }
+.lumi-agent-error > span { min-width: 0; }
+
+/* The streaming caret blinks in steps, never fades, and stands still for
+   readers who prefer reduced motion. */
+.lumi-agent-caret {
+  display: inline-block;
+  width: 0.45em;
+  height: 1.05em;
+  margin-inline-start: 2px;
+  vertical-align: -0.15em;
+  border-radius: 1px;
+  background: currentColor;
+  opacity: 0.65;
+  animation: lumi-agent-caret 1s steps(2, jump-none) infinite;
+}
+.lumi-agent-caret[data-motion="reduce"] { animation: none; }
+@keyframes lumi-agent-caret {
+  from { opacity: 0.65; }
+  to { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lumi-agent-caret, [data-shimmer] { animation: none; }
+  [data-shimmer] { background: none; color: inherit !important; }
+  .lumi-agent-chevron { transition: none; }
+}
+
+/* Markdown answers */
+.lumi-md { min-width: 0; color: inherit; font-size: inherit; line-height: var(--lumi-leading-body); overflow-wrap: anywhere; }
+.lumi-md > * { margin: 0; }
+.lumi-md > * + * { margin-top: 0.5rem; }
+.lumi-md :is(p, ul, ol, blockquote, h1, h2, h3, h4, h5, h6, hr) { margin-block: 0; }
+.lumi-md :is(ul, ol) { padding-inline-start: 1.25rem; }
+.lumi-md ul { list-style: disc; }
+.lumi-md ol { list-style: decimal; }
+.lumi-md li + li { margin-top: 0.1875rem; }
+.lumi-md li > * + * { margin-top: 0.25rem; }
+.lumi-md li::marker { color: var(--muted-foreground); }
+.lumi-md :is(h1, h2) { font-size: var(--lumi-fs-section); font-weight: var(--lumi-font-weight-semibold); line-height: var(--lumi-leading-tight); }
+.lumi-md :is(h3, h4, h5, h6) { font-size: var(--lumi-fs-title); font-weight: var(--lumi-font-weight-semibold); line-height: var(--lumi-leading-tight); }
+.lumi-md > :is(h1, h2, h3, h4, h5, h6):not(:first-child) { margin-top: 0.875rem; }
+.lumi-md strong { font-weight: var(--lumi-font-weight-semibold); }
+.lumi-md a { color: var(--lumi-text-info); text-decoration: underline; text-decoration-color: color-mix(in oklab, currentColor 40%, transparent); text-underline-offset: 2px; }
+.lumi-md a:hover { text-decoration-color: currentColor; }
+.lumi-md a:focus-visible { border-radius: 2px; outline: 2px solid var(--ring); outline-offset: 1px; }
+.lumi-md blockquote { padding-inline-start: var(--lumi-space-3); border-inline-start: 2px solid var(--border); color: var(--lumi-fg-secondary); }
+.lumi-md hr { height: 1px; border: 0; background: var(--border); }
+.lumi-md-table { max-width: 100%; overflow-x: auto; border: 1px solid var(--border); border-radius: var(--lumi-radius-control); }
+.lumi-md-table:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
+.lumi-md table { width: 100%; border-collapse: collapse; font-size: var(--lumi-fs-caption); font-variant-numeric: tabular-nums; }
+.lumi-md :is(th, td) { padding: 0.375rem var(--lumi-space-3); text-align: start; white-space: nowrap; }
+.lumi-md th { color: var(--muted-foreground); font-weight: var(--lumi-font-weight-medium); }
+.lumi-md tr + tr > td, .lumi-md thead + tbody > tr:first-child > td { border-top: 1px solid var(--border); }
+
+/* AgentMentionPicker: search, kinds as tabs, then the results. */
+.lumi-agent-mention { display: flex; flex-direction: column; gap: var(--lumi-space-2); min-width: 0; padding: var(--lumi-space-2); }
+.lumi-agent-mention-tabs { display: flex; gap: 0.25rem; overflow-x: auto; scrollbar-width: none; }
+.lumi-agent-mention-tabs::-webkit-scrollbar { display: none; }
+.lumi-agent-mention-tab {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.375rem;
+  height: 1.875rem;
+  padding: 0 0.75rem;
+  border: 0;
+  border-radius: var(--lumi-radius-full);
+  background: transparent;
+  color: var(--lumi-fg-secondary);
+  font: inherit;
+  font-size: var(--lumi-fs-body);
+  cursor: pointer;
+}
+.lumi-agent-mention-tab:hover { background: var(--lumi-hover-bg); color: var(--foreground); }
+.lumi-agent-mention-tab[aria-selected="true"] { background: var(--lumi-selected-bg); color: var(--lumi-selected-fg); font-weight: var(--lumi-font-weight-medium); }
+.lumi-agent-mention-tab .lumi-agent-chip-icon { color: currentColor; }
+.lumi-agent-mention-list { display: flex; flex-direction: column; gap: 2px; min-width: 0; margin: 0; padding: 0; overflow-y: auto; list-style: none; }
+.lumi-agent-mention-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.25rem;
+  padding: 0.5rem 0.625rem;
+  border-radius: var(--lumi-radius-item);
+  font-size: var(--lumi-fs-body);
+  cursor: pointer;
+}
+.lumi-agent-mention-option[data-active] { background: var(--lumi-hover-bg); }
+.lumi-agent-mention-mark {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+  background: var(--card, var(--background));
+  color: var(--lumi-fg-secondary);
+}
+.lumi-agent-mention-mark img { width: 100%; height: 100%; object-fit: cover; }
+.lumi-agent-mention-mark .lumi-agent-chip-icon { width: 1rem; height: 1rem; color: currentColor; }
+.lumi-agent-mention-copy { display: flex; flex: 1; flex-direction: column; gap: 0.125rem; min-width: 0; line-height: var(--lumi-leading-tight); }
+.lumi-agent-mention-label { overflow: hidden; color: var(--foreground); font-weight: var(--lumi-font-weight-medium); text-overflow: ellipsis; white-space: nowrap; }
+.lumi-agent-mention-meta { overflow: hidden; color: var(--muted-foreground); font-size: var(--lumi-fs-caption); text-overflow: ellipsis; white-space: nowrap; }
+.lumi-agent-mention-check { width: 1rem; height: 1rem; flex: none; color: var(--brand); }
+.lumi-agent-mention-more { display: grid; place-items: center; padding: var(--lumi-space-2); }
+.lumi-agent-mention-empty { margin: 0; padding: var(--lumi-space-6, 1.5rem) var(--lumi-space-3); color: var(--muted-foreground); font-size: var(--lumi-fs-body); text-align: center; }
+
+/* AgentSessionList: a dot slot before every title keeps titles aligned. */
+.lumi-agent-sessions { display: flex; flex-direction: column; gap: var(--lumi-space-2); min-width: 0; }
+.lumi-agent-sessions-head { display: flex; flex-direction: column; gap: var(--lumi-space-2); }
+.lumi-agent-sessions-new {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  width: 100%;
+  height: var(--lumi-control-md, 2.25rem);
+  padding: 0 0.75rem;
+  border: 0;
+  border-radius: var(--lumi-radius-control);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font: inherit;
+  font-size: var(--lumi-fs-control);
+  font-weight: var(--lumi-font-weight-medium);
+  cursor: pointer;
+  transition: background-color 150ms;
+}
+.lumi-agent-sessions-new:hover { background: color-mix(in oklab, var(--primary) 88%, var(--background)); }
+.lumi-agent-sessions-new:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.lumi-agent-sessions-new svg { width: 1rem; height: 1rem; }
+.lumi-agent-sessions-list { display: flex; flex-direction: column; gap: 1px; min-width: 0; margin: 0; padding: 0; overflow-y: auto; list-style: none; }
+.lumi-agent-session-item { display: flex; flex-direction: column; min-width: 0; }
+.lumi-agent-sessions-group { padding: var(--lumi-space-3) 0.625rem 0.25rem; color: var(--muted-foreground); font-size: var(--lumi-fs-caption); font-weight: var(--lumi-font-weight-medium); }
+.lumi-agent-session-item:first-child > .lumi-agent-sessions-group { padding-top: 0.25rem; }
+.lumi-agent-session {
+  display: grid;
+  grid-template-columns: 0.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 0.5rem;
+  width: 100%;
+  min-height: 2.25rem;
+  padding: 0.375rem 0.625rem 0.375rem 0.5rem;
+  border: 0;
+  border-radius: var(--lumi-radius-item);
+  background: transparent;
+  color: var(--lumi-fg-secondary);
+  font: inherit;
+  font-size: var(--lumi-fs-body);
+  text-align: start;
+  cursor: pointer;
+}
+.lumi-agent-session:hover { background: var(--lumi-hover-bg); color: var(--foreground); }
+.lumi-agent-session[aria-current="true"] { background: var(--lumi-selected-bg); color: var(--lumi-selected-fg); }
+/* The selected tint darkens the row, so its secondary lines step up to keep their contrast. */
+.lumi-agent-session[aria-current="true"] :is(.lumi-agent-session-time, .lumi-agent-session-preview) { color: var(--lumi-fg-secondary); }
+.lumi-agent-session:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+.lumi-agent-session-dot { width: 0.4375rem; height: 0.4375rem; border-radius: 50%; }
+.lumi-agent-session[data-status="running"] .lumi-agent-session-dot { background: var(--brand); animation: lumi-agent-pulse 1.4s ease-in-out infinite; }
+.lumi-agent-session[data-status="waiting"] .lumi-agent-session-dot { background: var(--lumi-warning); }
+.lumi-agent-session[data-status="unread"] .lumi-agent-session-dot { background: var(--brand); }
+.lumi-agent-session[data-status="error"] .lumi-agent-session-dot { background: var(--destructive); }
+.lumi-agent-session-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lumi-agent-session[data-status="unread"] .lumi-agent-session-title { color: var(--foreground); font-weight: var(--lumi-font-weight-medium); }
+.lumi-agent-session-time { color: var(--muted-foreground); font-size: var(--lumi-fs-caption); font-variant-numeric: tabular-nums; }
+.lumi-agent-session-preview { grid-column: 2 / -1; overflow: hidden; color: var(--muted-foreground); font-size: var(--lumi-fs-caption); text-overflow: ellipsis; white-space: nowrap; }
+.lumi-agent-sessions[data-variant="detailed"] .lumi-agent-session { row-gap: 0.125rem; min-height: 3.25rem; }
+@keyframes lumi-agent-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lumi-agent-session-dot { animation: none !important; }
+}
+
+/* A highlighted option's tint darkens the row; its second line steps up to keep its contrast. */
+.lumi-agent-mention-option:is([data-active], [aria-selected="true"]) .lumi-agent-mention-meta { color: var(--lumi-fg-secondary); }
+
+/* Slash commands over the composer: a mark, the label and line, the command name trailing. */
+.lumi-agent-commands { display: flex; flex-direction: column; gap: 2px; max-height: 18rem; margin: 0; padding: 0; overflow-y: auto; list-style: none; }
+.lumi-agent-command {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: var(--lumi-radius-item);
+  font-size: var(--lumi-fs-body);
+  cursor: pointer;
+}
+.lumi-agent-command[data-active] { background: var(--lumi-hover-bg); }
+.lumi-agent-command-mark {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+  background: var(--card, var(--background));
+  color: var(--lumi-fg-secondary);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+}
+.lumi-agent-command-mark .lumi-agent-chip-icon { width: 0.9375rem; height: 0.9375rem; color: currentColor; }
+.lumi-agent-command-copy { display: flex; flex: 1; flex-direction: column; gap: 0.125rem; min-width: 0; line-height: var(--lumi-leading-tight); }
+.lumi-agent-command-label { overflow: hidden; color: var(--foreground); font-weight: var(--lumi-font-weight-medium); text-overflow: ellipsis; white-space: nowrap; }
+.lumi-agent-command-meta { overflow: hidden; color: var(--muted-foreground); font-size: var(--lumi-fs-caption); text-overflow: ellipsis; white-space: nowrap; }
+.lumi-agent-command[data-active] .lumi-agent-command-meta { color: var(--lumi-fg-secondary); }
+.lumi-agent-command-name { flex: none; color: var(--muted-foreground); font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace); font-size: var(--lumi-fs-caption); }
+.lumi-agent-command[data-active] .lumi-agent-command-name { color: var(--lumi-fg-secondary); }

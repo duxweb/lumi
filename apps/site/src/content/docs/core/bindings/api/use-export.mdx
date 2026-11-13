@@ -1,0 +1,43 @@
+---
+title: "useExport"
+description: "useExport React hook 的签名、参数和返回值。"
+---
+
+Exports a resource's matching records as CSV or JSON, or saves the file the backend builds at `url`, the same way as the `exportList` action.
+
+```typescript
+useExport(input: UseExportOptions): UseExportReturn
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `input` | `UseExportOptions` | 是 |  |
+
+`input` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `columns` | `readonly TransferColumn[] \| undefined` | 否 | The columns of the file, in order; every field of the records when left out. |
+| `dataProviderName` | `string \| undefined` | 否 | 多数据源名称；省略时使用 default。 |
+| `filename` | `string \| undefined` | 否 | Name of the saved file without its extension; the resource name by default. |
+| `filters` | `Filter[] \| undefined` | 否 | 筛选条件数组。 |
+| `format` | `(string & {}) \| TransferFormat \| undefined` | 否 | `csv` or `json` for a file written here; with `url`, any name the backend knows (`xlsx`…). |
+| `maxItems` | `number \| undefined` | 否 | Stops after this many records, so an export cannot run away. |
+| `meta` | `Meta \| undefined` | 否 | 原样传给 DataProvider 的扩展数据。 |
+| `method` | `"GET" \| "POST" \| undefined` | 否 | `POST` (default) sends the values as JSON; `GET` as the query, `filters`, `sorters` and `columns` as JSON text. |
+| `pageSize` | `number \| undefined` | 否 | Records asked for per request. |
+| `resource` | `string` | 是 | 交给 DataProvider 解释的数据目标，如 `orders`。 |
+| `save` | `((file: TransferFile \| TransferDownload) => void) \| undefined` | 否 | Where the file goes; the browser download by default. |
+| `sorters` | `Sorter[] \| undefined` | 否 | 排序条件数组。 |
+| `url` | `string \| undefined` | 否 | The backend builds the file: this endpoint (relative to the API root) is sent `{ filters, sorters, columns, format, ...meta }` and answers the file as a stream, in any format. Without it the records are loaded page by page and the file is written in the browser. |
+
+返回 `UseExportReturn`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `error` | `Error \| undefined` | 否 | Why the last export failed. |
+| `isLoading` | `boolean` | 是 | True while the export runs. |
+| `progress` | `{ loaded: number; total?: number; } \| undefined` | 否 | Records loaded so far and their total; with `url`, bytes received and the file's size when the backend sends `Content-Length`. |
+| `trigger` | `() => Promise<TransferFile \| TransferDownload \| undefined>` | 是 | Loads the records and saves the file; the newest call wins over an earlier one still loading. |

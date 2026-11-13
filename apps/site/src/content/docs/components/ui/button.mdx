@@ -1,0 +1,50 @@
+---
+title: "Button"
+description: "触发一个动作。"
+---
+
+<ComponentPreview name="Button" />
+
+触发一个动作。有实心、描边、无背景和品牌色外观，以及加载和禁用状态。
+
+## 示例
+
+```json
+{
+  "root": "button-2",
+  "elements": {
+    "button-2": {
+      "type": "Button",
+      "props": { "label": "Continue", "appearance": "solid" },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `label` | 按钮文字。 | `string` |  |
+| `appearance` | 外观：`solid` 主色实心，`brand` 品牌色，`soft` 浅色，`outline` 描边，`ghost` 无背景，`link` 链接样式。 | `"solid" \| "brand" \| "soft" \| "outline" \| "ghost" \| "link" \| "danger"` | `"solid"` |
+| `size` | 尺寸：`sm` 紧凑，`md` 标准，`lg` 宽松。 | `"sm" \| "md" \| "lg"` | `"md"` |
+| `shape` | 形状：`pill` 胶囊，`circle` 圆形，`square` 方形（后两者用于只有图标的按钮）。 | `"default" \| "pill" \| "circle" \| "square"` | `"default"` |
+| `loading` | 为 true 时显示加载状态，并暂停交互。 | `boolean` | `false` |
+| `icon` | 图标名，来自内置 HugeIcons 图标集，如 `download`、`receipt`。 | `string` |  |
+| `iconPosition` | 图标在文字左边还是右边。 | `"left" \| "right"` | `"left"` |
+| `block` | 撑满父容器宽度。 | `boolean` | `false` |
+| `href` | 链接地址。设置后整个元素可点击跳转，站内地址不刷新页面。 | `string` |  |
+| `type` | 原生按钮类型。放在 Form 里的 `submit` 会触发表单提交。 | `"button" \| "submit" \| "reset"` | `"button"` |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`press`
+- 插槽：无

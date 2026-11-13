@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lumi base</title>
+    <!-- The whole front end: one stylesheet and one script, never rebuilt. -->
+    <link rel="stylesheet" href="/lumi/lumi-admin.css" />
+    <script>
+      // Optional: what JSON cannot hold. Any key here overrides the default,
+      // e.g. `authProvider: { login, logout, check, authorizeRequest }` for a
+      // backend that does not speak the simple sign-in convention.
+      // Several scripts may each push one, none overwriting another.
+      ;(window.LumiAdminSetup ||= []).push({
+        onEvent: event => console.warn('[admin event]', event.name, event.payload),
+      })
+    </script>
+    <script type="module" src="/lumi/lumi-admin.js" data-config="/config.json"></script>
+    <script type="module">
+      // A data source written in the page: Strapi's REST API as the `strapi`
+      // provider, used with `dataProviderName: "strapi"` or a route's
+      // `dataProvider`. Its address is the `strapi` entry of `data` in config.json;
+      // `http` sends JSON, adds the locale and tenant and reports failures,
+      // and `auth: false` keeps the app's credentials off another backend.
+      // Scripts after the base add theirs with use().
+      window.LumiAdmin.use((runtime, { panel, http }) => {
+        const strapi = http.extend({ baseUrl: panel.data.find(entry => entry.name === 'strapi').url, auth: false })
+        const one = async (path, options) => ({ data: (await strapi.request(path, options)).data })
+        return {
+          dataProviders: {
+            strapi: {
+              getList: async ({ resource, pagination }) => {
+                const body = await strapi.request(`/${resource}`, { query: { 'pagination[page]': pagination?.page ?? 1, 'pagination[pageSize]': pagination?.pageSize ?? 20 } })
+                return { data: body.data, total: body.meta.pagination.total }
+              },
+              getOne: ({ resource, id }) => one(`/${resource}/${id}`),
+              create: ({ resource, variables }) => one(`/${resource}`, { method: 'POST', body: { data: variables } }),
+              update: ({ resource, id, variables }) => one(`/${resource}/${id}`, { method: 'PUT', body: { data: variables } }),
+              deleteOne: ({ resource, id }) => one(`/${resource}/${id}`, { method: 'DELETE' }),
+            },
+          },
+        }
+      })
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>

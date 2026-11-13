@@ -1,0 +1,24 @@
+---
+title: "BarChart"
+description: "柱状图，适合少量分类或天数，带虚线网格、数值轴和悬停读数。"
+---
+
+柱状图，适合少量分类或天数，带虚线网格、数值轴和悬停读数。`highlight` 指定的柱（默认最高的）用完整色调，其余用浅色；`showValues` 在每根柱上方显示数值。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `points`（必填） | 柱子列表，每项 `{ key, label, value, display?, tone? }`。`display` 用于读数和提示；单项 `tone` 让这根柱子用自己的颜色全色显示，适合标出异常日。 字段：`key`、`label`、`value`、`display?`、`tone?` | `object[]` |  |
+| `ariaLabel`（必填） | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+| `tone` | 强调柱的颜色，其余柱子取它的浅色。 | `"neutral" \| "primary" \| "success" \| "warning" \| "danger" \| "info"` | `"primary"` |
+| `highlight` | 全色显示哪根柱子：`peak` 最大值，某项的 `key`（如今天），`none` 全部全色。 | `string` | `"peak"` |
+| `caption` | 图表下方的说明，如统计口径或时间范围。 | `string` |  |
+| `showValues` | 在每根柱子上方显示读数（优先用 `display`）。 | `boolean` | `false` |
+| `axis` | 在左侧显示数值刻度；虚线网格线始终显示。 | `boolean` | `true` |
+| `max` | 刻度上限；不填时从数据最大值向上取整为四等分。 | `number` |  |
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

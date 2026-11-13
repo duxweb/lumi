@@ -1,0 +1,17 @@
+node_modules
+dist
+apps/site/public/component-schemas
+# The full admin demo, built in-browser by `pnpm -F @duxweb/lumi-site build:demo`.
+apps/site/public/demo
+target
+coverage
+test-results
+playwright-report
+*.tsbuildinfo
+*.log
+.DS_Store
+.idea
+.vscode/*
+!.vscode/extensions.json
+.astro
+.lumi-pack

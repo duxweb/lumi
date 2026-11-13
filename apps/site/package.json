@@ -1,0 +1,51 @@
+{
+  "name": "@duxweb/lumi-site",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "pnpm generate && astro dev --host 127.0.0.1 --port 5179",
+    "build": "pnpm build:demo && astro build && node ../../scripts/check-site-links.mjs dist",
+    "preview": "astro preview --host 127.0.0.1 --port 4179",
+    "check": "pnpm check:code && pnpm check:examples && pnpm check:types",
+    "check:code": "node ../../scripts/check-doc-code-style.mjs",
+    "format:code": "node ../../scripts/check-doc-code-style.mjs --write",
+    "check:examples": "tsx --conditions=lumi:source ../../scripts/check-doc-schema-examples.ts",
+    "check:types": "tsx ../../scripts/check-doc-typescript-examples.ts",
+    "generate": "tsx --conditions=lumi:source ../../scripts/generate-docs.ts",
+    "generate:check": "tsx --conditions=lumi:source ../../scripts/generate-docs.ts --check",
+    "generate:api": "tsx --conditions=lumi:source ../../scripts/generate-docs.ts --api-only",
+    "test": "vitest run --root ../.. apps/site/test",
+    "typecheck": "astro sync && astro check",
+    "build:demo": "LUMI_ADMIN_BASE=/demo/ pnpm --dir ../admin build:browser --outDir ../site/public/demo --emptyOutDir"
+  },
+  "dependencies": {
+    "@astrojs/check": "catalog:",
+    "@astrojs/markdown-remark": "catalog:",
+    "@astrojs/mdx": "catalog:",
+    "@astrojs/react": "catalog:",
+    "@duxweb/lumi": "workspace:*",
+    "@duxweb/lumi-admin": "workspace:*",
+    "@duxweb/lumi-schema-gallery": "workspace:*",
+    "@duxweb/lumi-ui": "workspace:*",
+    "@hugeicons/core-free-icons": "catalog:",
+    "@hugeicons/react": "catalog:",
+    "@json-render/core": "catalog:",
+    "@json-render/react": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@visactor/vchart": "catalog:",
+    "astro": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-router": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "zod": "catalog:"
+  }
+}

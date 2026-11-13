@@ -1,0 +1,66 @@
+---
+title: "CodeEditor"
+description: "编辑源码，高亮与 CodeBlock 相同，带行号、括号匹配、自动缩进和撤销。"
+---
+
+<ComponentPreview name="CodeEditor" />
+
+编辑源码，高亮与 CodeBlock 相同，带行号、括号匹配、自动缩进和撤销。值是文本，像其他输入控件一样用 `$bindState` 绑定。Tab 缩进；先按 Escape 再按 Tab 可移走焦点。`checkSyntax` 报告 JSON 语法错误。编辑器首次使用时加载，加载前显示同样大小的纯文本框。
+
+## 示例
+
+```json
+{
+  "root": "codeeditor-1",
+  "elements": {
+    "codeeditor-1": {
+      "type": "CodeEditor",
+      "props": {
+        "value": { "$bindState": "/codeeditor-1/value" },
+        "language": "json",
+        "checkSyntax": true,
+        "minHeight": 120,
+        "ariaLabel": "JSON"
+      },
+      "children": []
+    }
+  },
+  "state": {
+    "codeeditor-1": {
+      "value": "{\n  \"resource\": \"orders\",\n  \"pageSize\": 20\n}"
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `value` | 编辑中的代码文本。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string` |  |
+| `defaultValue` | 初始值，只在没有绑定 `value` 时生效。 | `string` |  |
+| `language` | 语言，取值与别名同 CodeBlock，两者高亮配色一致。 | `string` | `纯文本` |
+| `placeholder` | 没有值时显示的提示文字。 | `string` |  |
+| `showLineNumbers` | 显示行号。 | `boolean` | `true` |
+| `wrap` | 长行折行显示。 | `boolean` | `false` |
+| `minHeight` | 编辑器最小高度（像素）。 | `integer` | `8 行` |
+| `maxHeight` | 编辑器最大高度（像素），超出后在内部滚动。 | `integer` | `400` |
+| `checkSyntax` | `language` 为 `json` 时检查语法：在编辑器下方显示第一个错误的行列并标记为错误状态。空内容不报错，必填请用 `checks`。 | `boolean` | `false` |
+| `name` | 字段名，表单提交时作为这个值的键。 | `string` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean` | `false` |
+| `invalid` | 标记为校验未通过，显示错误样式。通常由 FormField 自动设置。 | `boolean` | `false` |
+| `error` | 错误提示文字，显示在控件下方。 | `string` |  |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+
+通用参数：
+
+- `checks`：json-render 原生校验规则，如 `{ "type": "required", "message": "请填写" }`，提交或失焦时执行。
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：无

@@ -1,0 +1,160 @@
+/*
+ * Long-form typesetting. Every measure is in `em` of the body size, so `sm`,
+ * `md` and `lg` scale the whole rhythm together. Markdown and Html render
+ * inside it; the width follows the container, which sets the measure.
+ */
+/*
+ * Hierarchy comes from three steps, not from size alone: headings, bold and
+ * quotes take the strongest text colour, body copy sits one step back, and
+ * captions, markers and rules recede further. Weight also steps down from
+ * h1 to h4, so a page scanned by its headings reads in order.
+ */
+.lumi-prose {
+  --lumi-prose-fs: calc(var(--lumi-fs-body) * 1.0715);
+  --lumi-prose-flow: 1.25em;
+  --lumi-prose-heading: var(--foreground);
+  --lumi-prose-body: color-mix(in oklab, var(--foreground) 78%, var(--muted-foreground));
+  --lumi-prose-quiet: var(--muted-foreground);
+  --lumi-prose-bullet: color-mix(in oklab, var(--muted-foreground) 55%, transparent);
+  min-width: 0;
+  color: var(--lumi-prose-body);
+  font-size: var(--lumi-prose-fs);
+  line-height: 1.75;
+  overflow-wrap: break-word;
+}
+
+.lumi-prose[data-size="sm"] { --lumi-prose-fs: var(--lumi-fs-body); line-height: var(--lumi-leading-copy); }
+.lumi-prose[data-size="lg"] { --lumi-prose-fs: calc(var(--lumi-fs-body) * 1.215); }
+
+/* Markdown and Html add one wrapper; the rhythm runs through it. */
+.lumi-prose > :is([data-slot="markdown"], [data-slot="html"]) { display: contents; }
+
+.lumi-prose :where(p, ul, ol, blockquote, figure, pre, table, hr, h1, h2, h3, h4, h5, h6, [data-slot="code-block"], .lumi-md-table) { margin: 0; }
+.lumi-prose :where(p, ul, ol, blockquote, figure, pre, hr, img, [data-slot="code-block"], .lumi-md-table, [data-slot="html"] > table) + * { margin-top: var(--lumi-prose-flow); }
+.lumi-prose :where(h1, h2, h3, h4, h5, h6) + * { margin-top: 0.75em; }
+
+/* Headings: one weight, steps of size, more air above than below. */
+.lumi-prose :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--lumi-prose-heading);
+  font-weight: var(--lumi-font-weight-semibold);
+  letter-spacing: -0.012em;
+  line-height: 1.3;
+  text-wrap: balance;
+  scroll-margin-top: var(--lumi-space-4);
+}
+
+.lumi-prose :where(h1) { font-size: 2.125em; font-weight: var(--lumi-font-weight-bold); letter-spacing: -0.024em; line-height: 1.15; }
+.lumi-prose :where(h2) { font-size: 1.55em; font-weight: var(--lumi-font-weight-bold); letter-spacing: -0.018em; line-height: 1.25; }
+.lumi-prose :where(h3) { font-size: 1.22em; line-height: 1.4; }
+.lumi-prose :where(h4, h5, h6) { font-size: 1em; line-height: 1.5; }
+/* h5 and h6 are labels: small, set apart by tone rather than size. */
+.lumi-prose :where(h5, h6) { color: var(--lumi-prose-quiet); font-size: 0.875em; letter-spacing: 0.02em; }
+.lumi-prose :where(*) + :where(h1) { margin-top: 1.6em; }
+/* A section opens with a full rest above it; its sub-sections with less. */
+.lumi-prose :where(*) + :where(h2) { margin-top: 2.1em; }
+.lumi-prose :where(*) + :where(h3) { margin-top: 1.7em; }
+.lumi-prose :where(*) + :where(h4, h5, h6) { margin-top: 1.5em; }
+.lumi-prose :where(h2) + :where(h3) { margin-top: 1em; }
+
+.lumi-prose :where(strong, b) { color: var(--lumi-prose-heading); font-weight: var(--lumi-font-weight-semibold); }
+
+/* A lead paragraph: the article's opening, larger and quieter than the body. */
+.lumi-prose :where(.lead, [data-lead]) { color: var(--lumi-prose-quiet); font-size: 1.2em; line-height: 1.6; }
+
+.lumi-prose :where(a) {
+  color: var(--lumi-text-info);
+  font-weight: var(--lumi-font-weight-medium);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, currentColor 40%, transparent);
+  text-underline-offset: 3px;
+}
+
+.lumi-prose :where(a):hover { text-decoration-color: currentColor; }
+.lumi-prose :where(a):focus-visible { border-radius: 2px; outline: 2px solid var(--ring); outline-offset: 2px; }
+
+/* Lists: markers in the secondary tone, nested lists tight to their item. */
+.lumi-prose :where(ul, ol) { padding-inline-start: 1.5em; }
+.lumi-prose :where(ul) { list-style: disc; }
+.lumi-prose :where(ol) { list-style: decimal; }
+.lumi-prose :where(li) + :where(li) { margin-top: 0.35em; }
+.lumi-prose :where(li) > :where(* + *) { margin-top: 0.35em; }
+.lumi-prose :where(ul > li)::marker { color: var(--lumi-prose-bullet); }
+.lumi-prose :where(ol > li)::marker { color: var(--lumi-prose-quiet); font-variant-numeric: tabular-nums; }
+.lumi-prose :where(li) { padding-inline-start: 0.25em; }
+
+/* Task items: the box takes the marker's place. */
+.lumi-prose :where(li[data-task]) { position: relative; list-style: none; }
+.lumi-prose :where(li[data-task]) > input {
+  position: absolute;
+  top: 0.4em;
+  left: -1.5em;
+  width: 1em;
+  height: 1em;
+  margin: 0;
+  accent-color: var(--brand);
+}
+.lumi-prose :where(li[data-task="done"]) > :not(input) { color: var(--muted-foreground); text-decoration: line-through; text-decoration-color: color-mix(in oklab, currentColor 50%, transparent); }
+
+/* A quote speaks in the heading colour, set off by a rule and a step of weight;
+   no italics, which CJK faces only fake by slanting. */
+.lumi-prose :where(blockquote) {
+  padding-inline-start: 1.1em;
+  border-inline-start: 0.25em solid var(--border);
+  color: var(--lumi-prose-heading);
+  font-weight: var(--lumi-font-weight-medium);
+}
+
+.lumi-prose :where(hr) { height: 1px; margin-block: 2.75em; border: 0; background: var(--border); }
+.lumi-prose :where(hr) + * { margin-top: 0; }
+
+/* Inline code: a quiet chip that keeps the line height. */
+.lumi-prose :where(code):not(pre code, [data-slot="code-block"] code) {
+  padding: 0.1em 0.35em;
+  color: var(--lumi-prose-heading);
+  border-radius: var(--lumi-radius-sm);
+  background: var(--muted);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.875em;
+}
+
+/* Raw `<pre>` from Html; Markdown fences use the CodeBlock instead. */
+.lumi-prose :where(pre) {
+  overflow-x: auto;
+  padding: 0.85em 1em;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+  background: var(--muted);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.875em;
+  line-height: 1.6;
+}
+
+/* Images and figures: full width at most, rounded, the caption centred under it. */
+.lumi-prose :where(img) { display: block; max-width: 100%; height: auto; border-radius: var(--lumi-radius-control); }
+.lumi-prose :where(p) :where(img) { display: inline; vertical-align: middle; }
+.lumi-prose :where(figure) > :where(img) { margin-inline: auto; }
+.lumi-prose :where(figure, [data-slot="code-block"], .lumi-md-table) { margin-block: 2em; }
+.lumi-prose :where(figure, [data-slot="code-block"], .lumi-md-table) + * { margin-top: 2em; }
+.lumi-prose :where(figcaption) {
+  margin-top: 0.75em;
+  color: var(--lumi-prose-quiet);
+  font-size: 0.875em;
+  line-height: var(--lumi-leading-body);
+  text-align: center;
+}
+
+/* Tables: a horizontal scroller when wide, hairline rows, numbers aligned. */
+.lumi-prose :where(table) { width: 100%; border-collapse: collapse; font-size: 0.9em; font-variant-numeric: tabular-nums; line-height: var(--lumi-leading-body); }
+.lumi-prose :where([data-slot="html"] > table) { display: block; overflow-x: auto; }
+.lumi-prose :where(.lumi-md-table) { max-width: 100%; overflow-x: auto; }
+.lumi-prose :where(th, td) { padding: 0.55em 0.9em; border-bottom: 1px solid var(--border); text-align: start; vertical-align: top; }
+.lumi-prose :where(th) { color: var(--lumi-prose-heading); font-weight: var(--lumi-font-weight-medium); white-space: nowrap; }
+.lumi-prose :where(tr:last-child > td) { border-bottom: 0; }
+.lumi-prose :where(.lumi-md-table) { border: 1px solid var(--border); border-radius: var(--lumi-radius-control); }
+.lumi-prose :where(.lumi-md-table) :where(table) { font-size: 0.9em; }
+
+.lumi-prose > :first-child, .lumi-prose > :is([data-slot="markdown"], [data-slot="html"]) > :first-child { margin-top: 0; }
+.lumi-prose > :last-child, .lumi-prose > :is([data-slot="markdown"], [data-slot="html"]) > :last-child { margin-bottom: 0; }
+
+/* CJK sets solid blocks of equal-width glyphs; a little more leading keeps lines apart. */
+.lumi-prose:lang(zh), .lumi-prose:lang(ja) { line-height: 1.85; }

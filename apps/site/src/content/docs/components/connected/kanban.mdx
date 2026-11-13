@@ -1,0 +1,27 @@
+---
+title: "Kanban"
+description: "卡片分列显示，可拖放或用键盘（Space、方向键、Space）移动。"
+---
+
+卡片分列显示，可拖放或用键盘（Space、方向键、Space）移动。每张卡片在 `columnField`（默认 `status`）中指明所在列。`move` 时绑定的 `move` 为 `{ id, from, to, index, rank }`；用 `update` 保存 `to` 和 `rank`。`value` 来自 Query 数据，或用 $bindState 绑定；`add` 把列写入 `activeColumn`，`cardClick` 把卡片 id 写入 `activeCard`。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `columns`（必填） | 看板的列，每项 `{ value, title, limit?, collapsed?, done? }`。`limit` 是在制品上限，超出时计数变为警告色；`done` 列里的截止日期不算逾期。 字段：`value`、`title`、`limit?`、`collapsed?`、`done?` | `object[]` |  |
+| `value`（必填） | 全部卡片，按看板顺序排列。每张卡片 `{ id, title, description?, tags?, assignee?, dueDate?, priority? }`，并用 `columnField` 字段说明所在列。可直接读 Query 的数据，也可以 写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 字段：`id`、`title`、`description?`、`tags?`、`assignee?`、`dueDate?`、`priority?` | `object[]` |  |
+| `columnField` | 卡片里表示所在列的字段名。 | `string` | `"status"` |
+| `rankField` | 卡片里的排序值字段名。移动时按新位置前后两张卡片算出中间值。 | `string` | `"rank"` |
+| `move` | 最近一次移动 `{ id, from, to, index, rank }`。绑定到状态后，在 `move` 事件里用 `update` 保存 `to` 和 `rank`。 字段：`id`、`from`、`to`、`index`、`rank` | `object \| null` |  |
+| `activeColumn` | 点击“添加卡片”按钮的列 value，`add` 事件触发前写入。 | `string \| null` |  |
+| `activeCard` | 最近点击的卡片 id，`cardClick` 事件触发前写入。 | `string \| number \| null` |  |
+| `today` | 判断逾期所用的“今天”，格式 `YYYY-MM-DD`。不填时使用当前日期。 | `string` |  |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+| `readonly` | 只读：隐藏添加按钮，不能拖动或移动卡片。 | `boolean` | `false` |
+| `loading` | 为 true 时显示加载状态，并暂停交互。 | `boolean` | `false` |
+
+## 事件与插槽
+
+- 事件：`move`、`add`、`cardClick`
+- 插槽：无

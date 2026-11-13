@@ -1,0 +1,2254 @@
+{
+  "root": "page",
+  "state": {
+    "chat": {
+      "draft": "",
+      "streaming": false,
+      "event": null,
+      "messages": [
+        {
+          "id": "u1",
+          "role": "user",
+          "parts": [
+            {
+              "type": "context",
+              "items": [
+                {
+                  "id": "orders",
+                  "label": "Orders",
+                  "kind": "page"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": "Which orders need attention today?"
+            }
+          ]
+        },
+        {
+          "id": "a1",
+          "role": "assistant",
+          "parts": [
+            {
+              "type": "reasoning",
+              "state": "done",
+              "duration": 3800,
+              "steps": [
+                {
+                  "label": "Filtered paid orders unshipped for over 24 hours",
+                  "icon": "filter"
+                },
+                {
+                  "label": "Checked the warehouse of each order",
+                  "icon": "warehouse"
+                }
+              ]
+            },
+            {
+              "type": "tool-call",
+              "toolCallId": "t1",
+              "toolName": "orders.search",
+              "title": "Search orders",
+              "icon": "search",
+              "status": "success",
+              "duration": 640,
+              "input": {
+                "status": "paid",
+                "unshippedHours": {
+                  "gt": 24
+                }
+              },
+              "output": {
+                "total": 3,
+                "ids": [
+                  "ORD-00017",
+                  "ORD-00020",
+                  "ORD-00026"
+                ]
+              }
+            },
+            {
+              "type": "text",
+              "text": "Three paid orders are still unshipped after 24 hours, all from the **Chengdu** warehouse [1]. I can remind the warehouse:"
+            },
+            {
+              "type": "approval",
+              "id": "remind",
+              "title": "Send shipping reminders",
+              "description": "Notifies the Chengdu warehouse; order status stays the same.",
+              "action": "orders.remind",
+              "status": "pending",
+              "items": [
+                {
+                  "id": "ORD-00017",
+                  "label": "ORD-00017",
+                  "description": "Chengdu"
+                },
+                {
+                  "id": "ORD-00020",
+                  "label": "ORD-00020",
+                  "description": "Chengdu"
+                },
+                {
+                  "id": "ORD-00026",
+                  "label": "ORD-00026",
+                  "description": "Chengdu"
+                }
+              ]
+            },
+            {
+              "type": "source",
+              "sourceId": "orders",
+              "title": "Orders · unshipped",
+              "kind": "page",
+              "icon": "package",
+              "snippet": "3 paid orders older than 24 hours; the oldest has waited 31 hours."
+            }
+          ],
+          "suggestions": [
+            {
+              "label": "Why is Chengdu slower?"
+            },
+            {
+              "label": "Show these orders"
+            }
+          ]
+        }
+      ],
+      "context": []
+    },
+    "prompt": {
+      "value": "",
+      "last": "",
+      "model": "auto",
+      "attachments": [
+        {
+          "id": "sales",
+          "name": "sales-august.csv",
+          "mediaType": "text/csv",
+          "size": 18432
+        }
+      ],
+      "context": [
+        {
+          "id": "order-1",
+          "label": "ORD-00017",
+          "kind": "record"
+        }
+      ]
+    },
+    "message": {
+      "feedback": null,
+      "event": null,
+      "rating": "up"
+    },
+    "approval": {
+      "status": "pending",
+      "selected": [
+        "ORD-00017",
+        "ORD-00020",
+        "ORD-00026"
+      ],
+      "order": "pending"
+    },
+    "context": {
+      "shared": true,
+      "items": [
+        {
+          "id": "order-1",
+          "label": "ORD-00017",
+          "kind": "record"
+        },
+        {
+          "id": "customer",
+          "label": "Avery Chen",
+          "kind": "record",
+          "icon": "user"
+        },
+        {
+          "id": "selection",
+          "label": "ORD-00020 … ORD-00026",
+          "kind": "selection"
+        }
+      ]
+    },
+    "question": {
+      "courier": {
+        "status": "pending",
+        "answer": null
+      },
+      "extras": {
+        "status": "pending",
+        "answer": null
+      }
+    },
+    "mention": {
+      "type": "orders",
+      "query": "",
+      "context": []
+    },
+    "sessions": {
+      "active": "s1"
+    },
+    "live": {
+      "current": "chat-late-orders",
+      "draft": "",
+      "event": null,
+      "list": {
+        "data": [],
+        "loading": true
+      },
+      "context": []
+    }
+  },
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "AI components"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "card-live",
+        "card-thread",
+        "sections"
+      ]
+    },
+    "thread-streaming": {
+      "type": "Switch",
+      "props": {
+        "label": {
+          "$t": "Waiting for a reply"
+        },
+        "value": {
+          "$bindState": "/chat/streaming"
+        }
+      },
+      "children": []
+    },
+    "thread": {
+      "type": "ChatThread",
+      "props": {
+        "messages": {
+          "$bindState": "/chat/messages"
+        },
+        "streaming": {
+          "$state": "/chat/streaming"
+        },
+        "activeEvent": {
+          "$bindState": "/chat/event"
+        },
+        "maxHeight": 560,
+        "ariaLabel": {
+          "$t": "Conversation"
+        }
+      },
+      "children": [],
+      "on": {
+        "approve": {
+          "action": "pushState",
+          "params": {
+            "statePath": "/chat/messages",
+            "value": {
+              "id": "sent",
+              "role": "assistant",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Done — the Chengdu warehouse has the reminders. Undo is available for 30 seconds."
+                }
+              ]
+            }
+          }
+        },
+        "reject": {
+          "action": "pushState",
+          "params": {
+            "statePath": "/chat/messages",
+            "value": {
+              "id": "kept",
+              "role": "assistant",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Okay, I won't send them. The orders stay flagged in Recent orders."
+                }
+              ]
+            }
+          }
+        },
+        "suggestion": {
+          "action": "setState",
+          "params": {
+            "statePath": "/chat/draft",
+            "value": {
+              "$state": "/chat/event/value"
+            }
+          }
+        }
+      }
+    },
+    "thread-prompt": {
+      "type": "PromptInput",
+      "props": {
+        "value": {
+          "$bindState": "/chat/draft"
+        },
+        "streaming": {
+          "$state": "/chat/streaming"
+        },
+        "placeholder": {
+          "$t": "Ask, type @ to reference a record or / for a command"
+        },
+        "ariaLabel": {
+          "$t": "Message"
+        },
+        "mentions": {
+          "types": [
+            {
+              "value": "orders",
+              "label": {
+                "$t": "Orders"
+              },
+              "icon": "shopping-bag-01"
+            },
+            {
+              "value": "articles",
+              "label": {
+                "$t": "Articles"
+              },
+              "icon": "news"
+            },
+            {
+              "value": "customers",
+              "label": {
+                "$t": "Customers"
+              },
+              "icon": "user"
+            }
+          ],
+          "sources": {
+            "orders": {
+              "resource": "orders",
+              "labelField": "number",
+              "descriptionField": "customer",
+              "searchField": "searchText",
+              "pageSize": 8
+            },
+            "articles": {
+              "resource": "articles",
+              "labelField": "title",
+              "descriptionField": "author",
+              "searchField": "title",
+              "pageSize": 8
+            },
+            "customers": {
+              "resource": "customers",
+              "labelField": "name",
+              "descriptionField": "email",
+              "searchField": "name",
+              "pageSize": 8
+            }
+          }
+        },
+        "context": {
+          "$bindState": "/chat/context"
+        },
+        "commands": [
+          {
+            "value": "late",
+            "label": {
+              "$t": "Find late orders"
+            },
+            "description": {
+              "$t": "Paid orders unshipped after 24 hours"
+            },
+            "icon": "package",
+            "prompt": {
+              "$t": "Which orders are late this week?"
+            }
+          },
+          {
+            "value": "remind",
+            "label": {
+              "$t": "Remind late customers"
+            },
+            "description": {
+              "$t": "Asks before anything is sent"
+            },
+            "icon": "mail-01",
+            "prompt": {
+              "$t": "Remind the late customers"
+            }
+          },
+          {
+            "value": "summary",
+            "label": {
+              "$t": "Summarize this page"
+            },
+            "description": {
+              "$t": "A short summary of what is on screen"
+            },
+            "icon": "file-01",
+            "prompt": {
+              "$t": "Summarize this page"
+            }
+          },
+          {
+            "value": "clear",
+            "label": {
+              "$t": "Clear the conversation"
+            },
+            "description": {
+              "$t": "Starts over in this example"
+            },
+            "icon": "delete-01"
+          }
+        ]
+      },
+      "children": [],
+      "on": {
+        "submit": [
+          {
+            "action": "pushState",
+            "params": {
+              "statePath": "/chat/messages",
+              "value": {
+                "id": "you",
+                "role": "user",
+                "parts": [
+                  {
+                    "type": "text",
+                    "text": {
+                      "$state": "/chat/draft"
+                    }
+                  }
+                ]
+              },
+              "clearStatePath": "/chat/draft"
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/chat/streaming",
+              "value": true
+            }
+          }
+        ],
+        "stop": [
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/chat/streaming",
+              "value": false
+            }
+          },
+          {
+            "action": "pushState",
+            "params": {
+              "statePath": "/chat/messages",
+              "value": {
+                "id": "stopped",
+                "role": "assistant",
+                "parts": [
+                  {
+                    "type": "text",
+                    "text": "Stopped. No model is connected here — a backend streams its parts into this message in the same shape."
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "command": {
+          "action": "setState",
+          "params": {
+            "statePath": "/chat/messages",
+            "value": []
+          }
+        }
+      }
+    },
+    "thread-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "thread-streaming",
+        "thread",
+        "thread-prompt"
+      ]
+    },
+    "card-thread": {
+      "type": "Example",
+      "props": {
+        "id": "chat-thread",
+        "title": {
+          "$t": "Chat thread"
+        },
+        "description": {
+          "$t": "A full conversation bound to page state"
+        }
+      },
+      "children": [
+        "thread-stack"
+      ]
+    },
+    "prompt-full": {
+      "type": "PromptInput",
+      "props": {
+        "value": {
+          "$bindState": "/prompt/value"
+        },
+        "attachments": {
+          "$bindState": "/prompt/attachments"
+        },
+        "context": {
+          "$bindState": "/prompt/context"
+        },
+        "model": {
+          "$bindState": "/prompt/model"
+        },
+        "models": [
+          {
+            "label": "Auto",
+            "value": "auto",
+            "description": {
+              "$t": "Picks a model for each request"
+            }
+          },
+          {
+            "label": "Fast",
+            "value": "fast",
+            "description": {
+              "$t": "Quick answers about this page"
+            }
+          },
+          {
+            "label": "Deep",
+            "value": "deep",
+            "description": {
+              "$t": "Longer reasoning across records"
+            }
+          }
+        ],
+        "attachable": true,
+        "mentionable": true,
+        "placeholder": {
+          "$t": "Ask about this order"
+        },
+        "ariaLabel": {
+          "$t": "Message with attachments"
+        }
+      },
+      "children": [],
+      "on": {
+        "submit": [
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/prompt/last",
+              "value": {
+                "$state": "/prompt/value"
+              }
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/prompt/value",
+              "value": ""
+            }
+          }
+        ],
+        "attach": {
+          "action": "setState",
+          "params": {
+            "statePath": "/prompt/attachments",
+            "value": [
+              {
+                "id": "sales",
+                "name": "sales-august.csv",
+                "mediaType": "text/csv",
+                "size": 18432
+              },
+              {
+                "id": "receipt",
+                "name": "receipt.pdf",
+                "mediaType": "application/pdf",
+                "size": 96256,
+                "status": "uploading"
+              }
+            ]
+          }
+        },
+        "mention": {
+          "action": "setState",
+          "params": {
+            "statePath": "/prompt/context",
+            "value": [
+              {
+                "id": "order-1",
+                "label": "Order detail · 1",
+                "kind": "record"
+              },
+              {
+                "id": "orders",
+                "label": "Orders",
+                "kind": "page"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "prompt-suggest": {
+      "type": "PromptInput",
+      "props": {
+        "suggestions": [
+          {
+            "label": {
+              "$t": "Draft this week's report"
+            },
+            "icon": "file"
+          },
+          {
+            "label": {
+              "$t": "Find refunds over $500"
+            },
+            "icon": "undo"
+          }
+        ],
+        "placeholder": {
+          "$t": "Pick a suggestion or type"
+        },
+        "ariaLabel": {
+          "$t": "Message with suggestions"
+        }
+      },
+      "children": []
+    },
+    "prompt-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "prompt-full",
+        "prompt-suggest"
+      ]
+    },
+    "card-prompt": {
+      "type": "Example",
+      "props": {
+        "id": "prompt-input",
+        "title": {
+          "$t": "Prompt input"
+        },
+        "description": {
+          "$t": "Enter sends, Shift+Enter adds a line"
+        }
+      },
+      "children": [
+        "prompt-stack"
+      ]
+    },
+    "message-user": {
+      "type": "ChatMessage",
+      "props": {
+        "role": "user",
+        "parts": [
+          {
+            "type": "context",
+            "items": [
+              {
+                "id": "order-1",
+                "label": {
+                  "$t": "Order detail · 1"
+                },
+                "kind": "record"
+              }
+            ]
+          },
+          {
+            "type": "file",
+            "filename": "invoice-1042.pdf",
+            "mediaType": "application/pdf",
+            "size": 48231
+          },
+          {
+            "type": "text",
+            "text": {
+              "$t": "Is this order eligible for a refund?"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "message-answer": {
+      "type": "ChatMessage",
+      "props": {
+        "id": "answer",
+        "role": "assistant",
+        "status": "done",
+        "parts": [
+          {
+            "type": "text",
+            "text": {
+              "$t": "Yes. It was delivered **6 days ago**, inside the 14-day window [1], and the item is unopened according to the return note [2].\n\n- Refund: `$129.00` to the original card\n- Restocking fee: none"
+            }
+          },
+          {
+            "type": "source",
+            "sourceId": "policy",
+            "title": {
+              "$t": "Refund policy"
+            },
+            "kind": "document",
+            "snippet": {
+              "$t": "Unopened items can be returned within 14 days of delivery for a full refund"
+            }
+          },
+          {
+            "type": "source",
+            "sourceId": "note",
+            "title": {
+              "$t": "Return note · ORD-01042"
+            },
+            "kind": "record",
+            "snippet": {
+              "$t": "Customer reports the box is sealed; wants the money back on the card"
+            }
+          }
+        ],
+        "feedback": {
+          "$bindState": "/message/feedback"
+        },
+        "activeEvent": {
+          "$bindState": "/message/event"
+        },
+        "suggestions": [
+          {
+            "label": {
+              "$t": "Issue the refund"
+            }
+          },
+          {
+            "label": {
+              "$t": "Draft a reply to the customer"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "message-actions": {
+      "type": "MessageActions",
+      "props": {
+        "text": {
+          "$t": "Refund approved for ORD-01042"
+        },
+        "feedback": {
+          "$bindState": "/message/rating"
+        }
+      },
+      "children": []
+    },
+    "actions-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "actions-answer",
+        "message-actions"
+      ]
+    },
+    "card-actions": {
+      "type": "Example",
+      "props": {
+        "id": "message-actions",
+        "title": {
+          "$t": "Message actions"
+        },
+        "description": {
+          "$t": "Copy, regenerate and rate an answer"
+        }
+      },
+      "children": [
+        "actions-stack"
+      ]
+    },
+    "message-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "message-user",
+        "message-answer"
+      ]
+    },
+    "card-message": {
+      "type": "Example",
+      "props": {
+        "id": "chat-message",
+        "title": {
+          "$t": "Messages"
+        },
+        "description": {
+          "$t": "A question and its answer, with citations, actions and follow-ups"
+        }
+      },
+      "children": [
+        "message-stack"
+      ]
+    },
+    "thinking-live": {
+      "type": "Thinking",
+      "props": {
+        "state": "streaming",
+        "label": {
+          "$t": "Searching orders"
+        },
+        "steps": [
+          {
+            "label": {
+              "$t": "Read the order list"
+            },
+            "detail": {
+              "$t": "128 orders in the last 7 days"
+            },
+            "icon": "file"
+          },
+          {
+            "label": {
+              "$t": "Matched refunds to payments"
+            },
+            "status": "done",
+            "icon": "credit-card"
+          },
+          {
+            "label": {
+              "$t": "Checking the warehouse notes"
+            },
+            "status": "running"
+          }
+        ]
+      },
+      "children": []
+    },
+    "thinking-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "thinking-live",
+        "thinking-done"
+      ]
+    },
+    "card-thinking": {
+      "type": "Example",
+      "props": {
+        "id": "thinking",
+        "title": {
+          "$t": "Thinking"
+        },
+        "description": {
+          "$t": "Working with the current phase, then folded to its time; steps open beneath it"
+        }
+      },
+      "children": [
+        "thinking-stack"
+      ]
+    },
+    "tool-success": {
+      "type": "ToolCall",
+      "props": {
+        "toolName": "customers.get",
+        "title": {
+          "$t": "Read customer"
+        },
+        "icon": "user",
+        "status": "success",
+        "duration": 412,
+        "defaultOpen": true,
+        "input": {
+          "id": 1042
+        },
+        "output": {
+          "id": 1042,
+          "name": "Avery Chen",
+          "orders": 12,
+          "tier": "gold"
+        }
+      },
+      "children": []
+    },
+    "tool-error": {
+      "type": "ToolCall",
+      "props": {
+        "toolName": "courier.track",
+        "status": "error",
+        "duration": 2000,
+        "input": {
+          "tracking": "SF1234567890"
+        },
+        "errorText": {
+          "$t": "Courier API timed out after 2 seconds"
+        }
+      },
+      "children": []
+    },
+    "tool-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "tool-success",
+        "tool-error"
+      ]
+    },
+    "card-tools": {
+      "type": "Example",
+      "props": {
+        "id": "tool-call",
+        "title": {
+          "$t": "Tool calls"
+        },
+        "description": {
+          "$t": "Open a call to see what it returned, or why it failed"
+        }
+      },
+      "children": [
+        "tool-stack"
+      ]
+    },
+    "approval-main": {
+      "type": "Approval",
+      "props": {
+        "title": {
+          "$t": "Send shipping reminders"
+        },
+        "description": {
+          "$t": "Only the warehouse is notified; order status is unchanged"
+        },
+        "action": "orders.remind",
+        "items": [
+          {
+            "id": "ORD-00017",
+            "label": "ORD-00017",
+            "description": {
+              "$t": "Chengdu"
+            }
+          },
+          {
+            "id": "ORD-00020",
+            "label": "ORD-00020",
+            "description": {
+              "$t": "Chengdu"
+            }
+          },
+          {
+            "id": "ORD-00026",
+            "label": "ORD-00026",
+            "description": {
+              "$t": "Chengdu"
+            }
+          }
+        ],
+        "status": {
+          "$bindState": "/approval/status"
+        },
+        "selected": {
+          "$bindState": "/approval/selected"
+        },
+        "editable": true
+      },
+      "children": []
+    },
+    "approval-reset": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Ask again"
+        },
+        "appearance": "outline",
+        "size": "sm"
+      },
+      "children": [],
+      "on": {
+        "press": [
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/approval/status",
+              "value": "pending"
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/approval/selected",
+              "value": [
+                "ORD-00017",
+                "ORD-00020",
+                "ORD-00026"
+              ]
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/approval/order",
+              "value": "pending"
+            }
+          }
+        ]
+      }
+    },
+    "approval-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "approval-main",
+        "approval-order",
+        "approval-reset"
+      ]
+    },
+    "card-approval": {
+      "type": "Example",
+      "props": {
+        "id": "approval",
+        "title": {
+          "$t": "Approval"
+        },
+        "description": {
+          "$t": "Confirm an action before it runs"
+        }
+      },
+      "children": [
+        "approval-stack"
+      ]
+    },
+    "plan": {
+      "type": "AgentPlan",
+      "props": {
+        "title": {
+          "$t": "Build a low-stock alert page"
+        },
+        "steps": [
+          {
+            "id": "read",
+            "label": {
+              "$t": "Read inventory thresholds"
+            },
+            "status": "done"
+          },
+          {
+            "id": "draft",
+            "label": {
+              "$t": "Draft the page Spec"
+            },
+            "status": "done",
+            "detail": {
+              "$t": "A table of products with stock below 10"
+            }
+          },
+          {
+            "id": "check",
+            "label": {
+              "$t": "Check it against the Catalog"
+            },
+            "status": "running"
+          },
+          {
+            "id": "notify",
+            "label": {
+              "$t": "Email the buyers"
+            },
+            "status": "skipped",
+            "detail": {
+              "$t": "No buyer emails on file"
+            }
+          },
+          {
+            "id": "menu",
+            "label": {
+              "$t": "Add a menu entry"
+            },
+            "status": "pending"
+          }
+        ]
+      },
+      "children": []
+    },
+    "plan-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "plan"
+      ]
+    },
+    "card-plan": {
+      "type": "Example",
+      "props": {
+        "id": "agent-plan",
+        "title": {
+          "$t": "Plan"
+        },
+        "description": {
+          "$t": "The steps the agent will take and where it is"
+        }
+      },
+      "children": [
+        "plan-stack"
+      ]
+    },
+    "diff-fields": {
+      "type": "ChangeDiff",
+      "props": {
+        "title": "ORD-00020",
+        "fields": [
+          {
+            "field": "shipping",
+            "label": {
+              "$t": "Shipping"
+            },
+            "before": {
+              "$t": "Standard"
+            },
+            "after": {
+              "$t": "Express"
+            }
+          },
+          {
+            "field": "priority",
+            "label": {
+              "$t": "Priority"
+            },
+            "before": {
+              "$t": "Normal"
+            },
+            "after": {
+              "$t": "High"
+            }
+          },
+          {
+            "field": "note",
+            "label": {
+              "$t": "Note"
+            },
+            "after": {
+              "$t": "Customer asked for faster delivery"
+            }
+          },
+          {
+            "field": "gift",
+            "label": {
+              "$t": "Gift wrap"
+            },
+            "before": true,
+            "after": false
+          },
+          {
+            "field": "coupon",
+            "label": {
+              "$t": "Coupon"
+            },
+            "before": "SUMMER10"
+          }
+        ]
+      },
+      "children": []
+    },
+    "diff-text": {
+      "type": "ChangeDiff",
+      "props": {
+        "title": "orders.json",
+        "language": "json",
+        "before": "{\n  \"root\": \"orders\",\n  \"elements\": {\n    \"orders\": {\n      \"type\": \"Table\",\n      \"props\": {\n        \"rows\": {\n          \"$state\": \"/orders/data\"\n        },\n        \"pageSize\": 20,\n        \"selectable\": false,\n        \"columns\": [\n          \"number\",\n          \"customer\",\n          \"total\"\n        ]\n      }\n    }\n  }\n}",
+        "after": "{\n  \"root\": \"orders\",\n  \"elements\": {\n    \"orders\": {\n      \"type\": \"Table\",\n      \"props\": {\n        \"rows\": {\n          \"$state\": \"/orders/data\"\n        },\n        \"pageSize\": 50,\n        \"selectable\": true,\n        \"columns\": [\n          \"number\",\n          \"customer\",\n          \"status\",\n          \"total\"\n        ]\n      }\n    }\n  }\n}"
+      },
+      "children": []
+    },
+    "diff-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "diff-fields",
+        "diff-text"
+      ]
+    },
+    "card-diff": {
+      "type": "Example",
+      "props": {
+        "id": "change-diff",
+        "title": {
+          "$t": "Changes"
+        },
+        "description": {
+          "$t": "Record edits, and two versions of a text compared"
+        }
+      },
+      "children": [
+        "diff-stack"
+      ]
+    },
+    "context": {
+      "type": "ContextChips",
+      "props": {
+        "viewing": {
+          "$t": "Order detail · 1"
+        },
+        "shared": {
+          "$bindState": "/context/shared"
+        },
+        "items": {
+          "$bindState": "/context/items"
+        },
+        "removable": true
+      },
+      "children": []
+    },
+    "context-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "context"
+      ]
+    },
+    "card-context": {
+      "type": "Example",
+      "props": {
+        "id": "context-chips",
+        "title": {
+          "$t": "Context"
+        },
+        "description": {
+          "$t": "What the agent can see this turn"
+        }
+      },
+      "children": [
+        "context-stack"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "AI components"
+        },
+        "description": {
+          "$t": "Agent UI for chat and human-in-the-loop work: prompt input, messages with citations, thinking, tool calls, approvals, plans, changes and context, all driven by page state and registered actions"
+        }
+      },
+      "children": []
+    },
+    "sections": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "card-prompt",
+        "card-mention",
+        "card-message",
+        "card-states",
+        "card-actions",
+        "card-thinking",
+        "card-tools",
+        "card-approval",
+        "card-question",
+        "card-plan",
+        "card-diff",
+        "card-context",
+        "card-sessions"
+      ]
+    },
+    "approval-order": {
+      "type": "Approval",
+      "props": {
+        "title": {
+          "$t": "Place this order"
+        },
+        "description": {
+          "$t": "Review the items and address before paying"
+        },
+        "action": "orders.create",
+        "status": {
+          "$bindState": "/approval/order"
+        },
+        "lines": [
+          {
+            "title": {
+              "$t": "Linen shirt"
+            },
+            "description": {
+              "$t": "Size M x1"
+            },
+            "amount": "¥299"
+          },
+          {
+            "title": {
+              "$t": "Canvas tote"
+            },
+            "description": {
+              "$t": "Natural x2"
+            },
+            "amount": "¥158"
+          }
+        ],
+        "fields": [
+          {
+            "label": {
+              "$t": "Ship to"
+            },
+            "value": {
+              "$t": "Shanghai, Xuhui"
+            },
+            "description": "Avery Chen"
+          },
+          {
+            "label": {
+              "$t": "Shipping"
+            },
+            "value": {
+              "$t": "Free"
+            },
+            "tone": "success"
+          }
+        ],
+        "total": {
+          "value": "¥457"
+        },
+        "approveLabel": {
+          "$t": "Pay ¥457"
+        }
+      },
+      "children": []
+    },
+    "card-question": {
+      "type": "Example",
+      "props": {
+        "id": "agent-question",
+        "title": {
+          "$t": "Questions"
+        },
+        "description": {
+          "$t": "The agent asks before it goes on"
+        }
+      },
+      "children": [
+        "question-stack"
+      ]
+    },
+    "question-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "question-courier",
+        "question-extras"
+      ]
+    },
+    "question-courier": {
+      "type": "AgentQuestion",
+      "props": {
+        "title": {
+          "$t": "Which courier should ship it"
+        },
+        "status": {
+          "$bindState": "/question/courier/status"
+        },
+        "answer": {
+          "$bindState": "/question/courier/answer"
+        },
+        "options": [
+          {
+            "value": "sf",
+            "label": {
+              "$t": "SF Express"
+            },
+            "description": {
+              "$t": "Next day"
+            }
+          },
+          {
+            "value": "ems",
+            "label": "EMS",
+            "description": {
+              "$t": "2 to 3 days"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "question-extras": {
+      "type": "AgentQuestion",
+      "props": {
+        "title": {
+          "$t": "Anything else for this order"
+        },
+        "mode": "multiple",
+        "allowText": true,
+        "skippable": true,
+        "status": {
+          "$bindState": "/question/extras/status"
+        },
+        "answer": {
+          "$bindState": "/question/extras/answer"
+        },
+        "options": [
+          {
+            "value": "gift",
+            "label": {
+              "$t": "Gift wrap"
+            }
+          },
+          {
+            "value": "invoice",
+            "label": {
+              "$t": "Paper invoice"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "card-mention": {
+      "type": "Example",
+      "props": {
+        "id": "agent-mention-picker",
+        "title": {
+          "$t": "@ reference"
+        },
+        "description": {
+          "$t": "Search and pick records; picks become chips in the composer"
+        }
+      },
+      "children": [
+        "mention-stack"
+      ]
+    },
+    "mention-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "mention-picker",
+        "mention-prompt"
+      ]
+    },
+    "mention-picker": {
+      "type": "AgentMentionPicker",
+      "props": {
+        "types": [
+          {
+            "value": "orders",
+            "label": {
+              "$t": "Orders"
+            },
+            "icon": "shopping-bag-01"
+          },
+          {
+            "value": "articles",
+            "label": {
+              "$t": "Articles"
+            },
+            "icon": "news"
+          },
+          {
+            "value": "customers",
+            "label": {
+              "$t": "Customers"
+            },
+            "icon": "user"
+          }
+        ],
+        "sources": {
+          "orders": {
+            "resource": "orders",
+            "labelField": "number",
+            "descriptionField": "customer",
+            "searchField": "searchText",
+            "pageSize": 8
+          },
+          "articles": {
+            "resource": "articles",
+            "labelField": "title",
+            "descriptionField": "author",
+            "searchField": "title",
+            "pageSize": 8
+          },
+          "customers": {
+            "resource": "customers",
+            "labelField": "name",
+            "descriptionField": "email",
+            "searchField": "name",
+            "pageSize": 8
+          }
+        },
+        "type": {
+          "$bindState": "/mention/type"
+        },
+        "query": {
+          "$bindState": "/mention/query"
+        },
+        "value": {
+          "$bindState": "/mention/context"
+        },
+        "multiple": true,
+        "maxHeight": 280
+      },
+      "children": []
+    },
+    "mention-prompt": {
+      "type": "PromptInput",
+      "props": {
+        "placeholder": {
+          "$t": "Ask about what you picked"
+        },
+        "context": {
+          "$bindState": "/mention/context"
+        },
+        "mentionable": true
+      },
+      "children": []
+    },
+    "card-sessions": {
+      "type": "Example",
+      "props": {
+        "id": "agent-session-list",
+        "title": {
+          "$t": "Sessions"
+        },
+        "description": {
+          "$t": "Past chats, with a dot for their status"
+        }
+      },
+      "children": [
+        "sessions-grid"
+      ]
+    },
+    "sessions-grid": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 260,
+        "gap": "lg",
+        "align": "start"
+      },
+      "children": [
+        "sessions-compact",
+        "sessions-detailed"
+      ]
+    },
+    "sessions-compact": {
+      "type": "AgentSessionList",
+      "props": {
+        "sessions": [
+          {
+            "id": "s1",
+            "title": {
+              "$t": "Unshipped Chengdu orders"
+            },
+            "preview": {
+              "$t": "Approve the reminders to notify the warehouse"
+            },
+            "time": "14:20",
+            "status": "waiting",
+            "group": {
+              "$t": "Today"
+            }
+          },
+          {
+            "id": "s2",
+            "title": {
+              "$t": "Refund spike this week"
+            },
+            "preview": {
+              "$t": "Checking the courier notes"
+            },
+            "time": "13:05",
+            "status": "running",
+            "group": {
+              "$t": "Today"
+            }
+          },
+          {
+            "id": "s3",
+            "title": {
+              "$t": "August sales report"
+            },
+            "preview": {
+              "$t": "Revenue grew 12% on returning customers"
+            },
+            "time": "09:41",
+            "status": "unread",
+            "group": {
+              "$t": "Today"
+            }
+          },
+          {
+            "id": "s4",
+            "title": {
+              "$t": "Low-stock alert page"
+            },
+            "preview": {
+              "$t": "The page Spec passed the Catalog check"
+            },
+            "time": {
+              "$t": "Yesterday"
+            },
+            "group": {
+              "$t": "Earlier"
+            }
+          },
+          {
+            "id": "s5",
+            "title": {
+              "$t": "Courier API timeouts"
+            },
+            "preview": {
+              "$t": "Could not reach the courier API"
+            },
+            "time": "Nov 6",
+            "status": "error",
+            "group": {
+              "$t": "Earlier"
+            }
+          }
+        ],
+        "value": {
+          "$bindState": "/sessions/active"
+        },
+        "creatable": true,
+        "searchable": true
+      },
+      "children": []
+    },
+    "sessions-detailed": {
+      "type": "AgentSessionList",
+      "props": {
+        "sessions": [
+          {
+            "id": "s1",
+            "title": {
+              "$t": "Unshipped Chengdu orders"
+            },
+            "preview": {
+              "$t": "Approve the reminders to notify the warehouse"
+            },
+            "time": "14:20",
+            "status": "waiting",
+            "group": {
+              "$t": "Today"
+            }
+          },
+          {
+            "id": "s2",
+            "title": {
+              "$t": "Refund spike this week"
+            },
+            "preview": {
+              "$t": "Checking the courier notes"
+            },
+            "time": "13:05",
+            "status": "running",
+            "group": {
+              "$t": "Today"
+            }
+          },
+          {
+            "id": "s3",
+            "title": {
+              "$t": "August sales report"
+            },
+            "preview": {
+              "$t": "Revenue grew 12% on returning customers"
+            },
+            "time": "09:41",
+            "status": "unread",
+            "group": {
+              "$t": "Today"
+            }
+          },
+          {
+            "id": "s4",
+            "title": {
+              "$t": "Low-stock alert page"
+            },
+            "preview": {
+              "$t": "The page Spec passed the Catalog check"
+            },
+            "time": {
+              "$t": "Yesterday"
+            },
+            "group": {
+              "$t": "Earlier"
+            }
+          },
+          {
+            "id": "s5",
+            "title": {
+              "$t": "Courier API timeouts"
+            },
+            "preview": {
+              "$t": "Could not reach the courier API"
+            },
+            "time": "Nov 6",
+            "status": "error",
+            "group": {
+              "$t": "Earlier"
+            }
+          }
+        ],
+        "value": {
+          "$bindState": "/sessions/active"
+        },
+        "variant": "detailed"
+      },
+      "children": []
+    },
+    "card-live": {
+      "type": "Example",
+      "props": {
+        "id": "agent-session",
+        "title": {
+          "$t": "Live session"
+        },
+        "description": {
+          "$t": "Streams from the mock agent; ask it to remind the late customers"
+        }
+      },
+      "children": [
+        "live-query"
+      ]
+    },
+    "live-query": {
+      "type": "Query",
+      "props": {
+        "resource": "agent-sessions",
+        "resultPath": "/live/list"
+      },
+      "children": [
+        "live-session"
+      ]
+    },
+    "live-session": {
+      "type": "AgentSession",
+      "props": {
+        "statePath": "/live/chat",
+        "endpoint": "/agent/chat",
+        "sessionId": {
+          "$state": "/live/current"
+        },
+        "resource": "agent-sessions"
+      },
+      "children": [
+        "live-grid"
+      ]
+    },
+    "live-grid": {
+      "type": "Fragment",
+      "props": {
+        "layout": "split",
+        "asideWidth": 280
+      },
+      "children": [
+        "live-conversation",
+        "live-sessions"
+      ]
+    },
+    "live-sessions": {
+      "type": "AgentSessionList",
+      "props": {
+        "sessions": {
+          "$state": "/live/list/data"
+        },
+        "loading": {
+          "$state": "/live/list/loading"
+        },
+        "value": {
+          "$bindState": "/live/current"
+        },
+        "variant": "detailed",
+        "creatable": true,
+        "ariaLabel": {
+          "$t": "Chats"
+        }
+      },
+      "children": [],
+      "on": {
+        "create": {
+          "action": "setState",
+          "params": {
+            "statePath": "/live/current",
+            "value": null
+          }
+        }
+      }
+    },
+    "live-conversation": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "live-thread",
+        "live-prompt"
+      ]
+    },
+    "live-thread": {
+      "type": "ChatThread",
+      "props": {
+        "messages": {
+          "$state": "/live/chat/messages"
+        },
+        "streaming": {
+          "$state": "/live/chat/streaming"
+        },
+        "activeEvent": {
+          "$bindState": "/live/event"
+        },
+        "maxHeight": 480,
+        "emptyTitle": {
+          "$t": "Ask the agent anything"
+        },
+        "ariaLabel": {
+          "$t": "Conversation"
+        }
+      },
+      "children": [],
+      "on": {
+        "approve": {
+          "action": "agentEvent",
+          "params": {
+            "session": "/live/chat",
+            "event": {
+              "$state": "/live/event"
+            }
+          }
+        },
+        "reject": {
+          "action": "agentEvent",
+          "params": {
+            "session": "/live/chat",
+            "event": {
+              "$state": "/live/event"
+            }
+          }
+        },
+        "answer": {
+          "action": "agentEvent",
+          "params": {
+            "session": "/live/chat",
+            "event": {
+              "$state": "/live/event"
+            }
+          }
+        },
+        "skip": {
+          "action": "agentEvent",
+          "params": {
+            "session": "/live/chat",
+            "event": {
+              "$state": "/live/event"
+            }
+          }
+        },
+        "regenerate": {
+          "action": "agentEvent",
+          "params": {
+            "session": "/live/chat",
+            "event": {
+              "$state": "/live/event"
+            }
+          }
+        },
+        "edit": {
+          "action": "agentEvent",
+          "params": {
+            "session": "/live/chat",
+            "event": {
+              "$state": "/live/event"
+            }
+          }
+        },
+        "suggestion": {
+          "action": "agentEvent",
+          "params": {
+            "session": "/live/chat",
+            "event": {
+              "$state": "/live/event"
+            }
+          }
+        }
+      }
+    },
+    "live-prompt": {
+      "type": "PromptInput",
+      "props": {
+        "value": {
+          "$bindState": "/live/draft"
+        },
+        "streaming": {
+          "$state": "/live/chat/streaming"
+        },
+        "placeholder": {
+          "$t": "Ask, type @ to reference a record or / for a command"
+        },
+        "ariaLabel": {
+          "$t": "Message"
+        },
+        "mentions": {
+          "types": [
+            {
+              "value": "orders",
+              "label": {
+                "$t": "Orders"
+              },
+              "icon": "shopping-bag-01"
+            },
+            {
+              "value": "articles",
+              "label": {
+                "$t": "Articles"
+              },
+              "icon": "news"
+            },
+            {
+              "value": "customers",
+              "label": {
+                "$t": "Customers"
+              },
+              "icon": "user"
+            }
+          ],
+          "sources": {
+            "orders": {
+              "resource": "orders",
+              "labelField": "number",
+              "descriptionField": "customer",
+              "searchField": "searchText",
+              "pageSize": 8
+            },
+            "articles": {
+              "resource": "articles",
+              "labelField": "title",
+              "descriptionField": "author",
+              "searchField": "title",
+              "pageSize": 8
+            },
+            "customers": {
+              "resource": "customers",
+              "labelField": "name",
+              "descriptionField": "email",
+              "searchField": "name",
+              "pageSize": 8
+            }
+          }
+        },
+        "context": {
+          "$bindState": "/live/context"
+        },
+        "commands": [
+          {
+            "value": "late",
+            "label": {
+              "$t": "Find late orders"
+            },
+            "description": {
+              "$t": "Paid orders unshipped after 24 hours"
+            },
+            "icon": "package",
+            "prompt": {
+              "$t": "Which orders are late this week?"
+            }
+          },
+          {
+            "value": "remind",
+            "label": {
+              "$t": "Remind late customers"
+            },
+            "description": {
+              "$t": "Asks before anything is sent"
+            },
+            "icon": "mail-01",
+            "prompt": {
+              "$t": "Remind the late customers"
+            }
+          },
+          {
+            "value": "summary",
+            "label": {
+              "$t": "Summarize this page"
+            },
+            "description": {
+              "$t": "A short summary of what is on screen"
+            },
+            "icon": "file-01",
+            "prompt": {
+              "$t": "Summarize this page"
+            }
+          }
+        ]
+      },
+      "children": [],
+      "on": {
+        "submit": {
+          "action": "agentSend",
+          "params": {
+            "session": "/live/chat",
+            "text": {
+              "$state": "/live/draft"
+            },
+            "clear": [
+              "/live/draft",
+              "/live/context"
+            ],
+            "context": {
+              "$state": "/live/context"
+            }
+          }
+        },
+        "stop": {
+          "action": "agentStop",
+          "params": {
+            "session": "/live/chat"
+          }
+        }
+      }
+    },
+    "state-thinking-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Still thinking"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "state-thinking": {
+      "type": "ChatMessage",
+      "props": {
+        "id": "thinking",
+        "role": "assistant",
+        "status": "streaming",
+        "parts": [
+          {
+            "type": "reasoning",
+            "state": "streaming",
+            "label": {
+              "$t": "Reading the refund policy"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "state-tool-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Calling a tool"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "state-tool": {
+      "type": "ChatMessage",
+      "props": {
+        "id": "tool",
+        "role": "assistant",
+        "status": "streaming",
+        "parts": [
+          {
+            "type": "reasoning",
+            "state": "done",
+            "duration": 2100
+          },
+          {
+            "type": "tool-call",
+            "toolCallId": "lookup",
+            "toolName": "orders.get",
+            "title": {
+              "$t": "Read order"
+            },
+            "icon": "search",
+            "status": "running",
+            "input": {
+              "id": "ORD-01042"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "state-text-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Writing the answer"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "state-text": {
+      "type": "ChatMessage",
+      "props": {
+        "id": "writing",
+        "role": "assistant",
+        "status": "streaming",
+        "parts": [
+          {
+            "type": "reasoning",
+            "state": "done",
+            "duration": 2100
+          },
+          {
+            "type": "tool-call",
+            "toolCallId": "lookup",
+            "toolName": "orders.get",
+            "title": {
+              "$t": "Read order"
+            },
+            "icon": "search",
+            "status": "success",
+            "duration": 380
+          },
+          {
+            "type": "text",
+            "text": {
+              "$t": "Yes. It was delivered **6 days ago**, inside the 14-day window, so"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "state-thinking-group": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "state-thinking-label",
+        "state-thinking"
+      ]
+    },
+    "state-tool-group": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "state-tool-label",
+        "state-tool"
+      ]
+    },
+    "state-text-group": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "state-text-label",
+        "state-text"
+      ]
+    },
+    "states-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "lg"
+      },
+      "children": [
+        "state-thinking-group",
+        "state-tool-group",
+        "state-text-group"
+      ]
+    },
+    "card-states": {
+      "type": "Example",
+      "props": {
+        "id": "reply-states",
+        "title": {
+          "$t": "Reply states"
+        },
+        "description": {
+          "$t": "Thinking, calling tools and writing, each with its working shimmer"
+        }
+      },
+      "children": [
+        "states-stack"
+      ]
+    },
+    "actions-answer": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Refund approved for ORD-01042: $129.00 goes back to the original card within 3 to 5 working days."
+        }
+      },
+      "children": []
+    },
+    "thinking-done": {
+      "type": "Thinking",
+      "props": {
+        "state": "done",
+        "duration": 4200,
+        "steps": [
+          {
+            "label": {
+              "$t": "Read the order list"
+            },
+            "detail": {
+              "$t": "128 orders in the last 7 days"
+            },
+            "icon": "file",
+            "status": "done"
+          },
+          {
+            "label": {
+              "$t": "Matched refunds to payments"
+            },
+            "status": "done",
+            "icon": "credit-card"
+          },
+          {
+            "label": {
+              "$t": "Checking the warehouse notes"
+            },
+            "status": "done"
+          }
+        ]
+      },
+      "children": []
+    }
+  }
+}

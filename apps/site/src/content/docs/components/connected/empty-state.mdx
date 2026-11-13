@@ -1,0 +1,23 @@
+---
+title: "EmptyState"
+description: "可恢复的 Admin 页面状态，读屏软件可识别。"
+---
+
+可恢复的 Admin 页面状态，读屏软件可识别。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `kind`（必填） | 状态类型，决定图标：`empty` 空、`error` 出错、`permission` 无权限、`offline` 离线、`timeout` 超时等。 | `"empty" \| "error" \| "permission" \| "offline" \| "timeout"` |  |
+| `title`（必填） | 一句话说明发生了什么。 | `string` |  |
+| `reason`（必填） | 原因。 | `string` |  |
+| `nextStep`（必填） | 用户接下来可以做什么。 | `string` |  |
+| `actionLabel` | 操作按钮文字，点击触发 `action` 事件。 | `string` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `compact` | 紧凑样式，用于卡片或表格内部。 | `boolean` | `false` |
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：`actions`

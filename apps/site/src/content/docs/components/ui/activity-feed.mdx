@@ -1,0 +1,64 @@
+---
+title: "ActivityFeed"
+description: "谁做了什么，最新的在前：头像、一句话（执行者和对象加粗，actor action target）、第二行的上下文和可选的状态徽标，时间放在第一行末尾。"
+---
+
+<ComponentPreview name="ActivityFeed" />
+
+谁做了什么，最新的在前：头像、一句话（执行者和对象加粗，`actor action target`）、第二行的上下文和可选的状态徽标，时间放在第一行末尾。表示一连串状态时用 Timeline。
+
+## 示例
+
+```json
+{
+  "root": "activityfeed-49",
+  "elements": {
+    "activityfeed-49": {
+      "type": "ActivityFeed",
+      "props": {
+        "ariaLabel": "Recent activity",
+        "items": [
+          {
+            "key": "approve",
+            "actor": "Mina Manager",
+            "action": "approved",
+            "target": "Atlas budget",
+            "context": "Atlas rollout",
+            "status": { "label": "Approved", "tone": "success" },
+            "timestamp": "10 min ago"
+          },
+          {
+            "key": "comment",
+            "actor": "Theo Ops",
+            "action": "commented on",
+            "target": "Access audit",
+            "context": "Keystone access",
+            "timestamp": "Yesterday"
+          }
+        ]
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `items`（必填） | 动态列表，最新的在前。每项 `{ key, actor, action, target?, context?, status?, timestamp?, dateTime?, avatar? }`，读作“actor action target”，`actor` 与 `target` 加粗；语序不同的语言可在 `action` 里写 `{actor}`、`{target}` 占位，如 `"{actor} 为 {target} 起草了跟进"`。`status` 是第二行的小徽标 `{ label, tone? }`。 字段：`key`、`actor`、`avatar?`、`action`、`target?`、`context?`、`status?`、`timestamp?`、`dateTime?` | `object[]` |  |
+| `loading` | 没有条目时显示三行骨架占位；已有条目时保留它们并标记为忙碌。 | `boolean` | `false` |
+| `empty` | 没有动态时显示的文字。 | `string` | `"暂无动态"` |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

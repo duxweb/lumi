@@ -1,0 +1,23 @@
+---
+title: "useParsedLocation"
+description: "useParsedLocation React hook 的签名、参数和返回值。"
+---
+
+The current address as the router provider parses it, re-rendering when it changes.
+
+```typescript
+useParsedLocation(): ParsedLocation
+```
+
+返回 `ParsedLocation`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `action` | `string \| undefined` | 否 | The action of the address, e.g. `edit`, when the router knows it. |
+| `id` | `ID \| undefined` | 否 | The record of the address, when the router knows it. |
+| `params` | `Record<string, unknown>` | 是 | The path's params, e.g. `{ id: "12" }` for `/orders/:id`. |
+| `pathname` | `string` | 是 | The path without query or fragment. |
+| `query` | `Record<string, unknown> \| undefined` | 否 | The query parameters. |
+| `resource` | `string \| undefined` | 否 | The resource the address belongs to, when the router knows it. |

@@ -1,0 +1,78 @@
+{
+  "root": "card",
+  "state": {
+    "workspace": {
+      "name": "Northwind",
+      "plan": "Pro",
+      "seats": 12
+    }
+  },
+  "elements": {
+    "card": {
+      "type": "Card",
+      "props": {
+        "title": {
+          "$t": "Workspace"
+        },
+        "description": {
+          "$t": "Three elements and one state object"
+        }
+      },
+      "children": [
+        "summary",
+        "upgrade"
+      ]
+    },
+    "summary": {
+      "type": "DescriptionList",
+      "props": {
+        "items": [
+          {
+            "label": {
+              "$t": "Name"
+            },
+            "value": {
+              "$state": "/workspace/name"
+            }
+          },
+          {
+            "label": {
+              "$t": "Plan"
+            },
+            "value": {
+              "$state": "/workspace/plan"
+            }
+          },
+          {
+            "label": {
+              "$t": "Seats"
+            },
+            "value": {
+              "$state": "/workspace/seats"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "upgrade": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Upgrade to Enterprise"
+        },
+        "appearance": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/workspace/plan",
+            "value": "Enterprise"
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}

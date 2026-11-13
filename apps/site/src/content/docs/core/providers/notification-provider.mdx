@@ -1,0 +1,16 @@
+---
+title: "NotificationProvider"
+description: "NotificationProvider 接口的方法、参数和返回值。"
+---
+
+Draws notices. Lumi calls it from the `notify` and `closeNotice` actions and
+`useNotify()`; the UI layer supplies the drawing (Lumi UI ships a notifier).
+
+```typescript
+interface NotificationProvider
+```
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `close` | `((key: string) => void) \| undefined` | 否 | Closes the notice with this key. |
+| `open` | `(params: NotificationParams) => string` | 是 | Shows a notice and answers its key. |

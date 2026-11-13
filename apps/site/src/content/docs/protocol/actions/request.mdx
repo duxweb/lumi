@@ -1,0 +1,84 @@
+---
+title: "request"
+description: "通过 DataProvider 发一个自定义请求，可以把整理后的响应写进 resultPath。"
+---
+
+通过 DataProvider 发一个自定义请求，可以把整理后的响应写进 `resultPath`。用于不属于增删改查的接口。
+
+## 用法
+
+### 读取数据
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "刷新统计" },
+      "on": {
+        // 点击按钮时执行
+        "press": {
+          "action": "request",
+          "params": {
+            // 请求地址，相对于 DataProvider 的 API 地址
+            "url": "/orders/stats",
+            // HTTP 方法：GET（默认）、POST、PUT、PATCH 或 DELETE
+            "method": "GET",
+            // 响应写到 /stats，页面用 /stats/data 读
+            "resultPath": "/stats"
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+### 提交数据
+
+`POST` 时请求体写在 `payload` 里。这个接口改了订单，所以在后面加一个 `invalidate` 刷新列表：把 `on` 的值写成数组，动作按顺序执行。
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "重新计算" },
+      "on": {
+        // 点击按钮时执行
+        "press": [
+          {
+            "action": "request",
+            "params": {
+              // 请求地址，相对于 DataProvider 的 API 地址
+              "url": "/orders/recalculate",
+              // HTTP 方法：GET（默认）、POST、PUT、PATCH 或 DELETE
+              "method": "POST",
+              // 请求体；GET 不能带
+              "payload": { "scope": "unpaid" }
+            }
+          },
+          // 接口成功后，让 orders 的列表和详情重新请求
+          { "action": "invalidate", "params": { "resource": "orders" } }
+        ]
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| `url`（必填） | 请求地址，相对于 DataProvider 的 API 地址。 | `string` |
+| `method` | HTTP 方法：`GET`（默认）、`POST`、`PUT`、`PATCH` 或 `DELETE`。 | `"GET" \| "POST" \| "PUT" \| "PATCH" \| "DELETE"` |
+| `query` | 查询参数。 | `object` |
+| `payload` | 请求体；`GET` 不能带。 | `unknown` |
+| `dataProviderName` | 使用哪个数据源；省略时用当前范围的数据源，没有就是 default。 | `string` |
+| `meta` | 原样传给 DataProvider 的扩展数据。 | `object` |
+| `resultPath` | 把响应写进页面状态的路径，如 `/stats`；内容是 `{ data }`，用 `/stats/data` 读。 | `string` |

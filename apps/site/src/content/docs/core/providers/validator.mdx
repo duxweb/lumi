@@ -1,0 +1,16 @@
+---
+title: "Validator"
+description: "Validator 接口的方法、参数和返回值。"
+---
+
+Business validation of a form's values. `rules` is whatever the page gives
+(`rules` of `submitForm` or `useForm`); the validator decides how to read
+them, e.g. as a JSON Schema. Without one configured, rules are refused.
+
+```typescript
+interface Validator
+```
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `validate` | `(rules: ValidationRules, values: Record<string, unknown>) => ValidationIssue[] \| Promise<ValidationIssue[]>` | 是 | The issues of `values` under `rules`, each at a dotted field path; none when they pass. May be asynchronous. |

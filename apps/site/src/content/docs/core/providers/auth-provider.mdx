@@ -1,0 +1,28 @@
+---
+title: "AuthProvider"
+description: "AuthProvider 接口的方法、参数和返回值。"
+---
+
+Authentication provider: the one sign-in session of the app. It runs the
+session requests itself (sign in and out, register, password reset, the
+current user), decides how every other request carries the credentials
+(`authorizeRequest`) and what a failure means (`onError`). Data providers
+never handle credentials: they send through the HttpClient that asks it.
+
+```typescript
+interface AuthProvider
+```
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `authorizeRequest` | `((request: { url: string; method: string; }) => RequestAuthorization \| undefined \| Promise<RequestAuthorization \| undefined>) \| undefined` | 否 | Headers and fetch credentials for one request; called before each one an HttpClient sends. |
+| `check` | `() => Promise<CheckResponse>` | 是 | Whether a session exists; asked before a protected route or manifest loads. |
+| `forgotPassword` | `((params: any) => Promise<AuthActionResponse>) \| undefined` | 否 | Starts a password reset, e.g. by mailing a link to the account's address. |
+| `getIdentity` | `(<T = any>() => Promise<T \| null>) \| undefined` | 否 | The current user, for the account menu and `useIdentity`; `null` when signed out. |
+| `getPermissions` | `((params?: any) => Promise<unknown>) \| undefined` | 否 | The raw permission data, for `usePermissions`. Lumi's own checks ask the AccessProvider. |
+| `login` | `(params: any) => Promise<AuthActionResponse>` | 是 | Signs in with the sign-in form's values, e.g. `{ username, password, remember }`. |
+| `logout` | `(params?: any) => Promise<AuthActionResponse>` | 是 | Signs out and forgets the session. |
+| `onError` | `((error: any) => Promise<AuthErrorResponse>) \| undefined` | 否 | What a failed data request means for the session, once `refresh` could not save it; `{ logout: true }` signs the reader out. |
+| `refresh` | `(() => Promise<boolean>) \| undefined` | 否 | Renews expired credentials after a 401; `true` sends the request again. Concurrent 401s share one call. |
+| `register` | `((params: any) => Promise<AuthActionResponse>) \| undefined` | 否 | Creates an account; a provider that also signs the new account in answers like `login`. Leave it out where accounts are assigned. |
+| `updatePassword` | `((params: any) => Promise<AuthActionResponse>) \| undefined` | 否 | Sets a new password, with the reset link's token or the signed-in session. |

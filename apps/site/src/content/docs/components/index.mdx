@@ -1,0 +1,189 @@
+---
+title: "组件总览"
+description: "Lumi 的 138 个组件，按用途分组，每个组件一页：说明、JSON 示例和参数表。"
+---
+
+页面 JSON 里的 `type` 只能是下面这些组件。每个组件页有实时预览、可复制的 JSON 示例和完整参数表。
+
+## 通用
+
+| 组件 | 作用 |
+| --- | --- |
+| [`Button`](/components/ui/button/) | 触发一个动作。 |
+| [`Badge`](/components/ui/badge/) | 语义色的简短状态或数量标签。 |
+| [`Icon`](/components/ui/icon/) | 按名称显示图标：Lumi 名称如 `search`，或任意 HugeIcons 免费图标如 `delivery-truck-01`（或 `DeliveryTruck01Icon`）；不在内置集合里的名称首次使用时加载。 |
+| [`Heading`](/components/ui/heading/) | 标题文字（h1-h4）。 |
+| [`Text`](/components/ui/text/) | 段落文字，行宽适合阅读，与 json-render shadcn 的 Text 兼容。 |
+| [`Avatar`](/components/ui/avatar/) | 一个人或账号：图片或首字母，底色按名字选取，没有描边。 |
+| [`AvatarGroup`](/components/ui/avatar-group/) | 一组重叠的头像，表示一条记录涉及的人。 |
+| [`CodeBlock`](/components/ui/code-block/) | 只读源码，支持 JSON、JavaScript/TypeScript（JSX/TSX）、CSS、HTML、Bash、Go、YAML、SQL 和 Markdown 的语法高亮；其他语言按纯文本显示。 |
+
+## 布局
+
+| 组件 | 作用 |
+| --- | --- |
+| [`Fragment`](/components/ui/fragment/) | 把子元素编成一组，不带外框。 |
+| [`Card`](/components/ui/card/) | 卡片面板，可带标题、说明和头部图标。 |
+| [`Stack`](/components/ui/stack/) | 弹性布局容器，与 json-render shadcn 的 Stack 兼容。 |
+| [`Grid`](/components/ui/grid/) | 网格布局（1-6 列），与 json-render shadcn 的 Grid 兼容；自身宽度变窄时减少列数（每列至少 12rem），因此在抽屉、卡片和嵌入预览里也能用。 |
+| [`Separator`](/components/ui/separator/) | 视觉分隔线。 |
+| [`Frame`](/components/ui/frame/) | 通用盒子，提供内边距、底色和边框，在没有其他合适布局时使用。 |
+| [`Page`](/components/connected/page/) | Admin 页面容器。 |
+| [`PageHeader`](/components/connected/page-header/) | Admin 页面标题和操作插槽。 |
+| [`PageFrame`](/components/connected/page-frame/) | 带组合插槽的 Admin 页面框架。 |
+
+## 数据录入
+
+| 组件 | 作用 |
+| --- | --- |
+| [`Input`](/components/ui/input/) | 绑定到状态的单行文本输入。 |
+| [`Textarea`](/components/ui/textarea/) | 多行文本输入；`autoResize` 时随内容增高。 |
+| [`RichText`](/components/ui/rich-text/) | 带格式工具栏的 Markdown 文本输入。 |
+| [`NumberInput`](/components/ui/number-input/) | 数字输入，支持 `min`、`max` 和 `step`。 |
+| [`Select`](/components/ui/select/) | 从列表中选一项，可搜索、可清除。 |
+| [`MultiSelect`](/components/ui/multi-select/) | 从列表中选多项。 |
+| [`Checkbox`](/components/ui/checkbox/) | 带文字的单个开/关选项。 |
+| [`CheckboxGroup`](/components/ui/checkbox-group/) | 多选，所有选项同时可见。 |
+| [`RadioGroup`](/components/ui/radio-group/) | 单选，所有选项同时可见。 |
+| [`Switch`](/components/ui/switch/) | 开关一个设置，切换后立即生效。 |
+| [`DatePicker`](/components/ui/date-picker/) | 日期，格式 `yyyy-MM-dd`。 |
+| [`Cascader`](/components/ui/cascader/) | 分级选择，每级一列（地区 → 城市，分类 → 子分类）。 |
+| [`TimePicker`](/components/ui/time-picker/) | 一天中的时间，格式 `HH:mm`（`seconds` 时为 `HH:mm:ss`）。 |
+| [`DateTimePicker`](/components/ui/date-time-picker/) | 日期和时间，值为本地时间字符串 `yyyy-MM-ddTHH:mm`，即 `datetime-local` 格式。 |
+| [`DateRangePicker`](/components/ui/date-range-picker/) | 日期范围，值为 `[start, end]`（`yyyy-MM-dd`），与 dateRange 筛选的格式相同。 |
+| [`Form`](/components/ui/form/) | 把字段编成一组，跟踪校验状态并触发提交事件。 |
+| [`FormField`](/components/ui/form-field/) | 一个带标签的字段：根据 `fieldType` 或 `widget` 选择控件，并显示帮助文字和错误。 |
+| [`Upload`](/components/ui/upload/) | 上传文件，显示进度，可取消和重试。 |
+| [`CodeEditor`](/components/ui/code-editor/) | 编辑源码，高亮与 CodeBlock 相同，带行号、括号匹配、自动缩进和撤销。 |
+| [`TagsInput`](/components/ui/tags-input/) | 以可移除标签块表示的文字标签。 |
+| [`ImageGrid`](/components/ui/image-grid/) | 基于绑定的 `{ url, thumbnail?, alt? }[]` 值显示图片格子，第一张是封面。 |
+| [`Segmented`](/components/connected/segmented/) | 同一份数据的少量互斥视图；用 $bindState 绑定 value。 |
+
+## 数据展示
+
+| 组件 | 作用 |
+| --- | --- |
+| [`Table`](/components/ui/table/) | 行列表格，支持排序、勾选、行操作，以及 badge、tags、currency 等单元格类型。 |
+| [`DescriptionList`](/components/ui/description-list/) | 标签/值对。 |
+| [`Pagination`](/components/ui/pagination/) | 在列表的各页之间切换，可显示总数和每页条数选择。 |
+| [`Tabs`](/components/ui/tabs/) | 在同一位置切换并列的视图。 |
+| [`Progress`](/components/ui/progress/) | 进度条，与 json-render shadcn 的 Progress 兼容。 |
+| [`Filters`](/components/ui/filters/) | 受控的列表筛选，可加高级条件。 |
+| [`Stepper`](/components/ui/stepper/) | 显示有序步骤的进度，可设为可点击。 |
+| [`Timeline`](/components/ui/timeline/) | 按顺序排在一条连续竖线上的事件，每项有时间、状态和标题下方的可选详情。 |
+| [`ActivityFeed`](/components/ui/activity-feed/) | 谁做了什么，最新的在前：头像、一句话（执行者和对象加粗，`actor action target`）、第二行的上下文和可选的状态徽标，时间放在第一行末尾。 |
+| [`DataGrid`](/components/connected/data-grid/) | 受控的 Admin 结果网格，带分页。 |
+| [`FilterBar`](/components/connected/filter-bar/) | Admin 筛选工具栏。 |
+| [`RecordList`](/components/connected/record-list/) | 紧凑的记录行，用于动态流、抽屉或仪表盘侧栏：标识、状态和一个数字，下方是元数据。 |
+
+## 图表与指标
+
+| 组件 | 作用 |
+| --- | --- |
+| [`DashboardCard`](/components/connected/dashboard-card/) | 仪表盘面板：一个面板，带标题、可选的头部操作和底部一行文字。 |
+| [`MetricCard`](/components/connected/metric-card/) | 一个核心数字，带单位、变化幅度块和可选的迷你趋势图。 |
+| [`StatStrip`](/components/connected/stat-strip/) | 下方表格的合计，与表格行来自同一次查询快照。 |
+| [`MatrixChart`](/components/connected/matrix-chart/) | 按天数据的点阵趋势图，附带可被读屏软件读取的数值列表。 |
+| [`BarChart`](/components/connected/bar-chart/) | 柱状图，适合少量分类或天数，带虚线网格、数值轴和悬停读数。 |
+| [`ProportionList`](/components/connected/proportion-list/) | 按数值排名的条目：标签、读数和可选的占总数比例，下方细条按最大项的比例绘制。 |
+| [`FunnelChart`](/components/connected/funnel-chart/) | 居中的转化漏斗：有序的阶段画成逐级变窄的色带，阶段间用梯形连接，颜色按调色板逐级变化。 |
+| [`Pipeline`](/components/connected/pipeline/) | 工作在有序阶段中的堆积情况：把一个整体分在一根条中，如按状态分的订单。 |
+| [`Chart`](/components/connected/chart/) | 图表，读屏软件可读，渲染引擎可选且按需加载，并以数据表作为后备。 |
+
+## 反馈与浮层
+
+| 组件 | 作用 |
+| --- | --- |
+| [`Dialog`](/components/ui/dialog/) | 模态面板，用于专注完成一项任务或确认；宽度在尺寸范围内跟随内容。 |
+| [`Drawer`](/components/ui/drawer/) | 侧边面板，页面保持可见，用于详情和编辑表单。 |
+| [`Alert`](/components/ui/alert/) | 页面内的语义色提示信息，可关闭。 |
+| [`EmptyState`](/components/connected/empty-state/) | 可恢复的 Admin 页面状态，读屏软件可识别。 |
+
+## 页面模板
+
+| 组件 | 作用 |
+| --- | --- |
+| [`DashboardPage`](/components/connected/dashboard-page/) | 仪表盘的指标和内容面板。 |
+| [`DetailPage`](/components/connected/detail-page/) | 记录的摘要、内容和动态。 |
+| [`SettingsPage`](/components/connected/settings-page/) | 绑定的设置导航。 |
+| [`SettingsForm`](/components/connected/settings-form/) | 绑定到一条记录的设置卡片。 |
+| [`ListPage`](/components/connected/list-page/) | 有数据来源的 Admin 列表，分页和排序保存在原生页面 Store 中。 |
+| [`FormPage`](/components/connected/form-page/) | Admin 表单，带业务校验、未保存离开提醒，值只存在一个原生路径中。 |
+
+## 数据连接
+
+| 组件 | 作用 |
+| --- | --- |
+| [`CanAccess`](/components/connected/can-access/) | 只有权限提供者允许对 `resource` 执行 `action` 时才渲染子元素，否则渲染 `fallback` 插槽（判断期间什么也不显示）。 |
+| [`Query`](/components/connected/query/) | 挂载时、参数变化时读取数据；实时提供者推送了该资源的变更时也会重新读取（`liveMode`）。 |
+
+## 其他
+
+| 组件 | 作用 |
+| --- | --- |
+| [`AgentSession`](/components/connected/agent-session/) | 把一段对话连接到返回 AI SDK UI message stream（SSE）的智能体接口。 |
+| [`Skeleton`](/components/ui/skeleton/) | 内容还在加载时按内容形状显示的占位。 |
+| [`Spinner`](/components/ui/spinner/) | 不确定进度的活动指示，用于等待中的操作或一小块区域。 |
+| [`Loading`](/components/ui/loading/) | 整块区域正在加载：在内容将要占据的位置居中显示旋转图标和文字。 |
+| [`Empty`](/components/ui/empty/) | 空状态：浅色底上的图形、说明区域为什么是空的标题，以及下一步该做什么的说明，居中在内容本应占据的位置。 |
+| [`Kbd`](/components/ui/kbd/) | 把键盘快捷键显示成按键块：单个按键，或 `["⌘", "K"]` 这样的组合。 |
+| [`ScrollArea`](/components/ui/scroll-area/) | 在固定或最大高度内滚动子元素，可纵向、横向或双向，滚动条细窄且跟随主题。 |
+| [`Tag`](/components/ui/tag/) | 紧凑的标签，标注分类、人员或筛选条件，色调和外观与 Badge 相同。 |
+| [`TagGroup`](/components/ui/tag-group/) | 绑定到数组的一行标签。 |
+| [`Calendar`](/components/ui/calendar/) | 绑定到状态的内嵌月历。 |
+| [`Listbox`](/components/ui/listbox/) | 始终展开的选项列表，支持图标、说明和分组标题。 |
+| [`Slider`](/components/ui/slider/) | 沿轨道拖动选一个数字，`range` 时选 `[start, end]` 范围。 |
+| [`RadioCards`](/components/ui/radio-cards/) | 以卡片形式单选，每张卡片有图标、标题、说明，可加徽标或右侧文字（如价格）。 |
+| [`CheckboxCards`](/components/ui/checkbox-cards/) | 以卡片形式多选，每张卡片有图标、标题、说明，可加徽标或右侧文字。 |
+| [`TagSelect`](/components/ui/tag-select/) | 用于筛选的一行紧凑可选标签：选一个值，`multiple` 时选多个。 |
+| [`Rating`](/components/ui/rating/) | 用一排星星或其他图标表示评分，可选半星。 |
+| [`ColorPicker`](/components/ui/color-picker/) | 选一个颜色，值为 `#rrggbb` 十六进制字符串：可用饱和度/亮度区域加色相条、预设色块、十六进制输入框，浏览器支持时还可用取色器。 |
+| [`ColorSwatches`](/components/ui/color-swatches/) | 从一行内嵌色块中选颜色，行为是单选组：方向键移动并选中，选中的色块显示对勾和同色外圈。 |
+| [`InputOTP`](/components/ui/input-otp/) | 一次性验证码，每位一个格子。 |
+| [`SignaturePad`](/components/ui/signature-pad/) | 用鼠标、笔或手指签名。 |
+| [`IconPicker`](/components/ui/icon-picker/) | 从可搜索的网格中按名称选一个 HugeIcons 图标（如 `delivery-truck-01`）。 |
+| [`PromptInput`](/components/ui/prompt-input/) | 聊天的输入框：随文字增高的文本区、可移除的附件和 @ 引用上下文块、可选的紧凑模型选择器和发送按钮。 |
+| [`ChatMessage`](/components/ui/chat-message/) | 对话中的一条消息，按智能体消息约定绘制。 |
+| [`MessageActions`](/components/ui/message-actions/) | 回答下方的操作：复制、重新生成，以及作为切换按钮的赞和踩。 |
+| [`Thinking`](/components/ui/thinking/) | 紧凑的工作状态条——旋转图标、阶段名称和已用时间——`state` 为 `done` 时变成对勾和总耗时。 |
+| [`ToolCall`](/components/ui/tool-call/) | 智能体调用的一个工具或操作，显示为一行安静的时间线：图标（运行中为旋转图标）、名称、一行 `summary` 说明找到了什么，以及耗时。 |
+| [`Approval`](/components/ui/approval/) | 在已注册的动作执行前请读者确认：用平白的话说明它做什么（`action` 只给宿主识别，不显示），再列出影响范围——受影响条目的清单 `items`、带图片和金额的商品行 `lines`、标签加值的 `fields`（地址、配送、退款去向）和 `total`——以及 Approve、Reject 和（`editable` 时）Edit 按钮。 |
+| [`AgentQuestion`](/components/ui/agent-question/) | 智能体继续之前向读者提的问题。 |
+| [`AgentPlan`](/components/ui/agent-plan/) | 智能体打算按顺序执行的步骤，每步为 `pending`、`running`、`done`、`failed` 或 `skipped`，可带一行详情，排在时间线上，上方是带进度（如 3/5）的摘要行。 |
+| [`ChangeDiff`](/components/ui/change-diff/) | 展示一次改动的内容。 |
+| [`ContextChips`](/components/ui/context-chips/) | 智能体能看到的内容：当前页面的“Viewing”块，带一个绑定到 `shared` 的共享开关；已附加的上下文条目（可移除，会更新绑定的 `items`）；以及可选的用量条，显示 `used` / `limit`。 |
+| [`AgentMentionPicker`](/components/ui/agent-mention-picker/) | @ 引用选择器：搜索框、按种类分的页签（`types`，如订单、文章、客户）和高亮匹配部分的结果，用方向键和 Enter 选取。 |
+| [`AgentSessionList`](/components/ui/agent-session-list/) | 会话列表。 |
+| [`ChatThread`](/components/ui/chat-thread/) | 由智能体消息数组（`{ id, role, parts, status? }`）绘制的对话，每条消息是一个 ChatMessage。 |
+| [`Tooltip`](/components/ui/tooltip/) | 在唯一子元素（如图标按钮）上悬停或键盘聚焦时显示的简短提示。 |
+| [`Menu`](/components/ui/menu/) | 点击后打开命令列表的按钮。 |
+| [`Accordion`](/components/ui/accordion/) | 可展开的分段：默认一次只开一个，`multiple` 时可同时开多个。 |
+| [`Popover`](/components/ui/popover/) | 依附在触发元素上的浮动面板：标题、说明、任意内容（`children`）和可选的底部按钮。 |
+| [`Popconfirm`](/components/ui/popconfirm/) | 在破坏性行内操作旁用小气泡问“确定吗？ |
+| [`Image`](/components/ui/image/) | 图片，放在固定 `aspectRatio` 的框里（默认 4/3；`auto` 保持原比例），加载时闪烁占位，失败时显示图片失效的替代图形。 |
+| [`Iframe`](/components/ui/iframe/) | 在页面里显示另一个网页，比如报表或老系统。 |
+| [`Lightbox`](/components/ui/lightbox/) | 全屏看图：缩放（按钮、滚轮、双击；拖动平移）、上一张/下一张、计数和说明文字。 |
+| [`Carousel`](/components/ui/carousel/) | 滚动吸附轨道上的幻灯片，带上一张/下一张按钮和圆点。 |
+| [`Breadcrumb`](/components/ui/breadcrumb/) | 到当前页面的路径，最后一项是当前页。 |
+| [`Prose`](/components/ui/prose/) | 排版长文内容：标题、段落、列表、引用、代码、表格、图片和分隔线共用一套阅读节奏。 |
+| [`Markdown`](/components/ui/markdown/) | 把 Markdown 渲染成 Prose 样式的排版内容：标题、段落、有序、无序和任务列表、引用、带高亮的代码块、表格、分隔线、链接、强调和图片（`![alt](src "caption")`；单独占一行时成为带说明的插图）。 |
+| [`Html`](/components/ui/html/) | 把 HTML 片段（如富文本编辑器保存的文章正文）渲染成 Prose 样式的排版内容。 |
+| [`AutoComplete`](/components/ui/auto-complete/) | 自由文本输入，输入时提示匹配的选项并高亮匹配部分。 |
+| [`Mention`](/components/ui/mention/) | 多行文本，输入触发字符（默认 `@`）时在光标处打开提示列表，选中一项即插入提及。 |
+| [`Transfer`](/components/ui/transfer/) | 两个列表——可选和已选——各带搜索、全选和计数；箭头按钮把勾选的条目移到另一侧。 |
+| [`Repeater`](/components/ui/repeater/) | 基于绑定数组的可重复行（订单明细、联系人），以可编辑表格或卡片显示，支持添加、复制、删除、拖动手柄（或其方向键）排序、最少/最多行数、计算列、底部合计和单元格错误。 |
+| [`RepeaterRow`](/components/ui/repeater-row/) | Repeater 的 `repeat` 里的行模板。 |
+| [`Tree`](/components/ui/tree/) | 可展开、折叠的层级列表。 |
+| [`TreeSelect`](/components/ui/tree-select/) | 下拉面板是 Tree 的选择框。 |
+| [`CascaderPanel`](/components/ui/cascader-panel/) | 直接显示 Cascader 的各列，没有触发框。 |
+| [`Example`](/components/connected/example/) | 文档示例卡片：显示子元素的实际效果，代码视图把它们显示为原生 Spec。 |
+| [`AgentWorkspace`](/components/connected/agent-workspace/) | 与返回 AI SDK UI message stream 的智能体接口对话的整页界面：会话列表、对话内容和输入框，共用一个 Lumi 智能体会话。 |
+| [`Article`](/components/connected/article/) | 一篇可阅读的文章：标签、标题、导语、作者及日期和阅读时长、可选的封面图，然后是来自 Markdown 或已清理 HTML 的正文，使用 Prose 样式。 |
+| [`SkuEditor`](/components/connected/sku-editor/) | 规格（如颜色、尺码）用标签输入填写，下方为每种组合生成一行矩阵。 |
+| [`Kanban`](/components/connected/kanban/) | 卡片分列显示，可拖放或用键盘（Space、方向键、Space）移动。 |
+| [`ScheduleCalendar`](/components/connected/schedule-calendar/) | 月视图和周视图的日程日历，事件显示为语义色块；月视图中一天放不下的事件收进“+N more”菜单。 |
+| [`TreeFilter`](/components/connected/tree-filter/) | 侧栏树，把列表缩小到一个分支，放在 ListPage 的 `aside` 插槽中。 |
+| [`AssistantContext`](/components/connected/assistant-context/) | 页面打开期间告诉外壳的助手这个页面是关于什么的：每个条目成为一个上下文块，读者发送前可以移除；页面关闭或条目变化时移除。 |
+| [`Include`](/components/connected/include/) | 在这个位置显示另一个 JSON 页面，用于多个页面共用的区块。 |
+| [`AuditLog`](/components/connected/audit-log/) | 来自应用审计日志提供者的资源或单条记录的变更历史，显示为动态流：谁在什么时候创建、更新（含字段）、删除或导入了什么。 |
+| [`RecordPicker`](/components/connected/record-picker/) | 表单字段，值是一条记录的键（`multiple` 时是键的列表），在对话框里从可搜索、分页的表格中选取。 |

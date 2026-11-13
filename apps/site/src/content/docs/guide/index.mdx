@@ -1,0 +1,52 @@
+---
+title: "指南"
+description: "Lumi 从浅到深的学习路线：先用 CDN 和 JSON 搭起后台，再按需用 npm 和 TypeScript 扩展。"
+---
+
+Lumi 是给后端开发者和 AI 用的后台前端框架：页面是 JSON，前端是一个现成的脚本，不用编译。
+
+按这个顺序读，每一步都能独立用起来：
+
+1. **开始**：[快速开始](/guide/getting-started/) 用一个 HTML 文件加几个 JSON 文件跑起后台；[项目配置](/guide/config/) 列出 `config.json` 的全部配置项。
+2. **对接后端**：后端要提供哪些接口、返回什么格式。[数据接口](/guide/backend/) 是列表和增删改查，[登录和权限](/guide/backend-auth/) 是登录接口和权限标识，[上传和导入导出](/guide/backend-files/) 是文件相关的接口。
+3. **写页面**：[页面 JSON](/guide/pages/) 讲结构和绑定，[读取数据](/guide/data/)、[列表与筛选](/guide/lists/)、[表单与保存](/guide/forms/)、[详情页](/guide/detail/)、[仪表盘](/guide/dashboards/)、[交互](/guide/interactions/) 各讲一类页面，[CRUD 页面](/guide/crud/) 把它们串成一个完整的例子。
+4. **搭后台**：[菜单与路由](/guide/menus/) 描述整个后台，[从后端加载](/guide/remote/) 让菜单和页面由后端返回，[弹窗与复用](/guide/reuse/)、[嵌入网页](/guide/embed/) 处理共用的和已有的页面，[AI 助手](/guide/assistant/)、[主题](/guide/theme/)、[多语言](/guide/i18n/) 是外壳的设置。
+5. **用代码扩展**：JSON 写不了的部分用 [扩展模块](/guide/modules/) 补上，分两类：[组件和动作](/guide/extend-components/)、[后端和登录](/guide/extend-backend/)。整个页面都要用代码写时用 [JS 页面](/guide/js-pages/)。
+6. **上线**：[部署](/guide/deployment/)。遇到问题先看 [常见问题](/guide/faq/)。
+
+要自己的 React 组件、TypeScript 类型或深度定制时，再看进阶：
+
+| 想做什么 | 看哪一篇 |
+| --- | --- |
+| 先弄清各层怎么分工 | [架构总览](/guide/advanced/architecture/) |
+| 用 npm 和构建工具接入 | [npm 安装](/guide/advanced/install/)、[React 集成](/guide/advanced/react/)、[Admin 应用](/guide/advanced/admin/) |
+| 适配自己的后端 | [数据请求](/guide/advanced/data/)、[认证](/guide/advanced/auth/)、[权限](/guide/advanced/access/)、[其他 Provider](/guide/advanced/providers/) |
+| 在 React 里读写数据、加组件 | [数据 hooks](/guide/advanced/hooks/)、[自定义组件](/guide/advanced/components/) |
+
+让 AI 写页面，看 [Skills](/ai/)。
+
+## 示例
+
+| 示例 | 是什么 |
+| --- | --- |
+| [完整演示](/demo/) | 一个完整的后台，数据在浏览器里，可以随便点 |
+| [Playground](/playground/) | 在浏览器里改页面 JSON，实时校验和预览；左边可以打开每个组件的示例 |
+| 仓库的 `examples/base-admin` | CDN 版：一个 HTML 加 JSON 文件，不用构建 |
+| 仓库的 `examples/foundation-admin` | npm 版：用 `createAdmin` 在代码里组装后台 |
+| 仓库的 `examples/react-demo` | 不用后台外壳，只用 json-render 原生的 Provider 和 Lumi UI 的组件渲染 JSON |
+
+## json-render 文档
+
+页面 JSON 的格式就是 [json-render](https://json-render.dev/docs) 的 Spec，Lumi 没有改动语法，只是加了组件和动作。下面这些写法以 json-render 官方文档为准：
+
+| 内容 | json-render 文档 |
+| --- | --- |
+| `root`、`elements`、`children`、`state` 的结构 | [Specs](https://json-render.dev/docs/specs) |
+| `$state`、`$bindState`、`$template`、`$cond`、状态路径，`repeat` 和 `$item` | [Data Binding](https://json-render.dev/docs/data-binding) |
+| `visible` 条件显示 | [Visibility](https://json-render.dev/docs/visibility) |
+| `watch` 状态变化时执行动作 | [Watchers](https://json-render.dev/docs/watchers) |
+| `checks` 字段校验 | [Validation](https://json-render.dev/docs/validation) |
+| 组件、动作和参数的定义（进阶） | [Catalog](https://json-render.dev/docs/catalog) |
+| 把组件定义对应到 React 实现（进阶） | [Registry](https://json-render.dev/docs/registry) |
+
+Lumi 加的部分（`Query`、`submitForm`、`ListPage` 等）在本站的 [组件](/components/) 和 [动作](/protocol/actions/) 里。

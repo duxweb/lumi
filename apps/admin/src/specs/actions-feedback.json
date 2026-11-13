@@ -1,0 +1,75 @@
+{
+  "root": "row",
+  "elements": {
+    "row": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "toast",
+        "notify"
+      ]
+    },
+    "toast": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Show a toast"
+        }
+      },
+      "on": {
+        "press": {
+          "action": "toast",
+          "params": {
+            "tone": "success",
+            "message": {
+              "$t": "Settings saved"
+            }
+          }
+        }
+      },
+      "children": []
+    },
+    "notify": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Send a notice"
+        },
+        "appearance": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "notify",
+          "params": {
+            "key": "export",
+            "tone": "info",
+            "title": {
+              "$t": "Export ready"
+            },
+            "description": {
+              "$t": "orders-2026-08.csv · 1,284 rows"
+            },
+            "actions": [
+              {
+                "label": {
+                  "$t": "Download"
+                },
+                "action": "toast",
+                "params": {
+                  "message": {
+                    "$t": "Download started"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}

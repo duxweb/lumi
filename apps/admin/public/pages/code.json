@@ -1,0 +1,489 @@
+{
+  "root": "page",
+  "state": {
+    "editor": {
+      "config": "{\n  \"resource\": \"orders\",\n  \"pageSize\": 20,\n  \"filters\": [\"status\", \"customer\"],\n  \"export\": true\n}",
+      "handler": "",
+      "broken": "{\n  \"resource\": \"orders\",\n  \"pageSize\": 20,\n}"
+    }
+  },
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Code blocks and editor"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "sections"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Code blocks and editor"
+        },
+        "description": {
+          "$t": "Highlighted code blocks with file names, line numbers, marked lines and tabs, and a code editor bound to page state"
+        }
+      },
+      "children": []
+    },
+    "sections": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "card-languages",
+        "card-lines",
+        "card-tabs",
+        "card-wrap",
+        "card-plain",
+        "card-editor",
+        "card-states"
+      ]
+    },
+    "card-languages": {
+      "type": "Example",
+      "props": {
+        "id": "languages",
+        "title": {
+          "$t": "Languages"
+        },
+        "description": {
+          "$t": "JSON, TypeScript, Go, Bash, YAML, SQL, CSS, HTML and Markdown share one set of theme colours"
+        }
+      },
+      "children": [
+        "code-languages"
+      ]
+    },
+    "code-languages": {
+      "type": "CodeBlock",
+      "props": {
+        "files": [
+          {
+            "title": "OrderTotal.tsx",
+            "language": "tsx",
+            "code": "import type { ReactElement } from 'react'\nimport { useMemo } from 'react'\n\ninterface Order { id: number, number: string, total: number }\n\n// Sums the visible orders; amounts stay in minor units until display.\nexport function OrderTotal({ orders, currency = 'USD' }: { orders: Order[], currency?: string }): ReactElement {\n  const sum = useMemo(() => orders.reduce((total, order) => total + order.total, 0), [orders])\n  return <strong className=\"tabular-nums\">{(sum / 100).toFixed(2)} {currency}</strong>\n}\n"
+          },
+          {
+            "title": "deploy.sh",
+            "language": "bash",
+            "code": "#!/usr/bin/env bash\nset -euo pipefail\n\n# Build the admin and ship it next to the Go binary.\npnpm install --frozen-lockfile\npnpm -F @duxweb/lumi-admin-demo build\ncp -r apps/admin/dist ./server/public\necho \"Built $(date +%F) for ${ENVIRONMENT:-staging}\"\n"
+          },
+          {
+            "title": "lumi.yaml",
+            "language": "yaml",
+            "code": "app:\n  name: Lumi Admin\n  locales: [en-US, zh-CN]\napi:\n  baseUrl: https://api.example.com\n  timeout: 15000 # milliseconds\nfeatures:\n  assistant: true\n  export: \"csv\"\n"
+          },
+          {
+            "title": "orders.sql",
+            "language": "sql",
+            "code": "-- Paid orders from the last four weeks, newest first.\nSELECT o.id, o.number, c.name AS customer, o.total\nFROM orders AS o\nJOIN customers AS c ON c.id = o.customer_id\nWHERE o.status = 'paid'\n  AND o.created_at >= NOW() - INTERVAL '28 days'\nORDER BY o.created_at DESC\nLIMIT 20;\n"
+          },
+          {
+            "title": "theme.css",
+            "language": "css",
+            "code": ":root {\n  --lumi-theme-brand: #2d5bff;\n  --lumi-theme-radius: 0.5rem;\n}\n\n/* Totals line up in columns. */\n.order-total {\n  font-variant-numeric: tabular-nums;\n  padding: 0 12px;\n}\n"
+          },
+          {
+            "title": "index.html",
+            "language": "html",
+            "code": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Lumi Admin</title>\n    <style>body { margin: 0; }</style>\n  </head>\n  <body>\n    <div id=\"app\" data-theme=\"light\"></div>\n    <script type=\"module\" src=\"/src/main.tsx\"></script>\n  </body>\n</html>\n"
+          },
+          {
+            "title": "README.md",
+            "language": "markdown",
+            "code": "# Orders\n\nLists **paid** orders from the last _28 days_.\n\n- Filter by `status`\n- Export as [CSV](https://example.com/export)\n\n> Totals are in the store currency.\n"
+          }
+        ],
+        "maxHeight": 320
+      },
+      "children": []
+    },
+    "card-lines": {
+      "type": "Example",
+      "props": {
+        "id": "line-numbers",
+        "title": {
+          "$t": "File name and line numbers"
+        },
+        "description": {
+          "$t": "A header with the file name and copy button; marked lines carry the brand tint"
+        }
+      },
+      "children": [
+        "code-lines"
+      ]
+    },
+    "code-lines": {
+      "type": "CodeBlock",
+      "props": {
+        "title": "handlers/orders.go",
+        "language": "go",
+        "code": "package handlers\n\nimport (\n\t\"encoding/json\"\n\t\"net/http\"\n)\n\n// ListOrders answers the query the orders page sends on load.\nfunc ListOrders(w http.ResponseWriter, r *http.Request) {\n\tstatus := r.URL.Query().Get(\"status\")\n\torders, total, err := store.Orders(r.Context(), status)\n\tif err != nil {\n\t\thttp.Error(w, err.Error(), http.StatusInternalServerError)\n\t\treturn\n\t}\n\tw.Header().Set(\"Content-Type\", \"application/json\")\n\tjson.NewEncoder(w).Encode(map[string]any{\"data\": orders, \"meta\": map[string]int{\"total\": total}})\n}\n",
+        "showLineNumbers": true,
+        "highlightLines": [
+          10,
+          11
+        ],
+        "maxHeight": 320
+      },
+      "children": []
+    },
+    "card-tabs": {
+      "type": "Example",
+      "props": {
+        "id": "files",
+        "title": {
+          "$t": "Spec and handler"
+        },
+        "description": {
+          "$t": "Several files as tabs: the page's native Spec next to the Go handler that answers it"
+        }
+      },
+      "children": [
+        "code-tabs"
+      ]
+    },
+    "code-tabs": {
+      "type": "CodeBlock",
+      "props": {
+        "showLineNumbers": true,
+        "files": [
+          {
+            "title": "orders.json",
+            "language": "json",
+            "code": "{\n  \"root\": \"orders\",\n  \"state\": { \"filters\": { \"status\": \"paid\" } },\n  \"elements\": {\n    \"orders\": {\n      \"type\": \"Table\",\n      \"props\": {\n        \"rows\": { \"$state\": \"/orders/data\" },\n        \"pageSize\": 20,\n        \"selectable\": true\n      },\n      \"on\": { \"rowClick\": { \"action\": \"navigate\", \"params\": { \"to\": \"/orders/{id}\" } } }\n    }\n  }\n}"
+          },
+          {
+            "title": "orders.go",
+            "language": "go",
+            "code": "package handlers\n\nimport (\n\t\"encoding/json\"\n\t\"net/http\"\n)\n\n// ListOrders answers the query the orders page sends on load.\nfunc ListOrders(w http.ResponseWriter, r *http.Request) {\n\tstatus := r.URL.Query().Get(\"status\")\n\torders, total, err := store.Orders(r.Context(), status)\n\tif err != nil {\n\t\thttp.Error(w, err.Error(), http.StatusInternalServerError)\n\t\treturn\n\t}\n\tw.Header().Set(\"Content-Type\", \"application/json\")\n\tjson.NewEncoder(w).Encode(map[string]any{\"data\": orders, \"meta\": map[string]int{\"total\": total}})\n}\n"
+          }
+        ],
+        "maxHeight": 320
+      },
+      "children": []
+    },
+    "card-wrap": {
+      "type": "Example",
+      "props": {
+        "id": "long-lines",
+        "title": {
+          "$t": "Long lines"
+        },
+        "description": {
+          "$t": "Long lines scroll sideways by default; wrap breaks them inside the block"
+        }
+      },
+      "children": [
+        "wrap-stack"
+      ]
+    },
+    "wrap-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "wrap-label-scroll",
+        "code-scroll",
+        "wrap-label-wrap",
+        "code-wrap"
+      ]
+    },
+    "wrap-label-scroll": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Scroll"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "code-scroll": {
+      "type": "CodeBlock",
+      "props": {
+        "language": "json",
+        "code": "{\"id\":\"ORD-00042\",\"customer\":{\"name\":\"Avery Chen\",\"email\":\"avery.chen@example.com\"},\"items\":[{\"sku\":\"LMP-001\",\"qty\":2,\"price\":49.5},{\"sku\":\"LMP-014\",\"qty\":1,\"price\":129}],\"note\":\"Leave the parcel at the front desk if nobody answers the door.\"}",
+        "showLineNumbers": true
+      },
+      "children": []
+    },
+    "wrap-label-wrap": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Wrap"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "code-wrap": {
+      "type": "CodeBlock",
+      "props": {
+        "language": "json",
+        "code": "{\"id\":\"ORD-00042\",\"customer\":{\"name\":\"Avery Chen\",\"email\":\"avery.chen@example.com\"},\"items\":[{\"sku\":\"LMP-001\",\"qty\":2,\"price\":49.5},{\"sku\":\"LMP-014\",\"qty\":1,\"price\":129}],\"note\":\"Leave the parcel at the front desk if nobody answers the door.\"}",
+        "showLineNumbers": true,
+        "wrap": true
+      },
+      "children": []
+    },
+    "card-plain": {
+      "type": "Example",
+      "props": {
+        "id": "plain",
+        "title": {
+          "$t": "Plain and collapsible"
+        },
+        "description": {
+          "$t": "Without a title the copy button floats in the corner; an unknown language shows plain text; collapsible folds the code behind its title"
+        }
+      },
+      "children": [
+        "plain-stack"
+      ]
+    },
+    "plain-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "code-plain",
+        "code-collapsible"
+      ]
+    },
+    "code-plain": {
+      "type": "CodeBlock",
+      "props": {
+        "language": "http",
+        "code": "GET /api/orders?status=paid&page=1 HTTP/1.1\nAccept: application/json"
+      },
+      "children": []
+    },
+    "code-collapsible": {
+      "type": "CodeBlock",
+      "props": {
+        "title": {
+          "$t": "View response"
+        },
+        "language": "json",
+        "collapsible": true,
+        "code": "{\n  \"data\": [{ \"id\": 1, \"number\": \"ORD-00001\" }],\n  \"meta\": { \"total\": 1 }\n}"
+      },
+      "children": []
+    },
+    "card-editor": {
+      "type": "Example",
+      "props": {
+        "id": "editor",
+        "title": {
+          "$t": "Editor bound to state"
+        },
+        "description": {
+          "$t": "The editor writes page state with $bindState and reports JSON syntax errors; the block below reads the same state"
+        }
+      },
+      "children": [
+        "editor-stack"
+      ]
+    },
+    "editor-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "field-config",
+        "code-mirror"
+      ]
+    },
+    "field-config": {
+      "type": "FormField",
+      "props": {
+        "name": "config",
+        "label": {
+          "$t": "List config (JSON)"
+        },
+        "help": {
+          "$t": "Tab indents; press Escape, then Tab, to move on"
+        }
+      },
+      "children": [
+        "editor-config"
+      ]
+    },
+    "editor-config": {
+      "type": "CodeEditor",
+      "props": {
+        "value": {
+          "$bindState": "/editor/config"
+        },
+        "language": "json",
+        "checkSyntax": true,
+        "minHeight": 160,
+        "ariaLabel": {
+          "$t": "List config (JSON)"
+        }
+      },
+      "children": []
+    },
+    "code-mirror": {
+      "type": "CodeBlock",
+      "props": {
+        "title": {
+          "$t": "Page state"
+        },
+        "language": "json",
+        "code": {
+          "$state": "/editor/config"
+        }
+      },
+      "children": []
+    },
+    "card-states": {
+      "type": "Example",
+      "props": {
+        "id": "editor-states",
+        "title": {
+          "$t": "Editor states"
+        },
+        "description": {
+          "$t": "Placeholder, read only, disabled and invalid editors keep the field's border, focus ring and error text"
+        }
+      },
+      "children": [
+        "states-stack"
+      ]
+    },
+    "states-stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "field-empty",
+        "field-readonly",
+        "field-disabled",
+        "field-invalid"
+      ]
+    },
+    "field-empty": {
+      "type": "FormField",
+      "props": {
+        "name": "handler",
+        "label": {
+          "$t": "Handler (TypeScript)"
+        }
+      },
+      "children": [
+        "editor-empty"
+      ]
+    },
+    "editor-empty": {
+      "type": "CodeEditor",
+      "props": {
+        "value": {
+          "$bindState": "/editor/handler"
+        },
+        "language": "typescript",
+        "placeholder": "export async function handle(request: Request) { … }",
+        "minHeight": 96,
+        "ariaLabel": {
+          "$t": "Handler (TypeScript)"
+        }
+      },
+      "children": []
+    },
+    "field-readonly": {
+      "type": "FormField",
+      "props": {
+        "name": "deployment",
+        "label": {
+          "$t": "Read only"
+        }
+      },
+      "children": [
+        "editor-readonly"
+      ]
+    },
+    "editor-readonly": {
+      "type": "CodeEditor",
+      "props": {
+        "defaultValue": "# Generated from the deployment; read only.\nregion: ap-east-1\nreplicas: 3",
+        "language": "yaml",
+        "readonly": true,
+        "minHeight": 72,
+        "ariaLabel": {
+          "$t": "Read only"
+        }
+      },
+      "children": []
+    },
+    "field-disabled": {
+      "type": "FormField",
+      "props": {
+        "name": "query",
+        "label": {
+          "$t": "Disabled"
+        }
+      },
+      "children": [
+        "editor-disabled"
+      ]
+    },
+    "editor-disabled": {
+      "type": "CodeEditor",
+      "props": {
+        "defaultValue": "SELECT count(*) FROM orders WHERE status = 'paid';",
+        "language": "sql",
+        "disabled": true,
+        "minHeight": 48,
+        "showLineNumbers": false,
+        "ariaLabel": {
+          "$t": "Disabled"
+        }
+      },
+      "children": []
+    },
+    "field-invalid": {
+      "type": "FormField",
+      "props": {
+        "name": "broken",
+        "label": {
+          "$t": "Invalid JSON"
+        }
+      },
+      "children": [
+        "editor-invalid"
+      ]
+    },
+    "editor-invalid": {
+      "type": "CodeEditor",
+      "props": {
+        "value": {
+          "$bindState": "/editor/broken"
+        },
+        "language": "json",
+        "checkSyntax": true,
+        "minHeight": 96,
+        "ariaLabel": {
+          "$t": "Invalid JSON"
+        }
+      },
+      "children": []
+    }
+  }
+}

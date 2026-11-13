@@ -1,0 +1,145 @@
+{
+  "root": "stack",
+  "state": {
+    "outage": false,
+    "orders": {
+      "data": [],
+      "total": 0,
+      "loading": true
+    }
+  },
+  "elements": {
+    "stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "outage",
+        "query",
+        "failure",
+        "table"
+      ]
+    },
+    "outage": {
+      "type": "Switch",
+      "props": {
+        "label": {
+          "$t": "Answer with 500"
+        },
+        "value": {
+          "$bindState": "/outage"
+        }
+      },
+      "children": []
+    },
+    "query": {
+      "type": "Query",
+      "props": {
+        "resource": "orders",
+        "pagination": {
+          "page": 1,
+          "pageSize": 3
+        },
+        "meta": {
+          "__error": {
+            "$cond": {
+              "$state": "/outage"
+            },
+            "$then": 1,
+            "$else": null
+          }
+        },
+        "resultPath": "/orders"
+      },
+      "children": []
+    },
+    "failure": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "visible": {
+        "$state": "/orders/error"
+      },
+      "children": [
+        "failure-alert",
+        "retry"
+      ]
+    },
+    "failure-alert": {
+      "type": "Alert",
+      "props": {
+        "tone": "danger",
+        "title": {
+          "$t": "Orders unavailable"
+        },
+        "message": {
+          "$state": "/orders/error/message"
+        }
+      },
+      "children": []
+    },
+    "retry": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Retry"
+        },
+        "appearance": "outline",
+        "icon": "refresh"
+      },
+      "on": {
+        "press": {
+          "action": "invalidate",
+          "params": {
+            "resource": "orders"
+          }
+        }
+      },
+      "children": []
+    },
+    "table": {
+      "type": "Table",
+      "props": {
+        "rows": {
+          "$state": "/orders/data"
+        },
+        "loading": {
+          "$state": "/orders/loading"
+        },
+        "columns": [
+          {
+            "field": "number",
+            "label": {
+              "$t": "Order"
+            },
+            "kind": "code",
+            "width": "8rem"
+          },
+          {
+            "field": "customer",
+            "label": {
+              "$t": "Customer"
+            },
+            "truncate": true
+          },
+          {
+            "field": "total",
+            "label": {
+              "$t": "Total"
+            },
+            "kind": "currency",
+            "currency": "USD",
+            "width": "7rem"
+          }
+        ]
+      },
+      "visible": {
+        "$state": "/orders/error",
+        "not": true
+      },
+      "children": []
+    }
+  }
+}

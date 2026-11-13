@@ -1,0 +1,88 @@
+/* Popover, Popconfirm, Image, Lightbox and Carousel. Popover panels take the
+   shared frosted panel surface; nothing here owns a colour of its own. */
+
+/* On-media controls frost what is behind them, as tooltips do. */
+[data-glass] {
+  background: var(--lumi-glass);
+  -webkit-backdrop-filter: var(--lumi-glass-filter);
+  backdrop-filter: var(--lumi-glass-filter);
+}
+[data-lumi-popover] {
+  --lumi-radius-item: max(var(--lumi-radius-sm), calc(var(--lumi-radius-overlay) - var(--lumi-popover-padding)));
+}
+
+/* Pointing at a glass control turns it solid. */
+:is([data-slot="lightbox-control"], [data-slot="lightbox-zoom"], [data-slot="carousel-previous"], [data-slot="carousel-next"]):not(:disabled):hover {
+  background: var(--popover);
+}
+[data-slot="image-preview-hint"] {
+  background: var(--lumi-glass);
+  -webkit-backdrop-filter: var(--lumi-glass-filter);
+  backdrop-filter: var(--lumi-glass-filter);
+}
+
+/* The viewer: a scrim near the darkest neutral of the theme, so photos read
+   true in light and dark alike; text and controls sit on it, not on the page. */
+:root,
+[data-theme="light"] {
+  --lumi-lightbox-scrim: color-mix(in oklab, var(--foreground) 96%, transparent);
+  --lumi-lightbox-fg: var(--background);
+  --lumi-lightbox-muted: color-mix(in oklab, var(--background) 72%, transparent);
+}
+[data-theme="dark"] {
+  --lumi-lightbox-scrim: color-mix(in oklab, var(--background) 96%, transparent);
+  --lumi-lightbox-fg: var(--foreground);
+  --lumi-lightbox-muted: color-mix(in oklab, var(--foreground) 72%, transparent);
+}
+/* The viewer fills the screen, so it takes the top layer (style.css) or a
+   toast would cover its toolbar. */
+[data-slot="lightbox-scrim"] {
+  z-index: var(--lumi-z-lightbox);
+  background: var(--lumi-lightbox-scrim);
+}
+[data-slot="lightbox"] {
+  z-index: var(--lumi-z-lightbox);
+  color: var(--lumi-lightbox-fg);
+}
+[data-slot="lightbox"] [data-glass] {
+  color: var(--popover-foreground);
+}
+[data-slot="lightbox-caption"] {
+  color: var(--lumi-lightbox-muted);
+}
+[data-slot="lightbox-image"] {
+  transition: transform 0.18s ease-out, opacity 0.2s ease-out;
+  transform-origin: center;
+  will-change: transform;
+}
+[data-slot="lightbox-stage"][data-zoomed] [data-slot="lightbox-image"] {
+  transition: opacity 0.2s ease-out;
+}
+
+[data-slot="carousel-content"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: var(--lumi-radius-panel);
+}
+
+/* Arrows on a slide only appear when the carousel is pointed at or focused;
+   touch has no hover, so they stay. */
+@media (hover: hover) {
+  [data-slot="carousel"] :is([data-slot="carousel-previous"], [data-slot="carousel-next"]) {
+    opacity: 0;
+    transition: opacity 0.15s ease-out;
+  }
+  [data-slot="carousel"]:is(:hover, :focus-within) :is([data-slot="carousel-previous"], [data-slot="carousel-next"]):not(:disabled) {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="lightbox-image"],
+  [data-slot="carousel"] :is([data-slot="carousel-previous"], [data-slot="carousel-next"]) {
+    transition: none;
+  }
+  [data-slot="carousel-content"] {
+    scroll-behavior: auto;
+  }
+}

@@ -1,0 +1,92 @@
+---
+title: "ScrollArea"
+description: "在固定或最大高度内滚动子元素，可纵向、横向或双向，滚动条细窄且跟随主题。"
+---
+
+<ComponentPreview name="ScrollArea" />
+
+在固定或最大高度内滚动子元素，可纵向、横向或双向，滚动条细窄且跟随主题。视口可以获得键盘焦点；用 `ariaLabel` 给它命名。
+
+## 示例
+
+```json
+{
+  "root": "scrollarea-35",
+  "elements": {
+    "scrollarea-35": {
+      "type": "ScrollArea",
+      "props": { "maxHeight": 120, "ariaLabel": "Release notes" },
+      "children": [
+        "scrollarea-35-line-1",
+        "scrollarea-35-line-2",
+        "scrollarea-35-line-3",
+        "scrollarea-35-line-4",
+        "scrollarea-35-line-5",
+        "scrollarea-35-line-6",
+        "scrollarea-35-line-7",
+        "scrollarea-35-line-8"
+      ]
+    },
+    "scrollarea-35-line-1": {
+      "type": "Text",
+      "props": { "text": "v2.4 adds saved filters to every list." },
+      "children": []
+    },
+    "scrollarea-35-line-2": {
+      "type": "Text",
+      "props": { "text": "v2.3 speeds up exports by 40%." },
+      "children": []
+    },
+    "scrollarea-35-line-3": {
+      "type": "Text",
+      "props": { "text": "v2.2 brings dark mode to reports." },
+      "children": []
+    },
+    "scrollarea-35-line-4": {
+      "type": "Text",
+      "props": { "text": "v2.1 adds bulk tagging." },
+      "children": []
+    },
+    "scrollarea-35-line-5": {
+      "type": "Text",
+      "props": { "text": "v2.0 introduces the new dashboard." },
+      "children": []
+    },
+    "scrollarea-35-line-6": {
+      "type": "Text",
+      "props": { "text": "v1.9 adds two-factor sign-in." },
+      "children": []
+    },
+    "scrollarea-35-line-7": {
+      "type": "Text",
+      "props": { "text": "v1.8 supports CSV import." },
+      "children": []
+    },
+    "scrollarea-35-line-8": {
+      "type": "Text",
+      "props": { "text": "v1.7 adds audit history." },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `orientation` | 方向：`horizontal` 横向，`vertical` 纵向。 | `"vertical" \| "horizontal" \| "both" \| null` | `"horizontal"` |
+| `maxHeight` | 最大高度，像素数字或 CSS 长度；超出时滚动。 | `number \| string \| null` |  |
+| `height` | 固定高度，像素数字或 CSS 长度。 | `number \| string \| null` |  |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string \| null` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：`default`

@@ -1,0 +1,38 @@
+{
+  "name": "@duxweb/lumi-admin-demo",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "pnpm run build:styles && vite build",
+    "build:browser": "pnpm run build:styles && VITE_LUMI_ADMIN_MOCK=browser vite build",
+    "build:styles": "pnpm -F @duxweb/lumi-admin -F @duxweb/lumi-ui build:css",
+    "mock": "node mock/server.ts",
+    "test:mock": "vitest run --root ../.. apps/admin/test/mock.test.ts",
+    "dev": "pnpm run build:styles && vite --host 127.0.0.1 --port 5176",
+    "preview": "vite preview --host 127.0.0.1 --port 4176",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc -p mock/tsconfig.json"
+  },
+  "dependencies": {
+    "@duxweb/lumi": "workspace:*",
+    "@duxweb/lumi-admin": "workspace:*",
+    "@duxweb/lumi-schema-gallery": "workspace:*",
+    "@duxweb/lumi-ui": "workspace:*",
+    "@hugeicons/core-free-icons": "catalog:",
+    "@hugeicons/react": "catalog:",
+    "@json-render/core": "catalog:",
+    "@json-render/react": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "@visactor/vchart": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-router": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "vite": "catalog:"
+  }
+}

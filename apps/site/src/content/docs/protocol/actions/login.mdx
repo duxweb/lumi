@@ -1,0 +1,40 @@
+---
+title: "login"
+description: "登录，并在完成前清空 Lumi 的查询缓存，上一个账号的数据不会留到新会话里。"
+---
+
+登录，并在完成前清空 Lumi 的查询缓存，上一个账号的数据不会留到新会话里。
+
+## 用法
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "登录" },
+      "on": {
+        // 点击按钮时执行
+        "press": {
+          "action": "login",
+          "params": {
+            // 交给 AuthProvider.login 的值：这里是表单里的账号和密码
+            "params": {
+              "username": { "$state": "/form/username" },
+              "password": { "$state": "/form/password" }
+            }
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| `params` | 登录或退出时交给 AuthProvider 的参数。 | `object` |

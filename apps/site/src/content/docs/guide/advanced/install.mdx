@@ -1,0 +1,55 @@
+---
+title: "npm 安装"
+description: "用 create-lumi 新建 React + TypeScript 项目，或在已有项目里安装 Lumi 的三个包。"
+---
+
+需要自己的 React 组件、TypeScript 类型或第三方依赖时，用 npm 安装。JSON 页面的写法完全不变。
+
+## 新建项目
+
+```sh
+# 新建项目 my-app
+npm create @duxweb/lumi@latest my-app
+cd my-app
+# 安装依赖
+npm install
+# 启动开发服务器
+npm run dev
+```
+
+生成的项目包含：
+
+| 文件 | 作用 |
+| --- | --- |
+| `src/catalog.mjs` | 应用的组件目录。应用和 `lumi-check` 都读它，校验结果和运行时一致。 |
+| `src/pages/home.json` | 第一个页面。 |
+| `src/App.tsx` | 把目录、组件实现和页面组合起来。 |
+| `.claude/skills/lumi`、`.agents/skills/lumi` | 给 AI 的 [Lumi Skill](/ai/skill/)。 |
+
+`npm run check` 校验页面。不需要 AI 文件时加 `--no-ai`。
+
+## 在已有项目里安装
+
+```sh
+# Lumi 的三个包，加上它们共用的依赖
+npm install @duxweb/lumi @duxweb/lumi-ui @duxweb/lumi-admin \
+  @json-render/core @json-render/react @tanstack/react-query react react-dom zod
+```
+
+上面这行够 npm 用：它会自动装上各包声明的 peer 依赖。pnpm（严格模式）和 yarn 不会，需要把用到的包的 peer 也写上：
+
+| 包 | 还需要 |
+| --- | --- |
+| `@duxweb/lumi-ui` | `radix-ui`、`vaul`、`date-fns`、`react-day-picker`、`@react-input/mask`、`@tanstack/react-table`、`@hugeicons/react`、`@hugeicons/core-free-icons`；用图表时再加 `@visactor/vchart` |
+| `@duxweb/lumi` | `@tanstack/query-core`；用 JSON Schema 校验时再加 `ajv`、`ajv-formats` |
+| `@duxweb/lumi-admin` | `react-router`、`@hugeicons/react`、`@hugeicons/core-free-icons` |
+
+| 只要 | 安装 |
+| --- | --- |
+| 组件 | `@duxweb/lumi-ui` |
+| 组件和数据服务 | 再加 `@duxweb/lumi` |
+| 完整后台 | 再加 `@duxweb/lumi-admin` |
+
+样式各引入一次：`@duxweb/lumi-ui/style.css`，用后台时再加 `@duxweb/lumi-admin/style.css`。
+
+接下来：[React 集成](/guide/advanced/react/)。

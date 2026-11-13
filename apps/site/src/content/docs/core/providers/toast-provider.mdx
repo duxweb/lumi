@@ -1,0 +1,17 @@
+---
+title: "ToastProvider"
+description: "ToastProvider 接口的方法、参数和返回值。"
+---
+
+Draws toasts. Lumi calls it from the `toast` action, `useToast()` and its
+automatic error reports; the UI layer supplies the drawing (Lumi UI ships a
+toaster), so Lumi stays free of any component library.
+
+```typescript
+interface ToastProvider
+```
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `close` | `((key: string) => void) \| undefined` | 否 | Closes the toast with this key. |
+| `open` | `(params: ToastParams) => string` | 是 | Shows a toast and answers its key. |

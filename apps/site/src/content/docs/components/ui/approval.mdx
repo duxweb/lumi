@@ -1,0 +1,81 @@
+---
+title: "Approval"
+description: "在已注册的动作执行前请读者确认：用平白的话说明它做什么（action 只给宿主识别，不显示），再列出影响范围——受影响条目的清单 items、带图片和金额的商品行 lines、标签加值的 fields（地址、配送、退款去向）和 total——以及 Approve、Reject 和（editable 时）Edit 按钮。"
+---
+
+<ComponentPreview name="Approval" />
+
+在已注册的动作执行前请读者确认：用平白的话说明它做什么（`action` 只给宿主识别，不显示），再列出影响范围——受影响条目的清单 `items`、带图片和金额的商品行 `lines`、标签加值的 `fields`（地址、配送、退款去向）和 `total`——以及 Approve、Reject 和（`editable` 时）Edit 按钮。绑定 `status` 和 `selected`：Approve 写入 `approved` 并触发 `approve`，Reject 写入 `rejected` 并触发 `reject`；在 `on.approve` 中执行动作。要等待动作完成，先把 `status` 设为 `running`（按钮锁定，Approve 显示进度），再设为 `approved`，或设为 `failed` 并给出 `reason`，卡片保持打开以便重试。`tone` 标记有风险的改动，`danger` 让 Approve 变红。确认、拒绝或过期后，卡片折叠成一行，显示决定和 `reason`，展开可看到决定的内容。
+
+## 示例
+
+```json
+{
+  "root": "approval",
+  "elements": {
+    "approval": {
+      "type": "Approval",
+      "props": {
+        "title": "Place this order",
+        "description": "Review the items before paying",
+        "action": "orders.create",
+        "status": { "$bindState": "/approval" },
+        "lines": [
+          {
+            "title": "Linen shirt",
+            "description": "Size M x1",
+            "amount": "¥299"
+          },
+          {
+            "title": "Canvas tote",
+            "description": "Natural x2",
+            "amount": "¥158"
+          }
+        ],
+        "fields": [
+          {
+            "label": "Ship to",
+            "value": "Shanghai, Xuhui",
+            "description": "Avery Chen"
+          },
+          { "label": "Shipping", "value": "Free", "tone": "success" }
+        ],
+        "total": { "value": "¥457" },
+        "approveLabel": "Pay ¥457"
+      },
+      "children": []
+    }
+  },
+  "state": { "approval": "pending" }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `title`（必填） | 要确认的事情，如 `发送发货提醒`。 | `string` |  |
+| `description` | 执行后会发生什么、不会发生什么。 | `string` |  |
+| `action` | 批准后执行的已注册动作名，如 `orders.remind`，以代码样式显示。 | `string` |  |
+| `items` | 受影响的条目，每项 `{ id, label, description?, selected?, disabled? }`，以复选列表显示，可以缩小范围；超过 5 项时折叠在“再显示 n 项”后。 字段：`id`、`label`、`description?`、`selected?`、`disabled?` | `object[]` |  |
+| `lines` | 商品或明细行，每项 `{ id?, title, description?, image?, amount? }`，带缩略图和金额，适合确认下单。 字段：`id?`、`title`、`description?`、`image?`、`amount?` | `object[]` |  |
+| `fields` | 标签与值的行，每项 `{ label, value, description?, tone? }`，以带外框的描述列表显示；`tone` 为 `success` 或 `danger` 时值着色。 字段：`label`、`value`、`description?`、`tone?` | `object[]` |  |
+| `total` | 合计 `{ label?, value }`，显示在底部；提供后按钮占满宽度。 字段：`label?`、`value` | `object` |  |
+| `selected` | 已选条目的 id 列表；不填时为所有未标记 `selected: false` 的条目。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string[]` |  |
+| `tone` | 风险：`neutral` 普通，`warning` 难以撤销，`danger` 破坏性（批准按钮变红）。 | `"neutral" \| "warning" \| "danger"` | `"neutral"` |
+| `status`（必填） | `pending` 等待确认（显示按钮）、`running` 执行中（按钮锁定）、`failed` 未能完成（保持展开并显示 `reason`）、`approved` 已批准、`rejected` 已拒绝、`expired` 已过期；决定后折叠为一行，点开可回看。批准写入 `approved` 并触发 `approve`，拒绝写入 `rejected` 并触发 `reject`。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `"pending" \| "running" \| "approved" \| "rejected" \| "expired" \| "failed"` |  |
+| `reason` | 决定或过期后显示的说明，如 `已发送 3 条提醒`。 | `string` |  |
+| `approveLabel` | 批准按钮的文字；不填时为“批准（n）”。 | `string` |  |
+| `rejectLabel` | 拒绝按钮的文字。 | `string` |  |
+| `editable` | 显示“修改”按钮，按下触发 `edit`，用于请 Agent 调整方案。 | `boolean` | `false` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`approve`、`reject`、`edit`、`change`
+- 插槽：无

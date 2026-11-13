@@ -1,0 +1,38 @@
+---
+title: "RecordPicker"
+description: "表单字段，值是一条记录的键（multiple 时是键的列表），在对话框里从可搜索、分页的表格中选取。"
+---
+
+表单字段，值是一条记录的键（`multiple` 时是键的列表），在对话框里从可搜索、分页的表格中选取。已选的键显示为标签；预先选中的键按 ID 读取，以便显示其名称。`searchField` 加一个搜索框，用 `like` 过滤。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `resource`（必填） | 数据资源名，如 `orders`。DataProvider 据此拼出接口地址。 | `string` |  |
+| `dataProviderName` | 使用哪个 DataProvider。只有一个时不用填。 | `string` |  |
+| `meta` | 原样传给 DataProvider 的附加参数，如自定义请求头或查询字段。 | `object` |  |
+| `filters` | 筛选条件，每项 `{ field, operator, value }`，会传给 DataProvider。 字段：`field`、`operator`、`value` | `object[]` |  |
+| `columns`（必填） | 弹窗表格的列，每项 `{ field, label }`，同 DataGrid。 字段：`field`、`label?`、`width?`、`sortable?`、`align?`、`kind?`、`valueMap?`、`toneMap?`、`descriptionField?`、`imageField?`、`labelField?`、`initials?`、`truncate?`、`wrap?`、`currency?`、`actions?` | `object[]` |  |
+| `rowKey` | 每行数据里用作唯一键的字段名。 | `string` | `"id"` |
+| `labelField` | 已选记录显示的字段；不填时依次取 `label`、`name`、`title`，再退回主键。 | `string` |  |
+| `searchField` | 弹窗搜索框按此字段做 `like` 筛选；不填则没有搜索框。 | `string` |  |
+| `multiple` | 允许选择多个。 | `boolean` | `false` |
+| `value` | 当前值。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `null \| string \| number \| (string \| number)[]` |  |
+| `placeholder` | 没有值时显示的提示文字。 | `string` |  |
+| `title` | 标题。 | `string` |  |
+| `description` | 标题下方的一行说明。 | `string` |  |
+| `pageSize` | 每页条数。 | `integer` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean` | `false` |
+| `invalid` | 标记为校验未通过，显示错误样式。通常由 FormField 自动设置。 | `boolean` | `false` |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+
+通用参数：
+
+- `checks`：json-render 原生校验规则，如 `{ "type": "required", "message": "请填写" }`，提交或失焦时执行。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：无

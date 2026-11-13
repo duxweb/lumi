@@ -1,0 +1,26 @@
+---
+title: "用 AI 写页面"
+description: "让 AI 写 Lumi 页面的流程：查目录、写 JSON、校验、改错，以及需要的 Skill 和命令行工具。"
+---
+
+AI 写的是 JSON，不是代码，所以每一步都能检查：只能用目录里有的组件，写完马上校验，错误指到具体字段。
+
+## 流程
+
+1. **查目录**：有哪些组件、每个组件有哪些参数和事件。
+2. **写页面**：输出 json-render Spec。
+3. **校验**：用和运行时同一份目录检查，拿到带路径的错误列表。
+4. **改错**：照着错误路径修改，直到校验通过。
+5. **看效果**：刷新浏览器，不用编译。
+
+## 需要的工具
+
+| 工具 | 作用 |
+| --- | --- |
+| [Lumi Skill](/ai/skill/) | 告诉 AI 上面的流程和 Lumi 的写法。`create-lumi` 新建的项目自带。 |
+| [lumi-check](/ai/checker/) | 命令行工具：查组件目录、查某个组件的参数、校验页面。AI 和 CI 都用它。 |
+| [llms.txt](/llms.txt) | 给 AI 读的文档摘要；[llms-full.txt](/llms-full.txt) 是全部文档。 |
+
+## 用 CDN、没有 npm 项目时
+
+把 [llms-full.txt](/llms-full.txt) 交给 AI，再让它用 `npx -y @duxweb/lumi-check page.json` 校验写出的页面。默认目录就是 CDN 版包含的全部组件和动作。

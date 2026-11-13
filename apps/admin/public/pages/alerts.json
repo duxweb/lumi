@@ -1,0 +1,525 @@
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Alerts & progress"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "sections"
+      ]
+    },
+    "alert-1": {
+      "type": "Alert",
+      "props": {
+        "tone": "neutral",
+        "title": {
+          "$t": "Draft saved"
+        },
+        "message": {
+          "$t": "Your changes are kept on this device until you publish"
+        }
+      },
+      "children": []
+    },
+    "alert-2": {
+      "type": "Alert",
+      "props": {
+        "tone": "primary",
+        "title": {
+          "$t": "New version available"
+        },
+        "message": {
+          "$t": "Reload to get the latest dashboard widgets"
+        }
+      },
+      "children": []
+    },
+    "alert-3": {
+      "type": "Alert",
+      "props": {
+        "tone": "success",
+        "title": {
+          "$t": "Order shipped"
+        },
+        "message": {
+          "$t": "The customer receives a tracking link by email"
+        }
+      },
+      "children": []
+    },
+    "alert-4": {
+      "type": "Alert",
+      "props": {
+        "tone": "warning",
+        "title": {
+          "$t": "Stock running low"
+        },
+        "message": {
+          "$t": "Only 3 left of SKU-0002; reorder before Friday"
+        }
+      },
+      "children": []
+    },
+    "alert-5": {
+      "type": "Alert",
+      "props": {
+        "tone": "danger",
+        "title": {
+          "$t": "Payment failed"
+        },
+        "message": {
+          "$t": "The card was declined. Ask the customer for another method"
+        }
+      },
+      "children": []
+    },
+    "alert-6": {
+      "type": "Alert",
+      "props": {
+        "tone": "info",
+        "title": {
+          "$t": "Maintenance window"
+        },
+        "message": {
+          "$t": "Exports pause on Sunday from 02:00 to 03:00 UTC"
+        }
+      },
+      "children": []
+    },
+    "stack-7": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 360,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "alert-1",
+        "alert-2",
+        "alert-3",
+        "alert-4",
+        "alert-5",
+        "alert-6"
+      ]
+    },
+    "card-8": {
+      "type": "Example",
+      "props": {
+        "id": "alerts",
+        "title": {
+          "$t": "Alerts"
+        },
+        "description": {
+          "$t": "Each tone with a title and the next step in the message"
+        }
+      },
+      "children": [
+        "stack-7"
+      ]
+    },
+    "alert-9": {
+      "type": "Alert",
+      "props": {
+        "tone": "info",
+        "message": {
+          "$t": "Prices are shown in USD"
+        }
+      },
+      "children": []
+    },
+    "alert-10": {
+      "type": "Alert",
+      "props": {
+        "tone": "warning",
+        "message": {
+          "$t": "Two orders need an address check"
+        }
+      },
+      "children": []
+    },
+    "alert-11": {
+      "type": "Alert",
+      "props": {
+        "tone": "info",
+        "title": {
+          "$t": "Dismissible"
+        },
+        "message": {
+          "$t": "Close this notice with the button on the right"
+        },
+        "closable": true
+      },
+      "children": []
+    },
+    "alert-11-message": {
+      "type": "Alert",
+      "props": {
+        "tone": "success",
+        "message": {
+          "$t": "Export finished; the file is in your downloads"
+        },
+        "closable": true
+      },
+      "children": []
+    },
+    "stack-12": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "alert-9",
+        "alert-10",
+        "alert-11",
+        "alert-11-message"
+      ]
+    },
+    "card-13": {
+      "type": "Example",
+      "props": {
+        "id": "dismissible-alerts",
+        "title": {
+          "$t": "Message only and dismissible"
+        },
+        "description": {
+          "$t": "Short notices drop the title; a closable alert goes away for this visit"
+        }
+      },
+      "children": [
+        "stack-12"
+      ]
+    },
+    "progress-14": {
+      "type": "Progress",
+      "props": {
+        "value": 72,
+        "label": {
+          "$t": "Storage used"
+        },
+        "tone": "default"
+      },
+      "children": []
+    },
+    "progress-15": {
+      "type": "Progress",
+      "props": {
+        "value": 45,
+        "label": {
+          "$t": "Onboarding"
+        },
+        "tone": "brand"
+      },
+      "children": []
+    },
+    "progress-16": {
+      "type": "Progress",
+      "props": {
+        "value": 100,
+        "label": {
+          "$t": "Import complete"
+        },
+        "tone": "success"
+      },
+      "children": []
+    },
+    "progress-17": {
+      "type": "Progress",
+      "props": {
+        "value": 86,
+        "label": {
+          "$t": "API quota"
+        },
+        "tone": "warning"
+      },
+      "children": []
+    },
+    "progress-18": {
+      "type": "Progress",
+      "props": {
+        "value": 97,
+        "label": {
+          "$t": "Disk almost full"
+        },
+        "tone": "danger"
+      },
+      "children": []
+    },
+    "stack-19": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "progress-14",
+        "progress-15",
+        "progress-16",
+        "progress-17",
+        "progress-18"
+      ]
+    },
+    "card-20": {
+      "type": "Example",
+      "props": {
+        "id": "progress",
+        "title": {
+          "$t": "Progress"
+        },
+        "description": {
+          "$t": "A labelled bar in each tone; the value is announced with its label"
+        }
+      },
+      "children": [
+        "stack-19"
+      ]
+    },
+    "emptystate-21": {
+      "type": "EmptyState",
+      "props": {
+        "kind": "empty",
+        "compact": true,
+        "title": {
+          "$t": "No orders yet"
+        },
+        "reason": {
+          "$t": "No customer has checked out yet"
+        },
+        "nextStep": {
+          "$t": "Share your store link"
+        }
+      },
+      "children": [],
+      "slots": {
+        "actions": [
+          "emptystate-21-action"
+        ]
+      }
+    },
+    "emptystate-21-action": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Copy store link"
+        },
+        "appearance": "outline",
+        "size": "sm",
+        "icon": "copy-01"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Store link copied"
+            },
+            "tone": "success"
+          }
+        }
+      }
+    },
+    "emptystate-22": {
+      "type": "EmptyState",
+      "props": {
+        "kind": "error",
+        "compact": true,
+        "title": {
+          "$t": "Orders did not load"
+        },
+        "reason": {
+          "$t": "The server answered with an error"
+        },
+        "nextStep": {
+          "$t": "Try again in a moment"
+        }
+      },
+      "children": [],
+      "slots": {
+        "actions": [
+          "emptystate-22-action"
+        ]
+      }
+    },
+    "emptystate-22-action": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Try again"
+        },
+        "appearance": "outline",
+        "size": "sm",
+        "icon": "rotate-ccw"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Loading orders again"
+            },
+            "tone": "info"
+          }
+        }
+      }
+    },
+    "emptystate-23": {
+      "type": "EmptyState",
+      "props": {
+        "kind": "permission",
+        "compact": true,
+        "title": {
+          "$t": "No access"
+        },
+        "reason": {
+          "$t": "Your role cannot view refunds"
+        },
+        "nextStep": {
+          "$t": "Ask an administrator for access"
+        }
+      },
+      "children": [],
+      "slots": {
+        "actions": [
+          "emptystate-23-action"
+        ]
+      }
+    },
+    "emptystate-23-action": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Request access"
+        },
+        "appearance": "outline",
+        "size": "sm",
+        "icon": "key-round"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Access request sent"
+            },
+            "tone": "success"
+          }
+        }
+      }
+    },
+    "emptystate-24": {
+      "type": "EmptyState",
+      "props": {
+        "kind": "offline",
+        "compact": true,
+        "title": {
+          "$t": "You are offline"
+        },
+        "reason": {
+          "$t": "Changes stay on this device"
+        },
+        "nextStep": {
+          "$t": "Check the network"
+        }
+      },
+      "children": [],
+      "slots": {
+        "actions": [
+          "emptystate-24-action"
+        ]
+      }
+    },
+    "emptystate-24-action": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Retry"
+        },
+        "appearance": "outline",
+        "size": "sm",
+        "icon": "rotate-ccw"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Still offline. Changes stay on this device"
+            },
+            "tone": "warning"
+          }
+        }
+      }
+    },
+    "grid-25": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 200,
+        "gap": "sm"
+      },
+      "children": [
+        "emptystate-21",
+        "emptystate-22",
+        "emptystate-23",
+        "emptystate-24"
+      ]
+    },
+    "card-26": {
+      "type": "Example",
+      "props": {
+        "id": "empty-states",
+        "title": {
+          "$t": "Empty and error states"
+        },
+        "description": {
+          "$t": "Each state names what happened and what to do next"
+        }
+      },
+      "children": [
+        "grid-25"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Alerts & progress"
+        },
+        "description": {
+          "$t": "Inline messages in every tone, progress bars and the empty, error and permission states"
+        }
+      },
+      "children": []
+    },
+    "sections": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "card-8",
+        "sections-pair",
+        "card-26"
+      ]
+    },
+    "sections-pair": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "card-13",
+        "card-20"
+      ]
+    }
+  }
+}

@@ -1,0 +1,18 @@
+---
+title: "RouterProvider"
+description: "RouterProvider 接口的方法、参数和返回值。"
+---
+
+Router provider: the navigation the host app does, e.g. through react-router.
+
+```typescript
+interface RouterProvider
+```
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `back` | `() => void` | 是 | Goes back one history entry. |
+| `getCurrentPath` | `() => string` | 是 | The current path with its query. |
+| `go` | `(config: GoConfig) => void` | 是 | Opens an address. |
+| `parse` | `() => ParsedLocation` | 是 | The current address, taken apart. |
+| `subscribe` | `((listener: () => void) => () => void) \| undefined` | 否 | Notifies when the address changes. |

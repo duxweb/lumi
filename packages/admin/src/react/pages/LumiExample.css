@@ -1,0 +1,50 @@
+/* The anchor box of an example; its card fills the cell, so cards in a row end together. */
+.lumi-example {
+  display: grid;
+  min-width: 0;
+  scroll-margin-top: var(--lumi-space-4);
+}
+
+.lumi-example > [data-slot='card'] {
+  min-width: 0;
+}
+
+/* Cards in a row end together, and so does what they show: when the result is
+   one code block, or a vertical stack ending in code, the last code block that
+   can grow takes the card's free height instead of leaving a gap under the
+   content. A collapsible block (`<details>`) keeps its own height, so in a
+   stack the open block before it grows. Past its `maxHeight` code scrolls inside. */
+.lumi-example > [data-slot='card'] {
+  display: flex;
+  flex-direction: column;
+}
+
+.lumi-example [data-slot='card-content']:has(> .lumi-example__preview > :is([data-slot='code-block'], [data-slot='stack'][data-direction='vertical']):only-child) {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.lumi-example__preview:has(> :is([data-slot='code-block'], [data-slot='stack'][data-direction='vertical']):only-child),
+.lumi-example__preview > [data-slot='stack'][data-direction='vertical']:only-child {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.lumi-example__preview > [data-slot='code-block']:only-child,
+.lumi-example__preview > [data-slot='stack'][data-direction='vertical']:only-child > [data-slot='code-block']:not(details):not(:has(~ [data-slot='code-block']:not(details))) {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+:is(.lumi-example__preview > [data-slot='code-block']:only-child, .lumi-example__preview > [data-slot='stack'][data-direction='vertical']:only-child > [data-slot='code-block']:not(details):not(:has(~ [data-slot='code-block']:not(details)))) > .lumi-code-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+:is(.lumi-example__preview > [data-slot='code-block']:only-child, .lumi-example__preview > [data-slot='stack'][data-direction='vertical']:only-child > [data-slot='code-block']:not(details):not(:has(~ [data-slot='code-block']:not(details)))) .lumi-code-scroll {
+  flex: 1;
+}

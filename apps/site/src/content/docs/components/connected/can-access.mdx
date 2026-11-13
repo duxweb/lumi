@@ -1,0 +1,20 @@
+---
+title: "CanAccess"
+description: "只有权限提供者允许对 resource 执行 action 时才渲染子元素，否则渲染 fallback 插槽（判断期间什么也不显示）。"
+---
+
+只有权限提供者允许对 `resource` 执行 `action` 时才渲染子元素，否则渲染 `fallback` 插槽（判断期间什么也不显示）。设置 `resultPath` 时还会把 `{ can, reason, loading }` 写入状态：把按钮的 `disabled` 或任意元素的 `visible` 绑定到它，即可禁用或隐藏。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `resource`（必填） | 数据资源名，如 `orders`。DataProvider 据此拼出接口地址。 | `string` |  |
+| `action`（必填） | 要判断的操作，如 `edit`、`delete`，交给 accessProvider 的 `can`。 | `string` |  |
+| `params` | 一并传给 accessProvider 的附加参数，如 `{ "id": 7 }`。 | `object` |  |
+| `resultPath` | 把 `{ can, loading, reason }` 写入页面状态的路径，让按钮等其他元素据此禁用或提示。 | `string` |  |
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：`default`、`fallback`

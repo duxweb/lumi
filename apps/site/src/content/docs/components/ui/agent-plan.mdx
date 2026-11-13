@@ -1,0 +1,48 @@
+---
+title: "AgentPlan"
+description: "智能体打算按顺序执行的步骤，每步为 pending、running、done、failed 或 skipped，可带一行详情，排在时间线上，上方是带进度（如 3/5）的摘要行。"
+---
+
+<ComponentPreview name="AgentPlan" />
+
+智能体打算按顺序执行的步骤，每步为 `pending`、`running`、`done`、`failed` 或 `skipped`，可带一行详情，排在时间线上，上方是带进度（如 3/5）的摘要行。运行中的步骤闪烁；点摘要行可折叠列表。
+
+## 示例
+
+```json
+{
+  "root": "agent-plan",
+  "elements": {
+    "agent-plan": {
+      "type": "AgentPlan",
+      "props": {
+        "title": "Refund the failed orders",
+        "steps": [
+          { "id": "a", "label": "Find failed payments", "status": "done" },
+          { "id": "b", "label": "Check stock", "status": "running" },
+          { "id": "c", "label": "Issue refunds", "status": "pending" }
+        ]
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `title` | 计划标题。 | `string` | `"Plan"` |
+| `steps`（必填） | 按顺序的步骤，每项 `{ id, label, status, detail? }`，`status` 为 `pending`、`running`、`done`、`failed` 或 `skipped`。 字段：`id`、`label`、`status`、`detail?` | `object[]` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

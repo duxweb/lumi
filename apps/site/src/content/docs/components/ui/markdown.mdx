@@ -1,0 +1,45 @@
+---
+title: "Markdown"
+description: "把 Markdown 渲染成 Prose 样式的排版内容：标题、段落、有序、无序和任务列表、引用、带高亮的代码块、表格、分隔线、链接、强调和图片（![alt](src \"caption\")；单独占一行时成为带说明的插图）。"
+---
+
+<ComponentPreview name="Markdown" />
+
+把 Markdown 渲染成 Prose 样式的排版内容：标题、段落、有序、无序和任务列表、引用、带高亮的代码块、表格、分隔线、链接、强调和图片（`![alt](src "caption")`；单独占一行时成为带说明的插图）。源文本里的原始 HTML 保持为文字，只绘制 http(s)、mailto、tel 和相对地址的链接，以及 http(s) 和相对地址的图片。除非 `anchors` 为 false，标题会根据文字生成 id。
+
+## 示例
+
+```json
+{
+  "root": "markdown-1",
+  "elements": {
+    "markdown-1": {
+      "type": "Markdown",
+      "props": {
+        "size": "sm",
+        "content": "## Checklist\n\n- [x] Connect the payment provider\n- [ ] Invite the finance team\n\nRead the [setup guide](https://example.com/docs) for `webhook` details"
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `content`（必填） | Markdown 源文：标题、段落、有序/无序/任务列表、引用、围栏代码（带高亮）、表格、分隔线、链接、强调与图片 `![说明](地址 "图注")`，单独一行的图片显示为带图注的插图。源文中的 HTML 按纯文本显示；只渲染 http(s)、mailto、tel 与相对地址的链接，以及 http(s) 与相对地址的图片。 | `string` |  |
+| `size` | 正文字号，同 Prose。 | `"sm" \| "md" \| "lg"` | `"md"` |
+| `anchors` | 按标题文字生成 id，便于页内跳转和目录链接。 | `boolean` | `true` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

@@ -1,0 +1,28 @@
+---
+title: "AgentWorkspace"
+description: "与返回 AI SDK UI message stream 的智能体接口对话的整页界面：会话列表、对话内容和输入框，共用一个 Lumi 智能体会话。"
+---
+
+与返回 AI SDK UI message stream 的智能体接口对话的整页界面：会话列表、对话内容和输入框，共用一个 Lumi 智能体会话。会话来自 DataProvider 的 `resource`（默认 `agent-sessions`）：它的列表填充会话列表，`getOne` 加载一个会话，每次回复后刷新。当前打开的会话记录在 `param` 查询参数中（默认 `session`），刷新后仍然保留。双栏布局下会话列表占用外壳的第二列，替代模块菜单；其他布局下页面单独用一列显示。把它作为页面根元素使用。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `endpoint` | 对话接口地址，返回 AI SDK UI message stream（SSE）；相对路径按 DataProvider 的 API 地址解析。 | `string` | `"/agent/chat"` |
+| `resource` | 数据资源名，如 `orders`。DataProvider 据此拼出接口地址。 | `string` |  |
+| `dataProviderName` | 使用哪个 DataProvider。只有一个时不用填。 | `string` |  |
+| `body` | 每次请求附带的额外字段，如所选模型。 | `object` |  |
+| `param` | 记录当前会话的网址查询参数，刷新或分享链接时打开同一会话。 | `string` | `"session"` |
+| `placeholder` | 没有值时显示的提示文字。 | `string` |  |
+| `emptyTitle` | 还没有消息时的标题。 | `string` |  |
+| `emptyDescription` | 还没有消息时标题下的说明。 | `string` |  |
+| `suggestions` | 会话为空时输入框上方的推荐问题，点选即发送。 字段：`id?`、`label`、`prompt?`、`icon?` | `object[]` |  |
+| `mentions` | 输入框的 @ 引用：`{ types?, options?, placeholder?, sources? }`。`sources` 按页签的 `value` 各对应一个 DataProvider 资源（`{ resource, labelField, descriptionField?, searchField? }`），选中的记录随下一条消息作为上下文发送。 字段：`types?`、`options?`、`placeholder?`、`sources?` | `object` |  |
+| `commands` | 斜杠命令，每项 `{ value, label, description?, icon?, prompt? }`。有 `prompt` 的填入输入框，没有的把 `label` 作为消息发送。 字段：`value`、`label`、`description?`、`icon?`、`prompt?` | `object[]` |  |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

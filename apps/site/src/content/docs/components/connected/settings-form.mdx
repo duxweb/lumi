@@ -1,0 +1,29 @@
+---
+title: "SettingsForm"
+description: "绑定到一条记录的设置卡片。"
+---
+
+绑定到一条记录的设置卡片。`auto`（默认）通过 submitForm 保存每次改动：选择类控件在改变时保存，输入类字段在失焦或按 Enter 时保存，无效的值不提交。`manual` 加上放弃和保存按钮，用于需要确认的改动。把字段绑定到 valuesPath 下的路径。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `resource`（必填） | 数据资源名，如 `orders`。DataProvider 据此拼出接口地址。 | `string` |  |
+| `dataProviderName` | 使用哪个 DataProvider。只有一个时不用填。 | `string` |  |
+| `meta` | 原样传给 DataProvider 的附加参数，如自定义请求头或查询字段。 | `object` |  |
+| `title`（必填） | 设置卡片标题，也是卡片区域的读屏名称。 | `string` |  |
+| `description` | 标题下方的一行说明。 | `string` |  |
+| `id` | 记录 ID。填写时先按 ID 读取记录，保存时更新它；不填时是新建。 | `string \| number` |  |
+| `valuesPath`（必填） | 卡片表单值存放在页面状态里的路径，子字段绑定到它下面。 | `string` |  |
+| `initialValues` | 表单的初始值。编辑已有记录时会被接口返回的数据覆盖。 | `object` |  |
+| `fields` | 从记录里取出的字段；只给 `id` 时按这些字段初始化表单。 | `string[]` |  |
+| `rules` | 业务校验规则，按字段名组织，保存前执行。 | `unknown` |  |
+| `saveMode` | `auto` 每次修改自动保存：开关、选择即时提交，文本和数字在失去焦点或回车时提交，校验不通过的值不提交；`manual` 显示“放弃 / 保存”，适合需要确认的修改（如密码、个人资料）。 | `"auto" \| "manual"` | `"auto"` |
+| `columns` | 字段排成 1 列或 2 列。 | `1 \| 2` | `1` |
+| `saveLabel` | `manual` 模式保存按钮文字。 | `string` |  |
+
+## 事件与插槽
+
+- 事件：`saved`
+- 插槽：`default`

@@ -1,0 +1,88 @@
+/* ListPage with a side panel: the panel keeps its width, the results take the rest. */
+.lumi-list-page__layout {
+  display: grid;
+  grid-template-columns: minmax(13rem, 15rem) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--lumi-space-4);
+  min-width: 0;
+}
+/* The panel is as tall as its own tree, capped at the viewport, and must not take the results'
+   height: a choice in the tree re-reads the list, so a panel sized by the list would resize and
+   rescroll the tree on every click and squeeze it beside a short result. */
+.lumi-list-page__aside {
+  position: sticky;
+  top: var(--lumi-space-4);
+  min-width: 0;
+  max-height: calc(100dvh - 2 * var(--lumi-space-4));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--lumi-space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+  background: transparent;
+}
+/* Beside a taller panel the results fill the row with the pager at their foot, so a short
+   result changes what is inside the frame rather than the frame. */
+.lumi-list-page__layout > .lumi-list-page__surface {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+}
+.lumi-list-page__layout > .lumi-list-page__surface > .lumi-data-grid {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+.lumi-list-page__layout .lumi-data-grid > [data-slot="empty"] { flex: 1; }
+.lumi-list-page__layout .lumi-data-grid > .lumi-data-grid__pagination { margin-top: auto; }
+@media (width < 768px) {
+  .lumi-list-page__layout { grid-template-columns: minmax(0, 1fr); }
+  .lumi-list-page__aside { position: static; max-height: 18rem; }
+}
+
+.lumi-tree-filter { display: grid; gap: var(--lumi-space-1); min-width: 0; }
+.lumi-tree-filter__title {
+  margin: 0 0 var(--lumi-space-1);
+  padding-inline: var(--lumi-space-1);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  font-weight: var(--lumi-font-weight-medium, 500);
+}
+.lumi-tree-filter__all {
+  display: flex;
+  align-items: center;
+  min-height: var(--lumi-control-sm);
+  padding-inline: calc(var(--lumi-space-1) + 1.25rem + var(--lumi-space-1)) var(--lumi-control-px-sm);
+  border: 0;
+  border-radius: var(--lumi-radius-item);
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  font-size: var(--lumi-fs-label);
+  text-align: start;
+  cursor: default;
+}
+.lumi-tree-filter__all:hover { background: var(--lumi-hover-bg); color: var(--lumi-hover-fg); }
+.lumi-tree-filter__all[data-selected] { background: var(--lumi-selected-bg); color: var(--lumi-selected-fg); }
+.lumi-tree-filter__all:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--ring); }
+
+/* RecordPicker: chosen records as tags, then the button that opens the dialog. */
+.lumi-record-picker {
+  display: flex;
+  align-items: center;
+  gap: var(--lumi-space-2);
+  min-width: 0;
+  min-height: var(--lumi-control-md);
+  padding: var(--lumi-space-1) var(--lumi-space-1) var(--lumi-space-1) var(--lumi-control-px-md);
+  border: 1px solid var(--input);
+  border-radius: var(--lumi-radius-control);
+  background: transparent;
+}
+.lumi-record-picker:where([data-theme="dark"] *) { background: color-mix(in oklab, var(--input) 30%, transparent); }
+.lumi-record-picker[data-invalid] { border-color: var(--destructive); }
+.lumi-record-picker[data-disabled] { opacity: .5; }
+.lumi-record-picker__value { display: flex; flex: 1; flex-wrap: wrap; align-items: center; gap: var(--lumi-space-1); min-width: 0; }
+.lumi-record-picker__placeholder { color: var(--muted-foreground); font-size: var(--lumi-fs-control); }
+.lumi-record-picker__dialog { display: grid; gap: var(--lumi-space-3); min-width: 0; }
+.lumi-record-picker__dialog .lumi-data-grid__scroll { max-height: min(24rem, 55dvh); }
+.lumi-record-picker__count { color: var(--muted-foreground); font-size: var(--lumi-fs-label); }

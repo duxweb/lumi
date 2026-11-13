@@ -1,0 +1,55 @@
+---
+title: "SignaturePad"
+description: "用鼠标、笔或手指签名。"
+---
+
+<ComponentPreview name="SignaturePad" />
+
+用鼠标、笔或手指签名。值是 PNG data URL，清除后为空；Undo 撤销最后一笔。宽度跟随容器。
+
+## 示例
+
+```json
+{
+  "root": "signaturepad-1",
+  "elements": {
+    "signaturepad-1": {
+      "type": "SignaturePad",
+      "props": {
+        "ariaLabel": "Signature",
+        "value": { "$bindState": "/signaturepad-1/value" }
+      },
+      "children": []
+    }
+  },
+  "state": { "signaturepad-1": { "value": "" } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `value` | 当前值。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string` |  |
+| `defaultValue` | 初始值，只在没有绑定 `value` 时生效。 | `string` |  |
+| `height` | 签名区高度（像素）。 | `integer` | `160` |
+| `penColor` | 笔迹颜色。不填时跟随文字颜色，保存为黑色。 | `string` |  |
+| `placeholder` | 没有值时显示的提示文字。 | `string` |  |
+| `name` | 字段名，表单提交时作为这个值的键。 | `string` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean` | `false` |
+| `invalid` | 标记为校验未通过，显示错误样式。通常由 FormField 自动设置。 | `boolean` | `false` |
+| `error` | 错误提示文字，显示在控件下方。 | `string` |  |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+
+通用参数：
+
+- `checks`：json-render 原生校验规则，如 `{ "type": "required", "message": "请填写" }`，提交或失焦时执行。
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：无

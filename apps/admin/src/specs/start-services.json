@@ -1,0 +1,76 @@
+{
+  "root": "products",
+  "state": {
+    "products": {
+      "data": [],
+      "loading": true
+    }
+  },
+  "elements": {
+    "products": {
+      "type": "Query",
+      "props": {
+        "resource": "products",
+        "pagination": {
+          "page": 1,
+          "pageSize": 5
+        },
+        "resultPath": "/products"
+      },
+      "children": [
+        "table"
+      ]
+    },
+    "table": {
+      "type": "Table",
+      "props": {
+        "rows": {
+          "$state": "/products/data"
+        },
+        "loading": {
+          "$state": "/products/loading"
+        },
+        "columns": [
+          {
+            "field": "name",
+            "label": {
+              "$t": "Product"
+            }
+          },
+          {
+            "field": "status",
+            "label": {
+              "$t": "Status"
+            },
+            "kind": "badge",
+            "valueMap": {
+              "active": {
+                "$t": "Active"
+              },
+              "draft": {
+                "$t": "Draft"
+              },
+              "archived": {
+                "$t": "Archived"
+              }
+            },
+            "toneMap": {
+              "active": "success",
+              "draft": "warning",
+              "archived": "neutral"
+            }
+          },
+          {
+            "field": "price",
+            "label": {
+              "$t": "Price"
+            },
+            "kind": "currency",
+            "currency": "USD"
+          }
+        ]
+      },
+      "children": []
+    }
+  }
+}

@@ -1,0 +1,59 @@
+---
+title: "DateTimePicker"
+description: "日期和时间，值为本地时间字符串 yyyy-MM-ddTHH:mm，即 datetime-local 格式。"
+---
+
+<ComponentPreview name="DateTimePicker" />
+
+日期和时间，值为本地时间字符串 `yyyy-MM-ddTHH:mm`，即 `datetime-local` 格式。日历旁边是时间列；`min`/`max` 限定可选日期。点月份标题切换到月份和年份网格；`captionLayout: "label"` 时只显示标题。
+
+## 示例
+
+```json
+{
+  "root": "datetimepicker-1",
+  "elements": {
+    "datetimepicker-1": {
+      "type": "DateTimePicker",
+      "props": {
+        "value": { "$bindState": "/datetimepicker-1/value" },
+        "ariaLabel": "Default date and time picker"
+      },
+      "children": []
+    }
+  },
+  "state": { "datetimepicker-1": { "value": "2026-08-10T09:30" } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `value` | 选中的日期时间，格式 `yyyy-MM-ddTHH:mm`。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string \| null` |  |
+| `defaultValue` | 初始值，只在没有绑定 `value` 时生效。 | `string` |  |
+| `min` | 最早可选时刻；日历上更早的日期不可点。 | `string` |  |
+| `max` | 最晚可选时刻；日历上更晚的日期不可点。 | `string` |  |
+| `step` | 分钟列的间隔。 | `integer` | `5` |
+| `seconds` | 同时选择秒，值变成 `HH:mm:ss`。 | `boolean` | `false` |
+| `captionLayout` | `panel`：点击月份标题切换到月份网格，再点年份切换到年份网格，选中后逐级返回，Esc 返回上一级；超出 `min`/`max` 的月份和年份不可选。`label`：只显示标题。 | `"panel" \| "label"` | `"panel"` |
+| `placeholder` | 没有值时显示的提示文字。 | `string` |  |
+| `size` | 尺寸：`sm` 紧凑，`md` 标准，`lg` 宽松。 | `"sm" \| "md" \| "lg"` | `"md"` |
+| `appearance` | 外观：`outline` 描边，`filled` 浅色填充。 | `"outline" \| "filled"` | `"outline"` |
+| `name` | 字段名，表单提交时作为这个值的键。 | `string` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean` | `false` |
+| `invalid` | 标记为校验未通过，显示错误样式。通常由 FormField 自动设置。 | `boolean` | `false` |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+
+通用参数：
+
+- `checks`：json-render 原生校验规则，如 `{ "type": "required", "message": "请填写" }`，提交或失焦时执行。
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：无

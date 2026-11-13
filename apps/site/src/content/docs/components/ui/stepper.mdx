@@ -1,0 +1,52 @@
+---
+title: "Stepper"
+description: "显示有序步骤的进度，可设为可点击。"
+---
+
+<ComponentPreview name="Stepper" />
+
+显示有序步骤的进度，可设为可点击。
+
+## 示例
+
+```json
+{
+  "root": "stepper-29",
+  "elements": {
+    "stepper-29": {
+      "type": "Stepper",
+      "props": {
+        "value": { "$bindState": "/stepper-29/value" },
+        "items": [
+          { "key": "details", "label": "Details", "status": "current" },
+          { "key": "review", "label": "Review", "status": "upcoming" }
+        ]
+      },
+      "children": []
+    }
+  },
+  "state": { "stepper-29": { "value": "details" } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `items`（必填） | 步骤列表，每项 `{ label, value, description?, status? }`。 字段：`key`、`label`、`description?`、`status?` | `object[]` |  |
+| `value` | 当前步骤的 value。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string` |  |
+| `defaultValue` | 初始值，只在没有绑定 `value` 时生效。 | `string` |  |
+| `orientation` | 方向：`horizontal` 横向，`vertical` 纵向。 | `"vertical" \| "horizontal"` | `"horizontal"` |
+| `linear` | 只能按顺序前进，不能跳到后面的步骤。 | `boolean` | `false` |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：`default`

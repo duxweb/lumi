@@ -1,0 +1,45 @@
+{
+  "el": "#app",
+  "data": [
+    {
+      "name": "main",
+      "url": "http://127.0.0.1:3002"
+    },
+    {
+      "name": "strapi",
+      "url": "http://localhost:1337/api",
+      "auth": false
+    }
+  ],
+  "auth": {
+    "tokenKey": "lumi_base_token"
+  },
+  "panels": {
+    "manifest": "/manifest.json",
+    "login": {
+      "heroTitle": "One base script, every page from JSON.",
+      "demo": {
+        "username": "admin",
+        "password": "admin"
+      }
+    }
+  },
+  "theme": "/theme.json",
+  "i18n": {
+    "locale": "zh-CN",
+    "fallbackLocale": "en-US",
+    "translations": {
+      "zh-CN": "/locales/zh-CN.json",
+      "en-US": "/locales/en-US.json"
+    },
+    "format": {
+      "currency": "CNY",
+      "currencyUnit": "major",
+      "timeZone": "Asia/Shanghai",
+      "dateTimeInput": "iso-utc"
+    }
+  },
+  "modules": [
+    "/ext/order-summary.js"
+  ]
+}

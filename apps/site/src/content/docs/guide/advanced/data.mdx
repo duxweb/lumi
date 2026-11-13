@@ -1,0 +1,575 @@
+---
+title: "数据请求"
+description: "DataProvider、HttpClient 和缓存：请求怎么发、结果怎么解析、错误怎么统一、多个后端怎么并存、写入后怎么刷新，以及怎么适配自己的后端。"
+---
+
+## 干什么
+
+页面里的 `Query`、`ListPage`、`submitForm`、`delete` 和 React 里的 `useList`、`useUpdate` 都不直接发请求，而是交给三层：
+
+| 谁 | 负责什么 | 换掉它的场景 |
+| --- | --- | --- |
+| `DataProvider` | 请求什么：资源名、分页、筛选、排序变成哪个地址和参数；返回怎么解析成 `{ data, total }`；错误怎么读。 | 后端的地址、参数或返回格式和 Lumi 约定不同。 |
+| `HttpClient` | 怎么发：拼地址、编码查询参数和 JSON、带语言和工作区、问 `AuthProvider` 要凭证、401 时续期重发、把非 2xx 转成 `DataProviderError`。 | 一般不换，用 `extend` 指向别的后端。 |
+| `AuthProvider` | 凭证：每个请求带什么头或 cookie，见 [认证](/guide/advanced/auth/)。 | 登录方式不同。 |
+
+```text
+Query / ListPage / 动作 / hooks
+        │  { resource, pagination, filters, sorters, meta }
+        ▼
+   DataProvider ── 决定地址和参数，解析返回 ──┐
+        │                                      │
+        ▼                                      │
+   HttpClient ── 问 AuthProvider 要凭证 ──► fetch
+        │
+        ▼
+   缓存（按数据源 + 资源名），写入后自动刷新
+```
+
+同一个应用可以有多个 DataProvider（多个后端），但它们共用一个 HttpClient 和一个 AuthProvider。
+
+## DataProvider 接口
+
+DataProvider 是一个普通对象。必填的是 `getList`、`getOne`、`create`、`update`、`deleteOne`，其余可选。
+
+| 方法 | 参数 | 返回 | 谁调用 |
+| --- | --- | --- | --- |
+| `getList` | `resource`、`pagination`、`filters`、`sorters`、`meta`、`signal` | `{ data: T[], total, raw? }` | `Query` 列表、`ListPage`、`useList`、`useTable`、导出 |
+| `getOne` | `resource`、`id`、`meta`、`signal` | `{ data: T, raw? }` | `Query` 详情、`FormPage`、`useOne` |
+| `getMany` | `resource`、`ids`、`meta`、`signal` | `{ data: T[], raw? }` | `Query` 的 `many`、`useMany` |
+| `create` | `resource`、`variables`、`meta`、`signal` | `{ data: T, raw? }` | `create`、`submitForm`（没有 id）、`useCreate` |
+| `createMany` | `resource`、`variables`（数组）、`meta`、`signal` | `{ data: T[], raw? }` | 导入、`useCreateMany` |
+| `update` | `resource`、`id`、`variables`、`meta`、`signal` | `{ data: T, raw? }` | `update`、`submitForm`（有 id）、`useUpdate` |
+| `updateMany` | `resource`、`ids`、`variables`、`meta`、`signal` | `{ data: T[], raw? }` | `useUpdateMany` |
+| `deleteOne` | `resource`、`id`、`variables`、`meta`、`signal` | `{ data: T, raw? }` | `delete`、`useDelete` |
+| `deleteMany` | `resource`、`ids`、`variables`、`meta`、`signal` | `{ data: T[], raw? }` | `useDeleteMany` |
+| `custom` | `url`、`method`、`payload`、`query`、`filters`、`sorters`、`headers`、`meta`、`signal` | `{ data: T, raw? }` | `request` 动作、`Query` 的 `custom`、`useCustom`、`useCustomMutation` |
+| `getApiUrl` | 无 | 根地址 | 需要拼完整地址的地方 |
+| `http` | — | 它发请求用的 `HttpClient` | 上传和 AI 助手复用它的凭证 |
+
+参数里的几种类型：
+
+| 类型 | 形状 |
+| --- | --- |
+| `pagination` | `{ page, pageSize }`，从 1 开始；`false` 表示不分页，要全部。 |
+| `filters` | `[{ field, operator, value }]`。`operator` 是 `eq`、`ne`、`lt`、`lte`、`gt`、`gte`、`like`、`nlike`、`in`、`nin`、`between`、`null`、`nnull`。 |
+| `sorters` | `[{ field, order: "asc" \| "desc" }]`，可以多列。 |
+| `meta` | 任意附加参数，原样交给 DataProvider，比如 `{ "include": "items" }`。 |
+| `signal` | 页面离开或参数变化时用来取消请求。 |
+| `raw` | 原始返回体，可选，出错排查和 `resultPath` 里能看到。 |
+
+没有实现的可选方法有退路：
+
+- 没有 `getMany` 时，按每个 id 调一次 `getOne`。
+- 没有 `custom` 时，`request` 动作、`useCustom` 会报错 `custom is not implemented`。
+- 没有 `createMany`、`updateMany`、`deleteMany` 时，对应的批量 hook 逐条调用单条方法。
+
+`resource` 交给你之前已经去掉首尾的 `/`：`/shop/orders` 和 `shop/orders` 是同一个资源。
+
+## 默认约定：createSimpleDataProvider
+
+```ts
+import { createHttpClient, createSimpleDataProvider } from '@duxweb/lumi'
+
+// 请求客户端：负责带凭证、语言和工作区
+const http = createHttpClient()
+// 按默认约定请求 https://api.example.com 下的资源
+const dataProvider = createSimpleDataProvider({
+  apiUrl: 'https://api.example.com',
+  http,
+})
+```
+
+| 选项 | 说明 |
+| --- | --- |
+| `apiUrl`（必填） | 根地址，末尾的 `/` 会去掉。 |
+| `http` | 发请求用的客户端，带登录凭证、语言和工作区。不传时新建一个不带凭证的。 |
+| `unwrap` | 把成功的返回体变成 `{ data, total?, raw? }`。默认：`data` 取 `body.data`（没有就是整个 `body`），`total` 取 `body.meta.total`。 |
+| `parseError` | 把失败的返回体变成 `{ message, code, data, errors }`，见下文 [错误格式](#错误格式)。 |
+| `onRequest`、`onResponse` | 请求发出前、返回到达后的最后一步：加头、改头、签名、验签、解密，见 [签名与改写请求](#签名与改写请求)。 |
+
+请求格式（以 `resource: "orders"` 为例）：
+
+| 方法 | 请求 |
+| --- | --- |
+| `getList` | `GET /orders?status=paid&total[gte]=100&sort=-createdAt&page=1&pageSize=10` |
+| `getOne` | `GET /orders/12` |
+| `getMany` | `GET /orders?ids[]=1&ids[]=2` |
+| `create` | `POST /orders`，请求体是 `variables` |
+| `update` | `PUT /orders/12`，请求体是 `variables` |
+| `deleteOne` | `DELETE /orders/12`，有 `variables` 时作为请求体 |
+| `createMany`、`updateMany`、`deleteMany` | 逐条调用上面的单条请求 |
+| `custom` | `method`（默认 `GET`）请求 `url`（相对于 `apiUrl`），`payload` 作为请求体；`GET` 带 `payload` 会直接报错 |
+
+- 筛选：`eq` 就是字段名本身，其他运算符写成 `字段[运算符]`，如 `name[like]=ada`。数组值（`in`、`between`）写成 `status[in][]=a&status[in][]=b`。
+- 排序合成一个 `sort` 参数：字段按顺序用逗号分隔，倒序的前面加 `-`，如 `sort=-createdAt,name`。
+- 值是 `null` 或 `undefined` 的参数不发；空字符串照样发，后端应把空的 `like` 当作不筛选。
+- `meta` 的每一项都作为查询参数发出，如 `meta: { include: "items" }` 变成 `?include=items`。
+- id 会做 URL 编码，`a/b` 变成 `a%2Fb`。
+
+后端需要返回的格式见 [数据接口](/guide/backend/)。
+
+## HttpClient
+
+`createHttpClient` 创建发请求的客户端。CDN 版后台已经建好一个，扩展模块里从第二个参数 `{ http }` 拿到；npm 项目里用 `createLumi` 的 `http`，或者自己创建后传进去。
+
+```ts
+import type { AuthProvider } from '@duxweb/lumi'
+import { createHttpClient } from '@duxweb/lumi'
+
+// 已经建好的 AuthProvider
+declare const authProvider: AuthProvider
+
+const http = createHttpClient({
+  // 相对路径都接在它后面
+  baseUrl: 'https://api.example.com',
+  // 每次请求时读取：换了登录方式或退出后立刻生效
+  authProvider: () => authProvider,
+  // 当前语言，作为 Accept-Language 发出
+  getLocale: () => 'zh-CN',
+  // 当前工作区，作为 X-Tenant 发出
+  getTenant: () => localStorage.getItem('tenant'),
+})
+```
+
+| 选项 | 说明 |
+| --- | --- |
+| `baseUrl` | 相对路径接在它后面，完整网址原样使用。 |
+| `authProvider` | 用谁签名；可以是函数，每次请求时读取。只用到它的 `authorizeRequest` 和 `refresh`。 |
+| `auth` | `false` 时不带登录凭证，401 也交给调用方，后台不退出。默认 `true`。 |
+| `getLocale` | 当前语言，作为 `Accept-Language` 发出。 |
+| `getTenant`、`tenantHeader` | 当前工作区和它的请求头，默认 `X-Tenant`。 |
+| `headers` | 每个请求都带的头，可以是函数。优先级低于单次请求的头，凭证头最高。 |
+| `trustedOrigins` | 除了 `baseUrl` 和本站以外，还把哪些域名当成自己的后端，如 `["https://files.example.com"]`，见下文 [发往其他域名的请求](#发往其他域名的请求)。 |
+| `fetcher` | 换掉全局 `fetch`，测试时用。 |
+| `parseError` | 读失败返回的格式，默认 Lumi 约定。 |
+| `onRequest`、`onResponse` | 见 [签名与改写请求](#签名与改写请求)。 |
+
+| 成员 | 说明 |
+| --- | --- |
+| `request(path, { method, query, body, headers, signal })` | 发 JSON 请求，2xx 返回解析后的 JSON，否则抛 `DataProviderError`。`body` 是对象时自动序列化；`FormData`、`Blob`、字符串原样发送。`query` 里的数组写成 `key[]`。 |
+| `download(path, { method, query, body, headers, signal })` | 和 `request` 一样发请求，但 2xx 时返回还没读取的 `Response`，用来接收文件流（后端导出用它）；失败同样抛 `DataProviderError`。 |
+| `fetch(path, init)` | 签过名的 `fetch`，返回原始 `Response`，不管状态码。用于流式返回。 |
+| `prepare({ url, method, headers, body })` | 按这个客户端的规则准备好一个请求：凭证、语言、工作区，再经过 `onRequest`。给 `fetch` 管不到的地方用，比如 XHR 上传。 |
+| `receive(response, request)` | 让 `prepare` 过的请求的返回经过 `onResponse`。 |
+| `url(path)` | 把路径接到 `baseUrl` 后面。 |
+| `extend({ baseUrl, auth, headers, authProvider, trustedOrigins, fetcher, parseError, onRequest, onResponse })` | 得到一个改了部分设置的新客户端，其余继承。写 `onRequest: undefined` 就是不要继承来的那个；`trustedOrigins` 是在原有的基础上再加。 |
+| `own(error)` | 把一个错误标记成这个客户端的。`auth: false` 的客户端标记的错误不会让后台退出。 |
+| `baseUrl`、`signed` | 根地址；是否带后台的凭证。 |
+
+请求返回 401、`authProvider` 有 `refresh` 时，先续期一次（同时 401 的请求共用这一次），成功就用新凭证重发。
+
+`isUnsignedFailure(error)` 判断一个失败是否来自 `auth: false` 的客户端，自己处理错误时可以用它区分。
+
+### 发往其他域名的请求
+
+登录凭证、语言和工作区头、默认的 `headers`、`onRequest` 和 `onResponse` 只用在客户端自己的后端上：`baseUrl` 所在的域名、页面所在的域名，以及 `trustedOrigins` 里列出的域名。
+
+页面 JSON 里可以写完整网址（比如 `request` 动作的 `url`）。地址指向别的域名时，请求照常发出，但不带上面这些内容，它返回 401 也不会触发续期或让后台退出。这样页面写错或被人改成陌生地址，也不会把登录凭证发出去。
+
+文件服务、另一个子域名上的接口确实要带凭证时，把它列进 `trustedOrigins`，或者在 `config.json` 的 `data` 里给它单独配一项。
+
+## 签名与改写请求
+
+后端要求每个请求带签名、防篡改，或者要加、改、重排请求头时，在 DataProvider 上写两个函数：
+
+| 函数 | 什么时候调用 | 能做什么 |
+| --- | --- | --- |
+| `onRequest(request)` | 每个请求发出前，凭证、语言、工作区都加好、body 已经编码之后。401 续期后重发时会再调用一次。 | 改 `request.headers`、`url`、`method`、`body`，或者返回一个新的请求。 |
+| `onResponse(response, request)` | 返回到达、交给调用方之前，不管状态码。 | 验签、解密、改写；返回新的 `Response` 替换它，抛错就算请求失败。 |
+
+`request` 是最终要发出的样子：`url` 带着查询参数，`body` 是编码后的内容（JSON 请求是字符串，上传是 `FormData`）。所以签名能把方法、地址、时间和 body 的哈希都算进去：
+
+```ts
+import type { HttpOutgoingRequest } from '@duxweb/lumi'
+import { createSimpleAuthProvider, createSimpleDataProvider } from '@duxweb/lumi'
+
+// 签名密钥：由后端按会话下发（比如登录时返回），不要写死在前端
+declare function sessionKey(): Promise<CryptoKey>
+
+// 把字节转成十六进制文本
+const hex = (buffer: ArrayBuffer): string =>
+  [...new Uint8Array(buffer)].map((byte) => byte.toString(16).padStart(2, '0')).join('')
+
+// 签名：方法、地址、时间戳、随机数和 body 的哈希一起算 HMAC
+async function sign(request: HttpOutgoingRequest): Promise<void> {
+  const timestamp = String(Date.now())
+  const nonce = crypto.randomUUID()
+  // JSON 请求的 body 是字符串；上传（FormData）时不算 body
+  const text = typeof request.body === 'string' ? request.body : ''
+  const bodyHash = hex(
+    await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)),
+  )
+  // 要签名的内容
+  const payload = [request.method, request.url, timestamp, nonce, bodyHash].join('\n')
+  const signature = hex(
+    await crypto.subtle.sign(
+      'HMAC',
+      await sessionKey(),
+      new TextEncoder().encode(payload),
+    ),
+  )
+  // 结果放进请求头，后端用同样的算法验证
+  request.headers['X-Timestamp'] = timestamp
+  request.headers['X-Nonce'] = nonce
+  request.headers['X-Signature'] = signature
+}
+
+export const dataProvider = createSimpleDataProvider({
+  apiUrl: 'https://api.example.com',
+  // 每个请求发出前签名
+  onRequest: sign,
+  onResponse: async (response) => {
+    // 后端的返回没有签名时拒绝
+    if (response.ok && !response.headers.get('X-Signature'))
+      throw new Error('Unsigned response')
+  },
+})
+
+// 登录也用同一个客户端，所以同样会签名
+export const auth = createSimpleAuthProvider({
+  apiUrl: 'https://api.example.com',
+  http: dataProvider.http,
+})
+```
+
+- 函数挂在这个 DataProvider 的 `http` 上，所以它的增删改查、`custom`、上传、AI 助手都会经过。登录要同样签名时，像上面这样把 `dataProvider.http` 交给 auth provider；`createLumi({ http: dataProvider.http })` 让其他用应用客户端的请求（例如 Admin 加载菜单和页面）也经过它。
+- 每个后端各写各的：另一个 DataProvider 不写就不签。
+- 签名用的密钥要按会话由后端下发（例如登录返回），存在 auth provider 里。写死在前端的密钥谁都能看到，防不了伪造。
+- 只是要带固定的头，用 `headers` 就够了；要带登录凭证，写在 [AuthProvider](/guide/advanced/auth/) 的 `authorizeRequest` 里。这里管的是请求本身。
+
+CDN 版后台在扩展模块里写，见 [扩展模块](/guide/extend-backend/#签名与改写请求)。
+
+## 错误格式
+
+所有失败都是同一个 `DataProviderError`：
+
+| 字段 | 说明 |
+| --- | --- |
+| `status` | HTTP 状态码。 |
+| `message` | 给人看的提示；后端没给时用状态文字，再没有就是 `Request failed with 422`。 |
+| `code` | 后端的错误码。 |
+| `errors` | 字段错误 `[{ path, message, code? }]`，`submitForm` 把它显示在字段下面。 |
+| `data` | 后端附带的数据。 |
+| `raw` | 原始返回体。 |
+
+默认按 Lumi 约定读：`{ "message", "code", "data", "errors": [{ "path", "message" }] }`（导出为 `parseLumiError`）。后端格式不同时，给 `createSimpleDataProvider` 或 `http.extend` 传 `parseError`：
+
+```ts
+import type { HttpClient } from '@duxweb/lumi'
+import { createSimpleDataProvider } from '@duxweb/lumi'
+
+// 应用的请求客户端
+declare const http: HttpClient
+
+// 这个后端失败时返回 { msg, detail: { name: ['已被使用'] } }
+const dataProvider = createSimpleDataProvider({
+  apiUrl: '/api',
+  http,
+  // 把它转成 Lumi 统一的错误格式
+  parseError: (body, response) => {
+    const value = body as { msg?: string; detail?: Record<string, string[]> }
+    return {
+      // 提示文字
+      message: value.msg ?? `HTTP ${response.status}`,
+      // 字段错误：每个字段取第一条，表单会显示在字段下面
+      errors: Object.entries(value.detail ?? {}).map(([path, messages]) => ({
+        path,
+        message: messages[0] ?? '',
+      })),
+    }
+  },
+})
+```
+
+- `body` 是解析后的 JSON，不是 JSON 时是 `{}`；`response` 是原始的 `Response`。
+- `parseError` 只管把格式转成统一的错误。失败后要不要退出登录，由 `AuthProvider` 的 `onError` 决定，见 [认证](/guide/advanced/auth/#登录状态怎么变化)。
+- 字段错误的 `path` 用 `.` 分隔嵌套字段，如 `items.0.sku`，和表单里的字段名对应。
+- JSON 动作失败会弹出 `message`；hooks 没写 `onError` 时也一样。
+
+## 自定义 DataProvider
+
+后端的地址、参数和返回格式都不一样时，自己写一个。下面这个后端：
+
+- 列表是 `GET /orders/list?page=1&size=10`，详情是 `GET /orders/detail?id=12`；
+- 所有返回都包在 `{ code, msg, data }` 里，`code` 不是 0 表示失败，即使 HTTP 状态是 200；
+- 列表的 `data` 是 `{ list, total }`。
+
+```ts
+import type { DataProvider, Filter, HttpClient, HttpRequestOptions } from '@duxweb/lumi'
+import { DataProviderError } from '@duxweb/lumi'
+
+declare const http: HttpClient
+
+// 这个后端所有返回的外层结构
+interface Envelope<T> {
+  code: number
+  msg: string
+  data: T
+}
+
+// 凭证、语言、工作区和应用一样，只是换了地址和错误格式
+const legacy = http.extend({
+  baseUrl: 'https://legacy.example.com/api',
+  parseError: (body) => {
+    const value = body as Partial<Envelope<unknown>>
+    return { message: value.msg, code: value.code }
+  },
+})
+
+// 发请求并取出 data
+async function call<T = any>(path: string, options?: HttpRequestOptions): Promise<T> {
+  const body = await legacy.request<Envelope<T>>(path, options)
+  // HTTP 200 但 code 不是 0，也算失败
+  if (body.code !== 0) {
+    throw legacy.own(
+      new DataProviderError({
+        status: 200,
+        code: body.code,
+        message: body.msg,
+        raw: body,
+      }),
+    )
+  }
+  return body.data
+}
+
+// 筛选：eq 就是字段名，其他操作符写成 字段_操作符
+function filterQuery(filters: Filter[] = []): Record<string, unknown> {
+  return Object.fromEntries(
+    filters.map((filter) => [
+      filter.operator === 'eq' ? filter.field : `${filter.field}_${filter.operator}`,
+      filter.value,
+    ]),
+  )
+}
+
+// DataProvider：把 Lumi 的参数换成这个后端的地址和参数
+export const legacyProvider: DataProvider = {
+  // 上传和 AI 助手会复用这个客户端
+  http: legacy,
+  getApiUrl: () => legacy.baseUrl,
+  // 列表：GET /orders/list?page=1&size=10
+  getList: async ({ resource, pagination, filters, sorters, meta, signal }) => {
+    const data = await call<{ list: any[]; total: number }>(`/${resource}/list`, {
+      query: {
+        ...filterQuery(filters),
+        ...meta,
+        page: pagination ? pagination.page : undefined,
+        size: pagination ? pagination.pageSize : undefined,
+        order: sorters?.map((sorter) => `${sorter.field} ${sorter.order}`).join(','),
+      },
+      signal,
+    })
+    // Lumi 要 { data, total }
+    return { data: data.list, total: data.total }
+  },
+  // 详情：GET /orders/detail?id=12
+  getOne: async ({ resource, id, signal }) => ({
+    data: await call(`/${resource}/detail`, { query: { id }, signal }),
+  }),
+  // 新建、修改、删除：这个后端都用 POST
+  create: async ({ resource, variables, signal }) => ({
+    data: await call(`/${resource}/create`, {
+      method: 'POST',
+      body: variables,
+      signal,
+    }),
+  }),
+  update: async ({ resource, id, variables, signal }) => ({
+    data: await call(`/${resource}/update`, {
+      method: 'POST',
+      body: { ...variables, id },
+      signal,
+    }),
+  }),
+  deleteOne: async ({ resource, id, signal }) => ({
+    data: await call(`/${resource}/delete`, { method: 'POST', body: { id }, signal }),
+  }),
+}
+```
+
+要点：
+
+- 用 `http.extend` 而不是自己 `fetch`：凭证、语言、工作区、401 续期和统一的错误都有了。不想带后台的凭证时加 `auth: false`。
+- 返回的 `data` 就是记录本身，`total` 是总数，列表、分页和表单都只认这个形状。
+- 把 `signal` 传下去，页面切走时请求会被取消。
+- 失败一律抛 `DataProviderError`，`errors` 里放字段错误，表单才能显示在字段下面。
+
+### 注册
+
+**npm**：`createLumi` 的 `dataProvider` 可以是一个，也可以按名称给多个，`default` 是不写名称时用的：
+
+```ts
+import type { DataProvider } from '@duxweb/lumi'
+import { createHttpClient, createLumi, createSimpleDataProvider } from '@duxweb/lumi'
+
+// 上面写的 DataProvider
+declare const legacyProvider: DataProvider
+
+const http = createHttpClient()
+const lumi = createLumi({
+  http,
+  dataProvider: {
+    // 不写名称时用它
+    default: createSimpleDataProvider({ apiUrl: '/api', http }),
+    // 页面里写 "dataProviderName": "legacy" 用它
+    legacy: legacyProvider,
+  },
+})
+```
+
+**CDN**：在扩展模块里返回 `dataProviders: { legacy: … }`。模块函数的第二个参数里有 `panel` 和 `http`，地址写在 `config.json` 的 `data` 里，用 `panel.data` 读出来，完整例子见 [适配自己的后端格式](/guide/extend-backend/#适配自己的后端格式)。模块返回 `dataProviders.default` 会替换当前 panel 的默认数据源。
+
+后端只是地址不同、格式仍是 Lumi 约定时，不用写代码，在 `config.json` 的 `data` 里加一项即可，见 [项目配置](/guide/config/#data)。
+
+## 多个数据源
+
+每个数据源有一个名字。用哪个按下面的顺序决定：
+
+1. 元素、动作或 hook 自己写的 `dataProviderName`；
+2. 所在范围的数据源：manifest 路由的 `"dataProvider": "legacy"` 对它和它的子路由生效；React 里用 `<LumiDataProviderScope name="legacy">` 包起来；
+3. 都没有时用 `default`。
+
+```jsonc
+{
+  "root": "page",
+  // 查询结果放在 /orders
+  "state": { "orders": null },
+  "elements": {
+    "page": {
+      "type": "Stack",
+      "props": {},
+      "children": ["orders-query", "table"]
+    },
+    // 查询：从 legacy 读订单
+    "orders-query": {
+      "type": "Query",
+      "props": {
+        "resource": "orders",
+        // 用名为 legacy 的数据源，不写就用默认的
+        "dataProviderName": "legacy",
+        // 第 1 页，每页 10 条
+        "pagination": { "page": 1, "pageSize": 10 },
+        "resultPath": "/orders"
+      },
+      "children": []
+    },
+    // 表格显示查询结果
+    "table": {
+      "type": "Table",
+      "props": {
+        "rows": { "$state": "/orders/data" },
+        "columns": [{ "field": "no", "label": "订单号" }]
+      },
+      "children": []
+    }
+  }
+}
+```
+
+- 每个数据源有自己的缓存：`legacy` 的 `orders` 和默认的 `orders` 互不影响，写入也只刷新自己那份。
+- `auth: false` 的数据源（`config.json` 的 `data` 里 `"auth": false`，或 `http.extend({ auth: false })`）不带后台的凭证，它返回 401 时后台不会退出。
+- 写了不存在的名字会直接报错，不会悄悄用默认的。
+
+## 缓存与刷新
+
+读取的结果按 **数据源 + 资源名 + 操作 + 参数** 缓存。同样的参数第二次打开时先显示缓存，再在后台更新。
+
+缓存用的是 TanStack Query，Lumi 没有改它的时间设置，只关掉了失败重试：
+
+| 行为 | 默认 |
+| --- | --- |
+| 缓存多久算过期 | 立刻。缓存只用来先显示旧结果，每次打开页面都会在后台重新请求。 |
+| 回到浏览器窗口、网络恢复时 | 正在显示的数据重新请求。 |
+| 没有页面在用的缓存保留多久 | 5 分钟，之后丢弃。 |
+| 请求失败 | 不重试，直接显示错误。 |
+
+这些时间在 JSON 里不能改。编译接入时可以自己建一个 `QueryClient` 传给 `LumiProvider`（或 `LumiSpecPage`、`LumiServicesProvider`）的 `queryClient`，在它的 `defaultOptions` 里改，例如把过期时间设成 30 秒，或者关掉回到窗口时的刷新：
+
+```tsx
+import { QueryClient } from '@tanstack/react-query'
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // 30 秒内再次打开同样的数据，不重新请求
+      staleTime: 30_000,
+      // 回到浏览器窗口时不刷新
+      refetchOnWindowFocus: false,
+    },
+  },
+})
+```
+
+`createAdmin` 和 CDN 版自己建 `QueryClient`，目前不能换，用的就是上表的默认值。
+
+**写入后自动刷新**：`create`、`update`、`delete`、`submitForm`、导入，以及对应的 hooks 成功后，同一数据源、同一资源的列表、详情和汇总都会重新请求。删除时不会再去请求被删掉的那条详情。
+
+**手动刷新**：别处改了数据（比如 `request` 动作调了一个自定义接口），用 `invalidate`：
+
+```jsonc
+{
+  "type": "Button",
+  "props": { "label": "重新计算" },
+  "on": {
+    "press": [
+      // 调一个不属于增删改查的接口
+      {
+        "action": "request",
+        "params": { "url": "orders/recalculate", "method": "POST" }
+      },
+      // 让 orders 的列表和详情重新请求
+      { "action": "invalidate", "params": { "resource": "orders" } }
+    ]
+  }
+}
+```
+
+React 里用 `useInvalidate()`：传 `{ resource }` 刷新一个资源，只传 `{ dataProviderName }` 刷新整个数据源，什么都不传刷新全部。
+
+**写入什么时候显示**，由 `mutationMode` 决定，可以在 `createLumi` 里设默认值，也可以每个 `create`、`update`、`delete` 单独写：
+
+| `mutationMode` | 行为 |
+| --- | --- |
+| `pessimistic`（默认） | 等服务器成功后才更新界面。 |
+| `optimistic` | 立刻改掉缓存里的列表和详情，服务器拒绝时改回来。 |
+| `undoable` | 和 `optimistic` 一样立刻显示，但等 `undoableTimeout` 毫秒（默认 5000）再发请求，期间显示\"撤销\"。 |
+
+`submitForm` 编辑已有记录时总是 `pessimistic`：表单要等服务器接受才关闭。
+
+```jsonc
+{
+  "type": "Popconfirm",
+  "props": {
+    "label": "删除",
+    "title": "删除这个订单？",
+    "confirmText": "删除"
+  },
+  "on": {
+    // 用户确认后执行
+    "confirm": {
+      "action": "delete",
+      "params": {
+        "resource": "orders",
+        // 要删除的记录：刚点了按钮的那一行
+        "id": { "$state": "/table/row/id" },
+        // 先从列表里拿掉，8 秒内可以撤销
+        "mutationMode": "undoable",
+        "undoableTimeout": 8000
+      }
+    }
+  }
+}
+```
+
+**实时刷新**：配置了 `liveProvider`（CDN 版是 `config.json` 里 `data` 的 `live`）后，后端推送 `resources/{资源名}` 事件，读这个资源的列表和详情会自动重新请求。`Query` 的 `liveMode` 可以单独设：`auto` 自动刷新，`manual` 只通知不刷新，`off` 不订阅。
+
+## 相关
+
+| 类型 | 有哪些 |
+| --- | --- |
+| JSON 动作 | [create](/protocol/actions/create/)、[update](/protocol/actions/update/)、[delete](/protocol/actions/delete/)、[submitForm](/protocol/actions/submit-form/)、[request](/protocol/actions/request/)、[invalidate](/protocol/actions/invalidate/)、[exportList](/protocol/actions/export-list/)、[importList](/protocol/actions/import-list/) |
+| 组件 | [Query](/components/connected/query/)、[ListPage](/components/connected/list-page/)、[FormPage](/components/connected/form-page/) |
+| React hooks | `useList`、`useInfiniteList`、`useOne`、`useMany`、`useCustom`、`useCreate`、`useCreateMany`、`useUpdate`、`useUpdateMany`、`useDelete`、`useDeleteMany`、`useCustomMutation`、`useInvalidate`、`useTable`、`useForm`，见 [数据 hooks](/guide/advanced/hooks/) |
+| 接口定义 | [DataProvider](/core/providers/data-provider/)、[Lumi API](/api/packages/lumi/) |

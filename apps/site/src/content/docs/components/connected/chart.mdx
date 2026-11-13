@@ -1,0 +1,27 @@
+---
+title: "Chart"
+description: "图表，读屏软件可读，渲染引擎可选且按需加载，并以数据表作为后备。"
+---
+
+图表，读屏软件可读，渲染引擎可选且按需加载，并以数据表作为后备。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `type`（必填） | 图表类型：`area` 面积，`line` 折线，`bar` 柱状，`donut` 环形。 | `"area" \| "line" \| "bar" \| "donut"` |  |
+| `points`（必填） | 数据点列表，每项至少有 `key`、`label`、`value`。 字段：`label`、`value` | `object[]` |  |
+| `ariaLabel`（必填） | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+| `valueFormat` | 数值显示为普通数字还是金额。 | `"number" \| "currency"` | `"number"` |
+| `locale` | 数字格式使用的语言区域，如 `zh-CN`。 | `string` |  |
+| `currency` | `valueFormat` 为 `currency` 时的货币代码，如 `CNY`。 | `string` |  |
+| `height` | 图表高度（像素）。 | `number` |  |
+| `color` | 使用调色板里的第几种颜色（1–5）。 | `1 \| 2 \| 3 \| 4 \| 5` |  |
+| `dataLabel` | 数据表格的标题，图表下方可展开查看原始数值。 | `string` |  |
+| `emptyLabel` | 没有数据时显示的文字。 | `string` |  |
+| `errorLabel` | 数据加载失败时显示的文字。 | `string` |  |
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

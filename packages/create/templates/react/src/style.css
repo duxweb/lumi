@@ -1,0 +1,11 @@
+.app-page {
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+.app-shell {
+  display: grid;
+  max-width: 80rem;
+  margin: 0 auto;
+  gap: 1.25rem;
+}

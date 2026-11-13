@@ -1,0 +1,93 @@
+{
+  "root": "stack",
+  "state": {
+    "name": "Lumi",
+    "enabled": true,
+    "saved": false
+  },
+  "elements": {
+    "stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "name",
+        "toggle",
+        "run",
+        "result"
+      ]
+    },
+    "name": {
+      "type": "FormField",
+      "props": {
+        "name": "name",
+        "label": {
+          "$t": "Your name"
+        },
+        "value": {
+          "$bindState": "/name"
+        }
+      },
+      "children": []
+    },
+    "toggle": {
+      "type": "Switch",
+      "props": {
+        "label": {
+          "$t": "Show confirmation"
+        },
+        "value": {
+          "$bindState": "/enabled"
+        }
+      },
+      "children": []
+    },
+    "run": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Run action"
+        }
+      },
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/saved",
+            "value": true
+          }
+        }
+      },
+      "children": []
+    },
+    "result": {
+      "type": "Alert",
+      "props": {
+        "tone": "success",
+        "title": {
+          "$t": "Action complete"
+        },
+        "message": {
+          "$t": "Hello, {name}",
+          "params": {
+            "name": {
+              "$state": "/name"
+            }
+          }
+        }
+      },
+      "visible": {
+        "$and": [
+          {
+            "$state": "/saved"
+          },
+          {
+            "$state": "/enabled"
+          }
+        ]
+      },
+      "children": []
+    }
+  }
+}

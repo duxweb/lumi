@@ -1,0 +1,32 @@
+---
+title: "SkuEditor"
+description: "规格（如颜色、尺码）用标签输入填写，下方为每种组合生成一行矩阵。"
+---
+
+规格（如颜色、尺码）用标签输入填写，下方为每种组合生成一行矩阵。`columns` 设置每行编辑什么（number、currency、text 或 select；默认价格、库存和编码），`labels` 修改界面文字，如改成型号或套装。修改规格时，仍然存在的组合保留原有值；列标题旁的按钮把第一行的值复制到所有行（默认数字和选择列有，可按列用 `fill` 设置）。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `value` | `{ attributes: [{ name, values }], variants: [{ key, options, ...每列的值 }] }`，每列的值存在该列的 `key` 下（默认列为 `price`、`stock`、`sku`）。修改规格时按组合重新生成 variants，匹配的组合保留已填的值。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 字段：`attributes`、`variants` | `object` |  |
+| `errors` | 字段错误，键为 `<name>.variants.<行>.<列 key>` 或 `<name>.attributes.<行>.name`，如 `sku.variants.1.stock`，通常绑定 submitForm 的 `fieldErrors`。规格变化导致行重排时，组合表的错误会被清除。 | `object` |  |
+| `name` | 错误路径的前缀，与提交值里的字段名一致。 | `string` |  |
+| `columns` | 组合表的列：`[{ key, kind, label?, required?, width?, prefix?, suffix?, precision?, min?, max?, placeholder?, options?, defaultValue?, fill? }]`。`kind` 为 `number`、`currency`、`text` 或 `select`（`options` 为 `[{ value, label }]`）；`currency` 列默认使用 `pricePrefix` 和 `precision`。`defaultValue` 用于新生成且未继承到值的组合。`fill` 控制列标题旁的“应用第一行到全部”按钮：数值、金额和下拉列默认显示，文本列（如条码、编码）默认隐藏，可用 `fill: true` / `false` 改写；少于两行或第一行为空时按钮不可用。`price`、`stock`、`sku` 不写 `label` 时用内置文案。 字段：`key`、`label?`、`kind`、`required?`、`width?`、`prefix?`、`suffix?`、`precision?`、`min?`、`max?`、`placeholder?`、`options?`、`defaultValue?`、`fill?` | `object[]` | `价格（金额，必填）、库存（数字，必填）、编码（文本）` |
+| `labels` | 本实例的文案，组合表可以叫型号、套餐等：`title`、`count`（含 `{count}`）、`empty`、`fill`（列标题按钮的提示）、`filled`（填充后的读屏播报，含 `{count}`）、`attributes`（规格区标题）、`attributeName`、`attributeNamePlaceholder`、`valuesPlaceholder`、`attributeValues`（含 `{name}`）、`addAttribute`、`removeAttribute`（含 `{name}`）。未写的项使用内置文案；列名通过 `columns[].label` 修改。 字段：`title?`、`count?`、`empty?`、`fill?`、`filled?`、`attributes?`、`attributeName?`、`attributeNamePlaceholder?`、`valuesPlaceholder?`、`attributeValues?`、`addAttribute?`、`removeAttribute?` | `object` |  |
+| `errorDisplay` | 错误的显示方式。默认 `tooltip`，组合表的行高保持一致；`inline` 把错误写在控件下方。 | `"inline" \| "tooltip"` | `"tooltip"` |
+| `maxAttributes` | 最多几个规格维度。 | `integer` | `3` |
+| `pricePrefix` | 金额列的前缀，如 `¥`。 | `string` |  |
+| `precision` | 金额列保留的小数位数。 | `integer` | `2` |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean` | `false` |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：无

@@ -1,0 +1,52 @@
+---
+title: "Prose"
+description: "排版长文内容：标题、段落、列表、引用、代码、表格、图片和分隔线共用一套阅读节奏。"
+---
+
+<ComponentPreview name="Prose" />
+
+排版长文内容：标题、段落、列表、引用、代码、表格、图片和分隔线共用一套阅读节奏。把 Heading 和 Text 子元素包在里面，或者用 Markdown 和 Html，它们在同样的样式里渲染。`size` 设置正文字号；宽度跟随容器。
+
+## 示例
+
+```json
+{
+  "root": "prose-1",
+  "elements": {
+    "prose-1": {
+      "type": "Prose",
+      "props": { "size": "sm" },
+      "children": ["prose-heading", "prose-text"]
+    },
+    "prose-heading": {
+      "type": "Heading",
+      "props": { "text": "Release notes", "level": "h3" },
+      "children": []
+    },
+    "prose-text": {
+      "type": "Text",
+      "props": {
+        "text": "Orders now sync every five minutes and failed payments retry twice before they alert"
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `size` | 正文字号：`sm` 用于抽屉和侧栏，`md` 用于页面，`lg` 用于阅读视图；标题、间距随之等比缩放。 | `"sm" \| "md" \| "lg"` | `"md"` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：`default`

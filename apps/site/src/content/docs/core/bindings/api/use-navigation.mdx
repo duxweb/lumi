@@ -1,0 +1,19 @@
+---
+title: "useNavigation"
+description: "useNavigation React hook 的签名、参数和返回值。"
+---
+
+Navigation through the router provider, like the `navigate` action; inert without one.
+
+```typescript
+useNavigation(): { go: (config: GoConfig) => void; back: () => void; }
+```
+
+返回 `{ go: (config: GoConfig) => void; back: () => void; }`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `back` | `() => void` | 是 |  |
+| `go` | `(config: GoConfig) => void` | 是 |  |

@@ -1,0 +1,28 @@
+{
+  "name": "lumi-react-demo",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5175",
+    "build": "vite build",
+    "test": "vitest run --root ../.. examples/react-demo/test",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@duxweb/lumi": "workspace:*",
+    "@duxweb/lumi-ui": "workspace:*",
+    "@json-render/core": "catalog:",
+    "@json-render/react": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
+  }
+}

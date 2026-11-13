@@ -1,0 +1,18 @@
+---
+title: "TenantProvider"
+description: "TenantProvider 接口的方法、参数和返回值。"
+---
+
+Holds the current tenant. The request client reads it for every request,
+and Lumi listens to it to drop cached data when it changes.
+
+```typescript
+interface TenantProvider
+```
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `get` | `() => string \| undefined` | 是 | The current tenant's value, or undefined before one is chosen. |
+| `options` | `(() => readonly TenantOption[]) \| undefined` | 否 | The tenants the reader may switch between, when the provider knows them. |
+| `set` | `(value: string) => void` | 是 | Switches to another tenant. |
+| `subscribe` | `(listener: () => void) => () => void` | 是 | Notifies when the tenant changes; Lumi drops its cached data on it. |

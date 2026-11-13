@@ -1,0 +1,126 @@
+{
+  "name": "@duxweb/lumi-ui",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Native json-render integration and shadcn-style React components.",
+  "author": "DuxWeb",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duxweb/lumi.git",
+    "directory": "packages/ui"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "lumi:source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./catalog": {
+      "lumi:source": "./src/catalog.ts",
+      "types": "./dist/catalog.d.ts",
+      "import": "./dist/catalog.js",
+      "default": "./dist/catalog.js"
+    },
+    "./charts": {
+      "lumi:source": "./src/charts.tsx",
+      "types": "./dist/charts.d.ts",
+      "import": "./dist/charts.js"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "LICENSE",
+    "LICENSES",
+    "THIRD_PARTY_NOTICES.md",
+    "UPSTREAM_SOURCES.md",
+    "dist",
+    "src",
+    "upstream-manifest.json"
+  ],
+  "scripts": {
+    "build": "tsdown && pnpm run build:css",
+    "build:css": "tailwindcss -i src/style.css -o dist/style.css --minify",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run --root ../.. packages/ui/test",
+    "clean": "rimraf dist"
+  },
+  "peerDependencies": {
+    "@hugeicons/core-free-icons": "catalog:",
+    "@hugeicons/react": "catalog:",
+    "@json-render/core": "catalog:",
+    "@json-render/react": "catalog:",
+    "@react-input/mask": "catalog:",
+    "@tanstack/react-table": "catalog:",
+    "@visactor/vchart": "catalog:",
+    "date-fns": "catalog:",
+    "radix-ui": "catalog:",
+    "react": "catalog:",
+    "react-day-picker": "catalog:",
+    "react-dom": "catalog:",
+    "vaul": "catalog:",
+    "zod": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@visactor/vchart": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@codemirror/autocomplete": "catalog:",
+    "@codemirror/commands": "catalog:",
+    "@codemirror/lang-css": "catalog:",
+    "@codemirror/lang-go": "catalog:",
+    "@codemirror/lang-html": "catalog:",
+    "@codemirror/lang-javascript": "catalog:",
+    "@codemirror/lang-json": "catalog:",
+    "@codemirror/lang-markdown": "catalog:",
+    "@codemirror/lang-yaml": "catalog:",
+    "@codemirror/language": "catalog:",
+    "@codemirror/legacy-modes": "catalog:",
+    "@codemirror/state": "catalog:",
+    "@codemirror/streamparser": "catalog:",
+    "@codemirror/view": "catalog:",
+    "@lezer/common": "catalog:",
+    "@lezer/css": "catalog:",
+    "@lezer/go": "catalog:",
+    "@lezer/highlight": "catalog:",
+    "@lezer/html": "catalog:",
+    "@lezer/javascript": "catalog:",
+    "@lezer/json": "catalog:",
+    "@lezer/markdown": "catalog:",
+    "@lezer/yaml": "catalog:",
+    "class-variance-authority": "catalog:",
+    "clsx": "catalog:",
+    "dompurify": "catalog:",
+    "tailwind-merge": "catalog:"
+  },
+  "devDependencies": {
+    "@hugeicons/core-free-icons": "catalog:",
+    "@hugeicons/react": "catalog:",
+    "@json-render/core": "catalog:",
+    "@json-render/react": "catalog:",
+    "@react-input/mask": "catalog:",
+    "@tailwindcss/cli": "catalog:",
+    "@tanstack/react-table": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@visactor/vchart": "catalog:",
+    "date-fns": "catalog:",
+    "jsdom": "catalog:",
+    "radix-ui": "catalog:",
+    "react": "catalog:",
+    "react-day-picker": "catalog:",
+    "react-dom": "catalog:",
+    "tailwindcss": "catalog:",
+    "tw-animate-css": "catalog:",
+    "vaul": "catalog:",
+    "zod": "catalog:"
+  }
+}

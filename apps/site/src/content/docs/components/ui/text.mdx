@@ -1,0 +1,41 @@
+---
+title: "Text"
+description: "段落文字，行宽适合阅读，与 json-render shadcn 的 Text 兼容。"
+---
+
+<ComponentPreview name="Text" />
+
+段落文字，行宽适合阅读，与 json-render shadcn 的 Text 兼容。`muted` 用于次要文字，`caption` 用于小字，`lead` 用于引言，`code` 用于行内代码。`text` 中的换行会保留。
+
+## 示例
+
+```json
+{
+  "root": "scrollarea-35-line-1",
+  "elements": {
+    "scrollarea-35-line-1": {
+      "type": "Text",
+      "props": { "text": "v2.4 adds saved filters to every list." },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `text`（必填） | 文字内容。 | `string` |  |
+| `variant` | 样式：`body` 正文，`caption` 小字，`muted` 弱化，`lead` 引导段落，`code` 代码。 | `"body" \| "caption" \| "muted" \| "lead" \| "code" \| null` | `"body"` |
+| `role` | 原生 ARIA role，如需要读屏播报时填 `status`。 | `string` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

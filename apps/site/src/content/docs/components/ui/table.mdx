@@ -1,0 +1,61 @@
+---
+title: "Table"
+description: "行列表格，支持排序、勾选、行操作，以及 badge、tags、currency 等单元格类型。"
+---
+
+<ComponentPreview name="Table" />
+
+行列表格，支持排序、勾选、行操作，以及 badge、tags、currency 等单元格类型。`highlightField` 为该字段为真值的行着色，如需要关注的记录。`rowActions` 插槽里的元素会画在 `kind: "actions"` 列的每一行，各自绑定自己的动作；属性里用 `$item` 读这一行，动作执行前这一行会写入绑定的 `activeRow`，参数里用 `{ "$state": "/table/row/id" }` 读取。不放插槽时，列的 `actions` 收进菜单，点击后写入 `activeAction` 并触发 `rowAction`。有 `bulkActions` 时，勾选行期间表头区域换成勾选操作栏；`bulkAction` 把点击的值写入 `activeAction`。
+
+## 示例
+
+```json
+{
+  "root": "table-16",
+  "elements": {
+    "table-16": {
+      "type": "Table",
+      "props": {
+        "columns": [{ "field": "name", "label": "Name" }],
+        "rows": [{ "name": "Lumi" }],
+        "totals": [{ "label": "Total", "value": "$12.00", "emphasis": true }]
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `rows`（必填） | 表格数据，每行一个对象。 | `object[]` |  |
+| `columns`（必填） | 列定义，每项 `{ field, label, kind?, width?, sortable? }`。`kind` 决定单元格样式：`badge`、`tags`、`currency`、`date`、`entity`、`actions` 等。 字段：`field`、`label?`、`width?`、`sortable?`、`align?`、`kind?`、`valueMap?`、`toneMap?`、`descriptionField?`、`imageField?`、`labelField?`、`initials?`、`truncate?`、`wrap?`、`currency?`、`actions?` | `object[]` |  |
+| `bulkActions` | 勾选行后出现的批量操作按钮，每项 `{ action, label, tone? }`。 字段：`value`、`label`、`icon?`、`tone?`、`disabled?` | `object[]` |  |
+| `visibleColumns` | 只显示这些字段对应的列，不填显示全部。 | `string[]` |  |
+| `columnOrder` | 列的显示顺序，按字段名排列。 | `string[]` |  |
+| `sorters` | 当前排序，每项 `{ field, order: "asc" \| "desc" }`。 字段：`field`、`order` | `object[]` |  |
+| `rowKey` | 每行数据里用作唯一键的字段名。 | `string` | `"id"` |
+| `highlightField` | 该字段为真值的行会高亮，如标记异常的订单。 | `string` |  |
+| `loading` | 显示加载遮罩，并保留上一页数据避免闪烁。 | `boolean` | `false` |
+| `empty` | 没有行时在表格里显示的空状态（同 Empty 的 `sm`）。写字符串即标题；写 `{ title, description?, icon? }` 可补充下一步提示和图标。`""` 表示不显示空行，由宿主在表格外自行绘制。 字段：`title`、`description?`、`icon?` | `string \| object` | `"暂无数据"` |
+| `showHeader` | 设为 `false` 时隐藏表头，适合卡片里的紧凑列表；表头仍保留给读屏器。 | `boolean` | `true` |
+| `selectable` | 显示勾选列，可以多选行。 | `boolean` | `false` |
+| `selectedKeys` | 已勾选行的键。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `(string \| number)[]` | `[]` |
+| `total` | 记录总数，显示在表格底部，如“共 128 条”。只在表格显示的是其中一部分时出现；与 `rows` 行数相同时不显示，免得重复眼前已有的信息。 | `number` |  |
+| `summary` | 表格上方的简短摘要，如“共 3 条”。 | `string` |  |
+| `totals` | 表格底部的合计行，每项 `{ field, value }`。 字段：`label`、`value`、`emphasis?` | `object[]` |  |
+| `activeRow` | 最近一次点击的行数据，供行操作读取。通常绑定到状态。 | `object` |  |
+| `activeAction` | 最近一次点击的行操作名。通常绑定到状态。 | `string` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`sort`、`rowClick`、`rowAction`、`selectionChange`、`bulkAction`
+- 插槽：`rowActions`

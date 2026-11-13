@@ -1,0 +1,197 @@
+---
+title: "交互"
+description: "组件之间怎么联动：事件触发动作、改写状态、弹窗、删除确认、提示用户、跳转，以及状态变化时执行动作。"
+---
+
+组件之间不直接调用，都通过页面状态联动：一个组件改状态，读这个状态的组件跟着变。
+
+## 事件触发动作
+
+元素的 `on` 把事件对应到动作，可以是一个动作，也可以是数组：
+
+```jsonc
+{
+  "root": "page",
+  // 页面状态
+  "state": { "name": "陈米亚" },
+  "elements": {
+    "page": {
+      "type": "Stack",
+      "props": {},
+      "children": ["input", "hello", "clear"]
+    },
+    // 输入框，和 /name 双向绑定
+    "input": {
+      "type": "Input",
+      "props": { "ariaLabel": "姓名", "value": { "$bindState": "/name" } },
+      "children": []
+    },
+    // 提示里显示 /name 的当前值
+    "hello": {
+      "type": "Alert",
+      "props": { "message": { "$state": "/name" } },
+      "children": []
+    },
+    // 清空按钮
+    "clear": {
+      "type": "Button",
+      "props": { "label": "清空" },
+      "on": {
+        // 按下按钮时执行
+        "press": {
+          // 把 /name 改成空字符串
+          "action": "setState",
+          "params": { "statePath": "/name", "value": "" }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+`setState` 是 json-render 自带的动作。Lumi 增加的动作（增删改、提示、导出、导航等）见 [动作](/protocol/actions/)。每个组件有哪些事件，看组件页的"事件与插槽"。
+
+## 弹窗
+
+弹窗的开关就是一个状态：按钮把它设为 `true`，弹窗绑定它。
+
+```jsonc
+{
+  "root": "page",
+  // 对话框默认关闭
+  "state": { "dialog": { "open": false } },
+  "elements": {
+    "page": { "type": "Stack", "props": {}, "children": ["open", "dialog"] },
+    // 按下按钮打开对话框
+    "open": {
+      "type": "Button",
+      "props": { "label": "查看详情" },
+      "on": {
+        "press": {
+          "action": "setState",
+          // 把 /dialog/open 改成 true
+          "params": { "statePath": "/dialog/open", "value": true }
+        }
+      },
+      "children": []
+    },
+    // 对话框，跟着 /dialog/open 开关
+    "dialog": {
+      "type": "Dialog",
+      "props": {
+        "title": "订单 ORD-2031",
+        // 关闭对话框时自动写回 false
+        "open": { "$bindState": "/dialog/open" }
+      },
+      "children": ["detail"]
+    },
+    "detail": {
+      "type": "Text",
+      "props": { "text": "已付款，待发货。" },
+      "children": []
+    }
+  }
+}
+```
+
+## 删除前确认
+
+```jsonc
+{
+  "type": "Popconfirm",
+  // 按钮文字和确认气泡的内容
+  "props": {
+    "label": "删除",
+    "title": "删除这个订单？",
+    "confirmText": "删除"
+  },
+  "on": {
+    // 用户点了确认才执行
+    "confirm": {
+      // 删除 orders 里 id 为 12 的记录
+      "action": "delete",
+      "params": { "resource": "orders", "id": 12 }
+    }
+  }
+}
+```
+
+## 提示用户
+
+动作成功后告诉用户一声，用 `toast`（一行轻提示）或 `notify`（带标题和按钮的通知卡片）。把 `on` 的值写成数组，动作按顺序执行，前一个失败后面的就不执行：
+
+```jsonc
+{
+  "type": "Button",
+  "props": { "label": "标记发货" },
+  "on": {
+    "press": [
+      // 更新这条订单
+      {
+        "action": "update",
+        "params": {
+          "resource": "orders",
+          "id": { "$state": "/order/id" },
+          "values": { "status": "shipped" }
+        }
+      },
+      // 更新成功才会提示；失败时 Lumi 自动弹出后端的错误信息
+      {
+        "action": "toast",
+        "params": { "tone": "success", "message": "已发货" }
+      }
+    ]
+  },
+  "children": []
+}
+```
+
+失败不用自己处理：任何动作出错，页面都会自动弹出错误提示。更多写法见 [toast](/protocol/actions/toast/) 和 [notify](/protocol/actions/notify/)。
+
+## 跳转
+
+`navigate` 跳到后台里的另一个地址，`openDrawer` 把另一个页面打开成弹窗：
+
+```jsonc
+{
+  "type": "Button",
+  "props": { "label": "查看订单" },
+  "on": {
+    "press": {
+      // 跳到这条订单的详情页
+      "action": "navigate",
+      "params": { "to": { "$template": "/orders/${/order/id}" } }
+    }
+  },
+  "children": []
+}
+```
+
+弹窗页面的写法见 [弹窗与复用](/guide/reuse/#共用弹窗)。
+
+## 状态变化时执行动作
+
+`watch` 在某个状态变化时执行动作，适合联动选择，比如换了省份就清空城市：
+
+```jsonc
+{
+  "type": "Select",
+  "props": {
+    "ariaLabel": "省份",
+    // 选中的省份写到 /form/province
+    "value": { "$bindState": "/form/province" },
+    "options": [{ "label": "浙江", "value": "zj" }]
+  },
+  // 监听状态：这个路径变化时执行动作
+  "watch": {
+    "/form/province": {
+      // 省份变了，清空已选的城市
+      "action": "setState",
+      "params": { "statePath": "/form/city", "value": null }
+    }
+  }
+}
+```
+
+页面打开时 `watch` 不执行，只在值变化后执行。

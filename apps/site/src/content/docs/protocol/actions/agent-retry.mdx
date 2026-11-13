@@ -1,0 +1,37 @@
+---
+title: "agentRetry"
+description: "让 Agent 重新回答最后一条用户消息。"
+---
+
+让 Agent 重新回答最后一条用户消息。
+
+## 用法
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "重新回答" },
+      "on": {
+        // 点击按钮时执行
+        "press": {
+          "action": "agentRetry",
+          "params": {
+            // AgentSession 写入的状态路径，如 /chat
+            "session": "/chat"
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| `session`（必填） | AgentSession 写入的状态路径，如 `/chat`。 | `string` |

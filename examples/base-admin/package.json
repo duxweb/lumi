@@ -1,0 +1,10 @@
+{
+  "name": "@duxweb/lumi-base-admin",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "description": "No-build Admin: the prebuilt base script plus JSON files.",
+  "scripts": {
+    "dev": "node serve.mjs"
+  }
+}

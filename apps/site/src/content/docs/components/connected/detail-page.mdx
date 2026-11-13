@@ -1,0 +1,22 @@
+---
+title: "DetailPage"
+description: "记录的摘要、内容和动态。"
+---
+
+记录的摘要、内容和动态。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `title`（必填） | 页面标题，通常是记录名。 | `string` |  |
+| `description` | 标题下方的一行说明。 | `string` |  |
+| `state` | 页面状态：加载中、空、出错、无权限等，`{ kind, title?, reason?, nextStep? }`。不填时正常显示内容。 字段：`kind`、`title`、`reason`、`nextStep`、`actionLabel?`、`disabled?` | `object` |  |
+| `fields`（必填） | 详情字段，每项 `{ label, value }`。 字段：`key`、`label`、`value`、`hint?` | `object[]` |  |
+| `timeline` | 页面下方的动态时间线，同 Timeline 的 `items`。 字段：`items`、`loading?`、`empty?`、`marker?`、`datePlacement?`、`className?`、`data-testid?`、`aria-label?` | `object` |  |
+| `timelineTitle` | 时间线的标题。 | `string` |  |
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：`default`、`actions`、`status`

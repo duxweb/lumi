@@ -1,0 +1,68 @@
+---
+title: "Mention"
+description: "多行文本，输入触发字符（默认 @）时在光标处打开提示列表，选中一项即插入提及。"
+---
+
+<ComponentPreview name="Mention" />
+
+多行文本，输入触发字符（默认 `@`）时在光标处打开提示列表，选中一项即插入提及。值始终是纯文本。
+
+## 示例
+
+```json
+{
+  "root": "mention-47",
+  "elements": {
+    "mention-47": {
+      "type": "Mention",
+      "props": {
+        "value": { "$bindState": "/mention-47/value" },
+        "options": [
+          { "label": "Ada Lovelace", "value": "ada" },
+          { "label": "Alan Turing", "value": "alan" },
+          { "label": "Grace Hopper", "value": "grace" },
+          { "label": "Linus Torvalds", "value": "linus" }
+        ],
+        "rows": 3,
+        "placeholder": "Type @ to mention someone",
+        "ariaLabel": "Comment"
+      },
+      "children": []
+    }
+  },
+  "state": { "mention-47": { "value": "" } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `value` | 当前值。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string` |  |
+| `defaultValue` | 初始值，只在没有绑定 `value` 时生效。 | `string` |  |
+| `options` | 可选项列表，每项 `{ label, value, disabled? }`。 字段：`label`、`value`、`disabled?`、`description?`、`avatar?`、`image?` | `object[]` |  |
+| `trigger` | 打开建议列表的单个字符，须位于词首。 | `string` | `"@"` |
+| `loading` | 为 true 时显示加载状态，并暂停交互。 | `boolean` | `false` |
+| `rows` | 文本框的可见行数。 | `number` | `3` |
+| `autoResize` | 高度随内容自动增长，不出现滚动条。 | `boolean` | `false` |
+| `placeholder` | 没有值时显示的提示文字。 | `string` |  |
+| `size` | 尺寸：`sm` 紧凑，`md` 标准，`lg` 宽松。 | `"sm" \| "md" \| "lg"` | `"md"` |
+| `appearance` | 外观：`outline` 描边，`filled` 浅色填充。 | `"outline" \| "filled"` | `"outline"` |
+| `name` | 字段名，表单提交时作为这个值的键。 | `string` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean` | `false` |
+| `invalid` | 标记为校验未通过，显示错误样式。通常由 FormField 自动设置。 | `boolean` | `false` |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+| `source` | 从远程资源读取选项（Lumi Admin），如 `{ "resource": "members", "labelField": "name", "searchField": "name", "dependsOn": { "parentId": "/form/province" } }`：支持远程搜索、滚动加载、按 ID 回显已选值和联动。设置后忽略静态 `options`。 字段：`resource`、`dataProviderName?`、`meta?`、`filters?`、`labelField?`、`valueField?`、`descriptionField?`、`avatarField?`、`imageField?`、`searchField?`、`pageSize?`、`dependsOn?`、`clearOnDependencyChange?` | `object` |  |
+
+通用参数：
+
+- `checks`：json-render 原生校验规则，如 `{ "type": "required", "message": "请填写" }`，提交或失焦时执行。
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`、`select`
+- 插槽：无

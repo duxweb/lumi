@@ -1,0 +1,86 @@
+---
+title: "Tree"
+description: "可展开、折叠的层级列表。"
+---
+
+<ComponentPreview name="Tree" />
+
+可展开、折叠的层级列表。`selectionMode` 选一个或多个节点；`checkable` 加三态复选框并绑定勾选的值（`checkStrategy`：所有节点、仅叶子或最上层父节点）。`searchable` 按文字过滤、高亮匹配并展开其祖先节点。宿主连接了数据来源时，没有 `children` 的节点按需加载。绑定 `expandedValue` 把展开的节点保存在状态中。
+
+## 示例
+
+```json
+{
+  "root": "tree-1",
+  "elements": {
+    "tree-1": {
+      "type": "Tree",
+      "props": {
+        "items": [
+          {
+            "label": "Design",
+            "value": "design",
+            "children": [
+              { "label": "Brand", "value": "brand" },
+              { "label": "Icons", "value": "icons" }
+            ]
+          },
+          {
+            "label": "Engineering",
+            "value": "eng",
+            "children": [
+              { "label": "Frontend", "value": "web" },
+              { "label": "API", "value": "api" }
+            ]
+          }
+        ],
+        "checkable": true,
+        "checkStrategy": "leaf",
+        "defaultExpandAll": true,
+        "value": { "$bindState": "/tree-1/value" },
+        "ariaLabel": "Teams"
+      },
+      "children": []
+    }
+  },
+  "state": { "tree-1": { "value": ["brand"] } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `items` | 要显示的条目列表。 | `object[]` |  |
+| `value` | 当前值。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `null \| string \| number \| boolean \| (string \| number \| boolean)[]` |  |
+| `defaultValue` | 初始值，只在没有绑定 `value` 时生效。 | `null \| string \| number \| boolean \| (string \| number \| boolean)[]` |  |
+| `selectionMode` | `single` 单选、`multiple` 多选、`none` 只展开不选中。勾选模式下默认 `none`。 | `"none" \| "single" \| "multiple"` | `"single"` |
+| `checkable` | 每行显示复选框；父节点随子节点呈全选或半选。 | `boolean` | `false` |
+| `checkStrategy` | 勾选时上报哪些值：`all` 所有勾选节点，`parent` 只报最上层的全选节点，`leaf` 只报叶子。 | `"all" \| "leaf" \| "parent"` | `"all"` |
+| `expandedValue` | 展开中的节点值列表。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `(string \| number \| boolean)[]` |  |
+| `defaultExpandedValue` | 初始展开的节点值。 | `(string \| number \| boolean)[]` | `[]` |
+| `defaultExpandAll` | 初始展开所有有子节点的节点；节点稍后从远程到达时同样生效。 | `boolean` | `false` |
+| `searchable` | 顶部显示搜索框，高亮匹配并展开其祖先节点。 | `boolean` | `false` |
+| `searchPlaceholder` | 搜索框的提示文字。 | `string` |  |
+| `showLine` | 显示层级引导线。 | `boolean` | `true` |
+| `loading` | 为 true 时显示加载状态，并暂停交互。 | `boolean` | `false` |
+| `empty` | 没有数据时显示的文字。 | `string` |  |
+| `size` | 尺寸：`sm` 紧凑，`md` 标准，`lg` 宽松。 | `"sm" \| "md"` | `"md"` |
+| `name` | 字段名，表单提交时作为这个值的键。 | `string` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean` | `false` |
+| `invalid` | 标记为校验未通过，显示错误样式。通常由 FormField 自动设置。 | `boolean` | `false` |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+| `source` | 从远程资源读取节点，如 `{ "resource": "categories", "labelField": "name", "lazy": true }`：默认按 `parentId` 组装成树，`lazy` 时逐级请求；已选值会按 ID 回显。设置后忽略静态节点。 字段：`resource`、`dataProviderName?`、`meta?`、`filters?`、`labelField?`、`valueField?`、`parentField?`、`childrenField?`、`leafField?`、`lazy?`、`rootValue?`、`searchField?`、`pageSize?` | `object` |  |
+
+通用参数：
+
+- `checks`：json-render 原生校验规则，如 `{ "type": "required", "message": "请填写" }`，提交或失焦时执行。
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`、`expandedChange`
+- 插槽：无

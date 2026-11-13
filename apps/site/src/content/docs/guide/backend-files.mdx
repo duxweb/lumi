@@ -1,0 +1,177 @@
+---
+title: "上传和导入导出"
+description: "文件上传的接口和返回格式、直传对象存储的签名约定，以及由后端处理的导出和导入。"
+---
+
+上传、导出和导入都有默认做法，后端不提供专门的接口也能用。数据量大、要直传对象存储或要在后端校验时，按这一页提供接口。
+
+## 上传
+
+`Upload`、`ImageGrid` 和 `useUpload` 默认把文件发到 `POST {后端地址}/upload`，表单字段名是 `file`，和数据请求一样带登录凭证。后端返回文件地址：
+
+```
+{
+  "data": {
+    // 文件的访问地址，只有它必填
+    "url": "https://cdn.example.com/a/photo.png",
+    // 文件名、大小、类型：不返回时用本地文件的
+    "name": "photo.png",
+    "size": 20480,
+    "type": "image/png"
+  }
+}
+```
+
+- 只有 `url` 必填（也可以叫 `src`）；`name`、`size`、`type` 不返回时用本地文件的。
+- 也接受 `{ "data": { "files": [{ "url": "…" }] } }` 和 `{ "data": { "urls": ["…"] } }`，取第一个。
+- 失败时返回非 2xx 和 `{ "message": "…" }`，提示会显示在上传组件上。
+- 地址、字段名、附带的字段都可以改，见 [upload 选项](/guide/advanced/providers/#upload上传)。
+
+### 直传对象存储
+
+文件不经过你的后端，直接传到 S3、OSS、COS、R2、MinIO 这类对象存储。配置 `sign`：
+
+```jsonc
+{
+  "type": "Upload",
+  "props": {
+    "value": { "$bindState": "/form/files" },
+    "upload": {
+      "sign": {
+        // 向后端要上传凭证的接口
+        "url": "/upload/sign",
+        // 可选：随凭证请求一起发的参数
+        "data": { "folder": "avatars" },
+        // 可选：上传完成后通知后端的接口
+        "complete": "/upload/complete"
+      }
+    }
+  },
+  "children": []
+}
+```
+
+上传分三步：
+
+1. **要凭证**：`POST {后端地址}/upload/sign`，请求体 `{ "name", "size", "type", "folder" }`，带登录凭证。后端在这里检查权限、文件类型和大小，然后返回凭证。
+2. **传文件**：浏览器按凭证把文件直接发给对象存储。这个请求只带凭证里写的内容，不带登录凭证。
+3. **通知后端**（配了 `complete` 才有）：`POST {后端地址}/upload/complete`，请求体 `{ "name", "size", "type", ...凭证里的 complete }`，返回值和普通上传一样是 `{ "data": { "url" } }`。
+
+凭证的格式（放在 `data` 里返回）：
+
+| 字段 | 说明 |
+| --- | --- |
+| `url`（必填） | 文件发到哪里：预签名地址，或存储桶的表单上传地址。 |
+| `method` | `PUT` 把文件作为请求体发送（预签名地址）；`POST` 发表单（Policy 上传）。不写时有 `fields` 用 `POST`，否则 `PUT`。 |
+| `headers` | 对象存储要求的请求头，如 `Content-Type`，必须和签名时一致。 |
+| `fields` | `POST` 表单里的字段（`key`、`policy`、`signature` 等），排在文件前面。 |
+| `fieldName` | `POST` 表单里文件的字段名，默认 `file`。 |
+| `fileUrl` | 文件最终的访问地址。没配 `complete` 时必填。 |
+| `complete` | 原样带给 `complete` 接口的值，如对象的 `key`。 |
+
+预签名 `PUT`（S3、R2、MinIO 常用）：
+
+```
+{
+  "data": {
+    // 预签名地址：浏览器把文件 PUT 到这里
+    "url": "https://bucket.s3.amazonaws.com/avatars/a.png?X-Amz-Signature=…",
+    // 要和签名时一致的请求头
+    "headers": { "Content-Type": "image/png" },
+    // 上传完成后文件的访问地址
+    "fileUrl": "https://cdn.example.com/avatars/a.png"
+  }
+}
+```
+
+表单 `POST`（OSS、COS 的 Policy 上传）：
+
+```
+{
+  "data": {
+    // 存储桶的表单上传地址
+    "url": "https://bucket.oss-cn-hangzhou.aliyuncs.com",
+    // 表单字段，排在文件前面
+    "fields": {
+      "key": "avatars/a.png",
+      "policy": "…",
+      "OSSAccessKeyId": "…",
+      "signature": "…"
+    },
+    // 原样带给 complete 接口，后端据此确认文件
+    "complete": { "key": "avatars/a.png" }
+  }
+}
+```
+
+- 对象存储要给你的站点开 CORS，允许对应的方法和请求头。
+- 进度、取消、失败重试和普通上传一样。对象存储拒绝时（签名不对、过期）显示上传失败。
+- 目前是整个文件一次上传，不分片。
+
+## 导入导出
+
+`exportList` 和 `importList` 默认在浏览器里处理：导出时逐页读列表、生成 CSV 或 JSON；导入时读 CSV 或 JSON、逐条调用新建接口。数据量大、要导出 Excel，或导入要在后端校验和落库时，给它们加 `url`，交给后端做。
+
+### 后端导出
+
+```jsonc
+{
+  "type": "Button",
+  "props": { "label": "导出" },
+  "on": {
+    "press": {
+      // 点击后导出
+      "action": "exportList",
+      "params": {
+        "resource": "orders",
+        // 后端的导出接口，相对于后端地址
+        "url": "/orders/export",
+        // 后端支持的任何格式
+        "format": "xlsx",
+        // 当前的筛选条件，一起发给后端
+        "filters": { "$state": "/filters" },
+        // 进度写到这里，页面可以显示已接收多少
+        "progressPath": "/export/progress"
+      }
+    }
+  },
+  "children": []
+}
+```
+
+- 请求：`POST {后端地址}/orders/export`，请求体 `{ "filters", "sorters", "columns", "format", ...meta }`，带登录凭证。`"method": "GET"` 时这些值放在查询串里，其中 `filters`、`sorters`、`columns` 是 JSON 文本。
+- 返回：直接返回文件流，什么格式都可以。文件名取 `Content-Disposition` 里的 `filename`（支持 `filename*=UTF-8''…`），没有时用 `filename` 参数。
+- 进度：`progressPath` 里是 `{ loading, loaded, total }`，`loaded` 是已接收的字节数；后端返回 `Content-Length` 时才有 `total`。
+- 失败：返回非 2xx 和 `{ "message": "…" }`，不会保存文件。
+
+### 后端导入
+
+```jsonc
+{
+  "type": "Button",
+  "props": { "label": "导入" },
+  "on": {
+    "press": {
+      // 点击后选文件并上传
+      "action": "importList",
+      "params": {
+        "resource": "products",
+        // 后端的导入接口，相对于后端地址
+        "url": "/products/import",
+        // 文件选择框里允许的类型
+        "accept": ".xlsx,.csv",
+        // 上传进度写到这里
+        "progressPath": "/import/progress",
+        // 后端返回的导入结果写到这里
+        "resultPath": "/import/result"
+      }
+    }
+  },
+  "children": []
+}
+```
+
+- 请求：用户选的文件原样上传到 `POST {后端地址}/products/import`，表单字段名 `file`，`meta` 里的值作为其他表单字段，带登录凭证。文件格式由后端决定。
+- 返回：`{ "data": { "total": 120, "succeeded": 118, "failed": 2, "errors": [{ "row": 7, "message": "SKU 已存在" }] } }`。全部成功时弹出提示，有失败时弹出通知并列出前几条错误，结果写进 `resultPath`，然后刷新资源。只返回 2xx、不带这些数字时，视为后端已接受。
+- 进度：`progressPath` 里的 `uploaded` 是文件已上传的百分比；条数在后端返回后才有。
+- 导入耗时很长时，让接口先返回、后台继续处理，再通过 [实时推送](/guide/advanced/providers/) 或通知告诉用户结果。

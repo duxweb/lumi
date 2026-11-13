@@ -1,0 +1,463 @@
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Menus, tooltips & accordion"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "sections"
+      ]
+    },
+    "menu-1": {
+      "type": "Menu",
+      "props": {
+        "label": {
+          "$t": "Order actions"
+        },
+        "value": {
+          "$bindState": "/menu/order"
+        },
+        "items": [
+          {
+            "key": "ship",
+            "label": {
+              "$t": "Mark as shipped"
+            },
+            "icon": "delivery-truck-01"
+          },
+          {
+            "key": "invoice",
+            "label": {
+              "$t": "Download invoice"
+            },
+            "icon": "download",
+            "shortcut": "⌘D"
+          },
+          {
+            "key": "duplicate",
+            "label": {
+              "$t": "Duplicate"
+            },
+            "icon": "copy"
+          },
+          {
+            "key": "cancel",
+            "label": {
+              "$t": "Cancel order"
+            },
+            "icon": "circle-x",
+            "tone": "danger",
+            "separatorBefore": true
+          }
+        ]
+      },
+      "children": [],
+      "on": {
+        "select": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Menu item chosen"
+            },
+            "tone": "info"
+          }
+        }
+      }
+    },
+    "menu-2": {
+      "type": "Menu",
+      "props": {
+        "label": {
+          "$t": "More"
+        },
+        "icon": "more-horizontal",
+        "shape": "square",
+        "appearance": "ghost",
+        "align": "end",
+        "value": {
+          "$bindState": "/menu/more"
+        },
+        "items": [
+          {
+            "key": "edit",
+            "label": {
+              "$t": "Edit"
+            },
+            "icon": "pencil",
+            "group": {
+              "$t": "Record"
+            }
+          },
+          {
+            "key": "share",
+            "label": {
+              "$t": "Share link"
+            },
+            "icon": "link",
+            "group": {
+              "$t": "Record"
+            }
+          },
+          {
+            "key": "archive",
+            "label": {
+              "$t": "Archive"
+            },
+            "icon": "archive",
+            "group": {
+              "$t": "Danger zone"
+            },
+            "separatorBefore": true
+          },
+          {
+            "key": "delete",
+            "label": {
+              "$t": "Delete"
+            },
+            "icon": "trash-2",
+            "tone": "danger",
+            "group": {
+              "$t": "Danger zone"
+            }
+          },
+          {
+            "key": "locked",
+            "label": {
+              "$t": "Transfer ownership"
+            },
+            "icon": "lock",
+            "disabled": true
+          }
+        ]
+      },
+      "children": [],
+      "on": {
+        "select": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Action selected"
+            }
+          }
+        }
+      }
+    },
+    "stack-3": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "menu-1",
+        "menu-2"
+      ]
+    },
+    "card-6": {
+      "type": "Example",
+      "props": {
+        "id": "menu",
+        "title": {
+          "$t": "Dropdown menu"
+        },
+        "description": {
+          "$t": "Picking an item writes its key to state and runs the select action; here the toast reads the key back"
+        }
+      },
+      "children": [
+        "stack-3"
+      ]
+    },
+    "button-7": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Refresh"
+        },
+        "icon": "refresh-cw",
+        "shape": "square",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "tooltip-8": {
+      "type": "Tooltip",
+      "props": {
+        "content": {
+          "$t": "Reload the latest data"
+        },
+        "side": "top"
+      },
+      "children": [
+        "button-7"
+      ]
+    },
+    "button-9": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Export"
+        },
+        "icon": "download",
+        "shape": "square",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "tooltip-10": {
+      "type": "Tooltip",
+      "props": {
+        "content": {
+          "$t": "Download as CSV"
+        },
+        "side": "top"
+      },
+      "children": [
+        "button-9"
+      ]
+    },
+    "button-11": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Filter"
+        },
+        "icon": "filter",
+        "shape": "square",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "tooltip-12": {
+      "type": "Tooltip",
+      "props": {
+        "content": {
+          "$t": "Show the filter panel"
+        },
+        "side": "bottom"
+      },
+      "children": [
+        "button-11"
+      ]
+    },
+    "button-13": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Settings"
+        },
+        "icon": "settings",
+        "shape": "square",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "tooltip-14": {
+      "type": "Tooltip",
+      "props": {
+        "content": {
+          "$t": "Page settings"
+        },
+        "side": "right"
+      },
+      "children": [
+        "button-13"
+      ]
+    },
+    "stack-15": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "tooltip-8",
+        "tooltip-10",
+        "tooltip-12",
+        "tooltip-14"
+      ]
+    },
+    "card-16": {
+      "type": "Example",
+      "props": {
+        "id": "tooltip",
+        "title": {
+          "$t": "Tooltips"
+        },
+        "description": {
+          "$t": "Icon-only buttons keep their label as the accessible name; the tooltip adds a hint on hover and focus"
+        }
+      },
+      "children": [
+        "stack-15"
+      ]
+    },
+    "accordion-17": {
+      "type": "Accordion",
+      "props": {
+        "defaultOpen": [
+          "shipping"
+        ],
+        "items": [
+          {
+            "key": "shipping",
+            "title": {
+              "$t": "When do orders ship?"
+            },
+            "content": {
+              "$t": "Orders paid before 16:00 leave the warehouse the same day; later orders ship the next working day"
+            }
+          },
+          {
+            "key": "returns",
+            "title": {
+              "$t": "How do returns work?"
+            },
+            "content": {
+              "$t": "Customers have 14 days to start a return from their order page. Refunds go out once the parcel is checked"
+            }
+          },
+          {
+            "key": "invoices",
+            "title": {
+              "$t": "Where are invoices?"
+            },
+            "content": {
+              "$t": "Every paid order has a PDF invoice under its detail page and in the monthly export"
+            }
+          },
+          {
+            "key": "api",
+            "title": {
+              "$t": "Is there an API?"
+            },
+            "content": {
+              "$t": "Yes. Every list and form in this admin is backed by the same JSON API the Go backend exposes"
+            },
+            "disabled": true
+          }
+        ]
+      },
+      "children": []
+    },
+    "card-18": {
+      "type": "Example",
+      "props": {
+        "id": "accordion",
+        "title": {
+          "$t": "Accordion"
+        },
+        "description": {
+          "$t": "One section open at a time; the first starts open"
+        }
+      },
+      "children": [
+        "accordion-17"
+      ]
+    },
+    "accordion-19": {
+      "type": "Accordion",
+      "props": {
+        "multiple": true,
+        "defaultOpen": [
+          "profile",
+          "billing"
+        ],
+        "items": [
+          {
+            "key": "profile",
+            "title": {
+              "$t": "Profile"
+            },
+            "content": {
+              "$t": "Name, contact email and the language used in notifications"
+            }
+          },
+          {
+            "key": "billing",
+            "title": {
+              "$t": "Billing"
+            },
+            "content": {
+              "$t": "Payment method, invoices and the billing contact"
+            }
+          },
+          {
+            "key": "security",
+            "title": {
+              "$t": "Security"
+            },
+            "content": {
+              "$t": "Two-step sign-in, active sessions and API tokens"
+            }
+          },
+          {
+            "key": "notifications",
+            "title": {
+              "$t": "Notifications"
+            },
+            "content": {
+              "$t": "Email, push and the weekly digest"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "card-20": {
+      "type": "Example",
+      "props": {
+        "id": "accordion-multiple",
+        "title": {
+          "$t": "Several open"
+        },
+        "description": {
+          "$t": "With multiple, sections fold independently, as in a settings or FAQ page"
+        }
+      },
+      "children": [
+        "accordion-19"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Menus, tooltips & accordion"
+        },
+        "description": {
+          "$t": "Dropdown menus that hand the chosen key to an action, hints on icon buttons and folding sections"
+        }
+      },
+      "children": []
+    },
+    "sections": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "card-6",
+        "card-16",
+        "card-18",
+        "card-20"
+      ]
+    }
+  },
+  "state": {
+    "menu": {
+      "order": null,
+      "more": null
+    }
+  }
+}

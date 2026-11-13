@@ -1,0 +1,19 @@
+---
+title: "useToast"
+description: "useToast React hook 的签名、参数和返回值。"
+---
+
+Opens light messages through the configured ToastProvider, like the `toast` action.
+
+```typescript
+useToast(): FeedbackHandle<ToastParams>
+```
+
+返回 `FeedbackHandle<ToastParams>`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `close` | `(key: string) => void` | 是 | Closes the entry with this key. |
+| `open` | `(params: ToastParams) => string \| undefined` | 是 | Returns the key of the open entry, or `undefined` without a provider. |

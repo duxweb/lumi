@@ -1,0 +1,21 @@
+/*
+ * Field error tooltip: the hint surface with a danger accent. The control
+ * under it keeps the shared invalid state, so the message adds no height.
+ */
+[data-slot="tooltip"][data-tone="danger"] {
+  --tw-ring-color: color-mix(in oklab, var(--destructive) 40%, transparent);
+  display: flex;
+  max-width: 18rem;
+  align-items: flex-start;
+  gap: 0.375rem;
+  color: var(--destructive);
+  line-height: 1.35;
+  /* The tint is mixed into an opaque surface: the tooltip sits over the field's own label, which would show through a translucent one. */
+  background: color-mix(in oklab, var(--destructive) 8%, var(--popover)) !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+[data-theme="dark"] [data-slot="tooltip"][data-tone="danger"] {
+  background: color-mix(in oklab, var(--destructive) 16%, var(--popover)) !important;
+}
+[data-slot="tooltip"][data-tone="danger"] > svg { flex: none; width: 0.875rem; height: 0.875rem; margin-top: 0.0625rem; }

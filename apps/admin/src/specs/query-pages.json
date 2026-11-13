@@ -1,0 +1,123 @@
+{
+  "root": "stack",
+  "state": {
+    "page": 1,
+    "sorters": [
+      {
+        "field": "total",
+        "order": "desc"
+      }
+    ],
+    "orders": {
+      "data": [],
+      "total": 0,
+      "loading": true
+    }
+  },
+  "elements": {
+    "stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "query",
+        "table",
+        "pager"
+      ]
+    },
+    "query": {
+      "type": "Query",
+      "props": {
+        "resource": "orders",
+        "pagination": {
+          "page": {
+            "$state": "/page"
+          },
+          "pageSize": 5
+        },
+        "sorters": {
+          "$state": "/sorters"
+        },
+        "resultPath": "/orders"
+      },
+      "children": []
+    },
+    "table": {
+      "type": "Table",
+      "props": {
+        "rows": {
+          "$state": "/orders/data"
+        },
+        "loading": {
+          "$state": "/orders/loading"
+        },
+        "sorters": {
+          "$bindState": "/sorters"
+        },
+        "columns": [
+          {
+            "field": "number",
+            "label": {
+              "$t": "Order"
+            },
+            "kind": "code",
+            "width": "8rem"
+          },
+          {
+            "field": "customer",
+            "label": {
+              "$t": "Customer"
+            },
+            "truncate": true
+          },
+          {
+            "field": "total",
+            "label": {
+              "$t": "Total"
+            },
+            "kind": "currency",
+            "currency": "USD",
+            "sortable": true,
+            "width": "8rem"
+          },
+          {
+            "field": "createdAt",
+            "label": {
+              "$t": "Placed"
+            },
+            "kind": "date",
+            "sortable": true,
+            "width": "8rem"
+          }
+        ]
+      },
+      "on": {
+        "sort": {
+          "action": "setState",
+          "params": {
+            "statePath": "/page",
+            "value": 1
+          }
+        }
+      },
+      "children": []
+    },
+    "pager": {
+      "type": "Pagination",
+      "props": {
+        "ariaLabel": {
+          "$t": "Orders pages"
+        },
+        "page": {
+          "$bindState": "/page"
+        },
+        "pageSize": 5,
+        "total": {
+          "$state": "/orders/total"
+        }
+      },
+      "children": []
+    }
+  }
+}

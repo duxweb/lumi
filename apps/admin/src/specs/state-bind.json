@@ -1,0 +1,110 @@
+{
+  "root": "form",
+  "state": {
+    "customer": {
+      "name": "Ada Lovelace",
+      "tier": "gold",
+      "newsletter": true
+    }
+  },
+  "elements": {
+    "form": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "name",
+        "tier",
+        "newsletter",
+        "readout"
+      ]
+    },
+    "name": {
+      "type": "FormField",
+      "props": {
+        "name": "name",
+        "label": {
+          "$t": "Customer name"
+        },
+        "value": {
+          "$bindState": "/customer/name"
+        }
+      },
+      "children": []
+    },
+    "tier": {
+      "type": "FormField",
+      "props": {
+        "name": "tier",
+        "label": {
+          "$t": "Tier"
+        },
+        "fieldType": "enum",
+        "widget": "Select",
+        "options": [
+          {
+            "label": {
+              "$t": "Standard"
+            },
+            "value": "standard"
+          },
+          {
+            "label": {
+              "$t": "Gold"
+            },
+            "value": "gold"
+          },
+          {
+            "label": {
+              "$t": "Enterprise"
+            },
+            "value": "enterprise"
+          }
+        ],
+        "value": {
+          "$bindState": "/customer/tier"
+        }
+      },
+      "children": []
+    },
+    "newsletter": {
+      "type": "Switch",
+      "props": {
+        "label": {
+          "$t": "Newsletter"
+        },
+        "value": {
+          "$bindState": "/customer/newsletter"
+        }
+      },
+      "children": []
+    },
+    "readout": {
+      "type": "DescriptionList",
+      "props": {
+        "items": [
+          {
+            "label": "/customer/name",
+            "value": {
+              "$state": "/customer/name"
+            }
+          },
+          {
+            "label": "/customer/tier",
+            "value": {
+              "$state": "/customer/tier"
+            }
+          },
+          {
+            "label": "/customer/newsletter",
+            "value": {
+              "$state": "/customer/newsletter"
+            }
+          }
+        ]
+      },
+      "children": []
+    }
+  }
+}

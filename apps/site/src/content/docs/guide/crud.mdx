@@ -1,0 +1,547 @@
+---
+title: "CRUD 页面"
+description: "从列表、搜索、新建、编辑、删除到服务端字段错误，一步步写出一个客户管理页面，并说明怎么换成抽屉或单独的编辑页。"
+---
+
+这一篇把前面几篇的内容串起来，写一个客户管理页面：
+
+- 列表分页，可以按名称搜索；
+- 右上角“新建客户”，弹窗里填写；
+- 每一行有“编辑”和“删除”两个按钮，编辑和新建共用同一个弹窗；
+- 删除前在原地确认；
+- 后端说名称重复时，错误显示在名称字段下面。
+
+完整页面在本文最后，可以直接复制。在线后台里的“数据 → CRUD”就是这个页面。
+
+## 页面状态
+
+页面里所有会变的值都放在 `state` 里，组件通过路径读写：
+
+| 路径 | 存什么 | 谁写 |
+| --- | --- | --- |
+| `/search/name` | 搜索框里的文字 | 搜索框 |
+| `/table/row` | 刚点了按钮的那一行 | 表格 |
+| `/dialog` | 弹窗是否打开、正在编辑的 `id`（新建时为 `null`） | 新建、编辑按钮 |
+| `/form` | 弹窗里表单的值 | 表单字段 |
+| `/formStatus` | 保存状态：是否提交中、每个字段的错误 | `submitForm` |
+| `/list` | 列表的分页、排序 | 列表 |
+
+## 列表和搜索
+
+`ListPage` 自己请求 `customers`，管分页和排序。`filters` 读搜索框的状态，文字一变，列表就带着新条件重新请求（`?name[like]=…`）。
+
+```jsonc
+{
+  "type": "ListPage",
+  "props": {
+    "title": "客户",
+    "resource": "customers",
+    // 分页、排序存在这里
+    "statePath": "/list",
+    // 名称包含搜索框里的文字
+    "filters": [
+      {
+        "field": "name",
+        "operator": "like",
+        "value": { "$state": "/search/name" }
+      }
+    ],
+    "columns": [
+      // 名称下面一行小字显示邮箱
+      {
+        "field": "name",
+        "label": "名称",
+        "kind": "entity",
+        "descriptionField": "email"
+      },
+      {
+        "field": "spent",
+        "label": "消费",
+        "kind": "currency",
+        "currency": "CNY"
+      },
+      // 操作列：按钮放在 rowActions 插槽里
+      { "field": "actions", "kind": "actions" }
+    ],
+    // 点了某一行的按钮，这一行先写到 /table/row
+    "activeRow": { "$bindState": "/table/row" }
+  },
+  "slots": {
+    // 标题右边：搜索框和新建按钮
+    "actions": ["search", "create"],
+    // 每一行都画一遍：编辑和删除
+    "rowActions": ["edit", "remove"]
+  }
+}
+```
+
+## 每一行的按钮
+
+`rowActions` 插槽里放普通的按钮，每个按钮绑定自己的动作：编辑用 `setState` 打开弹窗，删除用 `delete`。也可以换成 `navigate`、`openDrawer`、`request` 等任意动作。
+
+按钮里怎么拿到“这一行”：
+
+- 按钮的属性（文字、`visible`、`disabled`）用 `$item` 读这一行的字段，例如 `{ "$item": "name" }`。
+- 动作参数用 `{ "$state": "/table/row/id" }`。按钮的动作执行前，表格已经把这一行写进 `activeRow` 绑定的 `/table/row`。
+
+动作参数里不能直接写 `$item`：在 json-render 里，动作参数中的 `$item` 表示这一项在状态里的路径（给 `setState` 改这一行用），不是它的值。
+
+编辑按钮把这一行的值复制进表单，再打开弹窗：
+
+```jsonc
+{
+  "type": "Button",
+  "props": { "label": "编辑", "appearance": "ghost", "size": "sm" },
+  "on": {
+    // 数组里的动作按顺序执行
+    "press": [
+      // 清掉上一次的字段错误
+      {
+        "action": "setState",
+        "params": { "statePath": "/formStatus", "value": {} }
+      },
+      // 只复制要编辑的字段，提交时不会带上 id、消费等
+      {
+        "action": "setState",
+        "params": {
+          "statePath": "/form",
+          "value": {
+            "name": { "$state": "/table/row/name" },
+            "email": { "$state": "/table/row/email" },
+            "tier": { "$state": "/table/row/tier" }
+          }
+        }
+      },
+      // 有 id，弹窗就是“编辑”
+      {
+        "action": "setState",
+        "params": {
+          "statePath": "/dialog",
+          "value": { "open": true, "id": { "$state": "/table/row/id" } }
+        }
+      }
+    ]
+  }
+}
+```
+
+“新建客户”按钮一样，只是把表单清空、`id` 设为 `null`。
+
+## 删除前确认
+
+`Popconfirm` 本身就是一个按钮，点了先在旁边弹出确认，用户确认后才执行 `confirm` 里的动作：
+
+```jsonc
+{
+  "type": "Popconfirm",
+  "props": {
+    "label": "删除",
+    "appearance": "ghost",
+    "size": "sm",
+    // ${name} 读这一行的 name
+    "title": { "$template": "删除 ${name}？" },
+    "description": "删除后不能恢复。",
+    "confirmText": "删除",
+    "tone": "danger"
+  },
+  "on": {
+    "confirm": [
+      // 删除成功后，列表会自动重新请求
+      {
+        "action": "delete",
+        "params": {
+          "resource": "customers",
+          "id": { "$state": "/table/row/id" }
+        }
+      },
+      // 删除失败时这一步不会执行，失败信息自动弹出
+      {
+        "action": "toast",
+        "params": { "message": "已删除", "tone": "success" }
+      }
+    ]
+  }
+}
+```
+
+json-render 的动作绑定也有原生的 `confirm` 字段，但它弹出的是 json-render 自带的确认框，不跟后台的主题和暗色模式走，后台页面里请用 `Popconfirm` 或 `Dialog`。
+
+## 新建和编辑共用的弹窗
+
+弹窗只有一个，标题看 `/dialog/id`：有值是编辑，没有是新建。
+
+```jsonc
+{
+  "type": "Dialog",
+  "props": {
+    // 标题：有 id 是编辑，没有是新建
+    "title": {
+      "$cond": { "$state": "/dialog/id" },
+      "$then": "编辑客户",
+      "$else": "新建客户"
+    },
+    // 关闭按钮和遮罩会把它写回 false
+    "open": { "$bindState": "/dialog/open" }
+  },
+  // 弹窗里放表单
+  "children": ["form"]
+}
+```
+
+表单提交时用 `submitForm`：`id` 为 `null` 时新建（POST），有值时更新（PUT）。
+
+```jsonc
+{
+  "type": "Form",
+  "props": {},
+  "on": {
+    "submit": [
+      {
+        "action": "submitForm",
+        "params": {
+          "resource": "customers",
+          "id": { "$state": "/dialog/id" },
+          // 提交 /form 里的值
+          "valuesPath": "/form",
+          // 提交中、字段错误写到这里
+          "validationPath": "/formStatus",
+          // 保存成功才关闭弹窗
+          "successState": { "/dialog/open": false }
+        }
+      },
+      // 校验没过或后端拒绝时，这一步不会执行
+      {
+        "action": "toast",
+        "params": { "message": "已保存", "tone": "success" }
+      }
+    ]
+  },
+  "children": ["name", "email", "tier", "save"]
+}
+```
+
+`submitForm` 会先检查字段的 `checks`，不通过就不发请求。同一个表单正在保存时，再点一次不会重复提交。保存成功后，`customers` 的列表会自动刷新。
+
+## 后端返回的字段错误
+
+后端返回 422 和 `errors: [{ "path": "name", "message": "已有同名客户" }]` 时，`submitForm` 把错误写到 `/formStatus/fieldErrors/name`。字段的 `error` 读这个路径，错误就会显示在名称下面：
+
+```jsonc
+{
+  "type": "FormField",
+  "props": {
+    "name": "name",
+    "label": "名称",
+    "value": { "$bindState": "/form/name" },
+    // 后端说这个字段不行时，显示在字段下面
+    "error": { "$state": "/formStatus/fieldErrors/name" },
+    // 前端先检查一遍
+    "checks": [{ "type": "required", "message": "请填写名称" }]
+  }
+}
+```
+
+保存按钮读 `/formStatus/pending`，提交中显示加载状态：
+
+```jsonc
+{
+  "type": "Button",
+  "props": {
+    "label": "保存",
+    // 回车或点击都会提交外层的表单
+    "type": "submit",
+    "loading": { "$state": "/formStatus/pending" }
+  }
+}
+```
+
+错误的格式见[数据接口](/guide/backend/)。如果你的后端返回的错误格式不同，可以在 DataProvider 里用 `parseError` 转换，见[数据请求](/guide/advanced/data/#错误格式)。
+
+## 换成抽屉或单独的页面
+
+- **抽屉**：把 `Dialog` 换成 `Drawer`，其他不变。两者的 `open`、`title` 和子元素写法一样。
+- **单独的编辑页**：编辑按钮改成 `{ "action": "navigate", "params": { "to": { "$template": "/customers/${id}/edit" } } }`，编辑页的路由写成 `/customers/:id/edit`，页面里用 [FormPage](/components/connected/form-page/) 读取和保存这一条记录（`"id": { "$state": "/route/params/id" }`），它还带离开前提醒。写法见 [地址里的参数](/guide/menus/#地址里的参数)。
+- **路由抽屉**：已经在菜单里注册过的抽屉，用 `openDrawer` 打开，地址栏会记住，刷新后还在。
+
+## 完整页面
+
+注释只为说明，真实的 `.json` 文件里不能写注释。
+
+```jsonc
+{
+  "root": "page",
+  // 页面状态：下面每一项的用途见上文的表
+  "state": {
+    // 搜索框里的文字
+    "search": { "name": "" },
+    // 刚点了按钮的那一行
+    "table": { "row": null },
+    // 弹窗是否打开，正在编辑的 id
+    "dialog": { "open": false, "id": null },
+    // 表单的值
+    "form": { "name": "", "email": "", "tier": "standard" },
+    // 保存状态和字段错误
+    "formStatus": {}
+  },
+  "elements": {
+    // 列表和弹窗并排放在页面里
+    "page": { "type": "Fragment", "props": {}, "children": ["list", "dialog"] },
+    // 列表：自己请求 customers，管分页和排序
+    "list": {
+      "type": "ListPage",
+      "props": {
+        "title": "客户",
+        "description": "新建、编辑和删除客户。",
+        "resource": "customers",
+        // 分页、排序存在这里
+        "statePath": "/list",
+        "pageSize": 10,
+        // 名称包含搜索框里的文字
+        "filters": [
+          {
+            "field": "name",
+            "operator": "like",
+            "value": { "$state": "/search/name" }
+          }
+        ],
+        // 列：名称（带邮箱）、等级、消费、操作
+        "columns": [
+          {
+            "field": "name",
+            "label": "名称",
+            "kind": "entity",
+            "descriptionField": "email"
+          },
+          {
+            "field": "tier",
+            "label": "等级",
+            "kind": "badge",
+            "valueMap": {
+              "standard": "普通",
+              "gold": "金牌",
+              "enterprise": "企业"
+            },
+            "toneMap": {
+              "standard": "neutral",
+              "gold": "warning",
+              "enterprise": "brand"
+            }
+          },
+          {
+            "field": "spent",
+            "label": "消费",
+            "kind": "currency",
+            "currency": "CNY"
+          },
+          { "field": "actions", "kind": "actions" }
+        ],
+        // 点了某一行的按钮，这一行先写到 /table/row
+        "activeRow": { "$bindState": "/table/row" }
+      },
+      // 标题右边放搜索框和新建按钮；每一行放编辑和删除
+      "slots": {
+        "actions": ["search", "create"],
+        "rowActions": ["edit", "remove"]
+      },
+      "children": []
+    },
+    // 搜索框
+    "search": {
+      "type": "Input",
+      "props": {
+        "value": { "$bindState": "/search/name" },
+        "placeholder": "搜索名称",
+        "clearable": true,
+        "ariaLabel": "搜索名称"
+      },
+      "children": []
+    },
+    // 新建：清空表单，打开没有 id 的弹窗
+    "create": {
+      "type": "Button",
+      "props": { "label": "新建客户", "icon": "add-01", "appearance": "solid" },
+      "on": {
+        "press": [
+          {
+            "action": "setState",
+            "params": { "statePath": "/formStatus", "value": {} }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/form",
+              "value": { "name": "", "email": "", "tier": "standard" }
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/dialog",
+              "value": { "open": true, "id": null }
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    // 编辑：复制这一行，打开带 id 的弹窗
+    "edit": {
+      "type": "Button",
+      "props": { "label": "编辑", "appearance": "ghost", "size": "sm" },
+      "on": {
+        "press": [
+          {
+            "action": "setState",
+            "params": { "statePath": "/formStatus", "value": {} }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/form",
+              "value": {
+                "name": { "$state": "/table/row/name" },
+                "email": { "$state": "/table/row/email" },
+                "tier": { "$state": "/table/row/tier" }
+              }
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/dialog",
+              "value": { "open": true, "id": { "$state": "/table/row/id" } }
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    // 删除：原地确认
+    "remove": {
+      "type": "Popconfirm",
+      "props": {
+        "label": "删除",
+        "appearance": "ghost",
+        "size": "sm",
+        "title": { "$template": "删除 ${name}？" },
+        "description": "删除后不能恢复。",
+        "confirmText": "删除",
+        "tone": "danger",
+        "align": "end"
+      },
+      "on": {
+        "confirm": [
+          {
+            "action": "delete",
+            "params": {
+              "resource": "customers",
+              "id": { "$state": "/table/row/id" }
+            }
+          },
+          {
+            "action": "toast",
+            "params": { "message": "已删除", "tone": "success" }
+          }
+        ]
+      },
+      "children": []
+    },
+    // 新建和编辑共用的弹窗
+    "dialog": {
+      "type": "Dialog",
+      "props": {
+        "title": {
+          "$cond": { "$state": "/dialog/id" },
+          "$then": "编辑客户",
+          "$else": "新建客户"
+        },
+        "open": { "$bindState": "/dialog/open" }
+      },
+      "children": ["form"]
+    },
+    // 表单：提交时保存，成功后关闭弹窗并提示
+    "form": {
+      "type": "Form",
+      "props": {},
+      "on": {
+        "submit": [
+          {
+            "action": "submitForm",
+            "params": {
+              "resource": "customers",
+              // 有 id 更新，没有 id 新建
+              "id": { "$state": "/dialog/id" },
+              "valuesPath": "/form",
+              // 提交中、字段错误写到这里
+              "validationPath": "/formStatus",
+              // 保存成功才关闭弹窗
+              "successState": { "/dialog/open": false }
+            }
+          },
+          {
+            "action": "toast",
+            "params": { "message": "已保存", "tone": "success" }
+          }
+        ]
+      },
+      "children": ["name", "email", "tier", "save"]
+    },
+    // 名称：必填；后端说重名时，错误显示在它下面
+    "name": {
+      "type": "FormField",
+      "props": {
+        "name": "name",
+        "label": "名称",
+        "value": { "$bindState": "/form/name" },
+        "error": { "$state": "/formStatus/fieldErrors/name" },
+        "checks": [{ "type": "required", "message": "请填写名称" }]
+      },
+      "children": []
+    },
+    // 邮箱：必填，并检查格式
+    "email": {
+      "type": "FormField",
+      "props": {
+        "name": "email",
+        "label": "邮箱",
+        "value": { "$bindState": "/form/email" },
+        "error": { "$state": "/formStatus/fieldErrors/email" },
+        "checks": [
+          { "type": "required", "message": "请填写邮箱" },
+          { "type": "email", "message": "邮箱格式不对" }
+        ]
+      },
+      "children": []
+    },
+    // 等级：下拉选择
+    "tier": {
+      "type": "FormField",
+      "props": {
+        "name": "tier",
+        "label": "等级",
+        "fieldType": "enum",
+        "widget": "Select",
+        "options": [
+          { "label": "普通", "value": "standard" },
+          { "label": "金牌", "value": "gold" },
+          { "label": "企业", "value": "enterprise" }
+        ],
+        "value": { "$bindState": "/form/tier" },
+        "error": { "$state": "/formStatus/fieldErrors/tier" }
+      },
+      "children": []
+    },
+    // 保存按钮：提交外层的表单，提交中显示加载状态
+    "save": {
+      "type": "Button",
+      "props": {
+        "label": "保存",
+        "type": "submit",
+        "appearance": "solid",
+        "loading": { "$state": "/formStatus/pending" }
+      },
+      "children": []
+    }
+  }
+}
+```

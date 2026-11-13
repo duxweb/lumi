@@ -1,0 +1,42 @@
+---
+title: "MessageActions"
+description: "回答下方的操作：复制、重新生成，以及作为切换按钮的赞和踩。"
+---
+
+<ComponentPreview name="MessageActions" />
+
+回答下方的操作：复制、重新生成，以及作为切换按钮的赞和踩。绑定 `feedback`（`{ "$bindState": "/path" }`）；再次点击当前评价会清除它。
+
+## 示例
+
+```json
+{
+  "root": "message-actions",
+  "elements": {
+    "message-actions": {
+      "type": "MessageActions",
+      "props": { "text": "Revenue fell 18%", "feedback": "up" },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `text` | 复制按钮写入剪贴板的文字。 | `string` |  |
+| `actions` | 显示哪些操作：`copy`、`regenerate`、`feedback`。 | `("copy" \| "regenerate" \| "feedback")[]` | `["copy","regenerate","feedback"]` |
+| `feedback` | 当前评价 `up` / `down` / `null`，再次点击已选的评价会取消。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `"up" \| "down" \| null` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`copy`、`regenerate`、`feedback`
+- 插槽：无

@@ -1,0 +1,18 @@
+---
+title: "useTenantReset"
+description: "useTenantReset React hook 的签名、参数和返回值。"
+---
+
+Drops every Lumi query when the tenant changes and fetches the mounted ones
+again, as signing in does, so one tenant's cache never shows in another;
+the live connection reopens with the new tenant.
+
+```typescript
+useTenantReset(client: QueryClient): void
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `client` | `QueryClient` | 是 |  |
+
+返回 `void`。

@@ -1,0 +1,29 @@
+---
+title: "ScheduleCalendar"
+description: "月视图和周视图的日程日历，事件显示为语义色块；月视图中一天放不下的事件收进“+N more”菜单。"
+---
+
+月视图和周视图的日程日历，事件显示为语义色块；月视图中一天放不下的事件收进“+N more”菜单。用 $bindState 绑定 `view` 和 `date`，驱动 Query 读取可见范围。`dayClick` 把 `YYYY-MM-DD` 写入 `activeDate`；`eventClick` 把事件 id 写入 `activeEvent`。星期名称和每周第一天跟随语言区域。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `events`（必填） | 日程列表，每项 `{ id, title, start, end?, allDay?, tone? }`。`start`/`end` 写成 `YYYY-MM-DD` 或本地时间 `YYYY-MM-DDTHH:mm`；全天日程的 `end` 日期包含在内。 字段：`id`、`title`、`start`、`end?`、`allDay?`、`tone?` | `object[]` |  |
+| `view` | 视图：`month` 月，`week` 周。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `"month" \| "week"` | `"month"` |
+| `date` | 当前显示的月或周里的任意一天，`YYYY-MM-DD`。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string` |  |
+| `weekStartsOn` | 每周第一天：0 是周日，1 是周一……不填时按语言区域决定。 | `integer` |  |
+| `locale` | 星期和月份名称使用的语言区域，如 `zh-CN`。不填时跟随界面语言。 | `string` |  |
+| `today` | 高亮为“今天”的日期，`YYYY-MM-DD`。不填时使用当前日期。 | `string` |  |
+| `startHour` | 周视图从几点开始显示（0–23）。 | `integer` | `7` |
+| `endHour` | 周视图显示到几点（1–24）。 | `integer` | `20` |
+| `maxEvents` | 月视图每格最多显示几条，其余收进“还有 N 项”菜单。 | `integer` | `3` |
+| `activeDate` | 最近点击的日期 `YYYY-MM-DD`，`dayClick` 事件触发前写入。 | `string \| null` |  |
+| `activeEvent` | 最近点击的日程 id，`eventClick` 事件触发前写入。 | `string \| number \| null` |  |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+| `loading` | 为 true 时显示加载状态，并暂停交互。 | `boolean` | `false` |
+
+## 事件与插槽
+
+- 事件：`viewChange`、`dateChange`、`dayClick`、`eventClick`
+- 插槽：无

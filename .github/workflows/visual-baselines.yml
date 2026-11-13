@@ -1,0 +1,49 @@
+name: Visual baselines
+
+# Regenerates the linux React Admin screenshot baselines in the pinned
+# Playwright image. Download the artifact and commit the *-linux.png files.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # Must equal the installed @playwright/test version (checked below).
+  PLAYWRIGHT_VERSION: 1.61.1
+
+jobs:
+  react-admin:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-noble
+      options: --ipc=host
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.12.x
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Check image matches @playwright/test
+        run: test "$(node -p "require('@playwright/test/package.json').version")" = "$PLAYWRIGHT_VERSION"
+
+      - name: Update react-admin snapshots
+        run: pnpm e2e:react-admin --update-snapshots
+        env:
+          CI: '1'
+          HOME: /root
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: react-admin-linux-baselines
+          path: e2e/react-admin.spec.ts-snapshots/*-linux.png
+          if-no-files-found: error

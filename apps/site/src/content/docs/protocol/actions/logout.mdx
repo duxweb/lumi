@@ -1,0 +1,31 @@
+---
+title: "logout"
+description: "退出登录，并隔离已缓存的数据，下一个会话读不到。"
+---
+
+退出登录，并隔离已缓存的数据，下一个会话读不到。
+
+## 用法
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "退出登录" },
+      "on": {
+        // 点击按钮时执行
+        "press": { "action": "logout", "params": {} }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| `params` | 登录或退出时交给 AuthProvider 的参数。 | `object` |

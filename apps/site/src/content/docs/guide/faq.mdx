@@ -1,0 +1,115 @@
+---
+title: "常见问题"
+description: "接入和写页面时最常遇到的问题：刷新 404、跨域、登录后被退出、页面加载失败、列表不刷新、菜单不显示，页面不按预期工作时怎么查，以及几条常见报错的原因。"
+---
+
+## 部署和接口
+
+### 刷新页面变成 404
+
+后台用浏览器地址做路由，`/orders` 这样的地址在服务器上没有对应的文件。让服务器把找不到的地址都返回 `index.html`，见 [地址回退](/guide/deployment/#地址回退)。
+
+### 请求被浏览器拦了（CORS）
+
+后台和接口不在同一个域名时，后端要返回 CORS 头，并允许 `Authorization`、`Content-Type`、`Accept-Language` 这几个请求头；用了工作区再加 `X-Tenant`。cookie 登录还要 `Access-Control-Allow-Credentials: true`，且 `Allow-Origin` 不能写 `*`。完整的表见 [接口在另一个域名](/guide/deployment/#接口在另一个域名)。最省事的办法是用反向代理把 `/api` 转到后端，这样就没有跨域。
+
+### 登录成功后马上回到登录页
+
+登录后后台会请求 `/me` 取用户和权限。这个接口返回 401 就会被当成没登录。检查：
+
+- `/login` 返回的 `data` 里有 `token`（cookie 登录不需要）；
+- `/me` 认得 `Authorization: Bearer <token>` 这个请求头；
+- 任何一个数据接口返回 401，后台都会退出。权限不足请返回 403，不要用 401。
+
+格式见 [登录](/guide/backend-auth/#登录)。
+
+### 保存时后端报错，但表单上没显示在字段下面
+
+字段错误要用 `errors: [{ "path": "email", "message": "…" }]` 返回，`path` 和表单里的字段名一致，嵌套字段用 `.` 分隔。只返回 `message` 时，它作为一条提示弹出来。后端格式不同时用 `parseError` 转换，见 [错误格式](/guide/advanced/data/#错误格式)。
+
+## 写页面
+
+### 页面显示“加载失败”，列出几个路径
+
+页面 JSON 没通过校验：用了不存在的组件、参数写错了类型，或者 `children` 里写了不存在的元素。错误里的路径（如 `/elements/orders/props/columns/0/kind`）指向出错的位置。把 JSON 贴进 [Playground](/playground/) 或者用 [lumi-check](/ai/checker/) 校验，能看到完整的问题列表。
+
+### JSON 文件里写了注释，加载失败
+
+文档里的示例带注释只是为了说明，真实的 `.json` 文件必须是标准 JSON，不能写注释，也不能有多余的逗号。
+
+### 改了页面 JSON，刷新后还是旧的
+
+页面打开后会缓存在内存里，刷新浏览器就重新请求。刷新后还是旧的，通常是浏览器或 CDN 缓存了这个文件：给 JSON 文件设置 `Cache-Control: no-cache`，或者让接口返回 `ETag`。
+
+### 用自定义接口改了数据，列表没刷新
+
+`create`、`update`、`delete`、`submitForm` 成功后会自动刷新同一资源的列表。`request` 调的是自定义接口，Lumi 不知道它改了什么，要在后面加一个 [invalidate](/protocol/actions/invalidate/)。
+
+### 每一行的按钮拿不到这一行的值
+
+按钮的属性（文字、`visible`）用 `{ "$item": "name" }` 读这一行。动作的参数里不能这样写，要用 `{ "$state": "/table/row/id" }`：按钮的动作执行前，列表已经把这一行写进 `activeRow` 绑定的路径。见 [每一行的按钮](/guide/crud/#每一行的按钮)。
+
+### 搜索框清空后，列表是空的
+
+清空后请求里是 `name[like]=`（空字符串）。后端应该把空的 `like` 当作不筛选。
+
+### 菜单里看不到某个页面
+
+依次检查：路由有没有写 `menu`；`menu.hidden` 是不是 `true`；路由的 `access` 要求的权限，当前用户的 `permissions` 里有没有。没有权限时菜单项隐藏，直接打开地址显示 403。见 [路由](/guide/menus/#路由)。
+
+### 嵌入的网页是空白的
+
+对方的页面用 `X-Frame-Options` 或 CSP 的 `frame-ancestors` 禁止被嵌入，浏览器直接拒绝显示，前端没法绕过，要对方放开。见 [嵌入其他网页](/guide/embed/)。
+
+## 调试页面
+
+页面能打开，但不按预期工作时，按这个顺序查。每一步都能排除一类原因。
+
+**1. 先校验。** 写错的组件名、参数名和动作名在这一步就能找到，不用打开浏览器：
+
+```sh
+npx -y @duxweb/lumi-check public/pages/orders.json --json
+```
+
+用了自己的组件或动作时加 `--catalog src/catalog.mjs`。没有命令行时，把 JSON 贴进 [Playground](/playground/) 也是同一套校验。
+
+**2. 看请求。** 打开浏览器开发者工具的 Network 面板，刷新页面：
+
+- 没有发出请求：`Query` 没有渲染出来。检查它是否在某个元素的 `children` 里，以及它的 `visible` 条件。
+- 请求发了但参数不对：检查 `Query` 的 `filters`、`pagination` 绑定的状态路径。
+- 请求返回了但页面是空的：后端返回的结构和 [默认约定](/guide/backend/) 不一致，或者显示用的组件读错了路径（见下一步）。
+
+**3. 看状态。** 页面上的值都来自状态。在页面里临时加一个 `Text`，把要查的那个值显示出来，查完删掉：
+
+```jsonc
+{
+  "type": "Text",
+  "props": {
+    // 把两个值拼成一行显示；换成你要查的路径
+    "text": {
+      "$template": "total=${/orders/total} error=${/orders/error/message}"
+    }
+  },
+  "children": []
+}
+```
+
+`$template` 只能显示文字、数字这类单个值，对象和数组要写到里面的字段。`Query` 写进 `resultPath` 的是 `{ data, total, loading, error }`，所以表格的 `rows` 要读 `/orders/data`，不是 `/orders`。`error` 有值说明请求失败了。
+
+**4. 看动作。** 动作失败时页面会弹出错误提示，同一个事件后面的动作不再执行。点了按钮没有反应、也没有提示，通常是事件名写错了：每个组件有哪些事件，用 `npx -y @duxweb/lumi-check describe Button` 查。
+
+**5. 看控制台。** 开发者工具的 Console 里有完整的报错和调用位置，对照下面的表。
+
+## 报错信息
+
+| 报错 | 原因 |
+| --- | --- |
+| `Query resultPath already has a writer` | 同一个页面里有两个 `Query` 写同一个 `resultPath`。给它们不同的路径。 |
+| `validator is not configured` | `submitForm` 或 `FormPage` 写了 `rules`，但没有注册 Validator。去掉 `rules`，或按 [业务校验](/guide/advanced/providers/#validator业务校验) 注册一个。 |
+| `DataProvider.custom is not configured` | 用了 `request` 动作或 `Query` 的 `custom`，但自己写的 DataProvider 没有实现 `custom`。 |
+| `dataProvider "xxx" not registered` | `dataProviderName` 或路由的 `dataProvider` 写了 `config.json` 的 `data` 里没有的名字。 |
+| `Duplicate handler` | 自己的动作和内置动作重名了，换一个名字。 |
+| `"xxx" is a built-in Admin action` | 扩展模块的 `handlers` 里用了 `navigate`、`openDrawer` 或 `closeDrawer` 这几个名字。 |
+| `Upload target origin … is not trusted` | 上传地址指向了别的域名。直传对象存储用 `sign`，见 [直传对象存储](/guide/backend-files/#直传对象存储)。 |
+
+还没解决的话，把页面 JSON 和报错一起交给 AI：装了 [Lumi Skill](/ai/skill/) 之后，它会按校验结果逐条修改。

@@ -1,0 +1,663 @@
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "DashboardPage",
+      "props": {
+        "title": {
+          "$t": "Sales analytics"
+        },
+        "description": {
+          "$t": "Revenue, channels and conversion for August 2026. Served as a JSON page; the order table reads live data"
+        },
+        "metrics": [
+          {
+            "key": "revenue",
+            "label": {
+              "$t": "Revenue"
+            },
+            "value": "131.5",
+            "unit": {
+              "$t": "k USD"
+            },
+            "icon": "wallet",
+            "change": "+8.2%",
+            "tone": "success",
+            "series": [
+              88,
+              101,
+              109,
+              117,
+              112,
+              124,
+              131
+            ],
+            "description": {
+              "$t": "Compared with July"
+            }
+          },
+          {
+            "key": "orders",
+            "label": {
+              "$t": "Orders"
+            },
+            "value": "1,086",
+            "icon": "receipt",
+            "change": "+12.2%",
+            "tone": "success",
+            "series": [
+              880,
+              910,
+              960,
+              940,
+              1010,
+              1040,
+              1086
+            ],
+            "description": {
+              "$t": "Paid and shipped"
+            }
+          },
+          {
+            "key": "aov",
+            "label": {
+              "$t": "Average order"
+            },
+            "value": "121",
+            "unit": {
+              "$t": "USD"
+            },
+            "icon": "credit-card",
+            "change": "-1.1%",
+            "tone": "danger",
+            "series": [
+              126,
+              125,
+              124,
+              124,
+              123,
+              122,
+              121
+            ],
+            "description": {
+              "$t": "Net of discounts"
+            }
+          },
+          {
+            "key": "refunds",
+            "label": {
+              "$t": "Refund rate"
+            },
+            "value": "2.4",
+            "unit": "%",
+            "icon": "undo",
+            "change": {
+              "$t": "+0.3 pt"
+            },
+            "tone": "warning",
+            "series": [
+              2.0,
+              2.1,
+              2.1,
+              2.2,
+              2.3,
+              2.3,
+              2.4
+            ],
+            "description": {
+              "$t": "Target below 2%"
+            }
+          }
+        ]
+      },
+      "children": [
+        "dashboardcard-2",
+        "dashboardcard-4",
+        "dashboardcard-6",
+        "dashboardcard-8",
+        "dashboardcard-10",
+        "dashboardcard-11"
+      ],
+      "slots": {
+        "actions": [
+          "export"
+        ]
+      }
+    },
+    "orders-query": {
+      "type": "Query",
+      "props": {
+        "resource": "orders",
+        "operation": "list",
+        "pagination": {
+          "page": 1,
+          "pageSize": 6
+        },
+        "sorters": [
+          {
+            "field": "id",
+            "order": "desc"
+          }
+        ],
+        "resultPath": "/orders"
+      },
+      "children": []
+    },
+    "orders-table": {
+      "type": "Table",
+      "props": {
+        "rowKey": "id",
+        "rows": {
+          "$state": "/orders/data"
+        },
+        "loading": {
+          "$state": "/orders/loading"
+        },
+        "empty": {
+          "$t": "No orders yet"
+        },
+        "columns": [
+          {
+            "field": "number",
+            "label": {
+              "$t": "Order"
+            },
+            "kind": "code",
+            "width": "8rem"
+          },
+          {
+            "field": "customer",
+            "label": {
+              "$t": "Customer"
+            },
+            "kind": "entity",
+            "initials": true,
+            "truncate": true
+          },
+          {
+            "field": "warehouse",
+            "label": {
+              "$t": "Warehouse"
+            },
+            "width": "8rem"
+          },
+          {
+            "field": "status",
+            "label": {
+              "$t": "Status"
+            },
+            "kind": "badge",
+            "width": "7rem",
+            "valueMap": {
+              "pending": {
+                "$t": "Pending"
+              },
+              "paid": {
+                "$t": "Paid"
+              },
+              "packed": {
+                "$t": "Packed"
+              },
+              "shipped": {
+                "$t": "Shipped"
+              },
+              "cancelled": {
+                "$t": "Cancelled"
+              }
+            },
+            "toneMap": {
+              "pending": "warning",
+              "paid": "info",
+              "packed": "neutral",
+              "shipped": "success",
+              "cancelled": "neutral"
+            }
+          },
+          {
+            "field": "total",
+            "label": {
+              "$t": "Amount"
+            },
+            "kind": "currency",
+            "currency": "USD",
+            "align": "right",
+            "width": "7rem"
+          }
+        ]
+      },
+      "children": []
+    },
+    "orders-all": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "All orders"
+        },
+        "appearance": "outline",
+        "size": "sm",
+        "href": "/orders"
+      },
+      "children": []
+    },
+    "range": {
+      "type": "Segmented",
+      "props": {
+        "ariaLabel": {
+          "$t": "Range"
+        },
+        "value": {
+          "$bindState": "/range"
+        },
+        "options": [
+          {
+            "value": "12m",
+            "label": {
+              "$t": "12 months"
+            }
+          },
+          {
+            "value": "ytd",
+            "label": {
+              "$t": "This year"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "chart-1": {
+      "type": "Chart",
+      "props": {
+        "type": "area",
+        "ariaLabel": {
+          "$t": "Monthly revenue"
+        },
+        "valueFormat": "number",
+        "height": 240,
+        "points": [
+          {
+            "label": {
+              "$t": "Sep"
+            },
+            "value": 84
+          },
+          {
+            "label": {
+              "$t": "Oct"
+            },
+            "value": 91
+          },
+          {
+            "label": {
+              "$t": "Nov"
+            },
+            "value": 103
+          },
+          {
+            "label": {
+              "$t": "Dec"
+            },
+            "value": 128
+          },
+          {
+            "label": {
+              "$t": "Jan"
+            },
+            "value": 96
+          },
+          {
+            "label": {
+              "$t": "Feb"
+            },
+            "value": 88
+          },
+          {
+            "label": {
+              "$t": "Mar"
+            },
+            "value": 101
+          },
+          {
+            "label": {
+              "$t": "Apr"
+            },
+            "value": 109
+          },
+          {
+            "label": {
+              "$t": "May"
+            },
+            "value": 117
+          },
+          {
+            "label": {
+              "$t": "Jun"
+            },
+            "value": 112
+          },
+          {
+            "label": {
+              "$t": "Jul"
+            },
+            "value": 124
+          },
+          {
+            "label": {
+              "$t": "Aug"
+            },
+            "value": 131
+          }
+        ]
+      },
+      "children": []
+    },
+    "dashboardcard-2": {
+      "type": "DashboardCard",
+      "props": {
+        "title": {
+          "$t": "Revenue"
+        },
+        "description": {
+          "$t": "Monthly revenue in thousands of USD"
+        },
+        "span": "full"
+      },
+      "children": [
+        "chart-1"
+      ],
+      "slots": {
+        "action": [
+          "range"
+        ]
+      }
+    },
+    "chart-3": {
+      "type": "Chart",
+      "props": {
+        "type": "donut",
+        "ariaLabel": {
+          "$t": "Orders by channel"
+        },
+        "height": 220,
+        "points": [
+          {
+            "label": {
+              "$t": "Web store"
+            },
+            "value": 612
+          },
+          {
+            "label": {
+              "$t": "Mobile app"
+            },
+            "value": 318
+          },
+          {
+            "label": {
+              "$t": "Marketplace"
+            },
+            "value": 104
+          },
+          {
+            "label": {
+              "$t": "In store"
+            },
+            "value": 52
+          }
+        ]
+      },
+      "children": []
+    },
+    "dashboardcard-4": {
+      "type": "DashboardCard",
+      "props": {
+        "title": {
+          "$t": "Orders by channel"
+        },
+        "description": {
+          "$t": "Last 28 days"
+        }
+      },
+      "children": [
+        "chart-3"
+      ]
+    },
+    "weekday-bars": {
+      "type": "BarChart",
+      "props": {
+        "ariaLabel": {
+          "$t": "Orders per weekday"
+        },
+        "showValues": true,
+        "points": [
+          {
+            "key": "mon",
+            "label": {
+              "$t": "Mon"
+            },
+            "value": 148
+          },
+          {
+            "key": "tue",
+            "label": {
+              "$t": "Tue"
+            },
+            "value": 162
+          },
+          {
+            "key": "wed",
+            "label": {
+              "$t": "Wed"
+            },
+            "value": 171
+          },
+          {
+            "key": "thu",
+            "label": {
+              "$t": "Thu"
+            },
+            "value": 158
+          },
+          {
+            "key": "fri",
+            "label": {
+              "$t": "Fri"
+            },
+            "value": 189
+          },
+          {
+            "key": "sat",
+            "label": {
+              "$t": "Sat"
+            },
+            "value": 143
+          },
+          {
+            "key": "sun",
+            "label": {
+              "$t": "Sun"
+            },
+            "value": 115
+          }
+        ]
+      },
+      "children": []
+    },
+    "dashboardcard-6": {
+      "type": "DashboardCard",
+      "props": {
+        "title": {
+          "$t": "Weekly orders"
+        },
+        "description": {
+          "$t": "Orders placed per weekday"
+        }
+      },
+      "children": [
+        "weekday-bars"
+      ]
+    },
+    "conversion-funnel": {
+      "type": "FunnelChart",
+      "props": {
+        "ariaLabel": {
+          "$t": "Conversion funnel"
+        },
+        "stages": [
+          {
+            "key": "visits",
+            "label": {
+              "$t": "Visits"
+            },
+            "value": 18420
+          },
+          {
+            "key": "carts",
+            "label": {
+              "$t": "Added to cart"
+            },
+            "value": 2310
+          },
+          {
+            "key": "checkout",
+            "label": {
+              "$t": "Checkout"
+            },
+            "value": 1388
+          },
+          {
+            "key": "paid",
+            "label": {
+              "$t": "Paid"
+            },
+            "value": 1086
+          }
+        ]
+      },
+      "children": []
+    },
+    "dashboardcard-8": {
+      "type": "DashboardCard",
+      "props": {
+        "title": {
+          "$t": "Conversion"
+        },
+        "description": {
+          "$t": "From visit to paid order"
+        }
+      },
+      "children": [
+        "conversion-funnel"
+      ]
+    },
+    "proportionlist-9": {
+      "type": "ProportionList",
+      "props": {
+        "ariaLabel": {
+          "$t": "Top products by revenue"
+        },
+        "tone": "primary",
+        "showShare": true,
+        "items": [
+          {
+            "key": "p1",
+            "label": {
+              "$t": "Lumi Lamp"
+            },
+            "value": 40800,
+            "display": "$40.8k"
+          },
+          {
+            "key": "p2",
+            "label": {
+              "$t": "Lumi Shade"
+            },
+            "value": 31600,
+            "display": "$31.6k"
+          },
+          {
+            "key": "p3",
+            "label": {
+              "$t": "Lumi Base"
+            },
+            "value": 25000,
+            "display": "$25.0k"
+          },
+          {
+            "key": "p4",
+            "label": {
+              "$t": "Lumi Cord"
+            },
+            "value": 14500,
+            "display": "$14.5k"
+          },
+          {
+            "key": "p5",
+            "label": {
+              "$t": "Other"
+            },
+            "value": 19600,
+            "display": "$19.6k",
+            "other": true
+          }
+        ]
+      },
+      "children": []
+    },
+    "dashboardcard-10": {
+      "type": "DashboardCard",
+      "props": {
+        "title": {
+          "$t": "Top products"
+        },
+        "description": {
+          "$t": "Share of revenue"
+        }
+      },
+      "children": [
+        "proportionlist-9"
+      ]
+    },
+    "dashboardcard-11": {
+      "type": "DashboardCard",
+      "props": {
+        "title": {
+          "$t": "Latest orders"
+        },
+        "description": {
+          "$t": "Read live from the orders resource by a Query element"
+        },
+        "span": "full",
+        "flush": true
+      },
+      "children": [
+        "orders-query",
+        "orders-table"
+      ],
+      "slots": {
+        "action": [
+          "orders-all"
+        ]
+      }
+    },
+    "export": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Export"
+        },
+        "appearance": "outline",
+        "icon": "download"
+      },
+      "children": []
+    }
+  },
+  "state": {
+    "orders": {
+      "data": [],
+      "total": 0,
+      "loading": true
+    },
+    "range": "12m"
+  }
+}

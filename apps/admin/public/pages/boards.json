@@ -1,0 +1,326 @@
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Boards & calendar"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "board-section",
+        "calendar-section"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Boards & calendar"
+        },
+        "description": {
+          "$t": "A task board and a schedule fed by live data. Moving a card saves its column and position"
+        }
+      },
+      "children": []
+    },
+    "board-section": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "board-heading",
+        "tasks-query",
+        "board"
+      ]
+    },
+    "board-heading": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "board-title",
+        "board-description"
+      ]
+    },
+    "board-title": {
+      "type": "Heading",
+      "props": {
+        "text": {
+          "$t": "Release board"
+        },
+        "level": "h2"
+      },
+      "children": []
+    },
+    "board-description": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Drag cards between columns, or focus a card and press Space, the arrow keys, then Space"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "tasks-query": {
+      "type": "Query",
+      "props": {
+        "resource": "tasks",
+        "operation": "list",
+        "pagination": {
+          "page": 1,
+          "pageSize": 100
+        },
+        "sorters": [
+          {
+            "field": "rank",
+            "order": "asc"
+          }
+        ],
+        "resultPath": "/tasks"
+      },
+      "children": []
+    },
+    "board": {
+      "type": "Kanban",
+      "props": {
+        "ariaLabel": {
+          "$t": "Release board"
+        },
+        "columns": [
+          {
+            "value": "backlog",
+            "title": {
+              "$t": "Backlog"
+            },
+            "collapsed": false
+          },
+          {
+            "value": "todo",
+            "title": {
+              "$t": "To do"
+            }
+          },
+          {
+            "value": "doing",
+            "title": {
+              "$t": "In progress"
+            },
+            "limit": 3
+          },
+          {
+            "value": "review",
+            "title": {
+              "$t": "Review"
+            },
+            "limit": 2
+          },
+          {
+            "value": "done",
+            "title": {
+              "$t": "Done"
+            },
+            "done": true
+          }
+        ],
+        "value": {
+          "$state": "/tasks/data"
+        },
+        "loading": {
+          "$state": "/tasks/loading"
+        },
+        "today": "2026-08-10",
+        "move": {
+          "$bindState": "/board/move"
+        },
+        "activeColumn": {
+          "$bindState": "/board/column"
+        }
+      },
+      "on": {
+        "move": [
+          {
+            "action": "update",
+            "params": {
+              "resource": "tasks",
+              "id": {
+                "$state": "/board/move/id"
+              },
+              "values": {
+                "status": {
+                  "$state": "/board/move/to"
+                },
+                "rank": {
+                  "$state": "/board/move/rank"
+                }
+              }
+            }
+          },
+          {
+            "action": "toast",
+            "params": {
+              "message": {
+                "$t": "Card moved"
+              },
+              "tone": "success",
+              "key": "board-move"
+            }
+          }
+        ],
+        "add": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "A real page would open a create form for column \"{column}\" here",
+              "params": {
+                "column": {
+                  "$state": "/board/column"
+                }
+              }
+            },
+            "tone": "info",
+            "key": "board-add"
+          }
+        }
+      },
+      "children": []
+    },
+    "calendar-section": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "calendar-heading",
+        "events-query",
+        "calendar"
+      ]
+    },
+    "calendar-heading": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "calendar-title",
+        "calendar-description"
+      ]
+    },
+    "calendar-title": {
+      "type": "Heading",
+      "props": {
+        "text": {
+          "$t": "Team schedule"
+        },
+        "level": "h2"
+      },
+      "children": []
+    },
+    "calendar-description": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Pick a day to open its week; pick an event for its details"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "events-query": {
+      "type": "Query",
+      "props": {
+        "resource": "events",
+        "operation": "list",
+        "pagination": {
+          "page": 1,
+          "pageSize": 100
+        },
+        "resultPath": "/events"
+      },
+      "children": []
+    },
+    "calendar": {
+      "type": "ScheduleCalendar",
+      "props": {
+        "ariaLabel": {
+          "$t": "Team schedule"
+        },
+        "events": {
+          "$state": "/events/data"
+        },
+        "loading": {
+          "$state": "/events/loading"
+        },
+        "today": "2026-08-10",
+        "view": {
+          "$bindState": "/calendar/view"
+        },
+        "date": {
+          "$bindState": "/calendar/date"
+        },
+        "activeDate": {
+          "$bindState": "/calendar/day"
+        },
+        "activeEvent": {
+          "$bindState": "/calendar/event"
+        },
+        "startHour": 8,
+        "endHour": 19
+      },
+      "on": {
+        "dayClick": [
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/calendar/date",
+              "value": {
+                "$state": "/calendar/day"
+              }
+            }
+          },
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/calendar/view",
+              "value": "week"
+            }
+          }
+        ],
+        "eventClick": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Event #{id} would open in a drawer here",
+              "params": {
+                "id": {
+                  "$state": "/calendar/event"
+                }
+              }
+            },
+            "tone": "info",
+            "key": "calendar-event"
+          }
+        }
+      },
+      "children": []
+    }
+  },
+  "state": {
+    "board": {
+      "move": null,
+      "column": null
+    },
+    "calendar": {
+      "view": "month",
+      "date": "2026-08-10",
+      "day": null,
+      "event": null
+    }
+  }
+}

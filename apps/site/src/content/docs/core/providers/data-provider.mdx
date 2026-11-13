@@ -1,0 +1,26 @@
+---
+title: "DataProvider"
+description: "DataProvider 接口的方法、参数和返回值。"
+---
+
+Data + request provider (Lumi REST conventions, framework-agnostic).
+All data access goes through this interface; it can be swapped for any REST / GraphQL / Mock implementation.
+
+```typescript
+interface DataProvider
+```
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `create` | `<T = any, V = any>(params: CreateParams<V>) => Promise<SingleResult<T>>` | 是 | Creates a record from `variables` and answers the saved one. |
+| `createMany` | `(<T = any, V = any>(params: CreateManyParams<V>) => Promise<ManyResult<T>>) \| undefined` | 否 | Creates several records in one request; without it they are created one by one. |
+| `custom` | `(<T = any>(params: CustomParams) => Promise<SingleResult<T>>) \| undefined` | 否 | A request outside the resource conventions; the `request` action, `useCustom` and `useCustomMutation` need it. |
+| `deleteMany` | `(<T = any, V = any>(params: DeleteManyParams<V>) => Promise<ManyResult<T>>) \| undefined` | 否 | Deletes several records; without it they are deleted one by one. |
+| `deleteOne` | `<T = any, V = any>(params: DeleteParams<V>) => Promise<SingleResult<T>>` | 是 | Deletes the record `id`. |
+| `getApiUrl` | `(() => string) \| undefined` | 否 | The API root, for callers that build full addresses such as uploads. |
+| `getList` | `<T = any>(params: GetListParams) => Promise<GetListResult<T>>` | 是 | One page of a resource, filtered and sorted, or all of it with `pagination: false`; `total` counts every match. |
+| `getMany` | `(<T = any>(params: GetManyParams) => Promise<ManyResult<T>>) \| undefined` | 否 | Several records by id in one request; without it each id is read with `getOne`. |
+| `getOne` | `<T = any>(params: GetOneParams) => Promise<SingleResult<T>>` | 是 | One record by id. |
+| `http` | `HttpClient \| undefined` | 否 | The client it sends through; uploads and the agent reuse its credentials. |
+| `update` | `<T = any, V = any>(params: UpdateParams<V>) => Promise<SingleResult<T>>` | 是 | Updates the record `id` with `variables` and answers the saved one. |
+| `updateMany` | `(<T = any, V = any>(params: UpdateManyParams<V>) => Promise<ManyResult<T>>) \| undefined` | 否 | Applies the same `variables` to several records; without it they are updated one by one. |

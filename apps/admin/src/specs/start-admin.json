@@ -1,0 +1,84 @@
+{
+  "root": "page",
+  "state": {
+    "stats": {
+      "data": null,
+      "loading": true
+    }
+  },
+  "elements": {
+    "page": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "header",
+        "stats-query"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Fulfilment"
+        },
+        "description": {
+          "$t": "Orders waiting on the warehouse today"
+        }
+      },
+      "children": []
+    },
+    "stats-query": {
+      "type": "Query",
+      "props": {
+        "resource": "orders",
+        "operation": "custom",
+        "url": "/orders/stats",
+        "resultPath": "/stats"
+      },
+      "children": [
+        "strip"
+      ]
+    },
+    "strip": {
+      "type": "StatStrip",
+      "props": {
+        "ariaLabel": {
+          "$t": "Fulfilment"
+        },
+        "items": [
+          {
+            "key": "pending",
+            "label": {
+              "$t": "Awaiting payment"
+            },
+            "value": {
+              "$state": "/stats/data/awaitingPayment"
+            }
+          },
+          {
+            "key": "ship",
+            "label": {
+              "$t": "To ship"
+            },
+            "value": {
+              "$state": "/stats/data/toShip"
+            }
+          },
+          {
+            "key": "late",
+            "label": {
+              "$t": "Overdue"
+            },
+            "value": {
+              "$state": "/stats/data/overdue"
+            },
+            "tone": "warning"
+          }
+        ]
+      },
+      "children": []
+    }
+  }
+}

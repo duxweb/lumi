@@ -1,0 +1,107 @@
+/* Gallery tile: one surface. The preview runs flush to the card's edges on the
+   card's own fill, and a hairline divides it from the caption; no inner well. */
+.lumi-preview-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+  border-radius: var(--lumi-radius-panel);
+  background: var(--card);
+  color: var(--card-foreground);
+  box-shadow: 0 0 0 1px var(--lumi-hairline);
+  transition: box-shadow 150ms ease;
+}
+
+/* Hover only firms up the edge; nothing moves. */
+.lumi-preview-card[data-link]:hover {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--foreground) 22%, transparent),
+    0 2px 6px color-mix(in oklab, var(--foreground) 6%, transparent);
+}
+
+.lumi-preview-card__media {
+  position: relative;
+  aspect-ratio: 8 / 5;
+  overflow: clip;
+  /* Clipped here rather than on the card, so the link's focus ring can sit outside it. */
+  border-radius: var(--lumi-radius-panel) var(--lumi-radius-panel) 0 0;
+  border-bottom: 1px solid var(--lumi-hairline);
+}
+
+/* The miniature centres in the well; one taller than the well keeps its top and loses its foot. */
+.lumi-preview-card__stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: safe center;
+  padding: var(--lumi-space-8) var(--lumi-space-4) var(--lumi-space-4);
+  overflow: clip;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Block flow: a miniature fills the frame width up to its own cap and centres within it. */
+.lumi-preview-card__content {
+  width: 100%;
+  min-width: 0;
+}
+
+.lumi-preview-card__content > * {
+  margin-inline: auto;
+}
+
+/* A miniature is a still: spinners and shimmers hold their first frame. */
+.lumi-preview-card__stage :is(*, *::before, *::after) {
+  animation-play-state: paused;
+  transition: none;
+}
+
+.lumi-preview-card__badge {
+  position: absolute;
+  top: var(--lumi-space-3);
+  left: var(--lumi-space-3);
+  background: var(--card);
+}
+
+.lumi-preview-card__body {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding: var(--lumi-space-3) var(--lumi-space-4) var(--lumi-space-4);
+}
+
+.lumi-preview-card__title {
+  margin: 0;
+  font-size: var(--lumi-fs-body);
+  font-weight: var(--lumi-font-weight-medium);
+  line-height: 1.4;
+}
+
+.lumi-preview-card__description {
+  margin: 0;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lumi-preview-card__link {
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+}
+
+.lumi-preview-card__link::after {
+  position: absolute;
+  border-radius: var(--lumi-radius-panel);
+  content: "";
+  inset: 0;
+}
+
+.lumi-preview-card__link:focus-visible::after {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}

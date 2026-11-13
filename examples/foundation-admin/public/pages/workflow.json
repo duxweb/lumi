@@ -1,0 +1,12 @@
+{
+  "root": "workflow",
+  "elements": {
+    "workflow": {
+      "type": "WorkflowDesigner",
+      "props": {
+        "title": "Purchase approval",
+        "workflowId": 42
+      }
+    }
+  }
+}

@@ -1,0 +1,560 @@
+/* Account pages — sign-in, sign-up and password recovery — share one open
+   page: the brand and display tools along the top, the headline beside the
+   card, and what the product covers along the foot. The light behind them is
+   the brand colour, mixed thin, so a themed app keeps its own colour here. */
+.lumi-auth {
+  --lumi-auth-gutter: clamp(20px, 4vw, 56px);
+  --lumi-auth-glow-soft: color-mix(in oklab, var(--brand) 10%, transparent);
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  min-height: 100vh;
+  min-height: 100svh;
+  grid-template-rows: auto 1fr auto;
+  overflow-x: clip;
+  color: var(--foreground);
+  background: var(--background);
+}
+
+[data-theme='dark'] .lumi-auth {
+  --lumi-auth-glow-soft: color-mix(in oklab, var(--brand) 6%, transparent);
+}
+
+/* One faint wash of the brand behind the card. */
+.lumi-auth::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(40% 50% at 74% 46%, var(--lumi-auth-glow-soft), transparent 70%);
+  pointer-events: none;
+  content: '';
+}
+
+.lumi-auth__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lumi-space-4);
+  padding: var(--lumi-space-6) var(--lumi-auth-gutter);
+}
+
+.lumi-auth__brand {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--lumi-space-3);
+}
+
+.lumi-auth__mark {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--lumi-radius-panel);
+  font-size: var(--lumi-fs-title);
+}
+
+.lumi-auth__name {
+  overflow: hidden;
+  font-size: var(--lumi-fs-title);
+  font-weight: var(--lumi-font-weight-semibold);
+  line-height: var(--lumi-leading-tight);
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lumi-auth__tools {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--lumi-space-2);
+}
+
+.lumi-auth__help {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-inline-end: var(--lumi-space-3);
+  color: var(--lumi-fg-secondary);
+  font-size: var(--lumi-fs-label);
+}
+
+.lumi-auth__help a {
+  border-radius: var(--lumi-radius-sm);
+  color: var(--foreground);
+  font-weight: var(--lumi-font-weight-medium);
+  text-decoration: none;
+}
+
+.lumi-auth__help a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* The language button pairs with the theme track beside it: same height, same muted fill. */
+.lumi-auth__tool {
+  display: inline-flex;
+  height: var(--lumi-control-sm);
+  align-items: center;
+  gap: 6px;
+  padding-inline: var(--lumi-control-px-sm);
+  border-radius: var(--radius);
+  color: var(--lumi-fg-secondary);
+  background: var(--muted);
+  font-size: var(--lumi-fs-label);
+  list-style: none;
+  cursor: pointer;
+  transition: color 150ms;
+}
+
+.lumi-auth__tool::-webkit-details-marker {
+  display: none;
+}
+
+.lumi-auth__tool:hover,
+.lumi-auth__menu[open] > .lumi-auth__tool {
+  color: var(--foreground);
+}
+
+.lumi-auth__chevron {
+  width: 14px;
+  height: 14px;
+  opacity: 0.6;
+}
+
+.lumi-auth__menu {
+  position: relative;
+}
+
+.lumi-auth__menu-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: var(--lumi-z-popover);
+  min-width: var(--lumi-menu-min-width);
+  padding: var(--lumi-menu-padding);
+  border-radius: var(--lumi-radius-md);
+}
+
+/* The card first in the document, the headline first on screen. */
+.lumi-auth__body {
+  display: grid;
+  width: min(100%, 1200px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+  align-items: center;
+  gap: clamp(40px, 7vw, 112px);
+  margin-inline: auto;
+  padding: var(--lumi-space-6) var(--lumi-auth-gutter);
+}
+
+.lumi-auth__main {
+  min-width: 0;
+}
+
+/* The host's copy, top to bottom: badge, headline, lead and the points. */
+.lumi-auth__hero {
+  order: -1;
+  display: flex;
+  min-width: 0;
+  max-width: 34rem;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.lumi-auth__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lumi-space-2);
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--foreground);
+  background: color-mix(in oklab, var(--card) 72%, transparent);
+  font-size: var(--lumi-fs-caption);
+  font-weight: var(--lumi-font-weight-medium);
+  backdrop-filter: blur(6px);
+}
+
+.lumi-auth__badge::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand);
+  content: '';
+}
+
+/* `keep-all` lets CJK headlines break at their punctuation rather than mid-phrase. */
+.lumi-auth__badge + h2 {
+  margin-top: var(--lumi-space-5);
+}
+
+.lumi-auth__hero h2 {
+  /* A measure, so a long headline wraps into two balanced lines. */
+  max-width: 9em;
+  margin: 0;
+  font-size: clamp(2.25rem, 1.4rem + 2.2vw, 3.25rem);
+  font-weight: var(--lumi-font-weight-semibold);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.lumi-auth__highlight {
+  color: var(--brand);
+}
+
+.lumi-auth__lead {
+  margin: var(--lumi-space-4) 0 0;
+  color: var(--lumi-fg-secondary);
+  font-size: calc(var(--lumi-fs-body) * 1.125);
+  line-height: var(--lumi-leading-copy);
+}
+
+/* The points, spaced apart from the pitch: icon tile, title, one line. */
+.lumi-auth__features {
+  display: grid;
+  width: 100%;
+  gap: var(--lumi-space-5);
+  margin: var(--lumi-space-10, 40px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lumi-auth__features li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lumi-space-3);
+}
+
+.lumi-auth__feature-icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+  color: var(--lumi-text-info);
+  background: var(--card);
+}
+
+.lumi-auth__feature-text {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+  padding-top: 1px;
+}
+
+.lumi-auth__feature-text strong {
+  font-size: var(--lumi-fs-body);
+  font-weight: var(--lumi-font-weight-medium);
+  line-height: var(--lumi-leading-body);
+}
+
+.lumi-auth__feature-text span {
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  line-height: var(--lumi-leading-body);
+}
+
+/* Shadows are mixed from black: a light foreground would turn them into a halo in dark mode. */
+.lumi-auth__card {
+  padding: clamp(24px, 3vw, 36px);
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-xl);
+  color: var(--card-foreground);
+  background: var(--card);
+  box-shadow: 0 24px 48px -28px oklch(0 0 0 / 0.18), 0 2px 6px -2px oklch(0 0 0 / 0.05);
+}
+
+/* On a dark page a card reads by its edge and a lit top, not by a shadow. */
+[data-theme='dark'] .lumi-auth__card {
+  border-color: oklch(1 0 0 / 0.08);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.05), 0 24px 48px -24px oklch(0 0 0 / 0.6);
+}
+
+/* A flex column, so the empty live region can hand its gap back. */
+.lumi-auth__form {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--lumi-space-5);
+}
+
+.lumi-auth__heading h1 {
+  margin: 0;
+  font-size: calc(var(--lumi-fs-page) * 1.15);
+  font-weight: var(--lumi-font-weight-semibold);
+  line-height: var(--lumi-leading-tight);
+  letter-spacing: -0.02em;
+}
+
+.lumi-auth__heading p {
+  margin: 6px 0 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-body);
+  line-height: var(--lumi-leading-body);
+}
+
+.lumi-auth__fields {
+  display: grid;
+  gap: var(--lumi-space-4);
+}
+
+.lumi-auth__field {
+  display: grid;
+  gap: 6px;
+}
+
+.lumi-auth__field label,
+.lumi-auth__label-row label {
+  font-size: var(--lumi-fs-label);
+  font-weight: var(--lumi-font-weight-medium);
+}
+
+.lumi-auth__label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--lumi-space-3);
+}
+
+.lumi-auth__field-error {
+  margin: 0;
+  color: var(--lumi-text-danger);
+  font-size: var(--lumi-fs-meta);
+}
+
+.lumi-auth__password {
+  position: relative;
+}
+
+.lumi-auth__password [data-slot='input'] {
+  padding-inline-end: calc(var(--lumi-control-sm) + var(--lumi-space-2));
+}
+
+.lumi-auth__reveal {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  display: grid;
+  width: var(--lumi-control-sm);
+  height: var(--lumi-control-sm);
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--lumi-radius-sm);
+  color: var(--muted-foreground);
+  background: none;
+  cursor: pointer;
+  translate: 0 -50%;
+}
+
+.lumi-auth__reveal:hover {
+  color: var(--foreground);
+  background: var(--lumi-hover-bg);
+}
+
+.lumi-auth__remember {
+  width: auto;
+  margin-top: calc(-1 * var(--lumi-space-1));
+}
+
+.lumi-auth__link {
+  padding: 0;
+  border: 0;
+  border-radius: var(--lumi-radius-sm);
+  color: var(--lumi-fg-secondary);
+  background: none;
+  font: inherit;
+  font-size: var(--lumi-fs-label);
+  font-weight: var(--lumi-font-weight-medium);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.lumi-auth__link:hover {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.lumi-auth__link[data-tone='brand'],
+.lumi-auth__switch .lumi-auth__link {
+  color: var(--lumi-text-info);
+}
+
+/* A link that leads on from a finished step, drawn as the page's main button. */
+.lumi-auth__button {
+  display: inline-flex;
+  height: var(--lumi-control-lg);
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--lumi-radius-control);
+  color: var(--primary-foreground);
+  background: var(--primary);
+  font-size: var(--lumi-fs-control);
+  font-weight: var(--lumi-font-weight-medium);
+  text-decoration: none;
+}
+
+.lumi-auth__button:hover {
+  background: color-mix(in oklab, var(--primary) 88%, var(--background));
+}
+
+:is(.lumi-auth__tool, .lumi-auth__reveal, .lumi-auth__link, .lumi-auth__button, .lumi-auth__help a, .lumi-auth__links a):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* The live region stays mounted; empty, it gives back the gap it would add. */
+.lumi-auth__alert:empty {
+  margin-top: calc(-1 * var(--lumi-space-5));
+}
+
+.lumi-auth__switch,
+.lumi-auth__note {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  text-align: center;
+}
+
+/* A demo deployment's account, under the action: a quiet note, never a second call to action. */
+.lumi-auth__demo {
+  display: flex;
+  align-items: center;
+  gap: var(--lumi-space-2);
+  padding: var(--lumi-space-2) var(--lumi-space-3);
+  border: 1px dashed color-mix(in oklab, var(--foreground) 16%, transparent);
+  border-radius: var(--lumi-radius-control);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+}
+
+.lumi-auth__demo-icon {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  place-items: center;
+  border-radius: var(--lumi-radius-sm);
+  color: var(--lumi-text-info);
+  background: color-mix(in oklab, var(--info) 12%, transparent);
+}
+
+.lumi-auth__demo-text {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.lumi-auth__demo code {
+  color: var(--foreground);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: var(--lumi-fs-caption);
+}
+
+/* A finished step: its mark, what happened, and the way on. */
+.lumi-auth__outcome {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lumi-space-5);
+}
+
+.lumi-auth__outcome-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: var(--lumi-radius-panel);
+  color: var(--lumi-text-info);
+  background: color-mix(in oklab, var(--info) 12%, transparent);
+}
+
+.lumi-auth__foot {
+  padding: var(--lumi-space-6) var(--lumi-auth-gutter);
+}
+
+.lumi-auth__legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--lumi-space-2) var(--lumi-space-5);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+}
+
+.lumi-auth__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lumi-space-4);
+}
+
+.lumi-auth__links a {
+  border-radius: var(--lumi-radius-sm);
+  color: inherit;
+  text-decoration: none;
+}
+
+.lumi-auth__links a:hover {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (pointer: coarse) {
+  .lumi-auth__reveal {
+    right: 2px;
+    width: var(--lumi-control-lg);
+    height: var(--lumi-control-lg);
+  }
+}
+
+/* Too narrow for the two columns: the pitch steps aside and the card stands
+   alone in the middle, as the only thing on the page. */
+@media (width < 960px) {
+  .lumi-auth__body {
+    width: min(100%, 440px);
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    padding-block: var(--lumi-space-4) var(--lumi-space-8);
+  }
+
+  .lumi-auth__hero {
+    display: none;
+  }
+
+  .lumi-auth::before {
+    background: radial-gradient(70% 40% at 50% 40%, var(--lumi-auth-glow-soft), transparent 70%);
+  }
+}
+
+/* A phone: the card gives way to the page itself, and only the language and theme stay beside the brand. */
+@media (width < 520px) {
+  .lumi-auth__help {
+    display: none;
+  }
+
+  .lumi-auth__top {
+    padding-block: var(--lumi-space-4);
+  }
+
+  .lumi-auth__body {
+    align-content: start;
+    padding-top: clamp(24px, 8vh, 72px);
+  }
+
+  .lumi-auth__card {
+    padding: var(--lumi-space-1) 0 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "root": "stack",
+  "state": {
+    "order": {
+      "quantity": 4,
+      "gift": false,
+      "message": ""
+    }
+  },
+  "elements": {
+    "stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "quantity",
+        "bulk",
+        "gift",
+        "message"
+      ]
+    },
+    "quantity": {
+      "type": "FormField",
+      "props": {
+        "name": "quantity",
+        "label": {
+          "$t": "Quantity"
+        },
+        "fieldType": "number",
+        "min": 1,
+        "max": 99,
+        "help": {
+          "$t": "Try more than 10"
+        },
+        "value": {
+          "$bindState": "/order/quantity"
+        }
+      },
+      "children": []
+    },
+    "bulk": {
+      "type": "Alert",
+      "props": {
+        "tone": "info",
+        "title": {
+          "$t": "Bulk order"
+        },
+        "message": {
+          "$t": "Orders over 10 items ship from the central warehouse"
+        }
+      },
+      "visible": {
+        "$state": "/order/quantity",
+        "gt": 10
+      },
+      "children": []
+    },
+    "gift": {
+      "type": "Switch",
+      "props": {
+        "label": {
+          "$t": "Gift wrap"
+        },
+        "value": {
+          "$bindState": "/order/gift"
+        }
+      },
+      "children": []
+    },
+    "message": {
+      "type": "FormField",
+      "props": {
+        "name": "giftMessage",
+        "label": {
+          "$t": "Gift message"
+        },
+        "value": {
+          "$bindState": "/order/message"
+        }
+      },
+      "visible": {
+        "$state": "/order/gift"
+      },
+      "children": []
+    }
+  }
+}

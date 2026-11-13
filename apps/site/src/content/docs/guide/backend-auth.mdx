@@ -1,0 +1,114 @@
+---
+title: "登录和权限"
+description: "后端要提供的登录接口：token 或 cookie 登录、刷新 token、注册与找回密码，以及权限标识怎么写、菜单和按钮怎么按它隐藏。"
+---
+
+后台打开后先要求登录。后端按下面的格式提供登录接口，前端不用写代码。数据接口见 [数据接口](/guide/backend/)。
+
+## 登录
+
+默认用 token 登录：
+
+| 接口 | 请求 | 返回 |
+| --- | --- | --- |
+| `POST /login` | `{ "username", "password", "remember" }` | `{ "data": { "token", "user", "permissions" } }` |
+| `GET /me` | 带 token | `{ "data": { "user", "permissions" } }` |
+| `POST /logout` | 带 token | 任意，失败也会退出 |
+
+登录拿到的 token 存在浏览器里，之后每个请求都带 `Authorization: Bearer <token>`。任何请求返回 401，就退出并回到登录页。
+
+`permissions` 是 `资源:操作` 字符串数组，如 `orders:list`、`orders:*`、`*:*`。菜单和按钮会按它隐藏，但后端仍要自己检查权限。
+
+### 权限标识
+
+菜单、路由的 `access` 写 `{ "resource", "action" }`，检查时拼成一个权限串，去 `permissions` 里找：
+
+| `access` | 拼成 |
+| --- | --- |
+| `{ "resource": "orders", "action": "list" }` | `orders:list` |
+| `{ "resource": "system/users", "action": "delete" }` | `system:users:delete`，资源里的 `/` 换成分隔符 |
+
+`permissions` 里每一段都可以写 `*`：
+
+| 后端返回 | 覆盖 |
+| --- | --- |
+| `system:users:*` | `system/users` 的所有操作 |
+| `system:*` | `system` 下面的所有资源和操作 |
+| `*:users:delete` | 任何模块下 `users` 的删除 |
+| `*` 或 `*:*` | 全部 |
+
+后端用点号或别的顺序时，在 `config.json` 的 `access` 里说明：
+
+```jsonc
+{
+  "data": { "url": "/api" },
+  "panels": { "manifest": "/manifest.json" },
+  // 权限判断的规则，和登录（auth）分开
+  "access": {
+    // system/users + delete 拼成 system.users.delete
+    "separator": "."
+  }
+}
+```
+
+`format` 可以调整顺序，例如 `"{action}{separator}{resource}"` 拼成 `delete:system:users`。拼法完全不同时，在扩展模块里换成自己的 `accessProvider`，见 [权限](/guide/advanced/access/#自定义)。
+
+### 用 cookie 登录
+
+后端用 session cookie 时，把 `mode` 设成 `cookie`：
+
+```jsonc
+{
+  "data": { "url": "/api" },
+  // 登录方式
+  "auth": {
+    // 用 cookie 保持登录，不存 token
+    "mode": "cookie",
+    // 写操作把这个 cookie 的值放进这个请求头
+    "csrf": { "cookie": "XSRF-TOKEN", "header": "X-XSRF-TOKEN" }
+  },
+  "panels": { "manifest": "/manifest.json" }
+}
+```
+
+- `/login` 设置 cookie 即可，返回里不需要 `token`。浏览器里不保存任何凭证，打开页面时用 `/me` 判断是否已登录。
+- 每个请求都带 cookie（`credentials: include`）。后台和接口不同源时，后端要返回 `Access-Control-Allow-Credentials: true`，并且 `Access-Control-Allow-Origin` 写具体的来源，不能写 `*`。
+- `csrf` 可选：写操作（POST、PUT、DELETE 等）会把 `XSRF-TOKEN` cookie 的值放进 `X-XSRF-TOKEN` 头。名字按后端框架的约定改。
+
+### 刷新 token
+
+填上 `refresh`，任何请求返回 401 时先调用它：成功就用新凭证把原请求重发一次，失败才退出。同时有多个请求 401，也只刷新一次。
+
+```jsonc
+{
+  "data": { "url": "/api" },
+  // token 过期（401）时调用这个地址续期
+  "auth": { "endpoints": { "refresh": "/refresh" } },
+  "panels": { "manifest": "/manifest.json" }
+}
+```
+
+`POST /refresh` 返回 `{ "data": { "token" } }`；cookie 模式下只需要更新 cookie。
+
+### 注册与找回密码
+
+注册、找回密码、重置密码是可选的，在 `config.json` 的 `auth.endpoints` 里填上地址才会出现：
+
+```jsonc
+{
+  "data": { "url": "/api" },
+  "auth": {
+    "endpoints": {
+      // 注册
+      "register": "/register",
+      // 发送重置密码邮件
+      "forgotPassword": "/forgot-password",
+      // 设置新密码
+      "updatePassword": "/reset-password"
+    }
+  },
+  "panels": { "manifest": "/manifest.json" }
+}
+```
+
+登录接口和这里不一样时（比如跳到统一登录页），用扩展模块换成自己的，见 [换成自己的登录](/guide/extend-backend/#换成自己的登录)。

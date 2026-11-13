@@ -1,0 +1,42 @@
+---
+title: "useImport"
+description: "useImport React hook 的签名、参数和返回值。"
+---
+
+Creates the records of a CSV or JSON file with progress, or uploads the file for the backend to import at `url`, the same way as the `importList` action.
+
+```typescript
+useImport(input: UseImportOptions): UseImportReturn
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `input` | `UseImportOptions` | 是 |  |
+
+`input` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `accept` | `string \| undefined` | 否 | File types the picker offers, e.g. `.csv,.json`. |
+| `batchSize` | `number \| undefined` | 否 | Records sent per `createMany` call, for backends whose bulk create takes or refuses a batch as a whole. Without it each record goes through `create`, so every refused row is reported on its own. |
+| `columns` | `readonly TransferColumn[] \| undefined` | 否 | Maps the file's headings to record fields; headings are taken as field names when left out. |
+| `dataProviderName` | `string \| undefined` | 否 | 多数据源名称；省略时使用 default。 |
+| `meta` | `Meta \| undefined` | 否 | 原样传给 DataProvider 的扩展数据。 |
+| `onFinish` | `((result: ImportResult) => void) \| undefined` | 否 | Called with the result once the import ended. |
+| `pick` | `((accept?: string) => Promise<Pick<TransferFile, "name" \| "content"> \| undefined>) \| undefined` | 否 | Chooses and reads the file of a browser import; the browser's picker by default. |
+| `pickFile` | `((accept?: string) => Promise<File \| undefined>) \| undefined` | 否 | Chooses the file of a backend import (`url`); the browser's picker by default. |
+| `resource` | `string` | 是 | 交给 DataProvider 解释的数据目标，如 `orders`。 |
+| `url` | `string \| undefined` | 否 | The backend performs the import: the chosen file is uploaded to this endpoint (relative to the API root) as the form field `file`, with `meta` beside it, and the answer `{ data: { total, succeeded, failed, errors } }` is the result. Without it the file is read here and each record created. |
+
+返回 `UseImportReturn`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `cancel` | `() => void` | 是 | Stops after the batch under way. |
+| `error` | `Error \| undefined` | 否 | Why the last import failed as a whole. |
+| `isLoading` | `boolean` | 是 | True while the import runs. |
+| `progress` | `ImportProgress \| undefined` | 否 | Records processed, accepted and refused so far; with `url`, the percent of the file uploaded. |
+| `result` | `ImportResult \| undefined` | 否 | How the last import went: totals and the refused rows. |
+| `trigger` | `(file?: Pick<TransferFile, "name" \| "content"> \| File) => Promise<ImportResult \| undefined>` | 是 | Opens the file picker, or imports the given file; resolves undefined when the reader cancels. |

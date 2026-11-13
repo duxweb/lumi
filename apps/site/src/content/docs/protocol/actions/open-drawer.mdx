@@ -1,0 +1,80 @@
+---
+title: "openDrawer"
+description: "打开一个抽屉或弹窗。"
+---
+
+打开一个抽屉或弹窗。内容可以是任意页面 JSON（`src`），也可以是代码里注册的抽屉（`name`）。页面 JSON 只按地址加载一次，`id` 和 `params` 写进它的页面状态 `/drawer`。抽屉有自己的地址，可以刷新和分享；在抽屉里再打开会叠在上面，最多三层。
+
+## 用法
+
+### 打开一个页面 JSON
+
+弹窗的内容是一个普通的页面 JSON，任何页面都能按地址打开它，见 [共用弹窗](/guide/reuse/#共用弹窗)。
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "编辑" },
+      "on": {
+        // 点击按钮时执行
+        "press": {
+          "action": "openDrawer",
+          "params": {
+            // 页面 JSON 的地址，如 /pages/article-edit.json
+            "src": "/pages/article-edit.json",
+            // 这条记录，弹窗页面里用 /drawer/id 读取
+            "id": { "$state": "/table/row/id" },
+            // 抽屉或弹窗的标题
+            "title": "编辑文章"
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+### 打开代码里注册的抽屉
+
+用 `name` 打开 `createAdmin` 或扩展模块的 `drawers` 里注册的 React 抽屉，见 [路由抽屉](/guide/advanced/admin/#路由抽屉)。
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "编辑客户" },
+      "on": {
+        // 点击按钮时执行
+        "press": {
+          "action": "openDrawer",
+          "params": {
+            // 代码里注册的抽屉名称
+            "name": "edit-customer",
+            // 抽屉里用 useAdminDrawer().recordId 读取
+            "id": { "$state": "/table/row/id" }
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| `name` | 代码里注册的抽屉名称。和 `src` 二选一。 | `string` |
+| `src` | 页面 JSON 的地址，如 `/pages/article-edit.json`。只能是本站路径或相对于 manifest 的路径。 | `string` |
+| `id` | 记录主键，页面里用 `/drawer/id` 读取。 | `string \| number` |
+| `params` | 传给页面的其他值，页面里用 `/drawer/params` 读取。会写进地址栏，只放少量数据。 | `object` |
+| `title` | 抽屉或弹窗的标题。 | `string` |
+| `mode` | `drawer`（默认）从侧边滑出，`modal` 居中弹出。 | `"drawer" \| "modal"` |
+| `size` | `sm`、`md` 或 `lg`。 | `"sm" \| "md" \| "lg"` |

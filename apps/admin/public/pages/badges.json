@@ -1,0 +1,794 @@
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Badges & avatars"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "sections"
+      ]
+    },
+    "badge-1": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Neutral"
+        },
+        "tone": "neutral",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "badge-2": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Primary"
+        },
+        "tone": "primary",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "badge-3": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Brand"
+        },
+        "tone": "brand",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "badge-4": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Success"
+        },
+        "tone": "success",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "badge-5": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Warning"
+        },
+        "tone": "warning",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "badge-6": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Danger"
+        },
+        "tone": "danger",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "badge-7": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Info"
+        },
+        "tone": "info",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "stack-8": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "badge-1",
+        "badge-2",
+        "badge-3",
+        "badge-4",
+        "badge-5",
+        "badge-6",
+        "badge-7"
+      ]
+    },
+    "card-9": {
+      "type": "Example",
+      "props": {
+        "id": "solid-badges",
+        "title": {
+          "$t": "Solid badges"
+        },
+        "description": {
+          "$t": "For counts and statuses that must stand out"
+        }
+      },
+      "children": [
+        "stack-8"
+      ]
+    },
+    "badge-10": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Neutral"
+        },
+        "tone": "neutral",
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "badge-11": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Primary"
+        },
+        "tone": "primary",
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "badge-12": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Brand"
+        },
+        "tone": "brand",
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "badge-13": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Success"
+        },
+        "tone": "success",
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "badge-14": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Warning"
+        },
+        "tone": "warning",
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "badge-15": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Danger"
+        },
+        "tone": "danger",
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "badge-16": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Info"
+        },
+        "tone": "info",
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "stack-17": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "badge-10",
+        "badge-11",
+        "badge-12",
+        "badge-13",
+        "badge-14",
+        "badge-15",
+        "badge-16"
+      ]
+    },
+    "card-18": {
+      "type": "Example",
+      "props": {
+        "id": "soft-badges",
+        "title": {
+          "$t": "Soft badges"
+        },
+        "description": {
+          "$t": "The default for statuses in tables and cards"
+        }
+      },
+      "children": [
+        "stack-17"
+      ]
+    },
+    "badge-19": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Neutral"
+        },
+        "tone": "neutral",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "badge-20": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Primary"
+        },
+        "tone": "primary",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "badge-21": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Brand"
+        },
+        "tone": "brand",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "badge-22": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Success"
+        },
+        "tone": "success",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "badge-23": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Warning"
+        },
+        "tone": "warning",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "badge-24": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Danger"
+        },
+        "tone": "danger",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "badge-25": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Info"
+        },
+        "tone": "info",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "stack-26": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "badge-19",
+        "badge-20",
+        "badge-21",
+        "badge-22",
+        "badge-23",
+        "badge-24",
+        "badge-25"
+      ]
+    },
+    "badge-outline-usage-status": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Active"
+        },
+        "tone": "success",
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "badge-outline-usage-channel": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Wholesale"
+        },
+        "tone": "neutral",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "badge-outline-usage-region": {
+      "type": "Badge",
+      "props": {
+        "label": {
+          "$t": "Ships from EU"
+        },
+        "tone": "neutral",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "text-outline-usage": {
+      "type": "Text",
+      "props": {
+        "text": "Lumi Lamp",
+        "variant": "body"
+      },
+      "children": []
+    },
+    "stack-outline-usage": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true,
+        "align": "center"
+      },
+      "children": [
+        "text-outline-usage",
+        "badge-outline-usage-status",
+        "badge-outline-usage-channel",
+        "badge-outline-usage-region"
+      ]
+    },
+    "stack-outline": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "stack-26",
+        "stack-outline-usage"
+      ]
+    },
+    "card-27": {
+      "type": "Example",
+      "props": {
+        "id": "outline-badges",
+        "title": {
+          "$t": "Outline badges"
+        },
+        "description": {
+          "$t": "For metadata beside other badges"
+        }
+      },
+      "children": [
+        "stack-outline"
+      ]
+    },
+    "avatar-28": {
+      "type": "Avatar",
+      "props": {
+        "name": "Alex Kim",
+        "size": "sm"
+      },
+      "children": []
+    },
+    "avatar-29": {
+      "type": "Avatar",
+      "props": {
+        "name": "Sam Rivera"
+      },
+      "children": []
+    },
+    "avatar-30": {
+      "type": "Avatar",
+      "props": {
+        "name": "Noor Haddad",
+        "size": "lg"
+      },
+      "children": []
+    },
+    "avatar-30-xl": {
+      "type": "Avatar",
+      "props": {
+        "name": "Lena Park",
+        "size": "xl"
+      },
+      "children": []
+    },
+    "stack-31": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true,
+        "align": "center"
+      },
+      "children": [
+        "avatar-28",
+        "avatar-29",
+        "avatar-30",
+        "avatar-30-xl"
+      ]
+    },
+    "avatar-32": {
+      "type": "Avatar",
+      "props": {
+        "name": "Mia Chen",
+        "showName": true,
+        "description": {
+          "$t": "Gold member, 4th order"
+        },
+        "size": "lg"
+      },
+      "children": []
+    },
+    "stack-33": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "stack-31",
+        "avatar-32"
+      ]
+    },
+    "card-34": {
+      "type": "Example",
+      "props": {
+        "id": "avatars",
+        "title": {
+          "$t": "Avatars"
+        },
+        "description": {
+          "$t": "Initials stand in until a photo loads; the name and a line of context can sit beside it"
+        }
+      },
+      "children": [
+        "stack-33"
+      ]
+    },
+    "avatargroup-35": {
+      "type": "AvatarGroup",
+      "props": {
+        "items": [
+          {
+            "name": "Mia Chen"
+          },
+          {
+            "name": "Alex Kim"
+          },
+          {
+            "name": "Sam Rivera"
+          },
+          {
+            "name": "Noor Haddad"
+          },
+          {
+            "name": "Li Wei"
+          },
+          {
+            "name": "Jonas Berg"
+          }
+        ],
+        "max": 4,
+        "label": {
+          "$t": "Reviewers"
+        }
+      },
+      "children": []
+    },
+    "avatargroup-36": {
+      "type": "AvatarGroup",
+      "props": {
+        "items": [
+          {
+            "name": "Ada Admin"
+          },
+          {
+            "name": "Mina Manager"
+          },
+          {
+            "name": "Sam Support"
+          }
+        ],
+        "size": "sm",
+        "label": {
+          "$t": "On call"
+        }
+      },
+      "children": []
+    },
+    "avatargroup-lg": {
+      "type": "AvatarGroup",
+      "props": {
+        "items": [
+          {
+            "name": "Lena Park"
+          },
+          {
+            "name": "Omar Haddad"
+          },
+          {
+            "name": "Yuki Sato"
+          },
+          {
+            "name": "Priya Nair"
+          },
+          {
+            "name": "Tom Weber"
+          }
+        ],
+        "size": "lg",
+        "max": 3,
+        "label": {
+          "$t": "Project team"
+        }
+      },
+      "children": []
+    },
+    "stack-37": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "avatargroup-36",
+        "avatargroup-35",
+        "avatargroup-lg"
+      ]
+    },
+    "card-38": {
+      "type": "Example",
+      "props": {
+        "id": "avatar-group",
+        "title": {
+          "$t": "Avatar group"
+        },
+        "description": {
+          "$t": "A stack of people with an overflow count"
+        }
+      },
+      "children": [
+        "stack-37"
+      ]
+    },
+    "icon-39": {
+      "type": "Icon",
+      "props": {
+        "name": "checkmark-circle-02",
+        "tone": "success",
+        "label": {
+          "$t": "Completed"
+        }
+      },
+      "children": []
+    },
+    "icon-40": {
+      "type": "Icon",
+      "props": {
+        "name": "alert-02",
+        "tone": "warning",
+        "label": {
+          "$t": "Needs attention"
+        }
+      },
+      "children": []
+    },
+    "icon-41": {
+      "type": "Icon",
+      "props": {
+        "name": "cancel-circle",
+        "tone": "danger",
+        "label": {
+          "$t": "Failed"
+        }
+      },
+      "children": []
+    },
+    "icon-42": {
+      "type": "Icon",
+      "props": {
+        "name": "information-circle",
+        "tone": "info",
+        "label": {
+          "$t": "Info"
+        }
+      },
+      "children": []
+    },
+    "icon-43": {
+      "type": "Icon",
+      "props": {
+        "name": "sparkles",
+        "tone": "brand",
+        "label": {
+          "$t": "Suggested"
+        }
+      },
+      "children": []
+    },
+    "icon-44": {
+      "type": "Icon",
+      "props": {
+        "name": "clock",
+        "tone": "muted",
+        "label": {
+          "$t": "Scheduled"
+        }
+      },
+      "children": []
+    },
+    "icon-45": {
+      "type": "Icon",
+      "props": {
+        "name": "user",
+        "tone": "default",
+        "label": {
+          "$t": "Customer"
+        }
+      },
+      "children": []
+    },
+    "stack-46": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true,
+        "align": "center"
+      },
+      "children": [
+        "icon-39",
+        "icon-40",
+        "icon-41",
+        "icon-42",
+        "icon-43",
+        "icon-44",
+        "icon-45"
+      ]
+    },
+    "icon-47": {
+      "type": "Icon",
+      "props": {
+        "name": "package",
+        "size": "sm",
+        "label": {
+          "$t": "Small"
+        }
+      },
+      "children": []
+    },
+    "icon-48": {
+      "type": "Icon",
+      "props": {
+        "name": "package",
+        "size": "md",
+        "label": {
+          "$t": "Medium"
+        }
+      },
+      "children": []
+    },
+    "icon-49": {
+      "type": "Icon",
+      "props": {
+        "name": "package",
+        "size": "lg",
+        "label": {
+          "$t": "Large"
+        }
+      },
+      "children": []
+    },
+    "stack-50": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true,
+        "align": "center"
+      },
+      "children": [
+        "icon-47",
+        "icon-48",
+        "icon-49"
+      ]
+    },
+    "stack-51": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "stack-46",
+        "stack-50"
+      ]
+    },
+    "card-52": {
+      "type": "Example",
+      "props": {
+        "id": "icons",
+        "title": {
+          "$t": "Icons"
+        },
+        "description": {
+          "$t": "Icons carry a tone and three sizes; a labelled icon is announced, an unlabelled one is decoration"
+        }
+      },
+      "children": [
+        "stack-51"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Badges & avatars"
+        },
+        "description": {
+          "$t": "Status badges in every tone and appearance, avatars, avatar groups and icons"
+        }
+      },
+      "children": []
+    },
+    "sections": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "card-9",
+        "card-18",
+        "card-27",
+        "card-52",
+        "card-34",
+        "card-38"
+      ]
+    }
+  }
+}

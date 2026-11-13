@@ -1,0 +1,77 @@
+---
+title: "Listbox"
+description: "始终展开的选项列表，支持图标、说明和分组标题。"
+---
+
+<ComponentPreview name="Listbox" />
+
+始终展开的选项列表，支持图标、说明和分组标题。选一个值，`multiple` 时选一个数组。方向键、Home/End 和输入首字母移动，Space 或 Enter 选中。
+
+## 示例
+
+```json
+{
+  "root": "listbox-39",
+  "elements": {
+    "listbox-39": {
+      "type": "Listbox",
+      "props": {
+        "value": { "$bindState": "/listbox-39/value" },
+        "options": [
+          {
+            "label": "Standard",
+            "value": "standard",
+            "description": "3–5 business days",
+            "icon": "truck",
+            "group": "Shipping"
+          },
+          {
+            "label": "Express",
+            "value": "express",
+            "description": "Next business day",
+            "icon": "sparkles",
+            "group": "Shipping"
+          },
+          {
+            "label": "Store pickup",
+            "value": "pickup",
+            "description": "Ready in two hours",
+            "icon": "clock",
+            "group": "Pickup"
+          }
+        ],
+        "ariaLabel": "Delivery method"
+      },
+      "children": []
+    }
+  },
+  "state": { "listbox-39": { "value": "standard" } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `value` | 当前值。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `null \| string \| number \| boolean \| (string \| number \| boolean)[]` |  |
+| `defaultValue` | 初始值，只在没有绑定 `value` 时生效。 | `null \| string \| number \| boolean \| (string \| number \| boolean)[]` |  |
+| `options`（必填） | 可选项列表，每项 `{ label, value, disabled? }`。 字段：`label`、`value`、`description?`、`icon?`、`disabled?`、`group?` | `object[]` |  |
+| `multiple` | 允许选择多个。 | `boolean \| null` | `false` |
+| `maxHeight` | 列表最大高度（像素），超出时滚动。 | `number \| null` |  |
+| `empty` | 没有数据时显示的文字。 | `string \| null` |  |
+| `disabled` | 禁用，不可操作。 | `boolean \| null` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean \| null` | `false` |
+| `invalid` | 标记为校验未通过，显示错误样式。通常由 FormField 自动设置。 | `boolean \| null` | `false` |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string \| null` |  |
+
+通用参数：
+
+- `checks`：json-render 原生校验规则，如 `{ "type": "required", "message": "请填写" }`，提交或失焦时执行。
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：无

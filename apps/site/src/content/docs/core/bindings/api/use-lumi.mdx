@@ -1,0 +1,31 @@
+---
+title: "useLumi"
+description: "useLumi React hook 的签名、参数和返回值。"
+---
+
+The `LumiContext` of the nearest Lumi provider: the data providers, the request client and every other service.
+
+```typescript
+useLumi(): LumiContext
+```
+
+返回 `LumiContext`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `accessProvider` | `AccessProvider \| undefined` | 否 | Permission checks. |
+| `agentBridge` | `AgentBridge \| undefined` | 否 | What the agent sees of the running pages and the client tools it acts through. |
+| `auditLogProvider` | `AuditLogProvider \| undefined` | 否 | The log of writes. |
+| `authProvider` | `AuthProvider \| undefined` | 否 | The sign-in session. |
+| `config` | `Readonly<LumiConfig>` | 是 | The config `createLumi` was given. |
+| `getDataProvider` | `(name?: string) => DataProvider` | 是 | The data provider registered under `name`, `default` when left out; throws for a name that is not registered. |
+| `http` | `HttpClient` | 是 | The request client, signed by `authProvider`. |
+| `i18nProvider` | `I18nProvider \| undefined` | 否 | Translation, the locale and formats. |
+| `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
+| `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
+| `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
+| `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
+| `validator` | `Validator` | 是 | Checks form values against `rules`. |

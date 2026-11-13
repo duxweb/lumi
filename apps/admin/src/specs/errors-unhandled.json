@@ -1,0 +1,87 @@
+{
+  "root": "stack",
+  "state": {
+    "lookupError": null
+  },
+  "elements": {
+    "stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "buttons",
+        "inline"
+      ]
+    },
+    "buttons": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "toast",
+        "handled"
+      ]
+    },
+    "toast": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Without onError"
+        },
+        "appearance": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "request",
+          "params": {
+            "url": "/orders/999999"
+          }
+        }
+      },
+      "children": []
+    },
+    "handled": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "With onError"
+        },
+        "appearance": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "request",
+          "params": {
+            "url": "/orders/999999"
+          },
+          "onError": {
+            "set": {
+              "/lookupError": "$error.message"
+            }
+          }
+        }
+      },
+      "children": []
+    },
+    "inline": {
+      "type": "Alert",
+      "props": {
+        "tone": "warning",
+        "title": {
+          "$t": "Handled in the Spec"
+        },
+        "message": {
+          "$state": "/lookupError"
+        }
+      },
+      "visible": {
+        "$state": "/lookupError"
+      },
+      "children": []
+    }
+  }
+}

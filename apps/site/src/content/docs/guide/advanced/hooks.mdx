@@ -1,0 +1,486 @@
+---
+title: "数据 hooks"
+description: "在 React 组件里读写数据、提交表单、做列表、判断权限和打开弹窗：每个 hook 的用途、参数、返回值，以及和 JSON 动作的关系。"
+---
+
+JSON 页面用 `Query`、`submitForm` 这些元素和动作读写数据。React 组件里做同样的事，用这一页的 hooks。两边背后是同一套服务：
+
+- **同一个 DataProvider**：hook 和 JSON 都通过 `createLumi({ dataProvider })` 注册的 provider 发请求，请求格式、登录凭证、错误格式完全一样。
+- **同一份缓存**：读到的结果按资源名缓存（基于 TanStack Query）。React 组件里 `useUpdate` 保存了，JSON 页面里同一资源的列表也会重新请求，反过来也一样。
+- **同一套行为**：`useCreate` 和 JSON 的 `create` 动作、`useForm().submit` 和 `submitForm` 动作走的是同一段代码，校验、防重复提交、失败提示都一致。
+
+所有 hooks 都从 `@duxweb/lumi` 导入，必须在 `LumiProvider`（或 `createAdmin` 渲染的后台）里使用，见 [React 集成](/guide/advanced/react/)。架构上它们处在哪一层，见 [架构](/guide/advanced/architecture/)；请求怎么发出去，见 [数据请求](/guide/advanced/data/)。
+
+## 总览
+
+| 分类 | hooks | 对应的 JSON |
+| --- | --- | --- |
+| 读取 | `useList`、`useInfiniteList`、`useOne`、`useMany`、`useCustom` | `Query` 元素 |
+| 写入 | `useCreate`、`useCreateMany`、`useUpdate`、`useUpdateMany`、`useDelete`、`useDeleteMany`、`useCustomMutation` | `create`、`update`、`delete`、`request` 动作 |
+| 缓存 | `useInvalidate`、`useClient` | `invalidate` 动作 |
+| 表单 | `useForm`、`useValidator` | `Form` + `submitForm` 动作 |
+| 列表 | `useTable`、`useSelect`、`useTreeSource` | `ListPage`、远程 `Select`、`Tree` |
+| 导入导出、上传 | `useExport`、`useImport`、`useUpload` | `exportList`、`importList` 动作，`Upload` 元素 |
+| 登录与权限 | `useLogin`、`useLogout`、`useRegister`、`useForgotPassword`、`useUpdatePassword`、`useCheck`、`useIdentity`、`usePermissions`、`useCan` | `login`、`logout` 动作，`CanAccess` 元素 |
+| 应用 | `useLumi`、`useNavigation`、`useParsedLocation`、`useTranslate`、`useLocale`、`useChangeLocale`、`useFormat*`、`useTenant`、`useToast`、`useNotify` | `navigate`、`toast`、`notify` 动作，`$t` |
+| 弹窗 | `useDialog`、`useModal`、`useDrawer`、`useOverlayCloseGuard` | `Dialog`、`Drawer` 元素 |
+| 实时与审计 | `useSubscription`、`usePublish`、`useAuditLogList` | `AuditLog` 元素 |
+
+## 读取
+
+读取类 hooks 返回 TanStack Query 的 `UseQueryResult`：常用的字段是 `data`、`isPending`（第一次加载中）、`isFetching`（任何一次请求中，包括刷新）、`error` 和 `refetch()`。
+
+### useList
+
+读一页列表，对应 DataProvider 的 `getList`。
+
+```tsx
+import { useList } from '@duxweb/lumi'
+
+// 一条订单的类型
+interface Order {
+  id: number
+  number: string
+  status: string
+}
+
+export function PaidOrders() {
+  // 读第一页：已付款的订单，按创建时间倒序
+  const { data, isPending, error } = useList<Order>({
+    resource: 'orders',
+    pagination: { page: 1, pageSize: 20 },
+    filters: [{ field: 'status', operator: 'eq', value: 'paid' }],
+    sorters: [{ field: 'createdAt', order: 'desc' }],
+  })
+  // 第一次加载中
+  if (isPending) {
+    return <p>加载中…</p>
+  }
+  // 请求失败
+  if (error) {
+    return <p>{error.message}</p>
+  }
+  // data.data 是这一页的记录，data.total 是总条数
+  return (
+    <ul>
+      {data.data.map((order) => (
+        <li key={order.id}>{order.number}</li>
+      ))}
+      <li>共 {data.total} 条</li>
+    </ul>
+  )
+}
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `resource`（必填） | 资源名，如 `orders`、`shop/orders`。首尾的 `/` 会被去掉。 |
+| `pagination` | `{ page, pageSize }`；`false` 表示不分页，一次取全部。 |
+| `filters` | `[{ field, operator, value }]`。`operator` 有 `eq`、`ne`、`lt`、`lte`、`gt`、`gte`、`like`、`nlike`、`in`、`nin`、`between`、`null`、`nnull`。 |
+| `sorters` | `[{ field, order: 'asc' \| 'desc' }]`，可以多列。 |
+| `meta` | 原样交给 DataProvider 的额外参数，默认的 provider 把它拼进查询字符串。 |
+| `dataProviderName` | 用哪个 DataProvider，默认用当前作用域的（见 `LumiDataProviderScope`）。 |
+| `enabled` | `false` 时不请求，例如还缺筛选条件时。 |
+| `liveMode`、`onLiveEvent` | 实时推送：`auto` 收到这个资源的事件就刷新，`manual` 只调用 `onLiveEvent`，`off` 不订阅。 |
+
+返回的 `data` 是 `{ data: T[], total?: number, raw? }`。换页、换筛选时，旧数据会一直显示到新数据到达，列表不会闪成空白。
+
+### useInfiniteList
+
+"加载更多"式的列表。参数和 `useList` 相同，只是 `pagination` 只有 `pageSize`。返回 TanStack 的无限查询结果：`data.pages` 是已加载的每一页，`fetchNextPage()` 加载下一页，`hasNextPage` 表示还有没有。
+
+### useOne、useMany
+
+```tsx
+import { useOne } from '@duxweb/lumi'
+
+export function OrderTitle({ id }: { id?: number }) {
+  // 还没有 id 时不请求：id 为 undefined 就什么都不发
+  const order = useOne<{ number: string }>({ resource: 'orders', id })
+  // order.data 是 { data: 记录 }
+  return <h1>{order.data?.data.number ?? '…'}</h1>
+}
+```
+
+- `useOne({ resource, id })`：一条记录，对应 `getOne`，返回 `{ data: T }`。`id` 为 `undefined` 时不请求。
+- `useMany({ resource, ids })`：多条记录。DataProvider 有 `getMany` 时一次取回，没有时逐条调用 `getOne`。
+
+两者也接受 `meta`、`dataProviderName`、`enabled` 和实时推送选项。
+
+### useCustom
+
+请求不属于增删改查的接口，对应 DataProvider 的 `custom`：
+
+```tsx
+import { useCustom } from '@duxweb/lumi'
+
+export function SalesSummary() {
+  // 请求 GET {后端地址}/stats/sales?period=month
+  const summary = useCustom<{ revenue: number }>({
+    url: 'stats/sales',
+    method: 'GET',
+    query: { period: 'month' },
+  })
+  return <strong>{summary.data?.data.revenue}</strong>
+}
+```
+
+参数：`url`（相对于 DataProvider 的地址）、`method`（`GET`、`POST`、`PUT`、`PATCH`、`DELETE`）、`query`、`payload`（请求体）、`headers`、`filters`、`sorters`、`meta`、`dataProviderName`、`enabled`。缓存按全部参数区分，参数一变就重新请求。
+
+## 写入
+
+写入类 hooks 返回 TanStack Query 的 `UseMutationResult`：调用 `mutate(variables)` 或 `await mutateAsync(variables)` 发送，`isPending` 表示进行中。
+
+| hook | `mutate` 的参数 | 对应 DataProvider |
+| --- | --- | --- |
+| `useCreate` | 要保存的值 | `create` |
+| `useCreateMany` | 值的数组 | `createMany`，没有时逐条 `create` |
+| `useUpdate` | `{ id, variables }` | `update` |
+| `useUpdateMany` | `{ ids, variables }` | `updateMany`，没有时逐条 `update` |
+| `useDelete` | `{ id, variables? }` | `deleteOne` |
+| `useDeleteMany` | `{ ids, variables? }` | `deleteMany`，没有时逐条 `deleteOne` |
+| `useCustomMutation` | 任意值，交给 `build` 转成请求 | `custom` |
+
+```tsx
+import { useDelete, useUpdate } from '@duxweb/lumi'
+
+export function OrderActions({ id }: { id: number }) {
+  // 更新订单
+  const update = useUpdate({ resource: 'orders' })
+  // 删除订单
+  const remove = useDelete({
+    resource: 'orders',
+    // 立刻从列表里拿掉，5 秒内可以撤销
+    mutationMode: 'undoable',
+    undoableTimeout: 5000,
+  })
+  return (
+    <>
+      <button
+        // 提交中禁用，避免重复点击
+        disabled={update.isPending}
+        onClick={() => update.mutate({ id, variables: { status: 'shipped' } })}
+      >
+        发货
+      </button>
+      {/* 删除这条订单 */}
+      <button onClick={() => remove.mutate({ id })}>删除</button>
+    </>
+  )
+}
+```
+
+每个写入 hook 都接受这些选项：
+
+| 选项 | 说明 |
+| --- | --- |
+| `resource`（必填，`useCustomMutation` 可选） | 资源名。写入成功后，这个资源的所有列表、详情、聚合查询都会重新请求。 |
+| `mutationMode` | `pessimistic`（默认）：等后端成功再更新界面。`optimistic`：先更新界面，失败时撤回。`undoable`：先更新界面并显示"撤销"，等 `undoableTimeout` 毫秒后才真正发送。后两种只用于更新和删除。 |
+| `undoableTimeout` | `undoable` 模式等待的毫秒数。 |
+| `onSuccess(data, variables)` | 成功后调用。 |
+| `onError(error, variables)` | 失败后调用。不写时失败会自动弹出错误提示；写了就由你自己处理。 |
+| `meta`、`dataProviderName` | 同读取。 |
+
+写入成功、但随后的刷新失败时，结果里带 `refreshError`：数据已经保存了，不要因此再保存一次。
+
+`useCustomMutation` 用 `build` 把参数变成请求：
+
+```tsx
+import { useCustomMutation } from '@duxweb/lumi'
+
+export function ShipButton({ id }: { id: number }) {
+  const ship = useCustomMutation<unknown, { carrier: string }>({
+    // 成功后刷新 orders 的列表和详情
+    resource: 'orders',
+    // 把 mutate 的参数变成请求：POST orders/12/ship
+    build: (values) => ({ url: `orders/${id}/ship`, method: 'POST', payload: values }),
+  })
+  return <button onClick={() => ship.mutate({ carrier: 'sf' })}>发货</button>
+}
+```
+
+## 缓存
+
+- `useInvalidate()` 返回一个函数：`invalidate({ resource })` 让这个资源的查询重新请求；`invalidate({ dataProviderName })` 刷新某个 DataProvider 的全部查询；`invalidate({})` 刷新 Lumi 的全部查询。和 JSON 的 `invalidate` 动作一样。
+- `useClient()` 返回底层的 TanStack `QueryClient`，需要直接操作缓存时用。缓存键以 `['lumi', 数据源名, 资源名, 操作, 参数]` 开头，不要依赖后面几段的细节。
+
+一般不需要手动刷新：写入成功会刷新同一资源；配置了 `data` 的 `live` 时，后端推送也会刷新。只有数据被别的途径改了（例如另一个接口的副作用），才需要 `invalidate`。
+
+## 表单
+
+### useForm
+
+`useForm` 读取一条记录作为表单初始值，管理编辑中的值、校验和提交。它和 JSON 的 `submitForm` 是同一个提交流程。
+
+```tsx
+import { useForm } from '@duxweb/lumi'
+
+// 表单值的类型
+interface Customer {
+  name: string
+  email: string
+}
+
+export function CustomerForm({ id }: { id?: number }) {
+  const form = useForm<Customer>({
+    resource: 'customers',
+    // 没有 id 是新建（POST）；有 id 先读出记录，保存时更新（PUT）
+    id,
+    // 新建时的初始值
+    initialValues: { name: '', email: '' },
+    // 业务校验规则，要先注册 Validator，见下文
+    rules: { required: ['name'] },
+  })
+  // 每条错误带着字段路径；后端返回的字段错误也在这里
+  const nameError = form.errors.find((error) => error.path === 'name')?.message
+  return (
+    <form
+      // 提交：校验通过才保存；失败时错误已经写进 form.errors
+      onSubmit={(event) => {
+        event.preventDefault()
+        void form.submit().catch(() => {})
+      }}
+    >
+      <input
+        value={form.values.name ?? ''}
+        onChange={(event) => form.setValue('name', event.target.value)}
+      />
+      {nameError && <small>{nameError}</small>}
+      <button disabled={form.isSubmitting}>保存</button>
+    </form>
+  )
+}
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `resource`（必填） | 保存到哪个资源。 |
+| `id` | 有值时先读取这条记录，提交时更新它；没有时新建。 |
+| `initialValues` | 新建时的初始值。编辑时，记录读到之后才初始化，之后的刷新不会覆盖正在编辑的内容。 |
+| `valuesPath` | 表单值放在页面状态的哪个路径。不写时自动生成一个。和 JSON 页面共用同一个表单时，写同一个路径。 |
+| `rules` | 业务校验规则，交给 `createLumi({ validator })` 注册的 Validator；没有注册时不要写，见 [useValidator](#usevalidator)。 |
+| `groups` | 把字段分组（例如分步表单的每一步），用 `groupErrors` 看每组的错误。 |
+| `draft` | 草稿：把未保存的内容存到浏览器，之后恢复。 |
+| `meta`、`dataProviderName` | 同读取。 |
+
+| 返回 | 说明 |
+| --- | --- |
+| `values`、`setValues`、`setValue(name, value)` | 当前的值。`name` 可以是 `items.0.sku` 这样的路径。 |
+| `errors` | 全部错误 `[{ path, message, code }]`，包括后端返回的字段错误。 |
+| `firstError(fields?)` | 第一个出错字段的路径（如 `email`），可以只看某几个字段；用来滚动或聚焦到它。错误文字在 `errors` 里。 |
+| `groupErrors` | 按 `groups` 汇总的错误。 |
+| `validate({ fields })` | 只校验部分字段，分步表单在"下一步"时用。 |
+| `isDirty` | 是否有未保存的改动，用于离开提醒。 |
+| `isSubmitting` | 是否提交中。提交中再调用 `submit` 不会重复发送。 |
+| `submit()` | 校验，通过后保存，返回保存结果；校验失败或后端拒绝时抛出错误，错误已写进 `errors`。 |
+| `reset(values?)` | 回到初始值，或换成新的值。 |
+| `draft` | `{ has, save, restore, clear }`，配置了 `draft` 时才有。 |
+
+表单值放在 json-render 的页面状态里，不另存一份：同一个页面上的 JSON 元素用 `$bindState` 绑定同一个 `valuesPath`，就能和 React 表单一起编辑。
+
+### useValidator
+
+`useValidator(rules)` 返回一个 `(values) => Promise<issues>` 的函数，用当前的 Validator 校验任意值，适合不经过 `useForm` 的场景。
+
+Lumi 没有内置的业务规则：`rules` 写成什么样，由注册的 Validator 决定；写了 `rules` 却没有注册 Validator，校验时会报错。上面 `useForm` 例子里的 `rules` 是 JSON Schema，要注册 JSON Schema 的 Validator：
+
+```ts
+import { createLumi } from '@duxweb/lumi'
+import { createJsonSchemaValidator } from '@duxweb/lumi/validation-json-schema'
+
+// 注册 JSON Schema 的校验器
+const context = createLumi({ validator: createJsonSchemaValidator() })
+```
+
+## 列表
+
+### useTable
+
+列表页需要的全部状态：分页、排序、筛选、汇总。JSON 的 `ListPage` 就是用它实现的。
+
+```tsx
+import { useTable } from '@duxweb/lumi'
+
+export function ProductTable() {
+  // 列表的全部状态：分页、排序、当前页的记录
+  const table = useTable<{ id: number; name: string }>({
+    resource: 'products',
+    // 每页 20 条
+    pagination: { pageSize: 20 },
+    // 页码、每页条数、排序同时写进地址：?page=2&sort=name:asc
+    syncWithLocation: true,
+  })
+  return (
+    <div>
+      {/* 当前页的记录 */}
+      {table.rows.map((row) => (
+        <p key={row.id}>{row.name}</p>
+      ))}
+      {/* 翻页 */}
+      <button disabled={table.page <= 1} onClick={() => table.setPage(table.page - 1)}>
+        上一页
+      </button>
+      <span>
+        {table.page} / {Math.ceil(table.total / table.pageSize) || 1}
+      </span>
+      <button onClick={() => table.setPage(table.page + 1)}>下一页</button>
+    </div>
+  )
+}
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `resource`（必填） | 资源名。 |
+| `pagination` | `{ pageSize }`，第一页的每页条数。 |
+| `filters` | 筛选条件，变化后回到第一页。 |
+| `statePath` | 分页和排序放在页面状态的哪个路径，JSON 元素可以读到。 |
+| `syncWithLocation` | `true` 时页码、每页条数、排序也写进地址；字符串表示参数名的前缀，同一页面有两个列表时用。 |
+| `aggregate` | 和列表同条件的汇总接口：`{ url, method?, totalKey? }`，结果在 `aggregate`。 |
+| `meta`、`dataProviderName` | 同读取。 |
+
+返回：`rows`、`total`、`page` 和 `setPage`、`pageSize` 和 `setPageSize`、`sorters` 和 `setSorters`、底层的 `query`（`useList` 的结果），以及 `aggregate`、`aggregateQuery`。
+
+### useSelect
+
+远程下拉的选项：分页加载、搜索、联动。
+
+| 参数 | 说明 |
+| --- | --- |
+| `resource`（必填） | 选项来自哪个资源。 |
+| `labelField`、`valueField` | 显示哪个字段、取哪个字段作值。不写时显示 `label`、`name`、`title` 中第一个有值的，值取 `id`。 |
+| `descriptionField`、`avatarField`、`imageField` | 选项的副文字和图片。 |
+| `searchField` | 搜索时按哪个字段 `like` 筛选。 |
+| `filters`、`deps`、`dependsOn` | 固定条件，以及依赖其他字段的条件（例如先选省再选市）。 |
+| `selected` | 已选中的值，不在当前页时会单独取回，保证能显示文字。 |
+| `pageSize` | 每次加载的条数。 |
+
+返回：`options`、`selectedOptions`、`loading`、`loadingMore`、`hasMore`、`total`、`keyword`，以及 `search(keyword)`、`loadMore()`、`setDeps(values)`。
+
+### useTreeSource
+
+树形数据（分类、部门）的读取，`Tree`、`TreeSelect`、`Cascader` 的远程模式用它。参数是 `{ resource, labelField, valueField, parentField, childrenField, leafField, lazy, rootValue, searchField, pageSize, filters }`：后端返回扁平列表时用 `parentField` 组成树，返回嵌套结构时用 `childrenField`；`lazy: true` 时展开节点才请求它的子节点。
+
+## 导入导出、上传
+
+- `useExport({ resource, filters, sorters, columns, format, filename })`：取回全部符合条件的记录，生成 CSV 或 JSON 文件下载。返回 `trigger()`、`isLoading`、`progress`、`error`。加上 `url`（和可选的 `method`）时改由后端生成文件，`format` 可以是后端支持的任何格式，`progress.loaded` 是已接收的字节数，见 [后端导出](/guide/backend-files/#后端导出)。
+- `useImport({ resource, columns, accept, onFinish })`：选一个文件，逐条写入。返回 `trigger(file?)`、`cancel()`、`isLoading`、`progress`、`result`（成功、失败条数和每行的错误）。加上 `url` 时把文件原样上传给后端，由后端导入并返回结果，见 [后端导入](/guide/backend-files/#后端导入)。
+- `useUpload(options)`：上传文件，带进度和取消。返回 `upload(files)`、`uploadFile(file, { onProgress })`、`progress`、`uploading`、`error`。上传地址、字段名等在 `createLumi({ upload })` 里配置，请求带登录凭证。`options.sign` 改为直传对象存储，见 [直传对象存储](/guide/backend-files/#直传对象存储)。
+
+```tsx
+import { useExport } from '@duxweb/lumi'
+
+export function ExportOrders() {
+  // 文件由后端生成；hook 边接收边保存
+  const exporter = useExport({
+    resource: 'orders',
+    url: '/orders/export',
+    format: 'xlsx',
+  })
+  // 已接收的字节数
+  const received = exporter.progress?.loaded ?? 0
+  return (
+    <button
+      disabled={exporter.isLoading}
+      onClick={() => void exporter.trigger().catch(() => {})}
+    >
+      {exporter.isLoading ? `已接收 ${Math.round(received / 1024)} KB` : '导出 Excel'}
+    </button>
+  )
+}
+```
+
+## 登录与权限
+
+这些 hooks 调用 `AuthProvider` 和 `AccessProvider`，见 [认证](/guide/advanced/auth/) 和 [权限](/guide/advanced/access/)。
+
+| hook | 返回 | 说明 |
+| --- | --- | --- |
+| `useLogin()` | mutation | `mutate({ username, password, remember })`。成功后清空上一个会话的缓存。 |
+| `useLogout()` | mutation | 退出并清空缓存。 |
+| `useRegister()`、`useForgotPassword()`、`useUpdatePassword()` | mutation | 注册、找回密码、设新密码，AuthProvider 实现了对应方法才可用。 |
+| `useCheck()` | query | 是否已登录：`{ authenticated, redirectTo? }`。 |
+| `useIdentity()` | query | 当前用户，来自 `getIdentity`。 |
+| `usePermissions(params?)` | query | 原始的权限数据，来自 `getPermissions`。 |
+| `useCan({ resource, action, params? }, enabled?)` | query | `data.can` 为 `true` 时有权限。 |
+
+```tsx
+import { LumiCanAccess, useCan } from '@duxweb/lumi'
+
+export function DeleteButton() {
+  // 问一次：能不能删除 orders
+  const can = useCan({ resource: 'orders', action: 'delete' })
+  return can.data?.can ? <button>删除</button> : null
+}
+
+// 同样的检查写成包裹组件，没有权限时显示 fallback
+export function Refunds() {
+  return (
+    <LumiCanAccess resource="orders" action="refund" fallback={<p>没有退款权限</p>}>
+      <button>退款</button>
+    </LumiCanAccess>
+  )
+}
+```
+
+隐藏按钮只是体验，后端必须自己检查权限。
+
+## 应用
+
+| hook | 说明 |
+| --- | --- |
+| `useLumi()` | 当前的 `LumiContext`：`getDataProvider(name)`、`http`、`authProvider`、`accessProvider`、`i18nProvider` 等，见 [架构](/guide/advanced/architecture/)。 |
+| `useNavigation()` | `{ go({ to, query, hash, replace }), back() }`，和 JSON 的 `navigate` 动作相同。 |
+| `useParsedLocation()` | 当前地址：`{ pathname, query, params, resource?, action?, id? }`。 |
+| `useTranslate()` | `t(key, params?, fallback?)`，和 JSON 的 `$t` 用同一份翻译。 |
+| `useLocale()`、`useChangeLocale()` | 当前语言和切换语言。 |
+| `useFormatNumber()`、`useFormatCurrency()`、`useFormatDate()`、`useFormatDateTime()`、`useFormatRelativeTime()` | 按当前语言和 `i18n.format` 格式化。 |
+| `useTenant()` | `{ tenant, current, options, setTenant }`。切换工作区后，所有查询按新工作区重新请求。 |
+| `useToast()`、`useNotify()` | `open(params)` 弹出轻提示或通知并返回它的 key，`close(key)` 关掉，和 `toast`、`notify` 动作相同。 |
+
+## 弹窗
+
+| hook | 说明 |
+| --- | --- |
+| `useDialog()` | `confirm(options)` 返回 `Promise<boolean>`，`alert(options)`、`prompt(options)`。 |
+| `useModal()`、`useDrawer()` | `open({ title, render, … })` 打开一个弹窗或抽屉，返回 `{ close(value?), result }`。 |
+| `useOverlayCloseGuard(guard)` | 在弹窗里注册关闭前的检查，例如有未保存内容时先确认。 |
+
+```tsx
+import { useDelete, useDialog } from '@duxweb/lumi'
+
+export function RemoveCustomer({ id, name }: { id: number; name: string }) {
+  // 后台外壳渲染的确认框，跟随主题
+  const dialog = useDialog()
+  const remove = useDelete({ resource: 'customers' })
+  return (
+    <button
+      onClick={async () => {
+        // 等用户选择：确认返回 true
+        const ok = await dialog.confirm({
+          title: `删除 ${name}？`,
+          message: '删除后不能恢复。',
+          tone: 'danger',
+          confirmText: '删除',
+        })
+        // 确认后才删除
+        if (ok) {
+          remove.mutate({ id })
+        }
+      }}
+    >
+      删除
+    </button>
+  )
+}
+```
+
+这些弹窗由后台外壳渲染，跟随主题和暗色模式。
+
+## 实时与审计
+
+- `useSubscription({ channel, types?, onLiveEvent, enabled? })`：订阅一个实时频道，组件卸载时取消。资源的频道是 `resources/{资源名}`；读取类 hooks 已经自动订阅自己的资源，一般不用手动写。
+- `usePublish()`：返回 `publish(event)`，LiveProvider 支持发布时才有效。
+- `useAuditLogList({ resource, id?, pagination? })`：一个资源或一条记录的操作历史，需要配置 panel 的 `auditLog` 或 `auditLogProvider`。写入成功后自动刷新。
+
+全部类型和参数见 [@duxweb/lumi API](/api/packages/lumi/)。

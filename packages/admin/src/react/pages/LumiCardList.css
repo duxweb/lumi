@@ -1,0 +1,181 @@
+/* Card results are independent objects, not cards nested in a table panel. */
+.lumi-list-page__surface:has(.lumi-card-list) {
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.lumi-list-page__surface:has(.lumi-card-list) > .lumi-list-page__results {
+  padding: 0 0 var(--lumi-space-6);
+}
+
+.lumi-list-page__surface:has(.lumi-card-list) > .lumi-data-grid__pagination {
+  padding-inline: 0;
+  background: transparent;
+}
+
+.lumi-card-list {
+  min-width: 0;
+}
+
+.lumi-card-list__items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--lumi-card-list-min, 280px)), 1fr));
+  gap: var(--lumi-space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lumi-card-list[data-layout='list'] .lumi-card-list__items {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--lumi-space-4);
+}
+
+.lumi-card-list__item {
+  display: grid;
+  min-width: 0;
+}
+
+.lumi-record-card {
+  display: grid;
+  min-width: 0;
+  height: 100%;
+}
+
+.lumi-record-card[data-link] {
+  position: relative;
+  transition: background-color 120ms ease;
+}
+
+.lumi-record-card[data-link]:hover {
+  background: var(--muted);
+}
+
+.lumi-record-card__link {
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+}
+
+.lumi-record-card__link::after {
+  position: absolute;
+  border-radius: inherit;
+  content: "";
+  inset: 0;
+}
+
+.lumi-record-card__link:focus-visible::after {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.lumi-record-card__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+  padding: var(--lumi-space-1);
+  gap: var(--lumi-space-3);
+  overflow-wrap: anywhere;
+}
+
+.lumi-record-card__title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--lumi-space-2) var(--lumi-space-3);
+}
+
+.lumi-record-card__title-row h2 {
+  flex: 1 1 160px;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--lumi-fs-title);
+  font-weight: var(--lumi-font-weight-semibold);
+  line-height: 1.4;
+}
+
+.lumi-record-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 100%;
+  align-items: center;
+  gap: var(--lumi-space-2);
+}
+
+.lumi-record-card__description {
+  max-width: 75ch;
+  margin: var(--lumi-space-3) 0 0;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  line-height: 1.6;
+  /* No last line holding one stray word, e.g. the "up." of a broken "follow-up". */
+  text-wrap: pretty;
+}
+
+.lumi-record-card__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lumi-space-4) var(--lumi-space-6);
+  margin: auto 0 0;
+}
+
+.lumi-record-card__fields > div {
+  min-width: 0;
+}
+
+.lumi-record-card__fields dt {
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  line-height: 1.5;
+}
+
+.lumi-record-card__fields dd {
+  margin: var(--lumi-space-1) 0 0;
+  font-size: var(--lumi-fs-label);
+  font-weight: var(--lumi-font-weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.lumi-record-card__progress {
+  display: grid;
+  gap: var(--lumi-space-2);
+}
+
+.lumi-record-card__progress > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--lumi-space-3);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  font-variant-numeric: tabular-nums;
+}
+
+.lumi-record-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  /* The footer is pushed to the card's foot and kept tight: a hairline and a
+     short band, not a second section. */
+  margin-block-start: auto;
+  padding-block-start: var(--lumi-space-2);
+  border-top: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  gap: var(--lumi-space-2) var(--lumi-space-4);
+}
+
+@media (width < 768px) {
+  .lumi-card-list__items {
+    gap: var(--lumi-space-4);
+  }
+}
+
+/* A leading ghost action lines its label up with the title above it. */
+.lumi-record-card__footer > [data-slot="button"][data-variant="ghost"]:first-child {
+  margin-inline-start: calc(-1 * var(--lumi-control-px-sm));
+}

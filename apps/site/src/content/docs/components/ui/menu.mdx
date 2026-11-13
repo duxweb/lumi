@@ -1,0 +1,62 @@
+---
+title: "Menu"
+description: "点击后打开命令列表的按钮。"
+---
+
+<ComponentPreview name="Menu" />
+
+点击后打开命令列表的按钮。选中一项会把它的 key 写入绑定的 `value`（`{ "$bindState": "/path" }`）并触发 `select`；把 `on.select` 绑定到处理它的动作。圆形或方形且带图标时只显示图标，`label` 作为它的名称。
+
+## 示例
+
+```json
+{
+  "root": "menu-1",
+  "elements": {
+    "menu-1": {
+      "type": "Menu",
+      "props": {
+        "label": "Order actions",
+        "value": { "$bindState": "/menu-1/value" },
+        "items": [
+          { "key": "edit", "label": "Edit", "icon": "pencil" },
+          { "key": "duplicate", "label": "Duplicate", "icon": "copy" },
+          {
+            "key": "delete",
+            "label": "Delete",
+            "icon": "trash-2",
+            "tone": "danger",
+            "separatorBefore": true
+          }
+        ]
+      },
+      "children": []
+    }
+  },
+  "state": { "menu-1": { "value": "" } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `label`（必填） | 显示的文字。 | `string` |  |
+| `icon` | 图标名，来自内置 HugeIcons 图标集，如 `download`、`receipt`。 | `string \| null` |  |
+| `appearance` | 外观：`outline` 描边，`filled` 浅色填充。 | `"solid" \| "brand" \| "soft" \| "outline" \| "ghost" \| null` | `"outline"` |
+| `size` | 尺寸：`sm` 紧凑，`md` 标准，`lg` 宽松。 | `"sm" \| "md" \| "lg" \| null` | `"md"` |
+| `shape` | 按钮形状。`circle`、`square` 配合 `icon` 时只显示图标，`label` 作为无障碍名称。 | `"default" \| "pill" \| "circle" \| "square" \| null` |  |
+| `align` | 菜单相对按钮的对齐方式：`start`、`center`、`end`。 | `"start" \| "end" \| null` | `"start"` |
+| `items`（必填） | 菜单项，每项 `{ key, label, icon?, shortcut?, tone?, disabled?, group?, separatorBefore? }`。 字段：`key`、`label`、`icon?`、`shortcut?`、`tone?`、`disabled?`、`group?`、`separatorBefore?` | `object[]` |  |
+| `value` | 最近选中项的 key。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string \| null` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`select`
+- 插槽：无

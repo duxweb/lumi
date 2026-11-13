@@ -1,0 +1,129 @@
+{
+  "root": "stack",
+  "state": {
+    "draft": {
+      "title": "Review the Chengdu backlog",
+      "priority": "normal"
+    },
+    "noteForm": {},
+    "created": null
+  },
+  "elements": {
+    "stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "form",
+        "form-error",
+        "created"
+      ]
+    },
+    "form": {
+      "type": "Form",
+      "props": {},
+      "on": {
+        "submit": {
+          "action": "submitForm",
+          "params": {
+            "resource": "notes",
+            "valuesPath": "/draft",
+            "validationPath": "/noteForm",
+            "resultPath": "/created",
+            "successState": {
+              "/draft": {
+                "title": "",
+                "priority": "normal"
+              }
+            }
+          },
+          "onError": {
+            "set": {
+              "/created": null
+            }
+          }
+        }
+      },
+      "children": [
+        "title",
+        "save"
+      ]
+    },
+    "title": {
+      "type": "FormField",
+      "props": {
+        "name": "title",
+        "label": {
+          "$t": "Note title"
+        },
+        "required": true,
+        "value": {
+          "$bindState": "/draft/title"
+        },
+        "error": {
+          "$state": "/noteForm/fieldErrors/title"
+        },
+        "checks": [
+          {
+            "type": "required",
+            "message": {
+              "$t": "Title is required"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "save": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Save note"
+        },
+        "type": "submit",
+        "loading": {
+          "$state": "/noteForm/pending"
+        }
+      },
+      "children": []
+    },
+    "form-error": {
+      "type": "Alert",
+      "props": {
+        "tone": "warning",
+        "title": {
+          "$t": "Not saved"
+        },
+        "message": {
+          "$t": "The backend rejected one or more fields"
+        }
+      },
+      "visible": {
+        "$state": "/noteForm/fieldErrors/title"
+      },
+      "children": []
+    },
+    "created": {
+      "type": "Alert",
+      "props": {
+        "tone": "success",
+        "title": {
+          "$t": "Saved"
+        },
+        "message": {
+          "$t": "Created note #{id}",
+          "params": {
+            "id": {
+              "$state": "/created/data/id"
+            }
+          }
+        }
+      },
+      "visible": {
+        "$state": "/created"
+      },
+      "children": []
+    }
+  }
+}

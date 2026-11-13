@@ -1,0 +1,51 @@
+{
+  "root": "stack",
+  "state": {
+    "count": 3
+  },
+  "elements": {
+    "stack": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "count",
+        "message"
+      ]
+    },
+    "count": {
+      "type": "FormField",
+      "props": {
+        "name": "count",
+        "label": {
+          "$t": "Orders waiting"
+        },
+        "fieldType": "number",
+        "min": 0,
+        "value": {
+          "$bindState": "/count"
+        }
+      },
+      "children": []
+    },
+    "message": {
+      "type": "Alert",
+      "props": {
+        "tone": "info",
+        "title": {
+          "$t": "Fulfilment"
+        },
+        "message": {
+          "$t": "{count} orders are waiting for a shipping label",
+          "params": {
+            "count": {
+              "$state": "/count"
+            }
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}

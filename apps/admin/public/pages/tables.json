@@ -1,0 +1,700 @@
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Tables"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "sections"
+      ]
+    },
+    "table-1": {
+      "type": "Table",
+      "props": {
+        "rowKey": "id",
+        "columns": [
+          {
+            "field": "sku",
+            "label": {
+              "$t": "SKU"
+            },
+            "width": "120px",
+            "kind": "code"
+          },
+          {
+            "field": "name",
+            "label": {
+              "$t": "Product"
+            },
+            "kind": "entity",
+            "descriptionField": "note",
+            "initials": true
+          },
+          {
+            "field": "status",
+            "label": {
+              "$t": "Status"
+            },
+            "width": "110px",
+            "kind": "badge",
+            "valueMap": {
+              "active": {
+                "$t": "Active"
+              },
+              "draft": {
+                "$t": "Draft"
+              },
+              "archived": {
+                "$t": "Archived"
+              }
+            },
+            "toneMap": {
+              "active": "success",
+              "draft": "warning",
+              "archived": "neutral"
+            }
+          },
+          {
+            "field": "tags",
+            "label": {
+              "$t": "Tags"
+            },
+            "kind": "tags",
+            "width": "170px"
+          },
+          {
+            "field": "price",
+            "label": {
+              "$t": "Price"
+            },
+            "width": "100px",
+            "kind": "currency",
+            "currency": "USD",
+            "align": "right"
+          },
+          {
+            "field": "updatedAt",
+            "label": {
+              "$t": "Updated"
+            },
+            "width": "120px",
+            "kind": "date"
+          },
+          {
+            "field": "actions",
+            "kind": "actions",
+            "actions": [
+              {
+                "value": "view",
+                "label": {
+                  "$t": "View"
+                }
+              },
+              {
+                "value": "delete",
+                "label": {
+                  "$t": "Delete"
+                },
+                "tone": "danger"
+              }
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "sku": "SKU-0001",
+            "name": "Lumi Lamp",
+            "note": "Warm white",
+            "status": "active",
+            "tags": [
+              "home",
+              "light"
+            ],
+            "price": 27,
+            "updatedAt": "2026-08-10"
+          },
+          {
+            "id": 2,
+            "sku": "SKU-0002",
+            "name": "Lumi Shade",
+            "note": "Linen",
+            "status": "draft",
+            "tags": [
+              "textile"
+            ],
+            "price": 42,
+            "updatedAt": "2026-08-09"
+          },
+          {
+            "id": 3,
+            "sku": "SKU-0003",
+            "name": "Lumi Base",
+            "note": "Oak",
+            "status": "active",
+            "tags": [
+              "wood"
+            ],
+            "price": 61,
+            "updatedAt": "2026-08-08"
+          },
+          {
+            "id": 4,
+            "sku": "SKU-0004",
+            "name": "Lumi Cord",
+            "note": "2 m, braided",
+            "status": "archived",
+            "tags": [],
+            "price": 9.5,
+            "updatedAt": "2026-07-30"
+          }
+        ],
+        "total": 4,
+        "totals": [
+          {
+            "label": {
+              "$t": "Total"
+            },
+            "value": "$139.50",
+            "emphasis": true
+          }
+        ],
+        "activeAction": {
+          "$bindState": "/kinds/action"
+        }
+      },
+      "children": [],
+      "on": {
+        "rowAction": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Row action: {value}",
+              "params": {
+                "value": {
+                  "$state": "/kinds/action"
+                }
+              }
+            },
+            "tone": "info"
+          }
+        }
+      }
+    },
+    "table-kinds": {
+      "type": "Example",
+      "props": {
+        "id": "column-kinds",
+        "title": {
+          "$t": "Column kinds"
+        },
+        "description": {
+          "$t": "Code, entity with initials, badge, tags, currency, date and row actions"
+        }
+      },
+      "children": [
+        "table-1"
+      ]
+    },
+    "table-2": {
+      "type": "Table",
+      "props": {
+        "rowKey": "id",
+        "selectable": true,
+        "selectedKeys": {
+          "$bindState": "/selection/keys"
+        },
+        "bulkActions": [
+          {
+            "value": "publish",
+            "label": {
+              "$t": "Publish"
+            },
+            "tone": "primary"
+          },
+          {
+            "value": "archive",
+            "label": {
+              "$t": "Archive"
+            }
+          }
+        ],
+        "activeAction": {
+          "$bindState": "/selection/action"
+        },
+        "columns": [
+          {
+            "field": "sku",
+            "label": {
+              "$t": "SKU"
+            },
+            "width": "120px",
+            "kind": "code"
+          },
+          {
+            "field": "name",
+            "label": {
+              "$t": "Product"
+            },
+            "kind": "entity",
+            "descriptionField": "note",
+            "initials": true
+          },
+          {
+            "field": "status",
+            "label": {
+              "$t": "Status"
+            },
+            "width": "110px",
+            "kind": "badge",
+            "valueMap": {
+              "active": {
+                "$t": "Active"
+              },
+              "draft": {
+                "$t": "Draft"
+              },
+              "archived": {
+                "$t": "Archived"
+              }
+            },
+            "toneMap": {
+              "active": "success",
+              "draft": "warning",
+              "archived": "neutral"
+            }
+          },
+          {
+            "field": "price",
+            "label": {
+              "$t": "Price"
+            },
+            "width": "100px",
+            "kind": "currency",
+            "currency": "USD",
+            "align": "right"
+          }
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "sku": "SKU-0001",
+            "name": "Lumi Lamp",
+            "note": "Warm white",
+            "status": "active",
+            "tags": [
+              "home",
+              "light"
+            ],
+            "price": 27,
+            "updatedAt": "2026-08-10"
+          },
+          {
+            "id": 2,
+            "sku": "SKU-0002",
+            "name": "Lumi Shade",
+            "note": "Linen",
+            "status": "draft",
+            "tags": [
+              "textile"
+            ],
+            "price": 42,
+            "updatedAt": "2026-08-09"
+          },
+          {
+            "id": 3,
+            "sku": "SKU-0003",
+            "name": "Lumi Base",
+            "note": "Oak",
+            "status": "active",
+            "tags": [
+              "wood"
+            ],
+            "price": 61,
+            "updatedAt": "2026-08-08"
+          }
+        ],
+        "total": 3
+      },
+      "children": [],
+      "on": {
+        "bulkAction": {
+          "action": "toast",
+          "params": {
+            "message": {
+              "$t": "Bulk action: {value}",
+              "params": {
+                "value": {
+                  "$state": "/selection/action"
+                }
+              }
+            },
+            "tone": "info"
+          }
+        }
+      }
+    },
+    "card-3": {
+      "type": "Example",
+      "props": {
+        "id": "selectable-rows",
+        "title": {
+          "$t": "Selectable rows"
+        },
+        "description": {
+          "$t": "Selection drives a bulk action bar; selected keys live in state"
+        }
+      },
+      "children": [
+        "table-2"
+      ]
+    },
+    "table-4": {
+      "type": "Table",
+      "props": {
+        "columns": [
+          {
+            "field": "name",
+            "label": {
+              "$t": "Name"
+            }
+          },
+          {
+            "field": "status",
+            "label": {
+              "$t": "Status"
+            }
+          }
+        ],
+        "rows": [],
+        "empty": {
+          "title": {
+            "$t": "No records match this filter"
+          },
+          "description": {
+            "$t": "Try clearing the filters or searching for something else"
+          },
+          "icon": "search-remove"
+        }
+      },
+      "children": []
+    },
+    "table-5": {
+      "type": "Table",
+      "props": {
+        "columns": [
+          {
+            "field": "name",
+            "label": {
+              "$t": "Name"
+            }
+          },
+          {
+            "field": "status",
+            "label": {
+              "$t": "Status"
+            }
+          }
+        ],
+        "rows": [],
+        "loading": true
+      },
+      "children": []
+    },
+    "stack-6": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "table-4",
+        "table-5"
+      ]
+    },
+    "card-7": {
+      "type": "Example",
+      "props": {
+        "id": "empty-and-loading",
+        "title": {
+          "$t": "Empty and loading"
+        },
+        "description": {
+          "$t": "An empty table says why; a loading one keeps its columns"
+        }
+      },
+      "children": [
+        "stack-6"
+      ]
+    },
+    "descriptionlist-8": {
+      "type": "DescriptionList",
+      "props": {
+        "items": [
+          {
+            "label": {
+              "$t": "Order"
+            },
+            "value": "ORD-00017"
+          },
+          {
+            "label": {
+              "$t": "Customer"
+            },
+            "value": "Mia Chen"
+          },
+          {
+            "label": {
+              "$t": "Status"
+            },
+            "value": {
+              "$t": "Paid"
+            }
+          },
+          {
+            "label": {
+              "$t": "Total"
+            },
+            "value": "$412.00"
+          },
+          {
+            "label": {
+              "$t": "Ship to"
+            },
+            "value": {
+              "$t": "Room 1203, 88 Huaihai Middle Road, Huangpu District, Shanghai 200021"
+            },
+            "span": "full"
+          }
+        ],
+        "layout": "grid"
+      },
+      "children": []
+    },
+    "separator-9": {
+      "type": "Separator",
+      "props": {},
+      "children": []
+    },
+    "descriptionlist-10": {
+      "type": "DescriptionList",
+      "props": {
+        "items": [
+          {
+            "label": {
+              "$t": "Order"
+            },
+            "value": "ORD-00017"
+          },
+          {
+            "label": {
+              "$t": "Customer"
+            },
+            "value": "Mia Chen"
+          },
+          {
+            "label": {
+              "$t": "Status"
+            },
+            "value": {
+              "$t": "Paid"
+            }
+          },
+          {
+            "label": {
+              "$t": "Items"
+            },
+            "value": 3
+          },
+          {
+            "label": {
+              "$t": "Gift wrap"
+            },
+            "value": false
+          }
+        ],
+        "layout": "rows"
+      },
+      "children": []
+    },
+    "stack-11": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "descriptionlist-8",
+        "separator-9",
+        "descriptionlist-10"
+      ]
+    },
+    "card-12": {
+      "type": "Example",
+      "props": {
+        "id": "description-list",
+        "title": {
+          "$t": "Description lists"
+        },
+        "description": {
+          "$t": "Grid for record summaries, with a full-width item for long text; rows for a narrow side panel"
+        }
+      },
+      "children": [
+        "stack-11"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Tables"
+        },
+        "description": {
+          "$t": "Static tables with every column kind, selection, totals, and their empty and loading states; description lists"
+        }
+      },
+      "children": []
+    },
+    "sections": {
+      "type": "Grid",
+      "props": {
+        "columns": 1,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "table-kinds",
+        "card-3",
+        "card-7",
+        "card-12",
+        "filters-card"
+      ]
+    },
+    "filters-card": {
+      "type": "Example",
+      "props": {
+        "id": "filters",
+        "title": {
+          "$t": "Filters"
+        },
+        "description": {
+          "$t": "A list filter toolbar: search and quick chips in the row, more conditions in the advanced panel"
+        }
+      },
+      "children": [
+        "filters-demo",
+        "filters-value"
+      ]
+    },
+    "filters-demo": {
+      "type": "Filters",
+      "props": {
+        "applyMode": "immediate",
+        "value": {
+          "$bindState": "/tableFilters"
+        },
+        "schema": {
+          "fields": [
+            {
+              "field": "q",
+              "label": {
+                "$t": "Search"
+              },
+              "widget": "search",
+              "placeholder": {
+                "$t": "Search orders…"
+              },
+              "primary": true
+            },
+            {
+              "field": "status",
+              "label": {
+                "$t": "Status"
+              },
+              "widget": "chips",
+              "primary": true,
+              "options": [
+                {
+                  "label": {
+                    "$t": "Paid"
+                  },
+                  "value": "paid"
+                },
+                {
+                  "label": {
+                    "$t": "Shipped"
+                  },
+                  "value": "shipped"
+                },
+                {
+                  "label": {
+                    "$t": "Refunded"
+                  },
+                  "value": "refunded"
+                }
+              ]
+            },
+            {
+              "field": "channel",
+              "label": {
+                "$t": "Channel"
+              },
+              "widget": "select",
+              "options": [
+                {
+                  "label": {
+                    "$t": "Web store"
+                  },
+                  "value": "web"
+                },
+                {
+                  "label": {
+                    "$t": "Mobile app"
+                  },
+                  "value": "app"
+                }
+              ]
+            },
+            {
+              "field": "created",
+              "label": {
+                "$t": "Created"
+              },
+              "widget": "dateRange"
+            }
+          ]
+        }
+      },
+      "children": []
+    },
+    "filters-value": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$state": "/tableFiltersText"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    }
+  },
+  "state": {
+    "kinds": {
+      "action": null
+    },
+    "selection": {
+      "keys": [
+        2
+      ],
+      "action": null
+    },
+    "tableFilters": {
+      "status": "paid"
+    }
+  }
+}

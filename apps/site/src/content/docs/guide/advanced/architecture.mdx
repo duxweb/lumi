@@ -1,0 +1,161 @@
+---
+title: "架构总览"
+description: "Lumi 的分层、一次操作从按钮到后端的完整链路、状态归属、createLumi 的配置和上下文，以及各个扩展点。"
+---
+
+这一篇讲 Lumi 内部怎么分工。只用 CDN 和 JSON 写页面时不需要读；要写 Provider、自定义组件或在 React 里集成时，先读这篇再看各专题。
+
+## 分层
+
+Lumi 只支持 React。六个包各管一层：
+
+| 包 | 负责 |
+| --- | --- |
+| `@duxweb/lumi` | 数据服务：DataProvider、HttpClient、登录、权限、上传、表单保存、JSON 动作和 React hooks。 |
+| `@duxweb/lumi/catalog` | 不依赖 React 的部分：组件和动作的定义（zod）、Spec 的加载和校验。 |
+| `@duxweb/lumi-ui` | 界面组件和它们的 Registry，`/catalog` 是组件定义。只负责显示，不发请求。 |
+| `@duxweb/lumi-admin` | 后台外壳：登录页、菜单、路由、标签页、`ListPage` 这类连数据的页面组件。 |
+| `@duxweb/lumi-check` | 命令行校验 JSON、给 AI 查组件目录和参数，和运行时用同一套 Catalog。 |
+| `@duxweb/create-lumi` | 新建项目的脚手架。 |
+
+依赖只往一个方向走：
+
+```text
+lumi-admin ──► lumi-ui ──► json-render
+     │                         ▲
+     └──────► lumi ────────────┘
+lumi-check ──► 各包的 /catalog（不需要 React）
+```
+
+- `lumi` 不依赖 UI 和 Admin，可以单独配别的界面使用。
+- `lumi-ui` 不发请求、不上传，组件只接收数据、发出事件；连数据的组件在 `lumi-admin`。
+- `/catalog` 入口不引用 React，所以校验工具和服务端能在 Node 里直接用。
+
+页面的格式就是 [json-render](https://json-render.dev/docs) 的 Spec，渲染器也是 json-render 原生的。Lumi 只是加了组件、动作和数据服务。
+
+## 一次操作的完整链路
+
+以 CRUD 页面里"删除"按钮为例：
+
+```jsonc
+{
+  "type": "Popconfirm",
+  "props": { "label": "删除", "title": "删除这个客户？" },
+  "on": {
+    // 用户确认后执行
+    "confirm": {
+      "action": "delete",
+      "params": { "resource": "customers", "id": { "$state": "/table/row/id" } }
+    }
+  }
+}
+```
+
+1. **事件**：用户确认后，组件发出 `confirm` 事件，json-render 找到 `on.confirm` 里的动作，先把 `$state` 这类参数解析成值。
+2. **动作**：`delete` 是 Lumi 注册的动作（实现在 `createLumiHandlers`）。它和 `useDelete` hook 调用同一个服务，JSON 和 React 的行为一致。
+3. **DataProvider**：服务按 `dataProviderName`（不写是 `default`）找到 DataProvider，调用 `deleteOne({ resource, id })`。DataProvider 决定请求的地址和格式。
+4. **HttpClient**：DataProvider 通过 `http` 发请求。`http` 向 `AuthProvider.authorizeRequest` 要凭证，补上 `Accept-Language` 和工作区头；返回 401 时调用一次 `refresh` 再重发；非 2xx 转成统一的 `DataProviderError`。
+5. **之后**：
+   - 成功：`customers` 的列表、详情查询自动重新请求；配置了审计日志时记一条记录。
+   - 失败：错误自动弹出提示，同一个事件后面的动作不再执行；401 交给 `AuthProvider.onError` 决定是否退出。
+   - 别人改了数据：后端通过 `liveProvider` 推送 `resources/customers` 事件，打开着的列表同样刷新。
+
+各环节的细节见 [数据请求](/guide/advanced/data/)、[认证](/guide/advanced/auth/) 和 [权限](/guide/advanced/access/)。
+
+## 状态归属
+
+一个值只放在一个地方：
+
+| 状态 | 放在哪里 | 例子 |
+| --- | --- | --- |
+| 页面和表单里可编辑的值 | json-render 的 StateStore（页面的 `state`） | 表单值、弹窗开关、搜索词、选中的行 |
+| 后端数据的缓存 | TanStack Query，按 `[DataProvider 名, 资源, 操作, 参数]` 缓存 | 列表、详情 |
+| 后台外壳 | Admin 自己保存 | 菜单折叠、标签页、当前工作区 |
+| 登录凭证 | `AuthProvider` 自己决定 | token、cookie |
+
+表单值只在页面状态里有一份，`submitForm` 直接读 `valuesPath`。不要再复制一份去编辑，否则两份会不一致。查询结果写进页面状态（`resultPath`）只是为了让组件读，真正的缓存在 TanStack Query 里。
+
+## createLumi 和上下文
+
+### 配置
+
+`createLumi(config)` 把所有服务装在一起。CDN 版和 `mountAdmin` 会按 `config.json` 替你调用它。
+
+| 配置 | 说明 | 默认 |
+| --- | --- | --- |
+| `dataProvider` | 一个 DataProvider，或 `{ default, 其他名称 }` 多个。 | 无，用到数据时报错 |
+| `authProvider` | 唯一的登录会话，也负责给每个请求带上凭证。 | 无，不登录 |
+| `http` | 上传、AI 助手等没有自己客户端时使用的请求客户端。 | 由 `authProvider`、语言、工作区组成 |
+| `accessProvider` | 权限判断 `can({ resource, action })`。 | 无，全部允许 |
+| `i18nProvider` | 翻译和当前语言。 | 无 |
+| `routerProvider` | 跳转和读取当前地址。 | 无；Admin 会提供 |
+| `tenantProvider` | 当前工作区，变化时所有查询重新请求。 | 无 |
+| `liveProvider` | 后端推送的变化。 | 无 |
+| `auditLogProvider` | 记录每次写入、读取记录历史。 | 无 |
+| `liveMode` | 查询收到推送时的默认行为：`auto`、`manual`、`off`。 | 有 `liveProvider` 时 `auto` |
+| `mutationMode` | 更新和删除的默认方式：`pessimistic`、`optimistic`、`undoable`。表单保存始终等服务器。 | `pessimistic` |
+| `undoableTimeout` | `undoable` 时等待撤销的毫秒数。 | `5000` |
+| `toastProvider` | 显示 `toast` 和自动错误提示。 | 无，不显示 |
+| `notificationProvider` | 显示 `notify` 通知。 | 无，不显示 |
+| `env` | 页面可读的环境值。 | 无 |
+| `upload` | 上传的地址、字段名、额外请求头等。 | 无 |
+| `agent` | AI 助手：`endpoint`、`headers`、`dataProviderName`、`safeActions`、`approvalMode`。 | `endpoint` 为 `/agent/chat` |
+| `validator` | 表单的业务校验，按 `rules` 检查。 | 无；写了 `rules` 时报错 |
+
+每个 Provider 的方法见 [Provider 定义](/guide/advanced/providers/)。
+
+### 上下文
+
+`createLumi` 返回 `LumiContext`：
+
+| 字段 | 说明 |
+| --- | --- |
+| `getDataProvider(name?)` | 按名称取 DataProvider，不写是 `default`；没注册时报错。 |
+| `http` | 带登录凭证的请求客户端。 |
+| `authProvider`、`accessProvider`、`i18nProvider`、`routerProvider`、`tenantProvider`、`liveProvider`、`auditLogProvider`、`toastProvider`、`notificationProvider` | 传入的各个 Provider。 |
+| `validator` | 当前的校验器。 |
+| `config` | 传入的原始配置（只读）。 |
+| `agentBridge` | AI 助手读取页面、操作页面用的桥，见下文。 |
+
+在不同地方拿到它：
+
+| 场景 | 写法 |
+| --- | --- |
+| React 组件里 | `useLumi()` |
+| Admin 扩展模块 | 模块函数的第二个参数 `{ config, http }`，`http` 就是上下文里的那一个 |
+| `createAdmin`、`mountAdmin` 返回值 | `admin.context`；`mountAdmin` 还有 `http` 和解析后的 `config` |
+
+```tsx
+import { useLumi } from '@duxweb/lumi'
+
+export function OrderCount(): string {
+  // 当前的上下文
+  const lumi = useLumi()
+  // 和 DataProvider 用的是同一个请求客户端：凭证、语言、工作区都带着
+  const url = lumi.http.url('/orders')
+  // 按名字取 DataProvider，不写是 default
+  const orders = lumi.getDataProvider()
+  return `${url} via ${typeof orders.getList}`
+}
+```
+
+页面里的请求优先用 hooks 或 JSON 动作，它们会处理缓存、刷新和错误提示；直接调用 `lumi.http` 时这些都要自己处理，见 [数据 hooks](/guide/advanced/hooks/)。
+
+## AI 助手和页面的关系
+
+助手不需要为每个组件单独声明能力：页面渲染时把自己注册到上下文的 `agentBridge`，助手每次发消息都带上当前页面的快照，并通过三个前端工具操作页面。它能看到什么、能做什么、对话接口的格式，见 [AI 助手](/guide/assistant/)。
+
+## 扩展点
+
+| 想加的东西 | 在哪里加 | 文档 |
+| --- | --- | --- |
+| 一个页面 | manifest 的路由加 `page.src` 或 `page.spec` | [菜单与路由](/guide/menus/) |
+| 一个组件 | Catalog 定义 + Registry 实现 | [自定义组件](/guide/advanced/components/) |
+| 一个动作 | `createAdmin` 或扩展模块的 `handlers` | [自定义组件](/guide/advanced/components/) |
+| 另一种后端格式 | 自己的 DataProvider，或 `parseError`、`unwrap` | [数据请求](/guide/advanced/data/) |
+| 自己的登录方式 | 实现 `AuthProvider` | [认证](/guide/advanced/auth/) |
+| 自己的权限规则 | 实现 `AccessProvider`，或 `config.json` 的 `access` | [权限](/guide/advanced/access/) |
+| 其他 Provider | 语言、路由、工作区、推送、审计日志 | [Provider 定义](/guide/advanced/providers/) |
+| 路由抽屉 | `createAdmin` 的 `drawers` | [Admin 应用](/guide/advanced/admin/) |
+| 不用构建的 JS 扩展 | `config.json` 的 `modules` | [扩展模块](/guide/modules/) |
+| 在自己的 React 应用里使用 | `LumiProvider` 和 json-render 的 `Renderer` | [React 集成](/guide/advanced/react/) |

@@ -1,0 +1,52 @@
+---
+title: "Pagination"
+description: "在列表的各页之间切换，可显示总数和每页条数选择。"
+---
+
+<ComponentPreview name="Pagination" />
+
+在列表的各页之间切换，可显示总数和每页条数选择。`pages`（默认）显示页码，如 `1 2 3 … 10`，保留第一页、最后一页和当前页的相邻页；`simple` 在箭头之间显示 `3 / 12` 这样的位置，适合窄处和逐页浏览的列表。每页条数使用 Select 列表。
+
+## 示例
+
+```json
+{
+  "root": "pagination-18",
+  "elements": {
+    "pagination-18": {
+      "type": "Pagination",
+      "props": {
+        "page": { "$bindState": "/pagination-18/page" },
+        "pageSize": { "$bindState": "/pagination-18/pageSize" },
+        "total": 1
+      },
+      "children": []
+    }
+  },
+  "state": { "pagination-18": { "page": 1, "pageSize": 10 } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `page`（必填） | 当前页码，从 1 开始。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `number` |  |
+| `pageSize`（必填） | 每页条数。 | `number` |  |
+| `total`（必填） | 数据总条数，用于分页和合计显示。 | `number` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+| `pageSizeOptions` | 可选的每页条数，如 `[10, 20, 50]`。不填则不显示切换。 | `number[]` |  |
+| `showTotal` | 显示“共 N 条”。 | `boolean` | `true` |
+| `variant` | `pages` 显示页码，如 `1 2 3 … 10`，始终保留首页、末页和当前页前后各一页，其余折叠为省略号；`simple` 在左右箭头间只显示 `3 / 12`，适合窄处或逐页浏览的列表。 | `"pages" \| "simple"` | `"pages"` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`pageChange`、`pageSizeChange`
+- 插槽：无

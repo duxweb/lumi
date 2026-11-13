@@ -1,0 +1,180 @@
+---
+title: "快速开始"
+description: "用 CDN 上的预构建脚本和几个 JSON 文件跑起一个 Lumi 后台，不装 Node、不编译。"
+---
+
+整个前端是 CDN 上的一个脚本和一个样式表。你只需要写几个 JSON 文件，再由后端提供登录和数据接口。
+
+## 1. 建四个文件
+
+```text
+public/
+├── index.html
+├── config.json
+├── manifest.json
+└── pages/
+    └── home.json
+```
+
+`index.html` 加载 Lumi，并告诉它配置在哪：
+
+```html
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>我的后台</title>
+    <!-- Lumi 的样式表 -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@duxweb/lumi-admin@0.1/dist/base/lumi-admin.css"
+    />
+    <!-- Lumi 的脚本；data-config 指向配置文件 -->
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@duxweb/lumi-admin@0.1/dist/base/lumi-admin.js"
+      data-config="/config.json"
+    ></script>
+  </head>
+  <body>
+    <!-- 后台挂载在这里 -->
+    <div id="app"></div>
+  </body>
+</html>
+```
+
+下面的示例带注释，注释只为说明，真实的 `.json` 文件里不能写注释。
+
+`config.json` 写接口地址、菜单和语言：
+
+```jsonc
+{
+  // 后端接口的根地址
+  "data": { "url": "/api" },
+  // 后台入口：菜单和路由清单
+  "panels": { "manifest": "/manifest.json" },
+  // 界面语言
+  "i18n": { "locale": "zh-CN" }
+}
+```
+
+`manifest.json` 是菜单和路由，每个路由指向一个页面 JSON：
+
+```jsonc
+{
+  // 应用编号和标题
+  "app": { "id": "my-admin", "title": "我的后台" },
+  // 每一项是一个页面
+  "routes": [
+    {
+      // 路由名，跳转时引用
+      "name": "home",
+      "path": "/",
+      // 出现在侧边菜单里
+      "menu": { "label": "首页", "icon": "layout-dashboard" },
+      // 这个地址显示哪个页面 JSON
+      "page": { "src": "/pages/home.json" }
+    }
+  ]
+}
+```
+
+`pages/home.json` 是页面本身：
+
+```jsonc
+{
+  // 根元素：从哪个元素开始渲染
+  "root": "home",
+  // 元素集：所有元素按 id 平铺
+  "elements": {
+    // 卡片，里面放一个提示
+    "home": {
+      "type": "Card",
+      "props": { "title": "欢迎", "description": "这个页面是一个 JSON 文件。" },
+      // 子元素：写元素 id
+      "children": ["tip"]
+    },
+    // 卡片里的成功提示
+    "tip": {
+      "type": "Alert",
+      "props": {
+        "tone": "success",
+        "message": "改完这个文件，刷新浏览器就能看到。"
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 2. 提供登录接口
+
+后台打开后先要求登录。默认约定只需要两个接口，用任何语言写都行：
+
+| 接口 | 请求 | 返回 |
+| --- | --- | --- |
+| `POST /api/login` | `{ "username", "password" }` | `{ "data": { "token", "user", "permissions" } }` |
+| `GET /api/me` | 请求头 `Authorization: Bearer <token>` | `{ "data": { "user", "permissions" } }` |
+
+`permissions` 是 `资源:操作` 字符串，`*:*` 表示全部允许。下面是一个 Go 的最小后端，同时托管 `public/` 里的前端文件：
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"net/http"
+	"os"
+)
+
+// 把 body 作为 JSON 返回
+func reply(w http.ResponseWriter, body any) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(body)
+}
+
+func main() {
+	// 演示用的固定账号：*:* 表示拥有全部权限
+	user := map[string]any{"id": 1, "name": "管理员"}
+	session := map[string]any{"user": user, "permissions": []string{"*:*"}}
+
+	// 登录：返回 token、用户和权限
+	http.HandleFunc("POST /api/login", func(w http.ResponseWriter, r *http.Request) {
+		login := map[string]any{"token": "demo", "user": user, "permissions": session["permissions"]}
+		reply(w, map[string]any{"data": login})
+	})
+	// 当前用户：刷新页面后用 token 取回用户和权限
+	http.HandleFunc("GET /api/me", func(w http.ResponseWriter, r *http.Request) {
+		reply(w, map[string]any{"data": session})
+	})
+
+	// 其余地址都交给前端：文件存在就返回文件，
+	// 不存在说明是前端路由，返回 index.html
+	static := http.FileServer(http.Dir("public"))
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if _, err := os.Stat("public" + r.URL.Path); err != nil {
+			http.ServeFile(w, r, "public/index.html")
+			return
+		}
+		static.ServeHTTP(w, r)
+	})
+	// 监听 8080 端口
+	http.ListenAndServe(":8080", nil)
+}
+```
+
+```sh
+# 启动后端，同时托管 public/ 里的前端文件
+go run main.go
+```
+
+打开 `http://localhost:8080`，随便输入账号密码登录，就能看到首页。
+
+## 3. 接下来
+
+- 列表、增删改查要哪些接口：[数据接口](/guide/backend/)。
+- 页面里能放什么：[页面 JSON](/guide/pages/)，所有组件见 [组件](/components/)。
+- 让 AI 帮你写页面：[Skills](/ai/)。
+
+CDN 地址里的 `@0.1` 会跟随 0.1.x 的补丁版本；要完全固定，写成具体版本号，如 `@0.1.0`。

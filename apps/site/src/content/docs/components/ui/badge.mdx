@@ -1,0 +1,42 @@
+---
+title: "Badge"
+description: "语义色的简短状态或数量标签。"
+---
+
+<ComponentPreview name="Badge" />
+
+语义色的简短状态或数量标签。`brand` 色调用于品牌色强调：soft 是品牌浅色底加品牌色文字，solid 是品牌色底。
+
+## 示例
+
+```json
+{
+  "root": "badge-24",
+  "elements": {
+    "badge-24": {
+      "type": "Badge",
+      "props": { "label": "Ready", "tone": "success" },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `label` | 标签文字。 | `string` |  |
+| `tone` | 语义色：`success` 成功，`warning` 警告，`danger` 危险，`info` 提示，`neutral` 中性。 | `"danger" \| "neutral" \| "primary" \| "success" \| "warning" \| "info" \| "brand"` | `"neutral"` |
+| `appearance` | `solid` 实心，`soft` 浅色底，`outline` 描边。 | `"solid" \| "soft" \| "outline"` | `"soft"` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

@@ -1,0 +1,30 @@
+[
+  {
+    "path": "AGENTS.md",
+    "sha256": "14e985fbf072ce4dcae9dc0c674eb38351bdd2b60fdac9ae9a14018f41070c7a"
+  },
+  {
+    "path": ".ai/AGENTS.md",
+    "sha256": "2a14b0e200288021381178b475c7065c0c0adab07ee183e14d497a9612a4fb6d"
+  },
+  {
+    "path": ".ai/rules/lumi.md",
+    "sha256": "e9f810ebfcb76c079c1f60000c2d32c8fea712b4678c9675005b76d4b88cd0e3"
+  },
+  {
+    "path": ".claude/skills/code-style/SKILL.md",
+    "sha256": "28715c8d8ad5791a9ddca498a8f59bb7b833baff17f37eaedbc0268c8ed7a3a0"
+  },
+  {
+    "path": ".claude/skills/lumi/SKILL.md",
+    "sha256": "fd6acf213de1ddac16550bc8f1a620e84fcb6aeaffa68d90d9f3c05b5f8555a9"
+  },
+  {
+    "path": ".claude/skills/lumi/agents/openai.yaml",
+    "sha256": "1c7eecb3ba6f818c68e584b9b8c5dfbb3baefd2bbfc40cfc163fc897f664e1cc"
+  },
+  {
+    "path": "plan/ui-design-spec.md",
+    "sha256": "9fcc8282fa5da4a5359d76dd28cf2a37c68eee9ff8cb8c8ee8e1a38d06981afa"
+  }
+]

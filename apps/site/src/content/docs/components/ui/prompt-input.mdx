@@ -1,0 +1,66 @@
+---
+title: "PromptInput"
+description: "聊天的输入框：随文字增高的文本区、可移除的附件和 @ 引用上下文块、可选的紧凑模型选择器和发送按钮。"
+---
+
+<ComponentPreview name="PromptInput" />
+
+聊天的输入框：随文字增高的文本区、可移除的附件和 @ 引用上下文块、可选的紧凑模型选择器和发送按钮。Enter 触发 `submit`，Shift+Enter 换行。有 `mentions` 时输入 @（或点 @ 按钮）打开引用选择器，选中项进入 `context`；有 `commands` 时在开头输入 / 列出命令，没有 `prompt` 的命令写入 `command` 并触发 `command`。`streaming` 期间发送按钮变成停止按钮，触发 `stop`。用 `$bindState` 绑定 `value`、`attachments`、`context` 和 `model`；发送后用 pushState 的 `clearStatePath` 清空文字。点推荐问题会填入输入框并触发 `suggestion`。
+
+## 示例
+
+```json
+{
+  "root": "prompt-input",
+  "elements": {
+    "prompt-input": {
+      "type": "PromptInput",
+      "props": {
+        "value": { "$bindState": "/prompt" },
+        "placeholder": "Ask about orders, customers or reports",
+        "attachable": true,
+        "mentionable": true,
+        "suggestions": [
+          { "label": "Summarise today" },
+          { "label": "Find late shipments" }
+        ]
+      },
+      "children": []
+    }
+  },
+  "state": { "prompt": "" }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `value` | 输入框里的文字。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。发送后用 pushState 的 `clearStatePath` 清空。 | `string` |  |
+| `placeholder` | 没有值时显示的提示文字。 | `string` |  |
+| `streaming` | 回复生成中：发送按钮变为停止按钮，按下触发 `stop`；此时 Enter 不发送。 | `boolean` | `false` |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `attachments` | 附件标签，每项 `{ id, name, mediaType?, size?, url?, status? }`，`status` 为 `uploading` 时显示转圈。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。标签上的删除按钮会更新它。 字段：`id`、`name`、`mediaType?`、`size?`、`url?`、`status?` | `object[]` |  |
+| `context` | 用 @ 引用的页面或记录，每项 `{ id, label, kind?, icon? }`。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。可逐个移除。 字段：`id`、`label`、`kind?`、`icon?`、`description?`、`data?` | `object[]` |  |
+| `attachable` | 显示附件按钮，按下触发 `attach`，由动作打开上传流程。 | `boolean` | `false` |
+| `mentionable` | 显示 @ 按钮，按下触发 `mention`。配置了 `mentions` 时按钮直接打开引用选择器。 | `boolean` | `false` |
+| `mentions` | 开启 @ 引用：在词首输入 @ 或按 @ 按钮，在输入框上方打开引用选择器，选中项成为 `context` 标签并替换掉输入的 @。`{ types?, options?, placeholder? }`，静态 `options` 按页签过滤；Admin 里可加 `sources` 按页签搜索 DataProvider 资源。需要绑定 `context`。 字段：`types?`、`options?`、`placeholder?`、`sources?` | `object` |  |
+| `commands` | 斜杠命令，每项 `{ value, label, description?, icon?, prompt? }`。输入框只有 `/` 加命令名时弹出，方向键选择、Enter 或 Tab 确认、Esc 关闭；有 `prompt` 的把它填入输入框，没有的写入 `command` 并触发 `command`。 字段：`value`、`label`、`description?`、`icon?`、`prompt?` | `object[]` |  |
+| `command` | 最近一次选中的无 `prompt` 命令的 `value`。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。在 `command` 事件里读取。 | `string \| null` |  |
+| `approvalMode` | Agent 后端工具的权限模式：`ask` 每次询问（写业务前先出审批卡），`auto` 完全权限（直接执行）。前端工具只填充和提示，不受它影响。设置后在输入框底栏显示权限下拉。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。Admin 中由 Lumi agent 桥保存并随请求发给后端。 | `"ask" \| "auto"` |  |
+| `model` | 当前模型的 value。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string` |  |
+| `models` | 可选模型，每项 `{ label, value, description? }`；提供后在工具栏显示紧凑的模型选择。 字段：`label`、`value`、`description?` | `object[]` |  |
+| `suggestions` | 输入框为空时显示在上方的提示语，每项 `{ label, prompt?, icon? }`。点击后把 `prompt`（默认 `label`）填入输入框并触发 `suggestion`。 字段：`id?`、`label`、`prompt?`、`icon?` | `object[]` |  |
+| `maxRows` | 输入框随内容增高的最大行数，超出后在框内滚动。 | `integer` | `8` |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`、`submit`、`stop`、`attach`、`mention`、`suggestion`、`command`
+- 插槽：无

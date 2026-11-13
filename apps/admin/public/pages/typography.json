@@ -1,0 +1,393 @@
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Typography"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "sections"
+      ]
+    },
+    "heading-1": {
+      "type": "Heading",
+      "props": {
+        "text": {
+          "$t": "H1 · Quarterly revenue report"
+        },
+        "level": "h1"
+      },
+      "children": []
+    },
+    "heading-2": {
+      "type": "Heading",
+      "props": {
+        "text": {
+          "$t": "H2 · Quarterly revenue report"
+        },
+        "level": "h2"
+      },
+      "children": []
+    },
+    "heading-3": {
+      "type": "Heading",
+      "props": {
+        "text": {
+          "$t": "H3 · Quarterly revenue report"
+        },
+        "level": "h3"
+      },
+      "children": []
+    },
+    "heading-4": {
+      "type": "Heading",
+      "props": {
+        "text": {
+          "$t": "H4 · Quarterly revenue report"
+        },
+        "level": "h4"
+      },
+      "children": []
+    },
+    "stack-5": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "heading-1",
+        "heading-2",
+        "heading-3",
+        "heading-4",
+        "heading-separator",
+        "heading-pair"
+      ]
+    },
+    "heading-separator": {
+      "type": "Separator",
+      "props": {},
+      "children": []
+    },
+    "heading-pair-title": {
+      "type": "Heading",
+      "props": {
+        "text": {
+          "$t": "Payment methods"
+        },
+        "level": "h2"
+      },
+      "children": []
+    },
+    "heading-pair-text": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Cards and wallets customers can pay with at checkout"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "heading-pair": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "heading-pair-title",
+        "heading-pair-text"
+      ]
+    },
+    "card-6": {
+      "type": "Example",
+      "props": {
+        "id": "headings",
+        "title": {
+          "$t": "Headings"
+        },
+        "description": {
+          "$t": "Four levels; a page uses one h1, from its header"
+        }
+      },
+      "children": [
+        "stack-5"
+      ]
+    },
+    "text-7": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Lead — Orders shipped within 24 hours rose to 92% this week"
+        },
+        "variant": "lead"
+      },
+      "children": []
+    },
+    "text-8": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Body — Each order moves from paid to packed to shipped"
+        },
+        "variant": "body"
+      },
+      "children": []
+    },
+    "text-lines": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Line breaks are kept —\nRoom 1203, 88 Huaihai Middle Road, Shanghai"
+        },
+        "variant": "body"
+      },
+      "children": []
+    },
+    "text-9": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Muted — Updated 5 minutes ago by the fulfilment service"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "text-10": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Caption — Totals exclude refunds and tax"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "text-11": {
+      "type": "Text",
+      "props": {
+        "text": "ORD-00017",
+        "variant": "code"
+      },
+      "children": []
+    },
+    "stack-12": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "text-7",
+        "text-8",
+        "text-lines",
+        "text-9",
+        "text-10",
+        "text-11"
+      ]
+    },
+    "card-13": {
+      "type": "Example",
+      "props": {
+        "id": "text-variants",
+        "title": {
+          "$t": "Text variants"
+        },
+        "description": {
+          "$t": "Lead opens a section, body carries it, muted and caption step back, code marks identifiers"
+        }
+      },
+      "children": [
+        "stack-12"
+      ]
+    },
+    "codeblock-14": {
+      "type": "CodeBlock",
+      "props": {
+        "title": {
+          "$t": "Request"
+        },
+        "language": "bash",
+        "code": "curl 'https://api.example.com/orders?status=paid&page=1&pageSize=20' \\\n  -H \"Authorization: Bearer $TOKEN\""
+      },
+      "children": []
+    },
+    "codeblock-15": {
+      "type": "CodeBlock",
+      "props": {
+        "title": {
+          "$t": "View response"
+        },
+        "language": "json",
+        "collapsible": true,
+        "code": "{\n  \"data\": [{ \"id\": 1, \"number\": \"ORD-00001\" }],\n  \"meta\": { \"total\": 1 }\n}"
+      },
+      "children": []
+    },
+    "stack-16": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "codeblock-14",
+        "codeblock-15"
+      ]
+    },
+    "card-17": {
+      "type": "Example",
+      "props": {
+        "id": "code-blocks",
+        "title": {
+          "$t": "Code blocks"
+        },
+        "description": {
+          "$t": "Requests and payloads, optionally collapsed until needed"
+        }
+      },
+      "children": [
+        "stack-16"
+      ]
+    },
+    "text-18": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Shipping address"
+        },
+        "variant": "body"
+      },
+      "children": []
+    },
+    "separator-19": {
+      "type": "Separator",
+      "props": {},
+      "children": []
+    },
+    "text-20": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Billing address"
+        },
+        "variant": "body"
+      },
+      "children": []
+    },
+    "text-21": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "12 items"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "separator-22": {
+      "type": "Separator",
+      "props": {
+        "orientation": "vertical"
+      },
+      "children": []
+    },
+    "text-23": {
+      "type": "Text",
+      "props": {
+        "text": "$412.00",
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "separator-24": {
+      "type": "Separator",
+      "props": {
+        "orientation": "vertical"
+      },
+      "children": []
+    },
+    "text-25": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "Paid"
+        },
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "stack-26": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true,
+        "align": "center"
+      },
+      "children": [
+        "text-21",
+        "separator-22",
+        "text-23",
+        "separator-24",
+        "text-25"
+      ]
+    },
+    "stack-27": {
+      "type": "Stack",
+      "props": {
+        "gap": "md"
+      },
+      "children": [
+        "text-18",
+        "separator-19",
+        "text-20",
+        "stack-26"
+      ]
+    },
+    "card-28": {
+      "type": "Example",
+      "props": {
+        "id": "separators",
+        "title": {
+          "$t": "Separators"
+        },
+        "description": {
+          "$t": "A horizontal rule between sections; a vertical one between inline items"
+        }
+      },
+      "children": [
+        "stack-27"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Typography"
+        },
+        "description": {
+          "$t": "Headings, text variants, code and separators — the type scale every page uses"
+        }
+      },
+      "children": []
+    },
+    "sections": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 420,
+        "gap": "md",
+        "align": "stretch"
+      },
+      "children": [
+        "card-6",
+        "card-13",
+        "card-17",
+        "card-28"
+      ]
+    }
+  }
+}

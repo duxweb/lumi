@@ -1,0 +1,50 @@
+---
+title: "介绍"
+description: "Lumi 是什么、适合谁、由哪几层组成。"
+---
+
+Lumi 是一个 JSON 驱动的后台前端框架。后端或 AI 输出页面 JSON，Lumi 把它渲染成完整的后台：登录、菜单、列表、表单、图表和 AI 助手。
+
+## 适合谁
+
+- **后端开发者**：不写前端工程，用 JSON 描述页面，接口照常用 Go、PHP、Node 写。
+- **AI**：JSON 只能使用目录（Catalog）里登记过的组件和动作，写错了有校验指出具体字段，界面不会跑偏。
+- **前端开发者**：需要时用 npm 和 TypeScript 加自己的 React 组件，JSON 页面照样能用它们。
+
+## 一个页面长什么样
+
+```jsonc
+{
+  // 根元素：从哪个元素开始渲染
+  "root": "orders",
+  // 元素集：所有元素按 id 平铺
+  "elements": {
+    // 一张卡片
+    "orders": {
+      "type": "Card",
+      "props": { "title": "今日订单", "description": "共 128 单" },
+      // 卡片里放的元素 id
+      "children": ["tip"]
+    },
+    // 卡片里的提示
+    "tip": {
+      "type": "Alert",
+      "props": { "tone": "success", "message": "全部已发货" },
+      "children": []
+    }
+  }
+}
+```
+
+改完刷新浏览器就能看到，不用编译。页面格式就是开源的 [json-render](https://json-render.dev/docs) Spec，会 json-render 就会写 Lumi 页面。
+
+## 分层
+
+| 包 | 作用 |
+| --- | --- |
+| `@duxweb/lumi-admin` | 后台外壳：登录、菜单、路由、多标签、AI 助手面板。CDN 上的预构建脚本也在这个包里。 |
+| `@duxweb/lumi-ui` | 130 多个组件，只负责显示，不发请求。 |
+| `@duxweb/lumi` | 数据服务：请求、缓存、表单保存、权限、上传，JSON 动作和 React hooks 共用一套。 |
+| `@duxweb/lumi-check` | 命令行工具：校验页面，给 AI 查组件目录和参数，与运行时共用同一份目录。 |
+
+每层只依赖下面的层。只用 CDN 时，这些都已经打包在一个脚本里。

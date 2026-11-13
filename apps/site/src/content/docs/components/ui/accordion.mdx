@@ -1,0 +1,56 @@
+---
+title: "Accordion"
+description: "可展开的分段：默认一次只开一个，multiple 时可同时开多个。"
+---
+
+<ComponentPreview name="Accordion" />
+
+可展开的分段：默认一次只开一个，`multiple` 时可同时开多个。`defaultOpen` 列出首次渲染时展开的 key。
+
+## 示例
+
+```json
+{
+  "root": "accordion-1",
+  "elements": {
+    "accordion-1": {
+      "type": "Accordion",
+      "props": {
+        "defaultOpen": ["returns"],
+        "items": [
+          {
+            "key": "returns",
+            "title": "How do returns work?",
+            "content": "Customers have 14 days to start a return from their order page."
+          },
+          {
+            "key": "invoices",
+            "title": "Where are invoices?",
+            "content": "Every paid order has a PDF invoice under its detail page."
+          }
+        ]
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `items`（必填） | 分区列表，每项 `{ key, title, content, disabled? }`。 字段：`key`、`title`、`content`、`disabled?` | `object[]` |  |
+| `multiple` | 允许同时展开多个分区。 | `boolean \| null` | `false` |
+| `defaultOpen` | 初始展开的分区 key 列表。 | `string[] \| null` | `false` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

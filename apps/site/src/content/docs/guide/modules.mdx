@@ -1,0 +1,67 @@
+---
+title: "扩展模块"
+description: "JSON 写不了的部分用一个普通 JS 文件补上：模块怎么加载、函数收到什么、能返回什么，不用打包工具。"
+---
+
+JSON 写不了的部分，比如一个特殊的统计卡片或者一个格式不同的后端，用扩展模块补上。扩展模块是普通的 ES 模块，不用打包。
+
+在 `config.json` 里列出模块：
+
+```jsonc
+{
+  "data": { "url": "/api" },
+  "panels": { "manifest": "/manifest.json" },
+  // 启动时加载的扩展脚本
+  "modules": ["/ext/order-summary.js"]
+}
+```
+
+## 模块的写法
+
+模块默认导出一个扩展对象，或者一个返回扩展对象的函数。函数收到两个参数：
+
+```js
+// public/ext/order-summary.js
+// 返回要注册的组件、动作、后端和登录；这里先留空
+export default (runtime, { config, panel, http }) => ({})
+```
+
+| 参数 | 是什么 |
+| --- | --- |
+| `runtime` | 后台自己用的那一份依赖：`React`、`jsx`（JSX 运行时）、`lumi`（数据 hooks）、`ui`（界面组件）、`admin`、`jsonRender`、`z`（zod）。模块必须用它，不能再引入一份 React，否则 hooks 会报错。 |
+| `config` | 校验过的 `config.json`。 |
+| `panel` | 当前这个后台；`panel.data` 是全部后端的列表。 |
+| `http` | 后台自己用的请求客户端，带登录凭证、语言和工作区。 |
+
+用不到的参数可以不写。常见的写法是只取要用的那几样：`export default ({ React, lumi, ui, z }) => …`。
+
+## 能扩展什么
+
+| 想做什么 | 返回的键 | 看哪一篇 |
+| --- | --- | --- |
+| 加一个页面 JSON 里能用的组件 | `components` | [加一个组件](/guide/extend-components/#加一个组件) |
+| 加一个 `on` 里能调用的动作 | `handlers`、`actions` | [加一个动作](/guide/extend-components/#加一个动作) |
+| 后端的返回格式和默认约定不同 | `dataProviders` | [适配自己的后端格式](/guide/extend-backend/#适配自己的后端格式) |
+| 请求要签名，或者要改请求头 | `dataProviders` 里的 `onRequest`、`onResponse` | [签名与改写请求](/guide/extend-backend/#签名与改写请求) |
+| 登录接口和默认约定不同 | `authProviders` | [换成自己的登录](/guide/extend-backend/#换成自己的登录) |
+| 整个页面用 JS 写 | 不用模块，路由写 `page.module` | [JS 页面](/guide/js-pages/) |
+
+扩展对象的全部键见 [扩展对象](/guide/advanced/admin/#扩展对象)。
+
+## 多个模块
+
+`modules` 里的模块按顺序加载，返回的扩展对象依次合并：组件、动作、后端和登录按名字合并，事件回调每个都会被调用，其余设置取最后一个。两个模块注册了同名的组件、动作或后端时，控制台会提示，后加载的生效。动作和内置动作重名则会报错。
+
+## 不单独放文件
+
+扩展也可以直接写在页面里，不放进 `modules`：
+
+| 写法 | 时机 |
+| --- | --- |
+| `window.LumiAdminSetup = extension`，或 `(window.LumiAdminSetup ||= []).push(extension)` | 在 `lumi-admin.js` 之前的 `<script>` 里，后台启动时读取。 |
+| `window.LumiAdmin.use(extension)` | 在 `lumi-admin.js` 之后、后台启动之前（同一轮页面解析内）。启动后再调用只会警告。 |
+| `window.LumiAdmin.mount(config, ...extensions)` | 页面没有配置时，后台等你手动启动；再次调用会先卸载上一个。 |
+
+应用顺序：`config.modules` 里的模块、`LumiAdminSetup`、`use()` 添加的，依次合并。配置的来源依次检查：`window.LumiAdminConfig`、`<script type="application/json" id="lumi-admin-config">`、`<script data-config="…">`。启动后的实例在 `window.LumiAdmin.current`。
+
+要 TypeScript 类型、JSX 或自己的依赖时，改用 [npm 安装](/guide/advanced/install/)。

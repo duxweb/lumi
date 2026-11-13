@@ -1,0 +1,25 @@
+---
+title: "MetricCard"
+description: "一个核心数字，带单位、变化幅度块和可选的迷你趋势图。"
+---
+
+一个核心数字，带单位、变化幅度块和可选的迷你趋势图。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `label`（必填） | 指标名称，如“收入”。 | `string` |  |
+| `value`（必填） | 指标数值，已格式化的文字或数字。 | `string \| number` |  |
+| `unit` | 数值后的单位，如 `k`、`%`。 | `string` |  |
+| `icon` | 图标名，来自内置 HugeIcons 图标集，如 `download`、`receipt`。 | `string` |  |
+| `description` | 标题下方的一行说明。 | `string` |  |
+| `change` | 变化幅度，如 `+12.4%`，显示为标签。 | `string` |  |
+| `tone` | 变化的语义色，影响标签和走势条最后一根。 | `"neutral" \| "primary" \| "success" \| "warning" \| "danger" \| "info"` | `"neutral"` |
+| `series` | 最近几期的数值，从旧到新，画成迷你柱状图。至少两个点。 | `number[]` |  |
+| `scale` | `md` 仪表盘大字号；`sm` 表格上方的紧凑统计条。 | `"md" \| "sm"` | `"md"` |
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

@@ -1,0 +1,37 @@
+{
+  "name": "{{PACKAGE_NAME}}",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "build": "vite build",
+    "check": "npx -y @duxweb/lumi-check@{{LUMI_VERSION}} src/pages/home.json --catalog src/catalog.mjs"
+  },
+  "dependencies": {
+    "@hugeicons/core-free-icons": "^4.3.0",
+    "@hugeicons/react": "^1.1.10",
+    "@react-input/mask": "^2.0.4",
+    "@tanstack/react-query": "5.101.2",
+    "date-fns": "^4.4.0",
+    "radix-ui": "^1.6.7",
+    "react": "^19.2.3",
+    "react-day-picker": "^10.0.1",
+    "react-dom": "^19.2.3",
+    "vaul": "^1.1.2",
+    "@duxweb/lumi": "{{LUMI_VERSION}}",
+    "@duxweb/lumi-ui": "{{LUMI_VERSION}}",
+    "@json-render/core": "0.22.0",
+    "@json-render/react": "0.22.0",
+    "zod": "4.3.6",
+    "@tanstack/query-core": "5.101.2",
+    "@tanstack/react-table": "^9.2.4"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.3",
+    "typescript": "^6.0.2",
+    "vite": "^7.3.6"
+  }
+}

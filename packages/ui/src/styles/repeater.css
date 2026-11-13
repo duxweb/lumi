@@ -1,0 +1,162 @@
+/*
+ * Repeater: an editable table or a stack of cards over a bound array. Cells
+ * hold ordinary controls; the frame only adds the handle, row tools, errors
+ * and the footer.
+ */
+[data-slot="repeater"] { display: flex; min-width: 0; flex-direction: column; gap: 0.625rem; }
+
+/* Table layout */
+[data-slot="repeater-scroll"] {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+}
+[data-slot="repeater"][data-invalid] [data-slot="repeater-scroll"] { border-color: color-mix(in oklab, var(--destructive) 50%, var(--border)); }
+[data-slot="repeater-table"] { width: 100%; min-width: max-content; border-collapse: separate; border-spacing: 0; font-size: var(--lumi-fs-control); }
+[data-slot="repeater-table"] th {
+  height: 2.25rem;
+  padding: 0 0.5rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-label);
+  font-weight: var(--lumi-font-weight-medium);
+  text-align: start;
+  white-space: nowrap;
+}
+[data-slot="repeater-table"] td { padding: 0.375rem 0.5rem; vertical-align: top; }
+[data-slot="repeater-table"] tbody tr + tr > td { border-top: 1px solid var(--border); }
+[data-slot="repeater-table"] :is(th, td)[data-align="end"] { text-align: end; }
+[data-slot="repeater-table"] :is(th, td)[data-align="center"] { text-align: center; }
+[data-slot="repeater-table"] th:first-child, [data-slot="repeater-table"] td:first-child { padding-inline-start: 0.375rem; }
+/* Column labels start where the controls' text does: past the 1px border and the control inset. */
+[data-slot="repeater-table"] thead th:not([data-slot], [data-align="end"], [data-align="center"]) { padding-inline-start: calc(0.5rem + 1px + var(--lumi-control-px-md)); }
+[data-slot="repeater-required"] { color: var(--destructive); }
+[data-slot="repeater-table"] th[data-has-action] { padding-block: 0; }
+th[data-has-action] > [data-slot="tooltip-trigger"] { margin-inline-start: 0.125rem; vertical-align: middle; }
+[data-slot="repeater-column-action"] { color: var(--muted-foreground); }
+[data-slot="repeater-column-action"] svg { width: 0.875rem; height: 0.875rem; }
+/* Pointer devices reveal the command on the header; touch keeps it visible. */
+@media (hover: hover) {
+  [data-slot="repeater-column-action"] { opacity: 0; transition: opacity 0.12s; }
+  th:is(:hover, :focus-within) [data-slot="repeater-column-action"] { opacity: 1; }
+}
+/* 1px, not 1%: a percentage column under `min-width: max-content` inflates the whole table. */
+[data-slot="repeater-lead"] { width: 1px; white-space: nowrap; }
+[data-slot="repeater-lead-inner"] { display: flex; height: var(--lumi-control-md); align-items: center; gap: 0.125rem; }
+[data-slot="repeater-index"] {
+  min-width: 1.25rem;
+  color: var(--muted-foreground);
+  font-size: var(--lumi-fs-caption);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+[data-slot="repeater-actions"] { width: 1px; white-space: nowrap; }
+[data-slot="repeater-row"] [data-slot="repeater-actions"] > [data-slot="repeater-tools"] { height: var(--lumi-control-md); }
+[data-slot="repeater-computed"] {
+  display: flex;
+  height: var(--lumi-control-md);
+  align-items: center;
+  justify-content: flex-end;
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+[data-slot="repeater-row"]:hover > td { background: var(--lumi-hover-bg); }
+[data-slot="repeater-table"] tfoot td {
+  height: 2.5rem;
+  border-top: 1px solid var(--border);
+  font-weight: var(--lumi-font-weight-medium);
+  font-variant-numeric: tabular-nums;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+[data-slot="repeater-summary-label"] { color: var(--muted-foreground); font-weight: var(--lumi-font-weight-normal); }
+/* The empty state brings its own inset. */
+[data-slot="repeater-empty-row"] td { padding: 0; }
+
+/* Errors: the message sits under the control it is about. */
+[data-slot="repeater-cell-error"], [data-slot="repeater-row-error"], [data-slot="repeater-error"] {
+  display: block;
+  margin: 0.25rem 0 0;
+  color: var(--destructive);
+  font-size: var(--lumi-fs-caption);
+  line-height: 1.3;
+  text-align: start;
+  white-space: normal;
+}
+[data-slot="repeater-row-error-row"] td { padding-top: 0; border-top: 0 !important; }
+:is([data-slot="repeater-cell"], [data-slot="repeater-field"])[data-invalid] :is(input, textarea, [data-slot="select-trigger"], [data-slot="tags-input-control"], [data-slot="lumi-rich-text"]) {
+  border-color: var(--destructive);
+}
+
+/* Row tools and the drag handle */
+[data-slot="repeater-tools"] { display: flex; align-items: center; justify-content: flex-end; gap: 0.0625rem; color: var(--muted-foreground); }
+[data-slot="repeater-remove"]:hover { color: var(--destructive); }
+[data-slot="repeater-handle"] {
+  display: grid;
+  width: 1.25rem;
+  height: 1.5rem;
+  flex: none;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--lumi-radius-sm);
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: grab;
+  touch-action: none;
+}
+[data-slot="repeater-handle"]:hover { background: var(--lumi-hover-bg); color: var(--lumi-hover-fg); }
+[data-slot="repeater-handle"]:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; color: var(--foreground); }
+[data-slot="repeater-handle"] svg { width: 0.9375rem; height: 0.9375rem; }
+:is([data-slot="repeater-row"], [data-slot="repeater-card"])[data-dragging] { opacity: 0.45; }
+[data-slot="repeater-row"][data-drop-target="before"] > td { box-shadow: inset 0 2px 0 var(--brand); }
+[data-slot="repeater-row"][data-drop-target="after"] > td { box-shadow: inset 0 -2px 0 var(--brand); }
+[data-slot="repeater-card"][data-drop-target="before"] { box-shadow: 0 -3px 0 -1px var(--brand); }
+[data-slot="repeater-card"][data-drop-target="after"] { box-shadow: 0 3px 0 -1px var(--brand); }
+
+/* Card layout */
+[data-slot="repeater-cards"] { display: flex; flex-direction: column; gap: 0.75rem; }
+[data-slot="repeater-card"] {
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+}
+[data-slot="repeater-card"][data-invalid] { border-color: color-mix(in oklab, var(--destructive) 50%, var(--border)); }
+[data-slot="repeater-card-header"] {
+  display: flex;
+  min-height: 2.5rem;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.375rem 0.25rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+[data-slot="repeater-card-title"] { flex: 1; min-width: 0; color: var(--foreground); font-size: var(--lumi-fs-label); font-weight: var(--lumi-font-weight-medium); }
+[data-slot="repeater-card-body"] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: 0.875rem 1rem;
+  padding: 0.875rem 1rem 1rem;
+}
+[data-slot="repeater-field"] { display: flex; min-width: 0; flex-direction: column; gap: 0.375rem; }
+[data-slot="repeater-field"][data-span="2"] { grid-column: 1 / -1; }
+[data-slot="repeater-field-label"] { color: var(--foreground); font-size: var(--lumi-fs-label); font-weight: var(--lumi-font-weight-medium); }
+[data-slot="repeater-card"] > [data-slot="repeater-row-error"] { margin: 0; padding: 0 1rem 0.875rem; }
+[data-slot="repeater-summary"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 0.25rem 1.25rem;
+  margin: 0;
+  padding: 0.625rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+  font-size: var(--lumi-fs-label);
+}
+[data-slot="repeater-summary"] dt { margin-inline-end: auto; color: var(--muted-foreground); }
+[data-slot="repeater-summary"] dd { display: flex; gap: 0.375rem; margin: 0; }
+[data-slot="repeater-summary"] dd span { color: var(--muted-foreground); }
+[data-slot="repeater-summary"] dd strong { color: var(--foreground); font-weight: var(--lumi-font-weight-medium); font-variant-numeric: tabular-nums; }
+
+[data-slot="repeater-footer"] { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+[data-slot="repeater-limit"] { margin-inline-start: auto; color: var(--muted-foreground); font-size: var(--lumi-fs-caption); font-variant-numeric: tabular-nums; }

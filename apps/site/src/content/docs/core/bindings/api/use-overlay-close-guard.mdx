@@ -1,0 +1,17 @@
+---
+title: "useOverlayCloseGuard"
+description: "useOverlayCloseGuard React hook 的签名、参数和返回值。"
+---
+
+Registers a check an overlay runs before it closes, e.g. to confirm unsaved changes; returns whether it is inside an overlay.
+
+```typescript
+useOverlayCloseGuard(guard: OverlayCloseGuard, active?: boolean): boolean
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `guard` | `OverlayCloseGuard` | 是 |  |
+| `active` | `boolean` | 否 |  |
+
+返回 `boolean`。

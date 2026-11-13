@@ -1,0 +1,15 @@
+{
+  "root": "welcome",
+  "elements": {
+    "welcome": {
+      "type": "Card",
+      "props": { "title": "{{PROJECT_TITLE}}" },
+      "children": ["message"]
+    },
+    "message": {
+      "type": "Alert",
+      "props": { "tone": "info", "message": "This page is src/pages/home.json, a native json-render Spec." },
+      "children": []
+    }
+  }
+}

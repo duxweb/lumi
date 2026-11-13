@@ -1,0 +1,12 @@
+---
+title: "useInvalidate"
+description: "useInvalidate React hook 的签名、参数和返回值。"
+---
+
+Returns `invalidate({ resource?, dataProviderName? })`: refetches a resource's queries, a whole data provider's without `resource`, or every Lumi query without either; like the `invalidate` action.
+
+```typescript
+useInvalidate(): (params: { resource?: string; dataProviderName?: string; }) => Promise<void>
+```
+
+返回 `(params: { resource?: string; dataProviderName?: string; }) => Promise<void>`。

@@ -1,0 +1,30 @@
+---
+title: "Query"
+description: "挂载时、参数变化时读取数据；实时提供者推送了该资源的变更时也会重新读取（liveMode）。"
+---
+
+挂载时、参数变化时读取数据；实时提供者推送了该资源的变更时也会重新读取（`liveMode`）。结果 `{ data, total, loading, error }` 写入 `resultPath`，把显示用的属性绑定到这个状态路径即可。
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `resource`（必填） | 数据资源名，如 `orders`。DataProvider 据此拼出接口地址。 | `string` |  |
+| `dataProviderName` | 使用哪个 DataProvider。只有一个时不用填。 | `string` |  |
+| `meta` | 原样传给 DataProvider 的附加参数，如自定义请求头或查询字段。 | `object` |  |
+| `operation`（必填） | 读取方式：`list` 列表，`one` 单条，`many` 按多个 ID，`custom` 自定义地址。 | `"list" \| "one" \| "many" \| "custom"` | `"list"` |
+| `id` | 记录 ID。填写时先按 ID 读取记录，保存时更新它；不填时是新建。 | `string \| number` |  |
+| `ids` | `many` 时要读取的 ID 列表。 | `(string \| number)[]` |  |
+| `pagination` | 分页参数 `{ page, pageSize }`；`false` 表示一次读全部。 字段：`page`、`pageSize` | `object \| false` |  |
+| `filters` | 筛选条件，每项 `{ field, operator, value }`，会传给 DataProvider。 字段：`field`、`operator`、`value` | `object[]` |  |
+| `sorters` | 当前排序，每项 `{ field, order: "asc" \| "desc" }`。 字段：`field`、`order` | `object[]` |  |
+| `url` | `custom` 时请求的地址。 | `string` |  |
+| `query` | `custom` 时附加的查询参数。 | `object` |  |
+| `enabled` | 为 false 时暂不请求，常用于等待前一个条件就绪。 | `boolean` | `true` |
+| `liveMode` | 收到实时推送时的处理：`auto` 自动重新读取，`manual` 只触发事件不动缓存，`off` 不订阅。有 liveProvider 时默认 `auto`，自定义请求默认 `off`。 | `"auto" \| "manual" \| "off"` |  |
+| `resultPath`（必填） | 把结果写入页面状态的路径，如 `/orders`，其他元素从这里读。 | `string` |  |
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：`default`

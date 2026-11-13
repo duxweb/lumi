@@ -1,0 +1,50 @@
+---
+title: "Breadcrumb"
+description: "到当前页面的路径，最后一项是当前页。"
+---
+
+<ComponentPreview name="Breadcrumb" />
+
+到当前页面的路径，最后一项是当前页。带 `href` 的项是链接；不带的项点击时把它的 key 写入绑定的 `value`（`{ "$bindState": "/path" }`）并触发 `select`，由动作决定去哪里。超过 `maxItems`（默认 4）时，中间的项收进溢出菜单。
+
+## 示例
+
+```json
+{
+  "root": "breadcrumb-45",
+  "elements": {
+    "breadcrumb-45": {
+      "type": "Breadcrumb",
+      "props": {
+        "items": [
+          { "key": "home", "label": "Home" },
+          { "key": "orders", "label": "Orders" },
+          { "key": "returns", "label": "Returns" },
+          { "key": "detail", "label": "RMA-1042" }
+        ]
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `items`（必填） | 要显示的条目列表。 字段：`key`、`label`、`href?`、`icon?` | `object[]` |  |
+| `maxItems` | 最多显示几项，超出时中间的项折叠进下拉菜单。 | `integer \| null` | `4` |
+| `separator` | 分隔符：`chevron` 箭头，`slash` 斜杠。 | `"chevron" \| "slash" \| null` | `"chevron"` |
+| `value` | 当前值。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string \| null` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`select`
+- 插槽：无

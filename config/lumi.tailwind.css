@@ -1,0 +1,119 @@
+@import "tailwindcss";
+@import "./lumi-state-variants.css";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/*
+ * Shared Tailwind base for the Lumi framework packages.
+ *
+ * It owns no palette of its own: every value falls back to the shadcn semantic
+ * token published by the UI adapter (`@duxweb/lumi-ui`), so a page can
+ * never introduce a second light/dark colour system. The literal fallbacks are
+ * only used when a package is rendered without an adapter stylesheet.
+ */
+:root,
+[data-theme] {
+  --lumi-background: var(--background, #f8fafc);
+  --lumi-foreground: var(--foreground, #18181b);
+  --lumi-card: var(--card, #fff);
+  --lumi-card-foreground: var(--card-foreground, var(--lumi-foreground));
+  --lumi-popover: var(--popover, #fff);
+  --lumi-popover-foreground: var(--popover-foreground, var(--lumi-foreground));
+  --lumi-primary: var(--primary, var(--lumi-theme-primary, #2563eb));
+  --lumi-primary-foreground: var(--primary-foreground, #fff);
+  --lumi-primary-strong: color-mix(in oklab, var(--lumi-primary) 82%, var(--lumi-foreground));
+  --lumi-primary-soft: color-mix(in oklab, var(--lumi-primary) 12%, transparent);
+  --lumi-secondary: var(--secondary, #f4f4f5);
+  --lumi-secondary-foreground: var(--secondary-foreground, var(--lumi-foreground));
+  --lumi-muted: var(--muted, #f4f4f5);
+  --lumi-muted-foreground: var(--muted-foreground, #71717a);
+  --lumi-faint: color-mix(in oklab, var(--lumi-muted-foreground) 76%, transparent);
+  --lumi-accent: var(--accent, #f4f4f5);
+  --lumi-accent-foreground: var(--accent-foreground, var(--lumi-foreground));
+  --lumi-border: var(--border, #e4e4e7);
+  --lumi-input: var(--input, var(--lumi-border));
+  --lumi-ring: var(--ring, var(--lumi-primary));
+  --lumi-sidebar: var(--sidebar, var(--lumi-card));
+  --lumi-sidebar-foreground: var(--sidebar-foreground, var(--lumi-foreground));
+  --lumi-sidebar-accent: var(--sidebar-accent, var(--lumi-accent));
+  --lumi-sidebar-accent-foreground: var(--sidebar-accent-foreground, var(--lumi-foreground));
+  --lumi-sidebar-border: var(--sidebar-border, var(--lumi-border));
+  /* Neutral anchor used by the self-drawn filter toolbar. */
+  --lumi-anchor: var(--lumi-foreground);
+  --lumi-anchor-foreground: var(--lumi-background);
+  /* Status colours are the UI package's public tokens (`--lumi-success`,
+     `--lumi-warning`, `--lumi-info` in tokens.css): fills, with `--lumi-text-*`
+     for text. Redefining them here overrode the fill tier with the text tier. */
+  --lumi-destructive: var(--destructive, var(--lumi-theme-danger, #dc2626));
+  --lumi-destructive-foreground: var(--destructive-foreground, #fff);
+
+}
+
+/* The adapter's frosted panel re-scopes its muted and accent tokens; the
+   aliases resolve again there so utilities inside it follow. */
+.lumi-glass-panel {
+  --lumi-muted: var(--muted, #f4f4f5);
+  --lumi-muted-foreground: var(--muted-foreground, #71717a);
+  --lumi-accent: var(--accent, #f4f4f5);
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before {
+    border-color: var(--lumi-border);
+  }
+}
+
+@theme inline {
+  --text-xs: var(--lumi-fs-caption);
+  --text-sm: var(--lumi-fs-body);
+  --text-base: var(--lumi-fs-title);
+  --font-weight-normal: var(--lumi-font-weight-normal);
+  --font-weight-medium: var(--lumi-font-weight-medium);
+  --font-weight-semibold: var(--lumi-font-weight-semibold);
+  --font-weight-bold: var(--lumi-font-weight-bold);
+  --color-background: var(--lumi-background);
+  --color-foreground: var(--lumi-foreground);
+  --color-card: var(--lumi-card);
+  --color-card-foreground: var(--lumi-card-foreground);
+  --color-popover: var(--lumi-popover);
+  --color-popover-foreground: var(--lumi-popover-foreground);
+  --color-primary: var(--lumi-primary);
+  --color-primary-foreground: var(--lumi-primary-foreground);
+  --color-primary-strong: var(--lumi-primary-strong);
+  --color-primary-soft: var(--lumi-primary-soft);
+  --color-secondary: var(--lumi-secondary);
+  --color-secondary-foreground: var(--lumi-secondary-foreground);
+  --color-muted: var(--lumi-muted);
+  --color-muted-foreground: var(--lumi-muted-foreground);
+  --color-faint: var(--lumi-faint);
+  --color-accent: var(--lumi-accent);
+  --color-accent-foreground: var(--lumi-accent-foreground);
+  --color-border: var(--lumi-border);
+  --color-input: var(--lumi-input);
+  --color-ring: var(--lumi-ring);
+  --color-sidebar: var(--lumi-sidebar);
+  --color-sidebar-foreground: var(--lumi-sidebar-foreground);
+  --color-sidebar-accent: var(--lumi-sidebar-accent);
+  --color-sidebar-accent-foreground: var(--lumi-sidebar-accent-foreground);
+  --color-sidebar-border: var(--lumi-sidebar-border);
+  --color-anchor: var(--lumi-anchor);
+  --color-anchor-foreground: var(--lumi-anchor-foreground);
+  --color-success: var(--lumi-success);
+  --color-info: var(--lumi-info);
+  --color-warning: var(--lumi-warning);
+  --color-destructive: var(--lumi-destructive);
+  --color-destructive-foreground: var(--lumi-destructive-foreground);
+  --radius-sm: var(--lumi-radius-sm);
+  --radius-md: var(--lumi-radius-md);
+  --radius-lg: var(--lumi-radius-control);
+  --radius-xl: var(--lumi-radius-xl);
+  --text-caption: var(--lumi-fs-caption);
+  --text-label: var(--lumi-fs-label);
+  --text-body: var(--lumi-fs-body);
+  --text-title: var(--lumi-fs-title);
+  --text-section: var(--lumi-fs-section);
+  --text-page: var(--lumi-fs-page);
+  --text-metric: var(--lumi-fs-metric);
+}

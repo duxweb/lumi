@@ -1,0 +1,1697 @@
+{
+  "root": "fragment-1",
+  "elements": {
+    "fragment-1": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "card-2",
+        "card-8",
+        "card-13",
+        "card-18",
+        "card-22",
+        "card-27",
+        "card-32",
+        "card-slider",
+        "card-radiocards",
+        "card-checkboxcards",
+        "card-tagselect",
+        "card-rating",
+        "card-colorpicker",
+        "card-colorswatches",
+        "card-iconpicker"
+      ]
+    },
+    "card-2": {
+      "type": "Card",
+      "props": {
+        "title": "Select",
+        "description": "One value from a list. Filterable when the list is long."
+      },
+      "children": [
+        "fragment-3"
+      ]
+    },
+    "fragment-3": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-select-4",
+        "variant-select-5",
+        "variant-select-6",
+        "variant-select-7"
+      ]
+    },
+    "select-4": {
+      "type": "Select",
+      "props": {
+        "value": {
+          "$bindState": "/select-4/value"
+        },
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ],
+        "ariaLabel": "Default select"
+      },
+      "children": []
+    },
+    "select-5": {
+      "type": "Select",
+      "props": {
+        "value": {
+          "$bindState": "/select-5/value"
+        },
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ],
+        "clearable": true,
+        "filterable": true,
+        "ariaLabel": "Searchable select"
+      },
+      "children": []
+    },
+    "select-6": {
+      "type": "Select",
+      "props": {
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ],
+        "placeholder": "Loading…",
+        "loading": true,
+        "ariaLabel": "Loading select"
+      },
+      "children": []
+    },
+    "select-7": {
+      "type": "Select",
+      "props": {
+        "value": {
+          "$bindState": "/select-7/value"
+        },
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ],
+        "disabled": true,
+        "ariaLabel": "Disabled select"
+      },
+      "children": []
+    },
+    "card-8": {
+      "type": "Card",
+      "props": {
+        "title": "MultiSelect",
+        "description": "Several values from a list, kept as chips."
+      },
+      "children": [
+        "fragment-9"
+      ]
+    },
+    "fragment-9": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-multiselect-10",
+        "variant-multiselect-11",
+        "variant-multiselect-12"
+      ]
+    },
+    "multiselect-10": {
+      "type": "MultiSelect",
+      "props": {
+        "value": {
+          "$bindState": "/multiselect-10/value"
+        },
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ],
+        "ariaLabel": "Default multiselect"
+      },
+      "children": []
+    },
+    "multiselect-11": {
+      "type": "MultiSelect",
+      "props": {
+        "value": {
+          "$bindState": "/multiselect-11/value"
+        },
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ],
+        "clearable": true,
+        "filterable": true,
+        "ariaLabel": "Searchable multiselect"
+      },
+      "children": []
+    },
+    "multiselect-12": {
+      "type": "MultiSelect",
+      "props": {
+        "value": {
+          "$bindState": "/multiselect-12/value"
+        },
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ],
+        "disabled": true,
+        "ariaLabel": "Disabled multiselect"
+      },
+      "children": []
+    },
+    "card-13": {
+      "type": "Card",
+      "props": {
+        "title": "RadioGroup",
+        "description": "One value, with every option visible."
+      },
+      "children": [
+        "fragment-14"
+      ]
+    },
+    "fragment-14": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-radiogroup-15",
+        "variant-radiogroup-16",
+        "variant-radiogroup-17"
+      ]
+    },
+    "radiogroup-15": {
+      "type": "RadioGroup",
+      "props": {
+        "value": {
+          "$bindState": "/radiogroup-15/value"
+        },
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ],
+        "ariaLabel": "Horizontal radio group",
+        "direction": "row"
+      },
+      "children": []
+    },
+    "radiogroup-16": {
+      "type": "RadioGroup",
+      "props": {
+        "value": {
+          "$bindState": "/radiogroup-16/value"
+        },
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ],
+        "direction": "column",
+        "ariaLabel": "Vertical radio group"
+      },
+      "children": []
+    },
+    "radiogroup-17": {
+      "type": "RadioGroup",
+      "props": {
+        "value": {
+          "$bindState": "/radiogroup-17/value"
+        },
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ],
+        "disabled": true,
+        "ariaLabel": "Disabled radio group",
+        "direction": "row"
+      },
+      "children": []
+    },
+    "card-18": {
+      "type": "Card",
+      "props": {
+        "title": "CheckboxGroup",
+        "description": "Several values, all choices visible."
+      },
+      "children": [
+        "fragment-19"
+      ]
+    },
+    "fragment-19": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-checkboxgroup-20",
+        "variant-checkboxgroup-21",
+        "variant-checkboxgroup-22"
+      ]
+    },
+    "checkboxgroup-20": {
+      "type": "CheckboxGroup",
+      "props": {
+        "value": {
+          "$bindState": "/checkboxgroup-20/value"
+        },
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ],
+        "ariaLabel": "Horizontal checkbox group",
+        "direction": "row"
+      },
+      "children": []
+    },
+    "checkboxgroup-21": {
+      "type": "CheckboxGroup",
+      "props": {
+        "value": {
+          "$bindState": "/checkboxgroup-21/value"
+        },
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ],
+        "direction": "column",
+        "ariaLabel": "Vertical checkbox group"
+      },
+      "children": []
+    },
+    "card-22": {
+      "type": "Card",
+      "props": {
+        "title": "Checkbox",
+        "description": "A single boolean beside its own label."
+      },
+      "children": [
+        "fragment-23"
+      ]
+    },
+    "fragment-23": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "checkbox-24",
+        "checkbox-25",
+        "checkbox-26"
+      ]
+    },
+    "checkbox-24": {
+      "type": "Checkbox",
+      "props": {
+        "value": {
+          "$bindState": "/checkbox-24/value"
+        },
+        "label": "Enabled"
+      },
+      "children": []
+    },
+    "checkbox-25": {
+      "type": "Checkbox",
+      "props": {
+        "value": {
+          "$bindState": "/checkbox-25/value"
+        },
+        "label": "Not enabled"
+      },
+      "children": []
+    },
+    "checkbox-26": {
+      "type": "Checkbox",
+      "props": {
+        "value": {
+          "$bindState": "/checkbox-26/value"
+        },
+        "label": "Locked",
+        "disabled": true
+      },
+      "children": []
+    },
+    "card-27": {
+      "type": "Card",
+      "props": {
+        "title": "Switch",
+        "description": "A boolean that takes effect immediately."
+      },
+      "children": [
+        "fragment-28"
+      ]
+    },
+    "fragment-28": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "switch-29",
+        "switch-30",
+        "switch-31"
+      ]
+    },
+    "switch-29": {
+      "type": "Switch",
+      "props": {
+        "value": {
+          "$bindState": "/switch-29/value"
+        },
+        "label": "Notifications"
+      },
+      "children": []
+    },
+    "switch-30": {
+      "type": "Switch",
+      "props": {
+        "value": {
+          "$bindState": "/switch-30/value"
+        },
+        "label": "Weekly digest"
+      },
+      "children": []
+    },
+    "switch-31": {
+      "type": "Switch",
+      "props": {
+        "value": {
+          "$bindState": "/switch-31/value"
+        },
+        "label": "Managed centrally",
+        "disabled": true
+      },
+      "children": []
+    },
+    "card-32": {
+      "type": "Card",
+      "props": {
+        "title": "Upload",
+        "description": "Files, with an optional preview strip."
+      },
+      "children": [
+        "fragment-33"
+      ]
+    },
+    "fragment-33": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-upload-34",
+        "variant-upload-35",
+        "variant-upload-36"
+      ]
+    },
+    "upload-34": {
+      "type": "Upload",
+      "props": {
+        "value": {
+          "$bindState": "/upload-34/value"
+        },
+        "multiple": true,
+        "maxFiles": 5,
+        "ariaLabel": "Multiple files"
+      },
+      "children": []
+    },
+    "upload-35": {
+      "type": "Upload",
+      "props": {
+        "value": {
+          "$bindState": "/upload-35/value"
+        },
+        "accept": "image/*",
+        "preview": true,
+        "maxSize": 2097152,
+        "ariaLabel": "Image preview"
+      },
+      "children": []
+    },
+    "upload-36": {
+      "type": "Upload",
+      "props": {
+        "value": {
+          "$bindState": "/upload-36/value"
+        },
+        "disabled": true,
+        "ariaLabel": "Disabled upload"
+      },
+      "children": []
+    },
+    "variant-select-4": {
+      "type": "FormField",
+      "props": {
+        "name": "select-4",
+        "label": "Default"
+      },
+      "children": [
+        "select-4"
+      ]
+    },
+    "variant-select-5": {
+      "type": "FormField",
+      "props": {
+        "name": "select-5",
+        "label": "Searchable"
+      },
+      "children": [
+        "select-5"
+      ]
+    },
+    "variant-select-6": {
+      "type": "FormField",
+      "props": {
+        "name": "select-6",
+        "label": "Loading"
+      },
+      "children": [
+        "select-6"
+      ]
+    },
+    "variant-select-7": {
+      "type": "FormField",
+      "props": {
+        "name": "select-7",
+        "label": "Disabled"
+      },
+      "children": [
+        "select-7"
+      ]
+    },
+    "variant-multiselect-10": {
+      "type": "FormField",
+      "props": {
+        "name": "multiselect-10",
+        "label": "Default"
+      },
+      "children": [
+        "multiselect-10"
+      ]
+    },
+    "variant-multiselect-11": {
+      "type": "FormField",
+      "props": {
+        "name": "multiselect-11",
+        "label": "Searchable"
+      },
+      "children": [
+        "multiselect-11"
+      ]
+    },
+    "variant-multiselect-12": {
+      "type": "FormField",
+      "props": {
+        "name": "multiselect-12",
+        "label": "Disabled"
+      },
+      "children": [
+        "multiselect-12"
+      ]
+    },
+    "variant-radiogroup-15": {
+      "type": "FormField",
+      "props": {
+        "name": "radiogroup-15",
+        "label": "Horizontal"
+      },
+      "children": [
+        "radiogroup-15"
+      ]
+    },
+    "variant-radiogroup-16": {
+      "type": "FormField",
+      "props": {
+        "name": "radiogroup-16",
+        "label": "Vertical"
+      },
+      "children": [
+        "radiogroup-16"
+      ]
+    },
+    "variant-radiogroup-17": {
+      "type": "FormField",
+      "props": {
+        "name": "radiogroup-17",
+        "label": "Disabled"
+      },
+      "children": [
+        "radiogroup-17"
+      ]
+    },
+    "variant-checkboxgroup-20": {
+      "type": "FormField",
+      "props": {
+        "name": "checkboxgroup-20",
+        "label": "Horizontal"
+      },
+      "children": [
+        "checkboxgroup-20"
+      ]
+    },
+    "variant-checkboxgroup-21": {
+      "type": "FormField",
+      "props": {
+        "name": "checkboxgroup-21",
+        "label": "Vertical"
+      },
+      "children": [
+        "checkboxgroup-21"
+      ]
+    },
+    "variant-upload-34": {
+      "type": "FormField",
+      "props": {
+        "name": "upload-34",
+        "label": "Multiple files"
+      },
+      "children": [
+        "upload-34"
+      ]
+    },
+    "variant-upload-35": {
+      "type": "FormField",
+      "props": {
+        "name": "upload-35",
+        "label": "Image preview"
+      },
+      "children": [
+        "upload-35"
+      ]
+    },
+    "variant-upload-36": {
+      "type": "FormField",
+      "props": {
+        "name": "upload-36",
+        "label": "Disabled"
+      },
+      "children": [
+        "upload-36"
+      ]
+    },
+    "slider-1": {
+      "type": "Slider",
+      "props": {
+        "tooltip": true,
+        "ariaLabel": "Default slider",
+        "value": {
+          "$bindState": "/slider-1/value"
+        }
+      },
+      "children": []
+    },
+    "variant-slider-1": {
+      "type": "FormField",
+      "props": {
+        "name": "slider-1",
+        "label": "Default"
+      },
+      "children": [
+        "slider-1"
+      ]
+    },
+    "slider-2": {
+      "type": "Slider",
+      "props": {
+        "input": true,
+        "ariaLabel": "Range slider",
+        "value": {
+          "$bindState": "/slider-2/value"
+        }
+      },
+      "children": []
+    },
+    "variant-slider-2": {
+      "type": "FormField",
+      "props": {
+        "name": "slider-2",
+        "label": "Range"
+      },
+      "children": [
+        "slider-2"
+      ]
+    },
+    "slider-3": {
+      "type": "Slider",
+      "props": {
+        "step": 25,
+        "marks": [
+          {
+            "value": 0,
+            "label": "Low"
+          },
+          {
+            "value": 50,
+            "label": "Mid"
+          },
+          {
+            "value": 100,
+            "label": "High"
+          }
+        ],
+        "ariaLabel": "Marked slider",
+        "value": {
+          "$bindState": "/slider-3/value"
+        }
+      },
+      "children": []
+    },
+    "variant-slider-3": {
+      "type": "FormField",
+      "props": {
+        "name": "slider-3",
+        "label": "Marks"
+      },
+      "children": [
+        "slider-3"
+      ]
+    },
+    "slider-4": {
+      "type": "Slider",
+      "props": {
+        "defaultValue": 30,
+        "disabled": true,
+        "ariaLabel": "Disabled slider"
+      },
+      "children": []
+    },
+    "variant-slider-4": {
+      "type": "FormField",
+      "props": {
+        "name": "slider-4",
+        "label": "Disabled"
+      },
+      "children": [
+        "slider-4"
+      ]
+    },
+    "fragment-slider": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 260
+      },
+      "children": [
+        "variant-slider-1",
+        "variant-slider-2",
+        "variant-slider-3",
+        "variant-slider-4"
+      ]
+    },
+    "card-slider": {
+      "type": "Card",
+      "props": {
+        "title": "Slider",
+        "description": "A value or a range on a track, with marks, a value hint and number boxes."
+      },
+      "children": [
+        "fragment-slider"
+      ]
+    },
+    "radiocards-1": {
+      "type": "RadioCards",
+      "props": {
+        "options": [
+          {
+            "value": "starter",
+            "label": "Starter",
+            "description": "For one person.",
+            "icon": "user",
+            "extra": "$0"
+          },
+          {
+            "value": "team",
+            "label": "Team",
+            "description": "Shared projects.",
+            "icon": "user-group",
+            "badge": "Popular",
+            "extra": "$12"
+          }
+        ],
+        "ariaLabel": "Plan",
+        "value": {
+          "$bindState": "/radiocards-1/value"
+        }
+      },
+      "children": []
+    },
+    "variant-radiocards-1": {
+      "type": "FormField",
+      "props": {
+        "name": "radiocards-1",
+        "label": "Default"
+      },
+      "children": [
+        "radiocards-1"
+      ]
+    },
+    "radiocards-2": {
+      "type": "RadioCards",
+      "props": {
+        "size": "sm",
+        "options": [
+          {
+            "value": "starter",
+            "label": "Starter",
+            "extra": "$0"
+          },
+          {
+            "value": "team",
+            "label": "Team",
+            "badge": "Popular",
+            "extra": "$12"
+          }
+        ],
+        "ariaLabel": "Small plan",
+        "value": {
+          "$bindState": "/radiocards-2/value"
+        }
+      },
+      "children": []
+    },
+    "variant-radiocards-2": {
+      "type": "FormField",
+      "props": {
+        "name": "radiocards-2",
+        "label": "Small"
+      },
+      "children": [
+        "radiocards-2"
+      ]
+    },
+    "fragment-radiocards": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 320
+      },
+      "children": [
+        "variant-radiocards-1",
+        "variant-radiocards-2",
+        "variant-radiocards-3"
+      ]
+    },
+    "radiocards-3": {
+      "type": "RadioCards",
+      "props": {
+        "size": "sm",
+        "readonly": true,
+        "options": [
+          {
+            "value": "monthly",
+            "label": "Monthly",
+            "extra": "$12"
+          },
+          {
+            "value": "yearly",
+            "label": "Yearly",
+            "badge": "Save 17%",
+            "extra": "$120"
+          }
+        ],
+        "ariaLabel": "Billing period",
+        "value": {
+          "$bindState": "/radiocards-3/value"
+        }
+      },
+      "children": []
+    },
+    "variant-radiocards-3": {
+      "type": "FormField",
+      "props": {
+        "name": "radiocards-3",
+        "label": "Readonly"
+      },
+      "children": [
+        "radiocards-3"
+      ]
+    },
+    "card-radiocards": {
+      "type": "Card",
+      "props": {
+        "title": "RadioCards",
+        "description": "One choice shown as cards with an icon, description, badge and price."
+      },
+      "children": [
+        "fragment-radiocards"
+      ]
+    },
+    "checkboxcards-1": {
+      "type": "CheckboxCards",
+      "props": {
+        "options": [
+          {
+            "value": "backup",
+            "label": "Backups",
+            "description": "Daily snapshots.",
+            "icon": "database"
+          },
+          {
+            "value": "audit",
+            "label": "Audit log",
+            "description": "Every change.",
+            "icon": "file-search"
+          }
+        ],
+        "ariaLabel": "Add-ons",
+        "value": {
+          "$bindState": "/checkboxcards-1/value"
+        }
+      },
+      "children": []
+    },
+    "variant-checkboxcards-1": {
+      "type": "FormField",
+      "props": {
+        "name": "checkboxcards-1",
+        "label": "Default"
+      },
+      "children": [
+        "checkboxcards-1"
+      ]
+    },
+    "checkboxcards-2": {
+      "type": "CheckboxCards",
+      "props": {
+        "columns": 1,
+        "options": [
+          {
+            "value": "sso",
+            "label": "Single sign-on",
+            "badge": "New"
+          },
+          {
+            "value": "support",
+            "label": "Priority support",
+            "disabled": true
+          }
+        ],
+        "ariaLabel": "Extras",
+        "value": {
+          "$bindState": "/checkboxcards-2/value"
+        }
+      },
+      "children": []
+    },
+    "variant-checkboxcards-2": {
+      "type": "FormField",
+      "props": {
+        "name": "checkboxcards-2",
+        "label": "Disabled option"
+      },
+      "children": [
+        "checkboxcards-2"
+      ]
+    },
+    "fragment-checkboxcards": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 320
+      },
+      "children": [
+        "variant-checkboxcards-1",
+        "variant-checkboxcards-2"
+      ]
+    },
+    "card-checkboxcards": {
+      "type": "Card",
+      "props": {
+        "title": "CheckboxCards",
+        "description": "Several choices shown as cards."
+      },
+      "children": [
+        "fragment-checkboxcards"
+      ]
+    },
+    "tagselect-1": {
+      "type": "TagSelect",
+      "props": {
+        "options": [
+          {
+            "value": "day",
+            "label": "Day"
+          },
+          {
+            "value": "week",
+            "label": "Week"
+          },
+          {
+            "value": "month",
+            "label": "Month"
+          }
+        ],
+        "ariaLabel": "Period",
+        "value": {
+          "$bindState": "/tagselect-1/value"
+        }
+      },
+      "children": []
+    },
+    "variant-tagselect-1": {
+      "type": "FormField",
+      "props": {
+        "name": "tagselect-1",
+        "label": "Single"
+      },
+      "children": [
+        "tagselect-1"
+      ]
+    },
+    "tagselect-2": {
+      "type": "TagSelect",
+      "props": {
+        "multiple": true,
+        "options": [
+          {
+            "value": "email",
+            "label": "Email",
+            "icon": "mail-01"
+          },
+          {
+            "value": "sms",
+            "label": "SMS",
+            "count": 3
+          }
+        ],
+        "ariaLabel": "Channels",
+        "value": {
+          "$bindState": "/tagselect-2/value"
+        }
+      },
+      "children": []
+    },
+    "variant-tagselect-2": {
+      "type": "FormField",
+      "props": {
+        "name": "tagselect-2",
+        "label": "Multiple"
+      },
+      "children": [
+        "tagselect-2"
+      ]
+    },
+    "tagselect-3": {
+      "type": "TagSelect",
+      "props": {
+        "defaultValue": "a",
+        "disabled": true,
+        "options": [
+          {
+            "value": "a",
+            "label": "Alpha"
+          },
+          {
+            "value": "b",
+            "label": "Beta"
+          }
+        ],
+        "ariaLabel": "Disabled tags"
+      },
+      "children": []
+    },
+    "variant-tagselect-3": {
+      "type": "FormField",
+      "props": {
+        "name": "tagselect-3",
+        "label": "Disabled"
+      },
+      "children": [
+        "tagselect-3"
+      ]
+    },
+    "fragment-tagselect": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-tagselect-1",
+        "variant-tagselect-2",
+        "variant-tagselect-3"
+      ]
+    },
+    "card-tagselect": {
+      "type": "Card",
+      "props": {
+        "title": "TagSelect",
+        "description": "Checkable tags for one value or several."
+      },
+      "children": [
+        "fragment-tagselect"
+      ]
+    },
+    "rating-1": {
+      "type": "Rating",
+      "props": {
+        "ariaLabel": "Default rating",
+        "value": {
+          "$bindState": "/rating-1/value"
+        }
+      },
+      "children": []
+    },
+    "variant-rating-1": {
+      "type": "FormField",
+      "props": {
+        "name": "rating-1",
+        "label": "Default"
+      },
+      "children": [
+        "rating-1"
+      ]
+    },
+    "rating-2": {
+      "type": "Rating",
+      "props": {
+        "allowHalf": true,
+        "clearable": true,
+        "ariaLabel": "Half rating",
+        "value": {
+          "$bindState": "/rating-2/value"
+        }
+      },
+      "children": []
+    },
+    "variant-rating-2": {
+      "type": "FormField",
+      "props": {
+        "name": "rating-2",
+        "label": "Half steps"
+      },
+      "children": [
+        "rating-2"
+      ]
+    },
+    "rating-3": {
+      "type": "Rating",
+      "props": {
+        "defaultValue": 4.5,
+        "allowHalf": true,
+        "readonly": true,
+        "ariaLabel": "Readonly rating"
+      },
+      "children": []
+    },
+    "variant-rating-3": {
+      "type": "FormField",
+      "props": {
+        "name": "rating-3",
+        "label": "Readonly"
+      },
+      "children": [
+        "rating-3"
+      ]
+    },
+    "rating-4": {
+      "type": "Rating",
+      "props": {
+        "count": 8,
+        "icon": "favourite",
+        "tone": "brand",
+        "size": "sm",
+        "ariaLabel": "Heart rating",
+        "value": {
+          "$bindState": "/rating-4/value"
+        }
+      },
+      "children": []
+    },
+    "variant-rating-4": {
+      "type": "FormField",
+      "props": {
+        "name": "rating-4",
+        "label": "Hearts"
+      },
+      "children": [
+        "rating-4"
+      ]
+    },
+    "fragment-rating": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-rating-1",
+        "variant-rating-2",
+        "variant-rating-3",
+        "variant-rating-4"
+      ]
+    },
+    "card-rating": {
+      "type": "Card",
+      "props": {
+        "title": "Rating",
+        "description": "A score in stars or another icon, with half steps."
+      },
+      "children": [
+        "fragment-rating"
+      ]
+    },
+    "colorpicker-1": {
+      "type": "ColorPicker",
+      "props": {
+        "clearable": true,
+        "ariaLabel": "Default color",
+        "value": {
+          "$bindState": "/colorpicker-1/value"
+        }
+      },
+      "children": []
+    },
+    "variant-colorpicker-1": {
+      "type": "FormField",
+      "props": {
+        "name": "colorpicker-1",
+        "label": "Default"
+      },
+      "children": [
+        "colorpicker-1"
+      ]
+    },
+    "colorpicker-2": {
+      "type": "ColorPicker",
+      "props": {
+        "appearance": "filled",
+        "ariaLabel": "Filled color",
+        "value": {
+          "$bindState": "/colorpicker-2/value"
+        }
+      },
+      "children": []
+    },
+    "variant-colorpicker-2": {
+      "type": "FormField",
+      "props": {
+        "name": "colorpicker-2",
+        "label": "Filled"
+      },
+      "children": [
+        "colorpicker-2"
+      ]
+    },
+    "colorpicker-3": {
+      "type": "ColorPicker",
+      "props": {
+        "defaultValue": "#3b82f6",
+        "disabled": true,
+        "ariaLabel": "Disabled color"
+      },
+      "children": []
+    },
+    "variant-colorpicker-3": {
+      "type": "FormField",
+      "props": {
+        "name": "colorpicker-3",
+        "label": "Disabled"
+      },
+      "children": [
+        "colorpicker-3"
+      ]
+    },
+    "fragment-colorpicker": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-colorpicker-1",
+        "variant-colorpicker-2",
+        "variant-colorpicker-3"
+      ]
+    },
+    "card-colorpicker": {
+      "type": "Card",
+      "props": {
+        "title": "ColorPicker",
+        "description": "A hex color from a color area, hue strip, theme presets or a hex field."
+      },
+      "children": [
+        "fragment-colorpicker"
+      ]
+    },
+    "colorswatches-1": {
+      "type": "ColorSwatches",
+      "props": {
+        "swatches": [
+          { "value": "#2d5bff", "label": "Blue" },
+          { "value": "#7c3aed", "label": "Violet" },
+          { "value": "#0891b2", "label": "Cyan" },
+          { "value": "#16a34a", "label": "Green" },
+          { "value": "#ea580c", "label": "Orange" },
+          { "value": "#db2777", "label": "Pink" },
+          { "value": "#171717", "label": "Black" }
+        ],
+        "allowCustom": true,
+        "ariaLabel": "Accent color",
+        "value": {
+          "$bindState": "/colorswatches-1/value"
+        }
+      },
+      "children": []
+    },
+    "variant-colorswatches-1": {
+      "type": "FormField",
+      "props": {
+        "name": "colorswatches-1",
+        "label": "With a custom color"
+      },
+      "children": [
+        "colorswatches-1"
+      ]
+    },
+    "colorswatches-2": {
+      "type": "ColorSwatches",
+      "props": {
+        "swatches": [
+          { "value": "#fde68a", "label": "Butter" },
+          { "value": "#bbf7d0", "label": "Mint" },
+          { "value": "#bfdbfe", "label": "Sky" },
+          { "value": "#fbcfe8", "label": "Blush" },
+          { "value": "#ffffff", "label": "White" }
+        ],
+        "clearable": true,
+        "ariaLabel": "Highlight color",
+        "value": {
+          "$bindState": "/colorswatches-2/value"
+        }
+      },
+      "children": []
+    },
+    "variant-colorswatches-2": {
+      "type": "FormField",
+      "props": {
+        "name": "colorswatches-2",
+        "label": "Clearable"
+      },
+      "children": [
+        "colorswatches-2"
+      ]
+    },
+    "colorswatches-3": {
+      "type": "ColorSwatches",
+      "props": {
+        "swatches": ["#2d5bff", "#16a34a", "#ea580c", "#dc2626", "#71717a"],
+        "shape": "square",
+        "size": "sm",
+        "ariaLabel": "Label color",
+        "value": {
+          "$bindState": "/colorswatches-3/value"
+        }
+      },
+      "children": []
+    },
+    "variant-colorswatches-3": {
+      "type": "FormField",
+      "props": {
+        "name": "colorswatches-3",
+        "label": "Square, small"
+      },
+      "children": [
+        "colorswatches-3"
+      ]
+    },
+    "colorswatches-4": {
+      "type": "ColorSwatches",
+      "props": {
+        "swatches": ["#2d5bff", "#16a34a", "#ea580c", "#dc2626", "#71717a"],
+        "defaultValue": "#16a34a",
+        "disabled": true,
+        "ariaLabel": "Disabled color"
+      },
+      "children": []
+    },
+    "variant-colorswatches-4": {
+      "type": "FormField",
+      "props": {
+        "name": "colorswatches-4",
+        "label": "Disabled"
+      },
+      "children": [
+        "colorswatches-4"
+      ]
+    },
+    "fragment-colorswatches": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 280
+      },
+      "children": [
+        "variant-colorswatches-1",
+        "variant-colorswatches-2",
+        "variant-colorswatches-3",
+        "variant-colorswatches-4"
+      ]
+    },
+    "card-colorswatches": {
+      "type": "Card",
+      "props": {
+        "title": "ColorSwatches",
+        "description": "An inline palette: a radio group with an optional no-color swatch and a custom color."
+      },
+      "children": [
+        "fragment-colorswatches"
+      ]
+    },
+    "iconpicker-1": {
+      "type": "IconPicker",
+      "props": {
+        "clearable": true,
+        "ariaLabel": "Default icon",
+        "value": {
+          "$bindState": "/iconpicker-1/value"
+        }
+      },
+      "children": []
+    },
+    "variant-iconpicker-1": {
+      "type": "FormField",
+      "props": {
+        "name": "iconpicker-1",
+        "label": "Default"
+      },
+      "children": [
+        "iconpicker-1"
+      ]
+    },
+    "iconpicker-2": {
+      "type": "IconPicker",
+      "props": {
+        "appearance": "filled",
+        "ariaLabel": "Empty icon",
+        "value": {
+          "$bindState": "/iconpicker-2/value"
+        }
+      },
+      "children": []
+    },
+    "variant-iconpicker-2": {
+      "type": "FormField",
+      "props": {
+        "name": "iconpicker-2",
+        "label": "Empty"
+      },
+      "children": [
+        "iconpicker-2"
+      ]
+    },
+    "iconpicker-3": {
+      "type": "IconPicker",
+      "props": {
+        "defaultValue": "settings-01",
+        "disabled": true,
+        "ariaLabel": "Disabled icon"
+      },
+      "children": []
+    },
+    "variant-iconpicker-3": {
+      "type": "FormField",
+      "props": {
+        "name": "iconpicker-3",
+        "label": "Disabled"
+      },
+      "children": [
+        "iconpicker-3"
+      ]
+    },
+    "fragment-iconpicker": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-iconpicker-1",
+        "variant-iconpicker-2",
+        "variant-iconpicker-3"
+      ]
+    },
+    "card-iconpicker": {
+      "type": "Card",
+      "props": {
+        "title": "IconPicker",
+        "description": "A HugeIcons name from a searchable grid."
+      },
+      "children": [
+        "fragment-iconpicker"
+      ]
+    },
+    "variant-checkboxgroup-22": {
+      "type": "FormField",
+      "props": {
+        "name": "checkboxgroup-22",
+        "label": "Disabled"
+      },
+      "children": [
+        "checkboxgroup-22"
+      ]
+    },
+    "checkboxgroup-22": {
+      "type": "CheckboxGroup",
+      "props": {
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ],
+        "direction": "row",
+        "value": {
+          "$bindState": "/checkboxgroup-22/value"
+        },
+        "disabled": true,
+        "ariaLabel": "Disabled checkbox group"
+      },
+      "children": []
+    }
+  },
+  "state": {
+    "select-4": {
+      "value": "alpha"
+    },
+    "select-5": {
+      "value": "alpha"
+    },
+    "select-7": {
+      "value": "beta"
+    },
+    "multiselect-10": {
+      "value": [
+        "alpha"
+      ]
+    },
+    "multiselect-11": {
+      "value": [
+        "alpha",
+        "beta"
+      ]
+    },
+    "multiselect-12": {
+      "value": [
+        "alpha"
+      ]
+    },
+    "radiogroup-15": {
+      "value": "alpha"
+    },
+    "radiogroup-16": {
+      "value": "beta"
+    },
+    "radiogroup-17": {
+      "value": "alpha"
+    },
+    "checkboxgroup-20": {
+      "value": [
+        "alpha"
+      ]
+    },
+    "checkboxgroup-21": {
+      "value": [
+        "alpha",
+        "beta"
+      ]
+    },
+    "checkbox-24": {
+      "value": true
+    },
+    "checkbox-25": {
+      "value": false
+    },
+    "checkbox-26": {
+      "value": true
+    },
+    "switch-29": {
+      "value": true
+    },
+    "switch-30": {
+      "value": false
+    },
+    "switch-31": {
+      "value": true
+    },
+    "upload-34": {
+      "value": []
+    },
+    "upload-35": {
+      "value": []
+    },
+    "upload-36": {
+      "value": []
+    },
+    "slider-1": {
+      "value": 40
+    },
+    "slider-2": {
+      "value": [
+        20,
+        80
+      ]
+    },
+    "slider-3": {
+      "value": 50
+    },
+    "radiocards-1": {
+      "value": "team"
+    },
+    "radiocards-2": {
+      "value": "starter"
+    },
+    "radiocards-3": {
+      "value": "yearly"
+    },
+    "checkboxcards-1": {
+      "value": [
+        "backup"
+      ]
+    },
+    "checkboxcards-2": {
+      "value": []
+    },
+    "tagselect-1": {
+      "value": "week"
+    },
+    "tagselect-2": {
+      "value": [
+        "email"
+      ]
+    },
+    "rating-1": {
+      "value": 3
+    },
+    "rating-2": {
+      "value": 3.5
+    },
+    "rating-4": {
+      "value": 6
+    },
+    "colorpicker-1": {
+      "value": ""
+    },
+    "colorpicker-2": {
+      "value": "#2f9e44"
+    },
+    "colorswatches-1": {
+      "value": "#2d5bff"
+    },
+    "colorswatches-2": {
+      "value": ""
+    },
+    "colorswatches-3": {
+      "value": "#16a34a"
+    },
+    "iconpicker-1": {
+      "value": "home-01"
+    },
+    "iconpicker-2": {
+      "value": ""
+    },
+    "checkboxgroup-22": {
+      "value": [
+        "alpha"
+      ]
+    }
+  }
+}

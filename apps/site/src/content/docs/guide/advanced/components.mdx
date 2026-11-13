@@ -1,0 +1,293 @@
+---
+title: "自定义组件"
+description: "用 json-render 原生的 defineCatalog 和 defineRegistry 加自己的组件和动作：定义参数、写 React 实现、绑定状态、触发事件，并让校验工具认识它。"
+---
+
+内置组件不够用时，加自己的。一个组件分两半：
+
+| 部分 | 写在哪 | 内容 | 谁读它 |
+| --- | --- | --- | --- |
+| 定义 | Catalog（`catalog.ts`，不引入 React） | 参数的 zod 结构、插槽、事件、说明 | 渲染器、`lumi-check`、AI 助手 |
+| 实现 | Registry（React 代码） | 把参数画成界面 | 渲染器 |
+
+两半都用 json-render 原生的 API，Lumi 不另加注册方式。用 CDN 版后台、不打包时，改用扩展模块，写法相同，见 [组件和动作](/guide/extend-components/)。
+
+## 定义
+
+```ts
+// catalog.ts：这里不引入 React，Node 工具才能加载它
+import { lumiActionDefinitions, lumiComponentDefinitions } from '@duxweb/lumi/catalog'
+import { uiComponentDefinitions } from '@duxweb/lumi-ui/catalog'
+import { defineCatalog } from '@json-render/core'
+import { schema } from '@json-render/react/schema'
+import { z } from 'zod'
+
+// 自己的组件的定义
+export const ownComponents = {
+  StarScore: {
+    // 参数的结构：评分 0 到 5，可以只读
+    props: z.object({
+      label: z.string(),
+      value: z.number().int().min(0).max(5).optional(),
+      readOnly: z.boolean().optional(),
+    }),
+    // 没有子元素
+    slots: [],
+    // 会触发的事件，JSON 里用 on 接动作
+    events: ['change'],
+    // 给 lumi-check 和 AI 助手看的说明
+    description: 'Five-star rating input. Bind value with $bindState.',
+  },
+}
+
+// 完整的目录：内置组件加上自己的
+export const catalog = defineCatalog(schema, {
+  components: {
+    ...uiComponentDefinitions,
+    ...lumiComponentDefinitions,
+    ...ownComponents,
+  },
+  actions: lumiActionDefinitions,
+})
+```
+
+| 字段 | 说明 |
+| --- | --- |
+| `props` | 参数的 zod 结构。JSON 里写错类型、写了不存在的参数，校验时就会报出来。参数要能序列化：字符串、数字、布尔、数组、对象。 |
+| `slots` | 能放子元素的位置。`['default']` 表示可以有 `children`，`[]` 表示没有。 |
+| `events` | 组件会触发的事件名，JSON 用 `on` 接动作。 |
+| `description` | 一句话说明，给 `lumi-check catalog` 和 AI 助手看，写清楚用途和怎么绑定。 |
+
+## 实现
+
+```tsx
+// registry.tsx
+import { lumiRegistry } from '@duxweb/lumi'
+import { uiRegistry } from '@duxweb/lumi-ui'
+import { defineCatalog } from '@json-render/core'
+import { defineRegistry, useBoundProp } from '@json-render/react'
+import { schema } from '@json-render/react/schema'
+import { z } from 'zod'
+
+// 只含自己组件的目录，用来给实现推导参数类型
+const ownCatalog = defineCatalog(schema, {
+  components: {
+    StarScore: {
+      props: z.object({
+        label: z.string(),
+        value: z.number().optional(),
+        readOnly: z.boolean().optional(),
+      }),
+      slots: [],
+      events: ['change'],
+      description: 'Five-star rating input.',
+    },
+  },
+  actions: {},
+})
+
+// 组件的 React 实现
+const { registry: ownRegistry } = defineRegistry(ownCatalog, {
+  components: {
+    StarScore: ({ props, bindings, emit }) => {
+      // 读绑定的状态路径，并能写回去，和内置的输入控件一样
+      const [value, setValue] = useBoundProp<number>(props.value, bindings?.value)
+      return (
+        <div role="radiogroup" aria-label={props.label}>
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              key={star}
+              type="button"
+              aria-pressed={(value ?? 0) >= star}
+              disabled={props.readOnly}
+              // 点第几颗星就写回几，再触发 change 事件
+              onClick={() => {
+                setValue(star)
+                emit('change')
+              }}
+            >
+              ★
+            </button>
+          ))}
+        </div>
+      )
+    },
+  },
+})
+
+// 完整的 registry：内置实现加上自己的
+export const registry = { ...uiRegistry, ...lumiRegistry, ...ownRegistry }
+```
+
+实现函数收到的参数：
+
+| 参数 | 说明 |
+| --- | --- |
+| `props` | 已解析的参数：`$state`、`$t` 这些都已经换成了实际值。 |
+| `children` | 渲染好的子元素（定义了 `default` 插槽时）。 |
+| `slots` | 具名插槽渲染好的内容。 |
+| `emit(event)` | 触发事件，执行 JSON 里 `on` 写的动作。 |
+| `on(event)` | 拿到事件的详细信息，例如 JSON 里是否接了这个事件。 |
+| `bindings` | 用了 `$bindState` 的参数对应的状态路径，配合 `useBoundProp` 写回。 |
+| `loading` | 外层是否在加载。 |
+
+输入类组件一律用 `useBoundProp` 读写：值存在页面状态里，表单提交、校验、草稿都能直接用，组件内部不再保存一份。
+
+在 JSON 里使用：
+
+```jsonc
+{
+  "root": "score",
+  "state": { "review": { "score": 4 } },
+  "elements": {
+    "score": {
+      "type": "StarScore",
+      // 双向绑定到 /review/score
+      "props": { "label": "评分", "value": { "$bindState": "/review/score" } },
+      // 点击星星后触发 change
+      "on": {
+        "change": {
+          "action": "setState",
+          "params": { "statePath": "/review/touched", "value": true }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+### 用 Lumi 的组件和数据
+
+实现里可以直接用 Lumi UI 的 React 组件（`LumiCard`、`LumiTable`……）保持外观一致，也可以用 [数据 hooks](/guide/advanced/hooks/) 读写后端：
+
+```tsx
+import type { BaseComponentProps } from '@json-render/react'
+import { useList } from '@duxweb/lumi'
+import { LumiCard, LumiText } from '@duxweb/lumi-ui'
+
+// 组件的实现里直接用数据 hooks 和 Lumi UI 的组件
+export function OrderCount({ props }: BaseComponentProps<{ title: string }>) {
+  // 只要总数，所以每页取 1 条
+  const { data, isPending } = useList({
+    resource: 'orders',
+    pagination: { page: 1, pageSize: 1 },
+  })
+  return (
+    <LumiCard title={props.title}>
+      <LumiText text={isPending ? '…' : String(data?.total ?? 0)} />
+    </LumiCard>
+  )
+}
+```
+
+hooks 和 JSON 的 `Query` 共用一份缓存：JSON 里保存了订单，这个组件也会刷新。
+
+## 自定义动作
+
+动作是 JSON 里 `on` 能调用的函数。它也分两半：定义写进 Catalog 的 `actions`，实现作为 handler 传给 `LumiProvider`（后台里是扩展的 `handlers`）。
+
+```ts
+// catalog.ts
+import { z } from 'zod'
+
+// 动作的定义：写进 Catalog 的 actions
+export const ownActions = {
+  copyText: {
+    // 参数的结构
+    params: z.object({ text: z.string() }),
+    // 给 lumi-check 和 AI 助手看的说明
+    description: 'Copies text to the clipboard.',
+  },
+}
+```
+
+```tsx
+// App.tsx
+import type { Spec } from '@json-render/core'
+import { createLumi, LumiProvider, lumiRegistry } from '@duxweb/lumi'
+import { uiRegistry } from '@duxweb/lumi-ui'
+import { Renderer } from '@json-render/react'
+
+const context = createLumi()
+const registry = { ...uiRegistry, ...lumiRegistry }
+// 动作的实现：键名和定义里的一致
+const handlers = {
+  // params 已经解析好：$state 引用到这里就是它的值
+  copyText: async (params: Record<string, unknown>) => {
+    await navigator.clipboard.writeText(String(params.text))
+  },
+}
+
+// 把 handlers 交给 LumiProvider
+export function Page({ spec }: { spec: Spec }) {
+  return (
+    <LumiProvider
+      context={context}
+      registry={registry}
+      handlers={handlers}
+      initialState={spec.state}
+    >
+      <Renderer spec={spec} registry={registry} />
+    </LumiProvider>
+  )
+}
+```
+
+动作的规则：
+
+- 参数只能是可序列化的值和 `$state` 这类引用，不能传函数。
+- handler 抛错就是失败，页面会弹出错误提示。
+- 动作数组按顺序执行，前一个失败后面的就不再执行；但它**不是事务**，已经完成的不会回滚。
+- 不要和内置动作重名，`LumiProvider` 会直接报错。
+- 聚焦、滚动这类要操作 DOM 实例的事，留在组件实现里，不做成动作。
+
+## 让校验工具认识它
+
+`lumi-check` 在 Node 里运行，不装 React。所以定义必须放在单独的文件里，只从 `/catalog` 子路径导入：
+
+```sh
+# 用项目自己的目录校验页面
+npx -y @duxweb/lumi-check src/pages/home.json --catalog src/catalog.mjs
+```
+
+`create-lumi` 生成的项目已经这样分好了。加组件时定义写进 `catalog.mjs`，实现写进 registry，页面、校验和目录查询同时生效。渲染时把同一个 `catalog` 交给 [LumiSpecPage](/guide/advanced/react/#加载-json-页面)，页面加载时也按它校验。
+
+## 替换内置组件
+
+想换掉某个内置组件的实现（例如自己的上传组件），在合并时声明覆盖，避免无意中重名：
+
+```ts
+import { composeDefinitions, lumiComponentDefinitions } from '@duxweb/lumi/catalog'
+import { uiComponentDefinitions } from '@duxweb/lumi-ui/catalog'
+import { z } from 'zod'
+
+// 自己的 Upload，和内置组件同名
+const myUpload = {
+  Upload: {
+    props: z.object({ label: z.string() }),
+    slots: [],
+    events: ['change'],
+    description: 'Own upload.',
+  },
+}
+
+// 按顺序合并，后面的覆盖前面的
+export const components = composeDefinitions(
+  uiComponentDefinitions,
+  lumiComponentDefinitions,
+  myUpload,
+  {
+    // 声明要替换的名字；不写的话同名会报错
+    override: ['Upload'],
+  },
+)
+```
+
+不写 `override` 时同名直接报错；写了但其实没有重名，也报错。Registry 里同样用对象展开，后面的覆盖前面的。
+
+## 注意
+
+- 定义文件（`/catalog`）里不能引入 React，连类型也不行，否则命令行工具无法加载。
+- 组件不要自己保存一份可编辑的值，表单值在页面状态里。
+- 纯 UI 组件不发请求；要取数，写成数据组件（用 hooks）或在 JSON 里用 `Query` 传进来。

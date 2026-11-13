@@ -1,0 +1,89 @@
+---
+title: "notify"
+description: "显示一张通知卡片（Admin 里在右上角），有标题、说明和最多 3 个按钮，按钮执行 Catalog 里的动作后关闭；默认约 4.5 秒后关闭，duration 为 0 时一直显示。"
+---
+
+显示一张通知卡片（Admin 里在右上角），有标题、说明和最多 3 个按钮，按钮执行 Catalog 里的动作后关闭；默认约 4.5 秒后关闭，`duration` 为 0 时一直显示。
+
+## 用法
+
+### 只有文字的通知
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "导出" },
+      "on": {
+        // 点击按钮时执行
+        "press": {
+          "action": "notify",
+          "params": {
+            // 语义色：success、warning、danger、info、neutral
+            "tone": "info",
+            // 标题
+            "title": "导出完成",
+            // 说明文字
+            "description": "共 1,284 条订单"
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+### 带按钮的通知
+
+按钮写在 `actions` 里，每个按钮执行一个动作。`duration` 为 0 时通知一直留着，直到用户点按钮或关闭。
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "发布" },
+      "on": {
+        // 点击按钮时执行
+        "press": {
+          "action": "notify",
+          "params": {
+            // 之后可以用 closeNotice 按这个 key 关闭
+            "key": "published",
+            // 语义色：success、warning、danger、info、neutral
+            "tone": "success",
+            // 标题
+            "title": "订单已发布",
+            // 显示毫秒数；0 表示一直显示
+            "duration": 0,
+            // 点“查看”跳到订单列表，通知随之关闭
+            "actions": [
+              {
+                "label": "查看",
+                "action": "navigate",
+                "params": { "to": "/orders" }
+              }
+            ]
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| `key` | 通知的标识：同一个 `key` 原地更新，`closeNotice` 用它关闭。 | `string` |
+| `tone` | 语义色：`success`、`warning`、`danger`、`info`、`neutral`。 | `"neutral" \| "success" \| "info" \| "warning" \| "danger"` |
+| `title`（必填） | 标题。 | `string` |
+| `description` | 说明文字。 | `string` |
+| `actions` | 通知上的按钮，最多 3 个，每个 `{ label, action, params? }`；点击后执行这个动作并关闭通知。 | `object[]` |
+| `duration` | 显示毫秒数；0 表示一直显示。 | `integer` |

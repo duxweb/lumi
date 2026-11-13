@@ -1,0 +1,47 @@
+---
+title: "DescriptionList"
+description: "标签/值对。"
+---
+
+<ComponentPreview name="DescriptionList" />
+
+标签/值对。`grid` 铺成自适应的多列，标签在值上方；`rows` 标签和值并排，适合窄面板。`span: "full"` 的条目占满整行，长文字（如地址、备注）会换行。`bordered` 给整个列表加一个圆角边框，行间加细线，适合订单摘要或确认信息。
+
+## 示例
+
+```json
+{
+  "root": "descriptionlist-17",
+  "elements": {
+    "descriptionlist-17": {
+      "type": "DescriptionList",
+      "props": {
+        "items": [
+          { "label": "Name", "value": "Lumi" },
+          { "label": "Status", "value": "Ready" }
+        ]
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `items`（必填） | 字段列表，每项 `{ label, value }`。 字段：`label`、`value`、`span?` | `object[]` |  |
+| `layout` | `grid` 多列网格，`rows` 每行一项。 | `"grid" \| "rows"` | `"grid"` |
+| `bordered` | 加圆角外框和行间细线，适合卡片里的订单摘要等记录。 | `boolean` | `false` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

@@ -1,0 +1,50 @@
+---
+title: "ChangeDiff"
+description: "展示一次改动的内容。"
+---
+
+<ComponentPreview name="ChangeDiff" />
+
+展示一次改动的内容。`fields` 列出记录的修改：标签、修改前和修改后，标记为新增、删除或变更。`before` 和 `after` 逐行比较两段文本（如 Spec 或配置），以 CodeBlock 样式高亮新增和删除的行，并显示 +/− 计数。
+
+## 示例
+
+```json
+{
+  "root": "change-diff",
+  "elements": {
+    "change-diff": {
+      "type": "ChangeDiff",
+      "props": {
+        "title": "ORD-1024",
+        "fields": [
+          { "label": "Shipping", "before": "Standard", "after": "Express" },
+          { "label": "Note", "before": null, "after": "Gift wrap" }
+        ]
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `title` | 改动对象，如记录编号或文件名。 | `string` |  |
+| `fields` | 字段改动，每项 `{ label, before?, after?, kind? }`；`kind` 不填时按两侧是否有值推断为新增、删除或修改。 字段：`field?`、`label`、`before?`、`after?`、`kind?` | `object[]` |  |
+| `before` | 修改前的文本，与 `after` 逐行对比。 | `string` |  |
+| `after` | 修改后的文本。 | `string` |  |
+| `language` | 文本对比的高亮语言，同 CodeBlock，如 `json`。 | `string` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

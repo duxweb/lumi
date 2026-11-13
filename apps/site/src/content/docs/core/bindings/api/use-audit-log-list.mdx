@@ -1,0 +1,29 @@
+---
+title: "useAuditLogList"
+description: "useAuditLogList React hook 的签名、参数和返回值。"
+---
+
+The audit log of a resource or record, newest first, from the audit log
+provider. It refreshes after every write to the resource. Without a
+provider that lists, it stays empty and idle.
+
+```typescript
+useAuditLogList(input: UseAuditLogListOptions): UseQueryResult<{ data: AuditLogEntry[]; total?: number; }, Error>
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `input` | `UseAuditLogListOptions` | 是 |  |
+
+`input` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `dataProviderName` | `string \| undefined` | 否 | 多数据源名称；省略时使用 default。 |
+| `enabled` | `boolean \| undefined` | 否 | 是否允许自动执行查询。 |
+| `id` | `ID \| undefined` | 否 | One record's history; the whole resource's without it. |
+| `meta` | `Meta \| undefined` | 否 | 原样传给 DataProvider 的扩展数据。 |
+| `pagination` | `Pagination \| undefined` | 否 | 分页参数；传 false 关闭分页。 |
+| `resource` | `string` | 是 | 交给 DataProvider 解释的数据目标，如 `orders`。 |
+
+返回 `UseQueryResult<{ data: AuditLogEntry[]; total?: number; }, Error>`。

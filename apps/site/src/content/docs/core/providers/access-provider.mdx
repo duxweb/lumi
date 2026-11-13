@@ -1,0 +1,14 @@
+---
+title: "AccessProvider"
+description: "AccessProvider 接口的方法、参数和返回值。"
+---
+
+Permission / visibility provider
+
+```typescript
+interface AccessProvider
+```
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `can` | `(params: CanParams) => Promise<CanResponse>` | 是 | Answers whether the current reader may do `action` on `resource`. |

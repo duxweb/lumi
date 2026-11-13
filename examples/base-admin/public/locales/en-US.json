@@ -1,0 +1,7 @@
+{
+  "base.module.workspace": "Workspace",
+  "base.group.overview": "Overview",
+  "base.menu.home": "Home",
+  "base.menu.orders": "Orders",
+  "base.menu.report": "Report"
+}

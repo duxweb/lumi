@@ -1,0 +1,38 @@
+---
+title: "navigate"
+description: "跳转到一个明确的 Admin 地址。"
+---
+
+跳转到一个明确的 Admin 地址。
+
+## 用法
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "查看订单" },
+      "on": {
+        // 点击按钮时执行
+        "press": {
+          "action": "navigate",
+          "params": {
+            // 目标地址，如 /orders/12
+            "to": "/orders"
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| `to`（必填） | 目标地址，如 `/orders/12`。 | `string` |
+| `replace` | 替换当前历史记录，而不是新增一条。 | `boolean` |

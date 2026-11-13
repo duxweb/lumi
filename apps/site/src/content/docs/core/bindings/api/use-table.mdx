@@ -1,0 +1,47 @@
+---
+title: "useTable"
+description: "useTable React hook 的签名、参数和返回值。"
+---
+
+The state of a list page: page, page size, sorters, the rows of the current page and an optional aggregate. The JSON `ListPage` is built on it.
+
+```typescript
+useTable<T = any>(input: UseTableOptions): UseTableReturn<T>
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `input` | `UseTableOptions` | 是 |  |
+
+`input` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `aggregate` | `UseTableAggregateOptions \| undefined` | 否 | An endpoint answering totals for the same filters: `{ url, method?, totalKey? }`. |
+| `dataProviderName` | `string \| undefined` | 否 | 多数据源名称；省略时使用 default。 |
+| `filters` | `Filter[] \| undefined` | 否 | Conditions of the list; a change returns to the first page. |
+| `liveMode` | `LiveMode \| undefined` | 否 | Defaults to the context's `liveMode`, which is `auto` with a liveProvider. |
+| `meta` | `Record<string, unknown> \| undefined` | 否 | 原样传给 DataProvider 的扩展数据。 |
+| `onLiveEvent` | `((event: LiveEvent) => void) \| undefined` | 否 | Called for each event of the resource, in `auto` and `manual` mode. |
+| `pagination` | `{ pageSize?: number; } \| undefined` | 否 | The first page size, 10 by default; the table keeps page and size in its state from there. |
+| `resource` | `string` | 是 | The resource listed. |
+| `statePath` | `string \| undefined` | 否 | Where page, page size and sorters live in page state, so JSON elements can read them; a private path when left out. |
+| `syncWithLocation` | `string \| boolean \| undefined` | 否 | Keeps page, page size and sort in the address's query (`page`, `pageSize`, `sort=field:asc,field2:desc`), so a reload, a shared link and back/forward restore them. A string prefixes the parameter names, for several synced tables on one page. Needs the context's routerProvider. |
+
+返回 `UseTableReturn<T>`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `aggregate` | `TableAggregate \| undefined` | 否 | The aggregate's values, once they have loaded for the rows on screen. |
+| `aggregateQuery` | `UseQueryResult<{ data: TableAggregate; }, Error> \| undefined` | 否 | The aggregate request, when `aggregate` is set. |
+| `page` | `number` | 是 | The current page, counted from 1. |
+| `pageSize` | `number` | 是 | Records per page. |
+| `query` | `UseQueryResult<GetListResult<T>, Error>` | 是 | The `useList` result behind the rows, for loading and error states. |
+| `rows` | `T[]` | 是 | The records of the current page. |
+| `setPage` | `Dispatch<SetStateAction<number>>` | 是 | Moves to another page. |
+| `setPageSize` | `Dispatch<SetStateAction<number>>` | 是 | Changes the page size. |
+| `setSorters` | `Dispatch<SetStateAction<Sorter[]>>` | 是 | Changes the sort. |
+| `sorters` | `Sorter[]` | 是 | The current sort, one entry per column. |
+| `total` | `number` | 是 | How many records match, across all pages. |

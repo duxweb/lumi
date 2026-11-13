@@ -1,0 +1,36 @@
+---
+title: "useResourceLive"
+description: "useResourceLive React hook 的签名、参数和返回值。"
+---
+
+Keeps a resource's queries live (spread the returned meta into the query): in `auto` mode an event on
+`resources/{resource}` refetches them (lists, records and aggregates
+together, so a list and its stats stay one snapshot). With `ids`, events
+naming other records are ignored.
+
+```typescript
+useResourceLive(resource: string, dataProviderName: string | undefined, options?: LiveOptions & { ids?: readonly ID[]; enabled?: boolean; }): LiveQueryMeta
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `resource` | `string` | 是 | 交给 DataProvider 解释的数据目标，如 `orders`。 |
+| `dataProviderName` | `string \| undefined` | 是 | 多数据源名称；省略时使用 default。 |
+| `options` | `LiveOptions & { ids?: readonly ID[]; enabled?: boolean; }` | 否 |  |
+
+`options` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `enabled` | `boolean \| undefined` | 否 | 是否允许自动执行查询。 |
+| `ids` | `readonly ID[] \| undefined` | 否 | 记录主键数组。 |
+| `liveMode` | `LiveMode \| undefined` | 否 | Defaults to the context's `liveMode`, which is `auto` with a liveProvider. |
+| `onLiveEvent` | `((event: LiveEvent) => void) \| undefined` | 否 | Called for each event of the resource, in `auto` and `manual` mode. |
+
+返回 `LiveQueryMeta`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `lumiLive` | `LiveMode` | 是 |  |

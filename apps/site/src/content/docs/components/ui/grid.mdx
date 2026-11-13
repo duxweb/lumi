@@ -1,0 +1,174 @@
+---
+title: "Grid"
+description: "网格布局（1-6 列），与 json-render shadcn 的 Grid 兼容；自身宽度变窄时减少列数（每列至少 12rem），因此在抽屉、卡片和嵌入预览里也能用。"
+---
+
+<ComponentPreview name="Grid" />
+
+网格布局（1-6 列），与 json-render shadcn 的 Grid 兼容；自身宽度变窄时减少列数（每列至少 12rem），因此在抽屉、卡片和嵌入预览里也能用。`minColumnWidth`（px）改为按宽度放下尽可能多的列。`align: "stretch"` 让同一行的条目等高，如一排卡片。
+
+## 示例
+
+```json
+{
+  "root": "fragment-3",
+  "elements": {
+    "fragment-3": {
+      "type": "Grid",
+      "props": { "minColumnWidth": 190 },
+      "children": [
+        "variant-input-4",
+        "variant-input-5",
+        "variant-input-6",
+        "variant-input-7",
+        "variant-input-8",
+        "variant-input-9",
+        "variant-input-10",
+        "variant-inputmask-1"
+      ]
+    },
+    "variant-input-4": {
+      "type": "FormField",
+      "props": { "name": "input-4", "label": "Default" },
+      "children": ["input-4"]
+    },
+    "input-4": {
+      "type": "Input",
+      "props": {
+        "value": { "$bindState": "/input-4/value" },
+        "placeholder": "Name",
+        "ariaLabel": "Default input"
+      },
+      "children": []
+    },
+    "variant-input-5": {
+      "type": "FormField",
+      "props": { "name": "input-5", "label": "Small" },
+      "children": ["input-5"]
+    },
+    "input-5": {
+      "type": "Input",
+      "props": {
+        "placeholder": "Outline, small",
+        "size": "sm",
+        "ariaLabel": "Small input"
+      },
+      "children": []
+    },
+    "variant-input-6": {
+      "type": "FormField",
+      "props": { "name": "input-6", "label": "Filled · large" },
+      "children": ["input-6"]
+    },
+    "input-6": {
+      "type": "Input",
+      "props": {
+        "placeholder": "Filled, large",
+        "size": "lg",
+        "appearance": "filled",
+        "ariaLabel": "Filled large input"
+      },
+      "children": []
+    },
+    "variant-input-7": {
+      "type": "FormField",
+      "props": { "name": "input-7", "label": "Clearable" },
+      "children": ["input-7"]
+    },
+    "input-7": {
+      "type": "Input",
+      "props": {
+        "value": { "$bindState": "/input-7/value" },
+        "clearable": true,
+        "ariaLabel": "Clearable input"
+      },
+      "children": []
+    },
+    "variant-input-8": {
+      "type": "FormField",
+      "props": { "name": "input-8", "label": "Invalid" },
+      "children": ["input-8"]
+    },
+    "input-8": {
+      "type": "Input",
+      "props": {
+        "value": { "$bindState": "/input-8/value" },
+        "invalid": true,
+        "ariaLabel": "Invalid input"
+      },
+      "children": []
+    },
+    "variant-input-9": {
+      "type": "FormField",
+      "props": { "name": "input-9", "label": "Disabled" },
+      "children": ["input-9"]
+    },
+    "input-9": {
+      "type": "Input",
+      "props": {
+        "value": { "$bindState": "/input-9/value" },
+        "disabled": true,
+        "ariaLabel": "Disabled input"
+      },
+      "children": []
+    },
+    "variant-input-10": {
+      "type": "FormField",
+      "props": { "name": "input-10", "label": "Read only" },
+      "children": ["input-10"]
+    },
+    "input-10": {
+      "type": "Input",
+      "props": {
+        "value": { "$bindState": "/input-10/value" },
+        "readonly": true,
+        "ariaLabel": "Read only input"
+      },
+      "children": []
+    },
+    "variant-inputmask-1": {
+      "type": "FormField",
+      "props": { "name": "inputmask-1", "label": "Masked · phone" },
+      "children": ["inputmask-1"]
+    },
+    "inputmask-1": {
+      "type": "Input",
+      "props": {
+        "mask": "999 9999 9999",
+        "ariaLabel": "Phone",
+        "value": { "$bindState": "/inputmask-1/value" },
+        "placeholder": "138 0000 0000"
+      },
+      "children": []
+    }
+  },
+  "state": {
+    "input-4": { "value": "Lumi" },
+    "input-7": { "value": "Clearable" },
+    "input-8": { "value": "Invalid" },
+    "input-9": { "value": "Disabled" },
+    "input-10": { "value": "Read only" },
+    "inputmask-1": { "value": "" }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `columns` | 固定列数（1–6）。 | `integer \| null` |  |
+| `gap` | 格子之间的间距。 | `"sm" \| "md" \| "lg" \| "xl" \| null` |  |
+| `minColumnWidth` | 每列最小宽度（像素），按宽度自动决定列数。与 `columns` 二选一。 | `number \| null` |  |
+| `align` | `stretch` 让同一行的格子等高，适合一排卡片；默认 `start` 顶部对齐。 | `"start" \| "stretch" \| null` | `"start"` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：`default`

@@ -1,0 +1,61 @@
+---
+title: "Popconfirm"
+description: "在破坏性行内操作旁用小气泡问“确定吗？"
+---
+
+<ComponentPreview name="Popconfirm" />
+
+在破坏性行内操作旁用小气泡问“确定吗？”，不弹模态框。包住操作（`children`，如一个 Button），或由 `label`/`icon`/`appearance` 生成按钮。确认触发 `confirm`（在这里接上真正的动作），取消、按 Escape 或点击别处触发 `cancel`。`tone`（默认 `danger`）决定图标和确认按钮的颜色。焦点先移到 Cancel，关闭后回到触发元素。
+
+## 示例
+
+```json
+{
+  "root": "popconfirm-41",
+  "elements": {
+    "popconfirm-41": {
+      "type": "Popconfirm",
+      "props": {
+        "title": "Delete this order?",
+        "description": "The order and its invoices are removed.",
+        "confirmText": "Delete",
+        "cancelText": "Keep",
+        "label": "Delete order",
+        "appearance": "outline"
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `title`（必填） | 标题。 | `string` |  |
+| `description` | 标题下方的一行说明。 | `string \| null` |  |
+| `confirmText` | 确认按钮文字。 | `string \| null` |  |
+| `cancelText` | 取消按钮文字。 | `string \| null` |  |
+| `tone` | 语义色：`success` 成功，`warning` 警告，`danger` 危险，`info` 提示，`neutral` 中性。 | `"danger" \| "warning" \| "neutral" \| null` | `"neutral"` |
+| `side` | 气泡出现在触发元素的哪一侧。 | `"top" \| "right" \| "bottom" \| "left" \| null` | `"top"` |
+| `align` | 气泡相对触发元素的对齐方式。 | `"start" \| "center" \| "end" \| null` | `"center"` |
+| `open` | 是否打开。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `boolean \| null` |  |
+| `defaultOpen` | 初始是否打开，只在没有绑定 `open` 时生效。 | `boolean \| null` | `false` |
+| `disabled` | 禁用，不可操作。 | `boolean \| null` | `false` |
+| `label` | 显示的文字。 | `string \| null` |  |
+| `icon` | 图标名，来自内置 HugeIcons 图标集，如 `download`、`receipt`。 | `string \| null` |  |
+| `appearance` | 外观：`outline` 描边，`filled` 浅色填充。 | `"solid" \| "brand" \| "soft" \| "outline" \| "ghost" \| "danger" \| null` | `"outline"` |
+| `size` | 尺寸：`sm` 紧凑，`md` 标准，`lg` 宽松。 | `"sm" \| "md" \| "lg" \| null` | `"md"` |
+| `shape` | 内置触发按钮的形状。 | `"default" \| "pill" \| "circle" \| "square" \| null` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`confirm`、`cancel`、`openChange`
+- 插槽：`default`

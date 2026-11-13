@@ -1,0 +1,6452 @@
+{
+  "categories": [
+    {
+      "name": "basics",
+      "label": "Basics"
+    },
+    {
+      "name": "feedback",
+      "label": "Feedback"
+    },
+    {
+      "name": "surfaces",
+      "label": "Surfaces & navigation"
+    },
+    {
+      "name": "display",
+      "label": "Data display"
+    },
+    {
+      "name": "agent",
+      "label": "AI"
+    },
+    {
+      "name": "elements",
+      "label": "Form elements"
+    },
+    {
+      "name": "forms",
+      "label": "Form layouts"
+    },
+    {
+      "name": "pages",
+      "label": "Pages & boards"
+    }
+  ],
+  "components": [
+    {
+      "name": "Button",
+      "package": "@duxweb/lumi-ui",
+      "category": "basics",
+      "description": "Triggers an action in seven appearances, three sizes and four shapes",
+      "href": "/ui/buttons#appearances",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm",
+              "align": "center"
+            },
+            "children": [
+              "top",
+              "bottom"
+            ]
+          },
+          "top": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "sm"
+            },
+            "children": [
+              "save",
+              "publish"
+            ]
+          },
+          "bottom": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "sm"
+            },
+            "children": [
+              "cancel",
+              "skip",
+              "add"
+            ]
+          },
+          "save": {
+            "type": "Button",
+            "props": {
+              "label": "Save changes"
+            },
+            "children": []
+          },
+          "publish": {
+            "type": "Button",
+            "props": {
+              "label": "Publish",
+              "appearance": "brand",
+              "icon": "send"
+            },
+            "children": []
+          },
+          "cancel": {
+            "type": "Button",
+            "props": {
+              "label": "Cancel",
+              "appearance": "outline"
+            },
+            "children": []
+          },
+          "skip": {
+            "type": "Button",
+            "props": {
+              "label": "Skip",
+              "appearance": "ghost"
+            },
+            "children": []
+          },
+          "add": {
+            "type": "Button",
+            "props": {
+              "icon": "plus",
+              "appearance": "outline",
+              "shape": "square",
+              "aria-label": "Add"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Badge",
+      "package": "@duxweb/lumi-ui",
+      "category": "basics",
+      "description": "A short status or count in six tones and three appearances",
+      "href": "/ui/badges#solid-badges",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm",
+              "align": "center"
+            },
+            "children": [
+              "soft",
+              "solid"
+            ]
+          },
+          "soft": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "sm"
+            },
+            "children": [
+              "active",
+              "pending",
+              "failed"
+            ]
+          },
+          "solid": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "sm"
+            },
+            "children": [
+              "new",
+              "draft",
+              "featured"
+            ]
+          },
+          "active": {
+            "type": "Badge",
+            "props": {
+              "label": "Active",
+              "tone": "success"
+            },
+            "children": []
+          },
+          "pending": {
+            "type": "Badge",
+            "props": {
+              "label": "Pending",
+              "tone": "warning"
+            },
+            "children": []
+          },
+          "failed": {
+            "type": "Badge",
+            "props": {
+              "label": "Failed",
+              "tone": "danger"
+            },
+            "children": []
+          },
+          "new": {
+            "type": "Badge",
+            "props": {
+              "label": "New",
+              "tone": "info",
+              "appearance": "solid"
+            },
+            "children": []
+          },
+          "draft": {
+            "type": "Badge",
+            "props": {
+              "label": "Draft",
+              "tone": "neutral",
+              "appearance": "outline"
+            },
+            "children": []
+          },
+          "featured": {
+            "type": "Badge",
+            "props": {
+              "label": "Featured",
+              "tone": "brand",
+              "appearance": "solid"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Avatar",
+      "package": "@duxweb/lumi-ui",
+      "category": "basics",
+      "description": "A person as an image or initials, in four sizes, optionally named",
+      "href": "/ui/badges#avatars",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "md",
+              "align": "center"
+            },
+            "children": [
+              "sizes",
+              "named"
+            ]
+          },
+          "sizes": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "md",
+              "align": "center"
+            },
+            "children": [
+              "sm",
+              "md",
+              "lg",
+              "xl"
+            ]
+          },
+          "sm": {
+            "type": "Avatar",
+            "props": {
+              "name": "Ada Lovelace",
+              "size": "sm"
+            },
+            "children": []
+          },
+          "md": {
+            "type": "Avatar",
+            "props": {
+              "name": "Grace Hopper",
+              "size": "md"
+            },
+            "children": []
+          },
+          "lg": {
+            "type": "Avatar",
+            "props": {
+              "name": "Linus Berg",
+              "size": "lg"
+            },
+            "children": []
+          },
+          "xl": {
+            "type": "Avatar",
+            "props": {
+              "name": "Mina Park",
+              "size": "xl"
+            },
+            "children": []
+          },
+          "named": {
+            "type": "Avatar",
+            "props": {
+              "name": "Mina Park",
+              "description": "Product designer",
+              "showName": true
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "AvatarGroup",
+      "package": "@duxweb/lumi-ui",
+      "category": "basics",
+      "description": "Overlapping avatars for the people on a record, with a +N overflow",
+      "href": "/ui/badges#avatar-group",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "md",
+              "align": "center"
+            },
+            "children": [
+              "large",
+              "small"
+            ]
+          },
+          "large": {
+            "type": "AvatarGroup",
+            "props": {
+              "size": "lg",
+              "max": 4,
+              "items": [
+                {
+                  "name": "Ada Lovelace"
+                },
+                {
+                  "name": "Grace Hopper"
+                },
+                {
+                  "name": "Linus Berg"
+                },
+                {
+                  "name": "Mina Park"
+                },
+                {
+                  "name": "Omar Haddad"
+                },
+                {
+                  "name": "Sofia Rossi"
+                }
+              ]
+            },
+            "children": []
+          },
+          "small": {
+            "type": "AvatarGroup",
+            "props": {
+              "size": "sm",
+              "items": [
+                {
+                  "name": "Kai Chen"
+                },
+                {
+                  "name": "Lena Vogel"
+                },
+                {
+                  "name": "Ravi Shah"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Icon",
+      "package": "@duxweb/lumi-ui",
+      "category": "basics",
+      "description": "Any HugeIcons icon by name, in three sizes and seven tones",
+      "href": "/ui/badges#icons",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "md",
+              "align": "center"
+            },
+            "children": [
+              "first",
+              "second"
+            ]
+          },
+          "first": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "lg"
+            },
+            "children": [
+              "home",
+              "search",
+              "settings",
+              "bell",
+              "user"
+            ]
+          },
+          "second": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "lg"
+            },
+            "children": [
+              "check",
+              "alert",
+              "info",
+              "star",
+              "rocket"
+            ]
+          },
+          "home": {
+            "type": "Icon",
+            "props": {
+              "name": "home",
+              "size": "lg"
+            },
+            "children": []
+          },
+          "search": {
+            "type": "Icon",
+            "props": {
+              "name": "search",
+              "size": "lg"
+            },
+            "children": []
+          },
+          "settings": {
+            "type": "Icon",
+            "props": {
+              "name": "settings",
+              "size": "lg"
+            },
+            "children": []
+          },
+          "bell": {
+            "type": "Icon",
+            "props": {
+              "name": "bell",
+              "size": "lg"
+            },
+            "children": []
+          },
+          "user": {
+            "type": "Icon",
+            "props": {
+              "name": "user",
+              "size": "lg"
+            },
+            "children": []
+          },
+          "check": {
+            "type": "Icon",
+            "props": {
+              "name": "circle-check",
+              "size": "lg",
+              "tone": "success"
+            },
+            "children": []
+          },
+          "alert": {
+            "type": "Icon",
+            "props": {
+              "name": "triangle-alert",
+              "size": "lg",
+              "tone": "warning"
+            },
+            "children": []
+          },
+          "info": {
+            "type": "Icon",
+            "props": {
+              "name": "info",
+              "size": "lg",
+              "tone": "info"
+            },
+            "children": []
+          },
+          "star": {
+            "type": "Icon",
+            "props": {
+              "name": "star",
+              "size": "lg",
+              "tone": "brand"
+            },
+            "children": []
+          },
+          "rocket": {
+            "type": "Icon",
+            "props": {
+              "name": "rocket-01",
+              "size": "lg",
+              "tone": "danger"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Heading",
+      "package": "@duxweb/lumi-ui",
+      "category": "basics",
+      "description": "Section titles from h1 to h4 that lean on weight, not size",
+      "href": "/ui/typography#headings",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm"
+            },
+            "children": [
+              "h1",
+              "h3",
+              "body"
+            ]
+          },
+          "h1": {
+            "type": "Heading",
+            "props": {
+              "text": "Quarterly report",
+              "level": "h1"
+            },
+            "children": []
+          },
+          "h3": {
+            "type": "Heading",
+            "props": {
+              "text": "Highlights",
+              "level": "h3"
+            },
+            "children": []
+          },
+          "body": {
+            "type": "Text",
+            "props": {
+              "text": "Revenue grew 18% while costs held steady",
+              "variant": "muted"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Text",
+      "package": "@duxweb/lumi-ui",
+      "category": "basics",
+      "description": "Paragraphs at a readable measure: body, lead, muted, caption and code",
+      "href": "/ui/typography#text-variants",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm"
+            },
+            "children": [
+              "lead",
+              "body",
+              "muted",
+              "code"
+            ]
+          },
+          "lead": {
+            "type": "Text",
+            "props": {
+              "text": "Ship pages as JSON",
+              "variant": "lead"
+            },
+            "children": []
+          },
+          "body": {
+            "type": "Text",
+            "props": {
+              "text": "The renderer turns a native Spec into the page you see"
+            },
+            "children": []
+          },
+          "muted": {
+            "type": "Text",
+            "props": {
+              "text": "Updated two minutes ago",
+              "variant": "caption"
+            },
+            "children": []
+          },
+          "code": {
+            "type": "Text",
+            "props": {
+              "text": "$bindState",
+              "variant": "code"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Separator",
+      "package": "@duxweb/lumi-ui",
+      "category": "basics",
+      "description": "A single hairline between groups, horizontal or vertical",
+      "href": "/ui/typography#separators",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "md"
+            },
+            "children": [
+              "title",
+              "line",
+              "links"
+            ]
+          },
+          "title": {
+            "type": "Text",
+            "props": {
+              "text": "Account settings"
+            },
+            "children": []
+          },
+          "line": {
+            "type": "Separator",
+            "props": {},
+            "children": []
+          },
+          "links": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "md",
+              "align": "center"
+            },
+            "children": [
+              "docs",
+              "rule-1",
+              "api",
+              "rule-2",
+              "blog"
+            ]
+          },
+          "docs": {
+            "type": "Text",
+            "props": {
+              "text": "Docs",
+              "variant": "muted"
+            },
+            "children": []
+          },
+          "rule-1": {
+            "type": "Separator",
+            "props": {
+              "orientation": "vertical"
+            },
+            "children": []
+          },
+          "api": {
+            "type": "Text",
+            "props": {
+              "text": "API",
+              "variant": "muted"
+            },
+            "children": []
+          },
+          "rule-2": {
+            "type": "Separator",
+            "props": {
+              "orientation": "vertical"
+            },
+            "children": []
+          },
+          "blog": {
+            "type": "Text",
+            "props": {
+              "text": "Blog",
+              "variant": "muted"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "CodeBlock",
+      "package": "@duxweb/lumi-ui",
+      "category": "basics",
+      "description": "Read-only highlighted source with a file name, line numbers and copy",
+      "href": "/ui/code#languages",
+      "scale": 0.9,
+      "spec": {
+        "root": "code",
+        "elements": {
+          "code": {
+            "type": "CodeBlock",
+            "props": {
+              "title": "page.json",
+              "language": "json",
+              "showLineNumbers": true,
+              "copyable": false,
+              "code": "{\n  \"type\": \"Button\",\n  \"props\": { \"label\": \"Save\" },\n  \"on\": { \"press\": { \"action\": \"submit\" } }\n}"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "CodeEditor",
+      "package": "@duxweb/lumi-ui",
+      "category": "basics",
+      "description": "Edits source with highlighting, line numbers, brackets and undo",
+      "href": "/ui/code#editor",
+      "scale": 0.85,
+      "spec": {
+        "root": "editor",
+        "elements": {
+          "editor": {
+            "type": "CodeEditor",
+            "props": {
+              "ariaLabel": "Source",
+              "language": "typescript",
+              "showLineNumbers": true,
+              "minHeight": 96,
+              "maxHeight": 140,
+              "defaultValue": "export function total(lines: Line[]) {\n  return lines.reduce((sum, line) =>\n    sum + line.qty * line.price, 0)\n}"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Prose",
+      "package": "@duxweb/lumi-ui",
+      "category": "basics",
+      "description": "Typesets long-form content with one reading rhythm",
+      "href": "/ui/content#prose",
+      "scale": 0.9,
+      "spec": {
+        "root": "prose",
+        "elements": {
+          "prose": {
+            "type": "Prose",
+            "props": {
+              "size": "sm"
+            },
+            "children": [
+              "h",
+              "t"
+            ]
+          },
+          "h": {
+            "type": "Heading",
+            "props": {
+              "text": "Release notes",
+              "level": "h3"
+            },
+            "children": []
+          },
+          "t": {
+            "type": "Text",
+            "props": {
+              "text": "Orders now sync every five minutes and failed payments retry twice"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Markdown",
+      "package": "@duxweb/lumi-ui",
+      "category": "basics",
+      "description": "Renders Markdown with headings, task lists, tables and code",
+      "href": "/ui/content#markdown",
+      "scale": 0.9,
+      "spec": {
+        "root": "md",
+        "elements": {
+          "md": {
+            "type": "Markdown",
+            "props": {
+              "size": "sm",
+              "content": "### Checklist\n\n- [x] Connect payments\n- [ ] Invite the finance team\n\nSee the `webhook` guide"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Html",
+      "package": "@duxweb/lumi-ui",
+      "category": "basics",
+      "description": "Sanitizes and renders an HTML fragment from an editor",
+      "href": "/ui/content#html",
+      "scale": 0.9,
+      "spec": {
+        "root": "html",
+        "elements": {
+          "html": {
+            "type": "Html",
+            "props": {
+              "size": "sm",
+              "content": "<h3>Returns</h3><p>Within <strong>30 days</strong> of delivery</p><ul><li>Unused</li><li>With the order number</li></ul>"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Article",
+      "package": "@duxweb/lumi-admin",
+      "category": "basics",
+      "description": "A full article with byline, cover, body and table of contents",
+      "href": "/ui/content#article",
+      "scale": 0.6,
+      "spec": {
+        "root": "a",
+        "elements": {
+          "a": {
+            "type": "Article",
+            "props": {
+              "title": "Shipping faster with batch fulfilment",
+              "summary": "How the warehouse team cut dispatch time in half",
+              "author": {
+                "name": "Mia Chen",
+                "role": "Operations"
+              },
+              "publishedAt": "Nov 8, 2026",
+              "readingTime": "4 min read",
+              "tags": [
+                "Operations"
+              ],
+              "toc": false,
+              "content": "## Why batches\n\nPicking orders together shortens every route through the shelves"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Alert",
+      "package": "@duxweb/lumi-ui",
+      "category": "feedback",
+      "description": "A message inside the page in a semantic tone, optionally closable",
+      "href": "/ui/alerts#alerts",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm"
+            },
+            "children": [
+              "success",
+              "warning"
+            ]
+          },
+          "success": {
+            "type": "Alert",
+            "props": {
+              "tone": "success",
+              "title": "Changes saved",
+              "message": "Your product is live in every channel"
+            },
+            "children": []
+          },
+          "warning": {
+            "type": "Alert",
+            "props": {
+              "tone": "warning",
+              "message": "Stock is running low on two items"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Progress",
+      "package": "@duxweb/lumi-ui",
+      "category": "feedback",
+      "description": "A labelled bar from zero to max in five tones",
+      "href": "/ui/alerts#progress",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "md"
+            },
+            "children": [
+              "upload",
+              "storage",
+              "done"
+            ]
+          },
+          "upload": {
+            "type": "Progress",
+            "props": {
+              "label": "Uploading assets",
+              "value": 72,
+              "tone": "brand"
+            },
+            "children": []
+          },
+          "storage": {
+            "type": "Progress",
+            "props": {
+              "label": "Storage used",
+              "value": 40
+            },
+            "children": []
+          },
+          "done": {
+            "type": "Progress",
+            "props": {
+              "label": "Profile complete",
+              "value": 100,
+              "tone": "success"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "EmptyState",
+      "package": "@duxweb/lumi-admin",
+      "category": "feedback",
+      "description": "Why an area is empty or failed, and what to do next",
+      "href": "/ui/alerts#empty-states",
+      "scale": 0.85,
+      "spec": {
+        "root": "state",
+        "elements": {
+          "state": {
+            "type": "EmptyState",
+            "props": {
+              "kind": "error",
+              "compact": true,
+              "title": "Orders could not load",
+              "reason": "The service did not respond.",
+              "nextStep": "Retry in a moment.",
+              "actionLabel": "Retry"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Dialog",
+      "package": "@duxweb/lumi-ui",
+      "category": "feedback",
+      "description": "A modal panel for a focused task or a confirmation",
+      "href": "/ui/modals#dialogs",
+      "spec": {
+        "root": "column",
+        "elements": {
+          "column": {
+            "type": "Stack",
+            "props": {
+              "align": "center"
+            },
+            "children": [
+              "panel",
+              "dialog"
+            ]
+          },
+          "dialog": {
+            "type": "Dialog",
+            "props": {
+              "title": "Delete product?",
+              "tone": "danger",
+              "confirmText": "Delete",
+              "open": false
+            },
+            "children": []
+          },
+          "panel": {
+            "type": "Card",
+            "props": {
+              "title": "Delete product?",
+              "description": "It is removed from every channel"
+            },
+            "children": [
+              "actions"
+            ]
+          },
+          "actions": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "sm",
+              "justify": "end"
+            },
+            "children": [
+              "cancel",
+              "confirm"
+            ]
+          },
+          "cancel": {
+            "type": "Button",
+            "props": {
+              "label": "Cancel",
+              "appearance": "outline",
+              "size": "sm"
+            },
+            "children": []
+          },
+          "confirm": {
+            "type": "Button",
+            "props": {
+              "label": "Delete",
+              "appearance": "danger",
+              "size": "sm"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Drawer",
+      "package": "@duxweb/lumi-ui",
+      "category": "feedback",
+      "description": "A side panel that keeps the page in view, for details and edits",
+      "href": "/ui/modals#drawers",
+      "scale": 0.8,
+      "spec": {
+        "root": "split",
+        "elements": {
+          "split": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "md",
+              "align": "stretch"
+            },
+            "children": [
+              "page",
+              "panel",
+              "drawer"
+            ]
+          },
+          "drawer": {
+            "type": "Drawer",
+            "props": {
+              "title": "Edit customer",
+              "open": false
+            },
+            "children": []
+          },
+          "page": {
+            "type": "Skeleton",
+            "props": {
+              "variant": "text",
+              "lines": 6,
+              "width": "6rem",
+              "animated": false
+            },
+            "children": []
+          },
+          "panel": {
+            "type": "Card",
+            "props": {
+              "title": "Edit customer",
+              "description": "Changes save to the record"
+            },
+            "children": [
+              "name",
+              "actions"
+            ]
+          },
+          "name": {
+            "type": "FormField",
+            "props": {
+              "name": "name",
+              "label": "Name",
+              "value": "Ada Lovelace",
+              "size": "sm"
+            },
+            "children": []
+          },
+          "actions": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "sm",
+              "justify": "end"
+            },
+            "children": [
+              "cancel",
+              "save"
+            ]
+          },
+          "cancel": {
+            "type": "Button",
+            "props": {
+              "label": "Cancel",
+              "appearance": "outline",
+              "size": "sm"
+            },
+            "children": []
+          },
+          "save": {
+            "type": "Button",
+            "props": {
+              "label": "Save",
+              "size": "sm"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Skeleton",
+      "package": "@duxweb/lumi-ui",
+      "category": "feedback",
+      "description": "A placeholder in the shape of content that is still loading",
+      "href": "/ui/feedback-display#skeleton",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Card",
+            "props": {},
+            "children": [
+              "list",
+              "text"
+            ]
+          },
+          "list": {
+            "type": "Skeleton",
+            "props": {
+              "variant": "list-row",
+              "lines": 2,
+              "animated": false
+            },
+            "children": []
+          },
+          "text": {
+            "type": "Skeleton",
+            "props": {
+              "variant": "text",
+              "lines": 2,
+              "animated": false
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Spinner",
+      "package": "@duxweb/lumi-ui",
+      "category": "feedback",
+      "description": "An indeterminate indicator for a pending action, in three sizes",
+      "href": "/ui/feedback-display#spinner",
+      "spec": {
+        "root": "row",
+        "elements": {
+          "row": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "lg",
+              "align": "center"
+            },
+            "children": [
+              "sm",
+              "md",
+              "lg",
+              "label"
+            ]
+          },
+          "sm": {
+            "type": "Spinner",
+            "props": {
+              "size": "sm"
+            },
+            "children": []
+          },
+          "md": {
+            "type": "Spinner",
+            "props": {
+              "size": "md",
+              "tone": "brand"
+            },
+            "children": []
+          },
+          "lg": {
+            "type": "Spinner",
+            "props": {
+              "size": "lg",
+              "tone": "muted"
+            },
+            "children": []
+          },
+          "label": {
+            "type": "Spinner",
+            "props": {
+              "label": "Saving",
+              "showLabel": true
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Loading",
+      "package": "@duxweb/lumi-ui",
+      "category": "feedback",
+      "description": "A loading section: a spinner and text centred where content will be",
+      "href": "/ui/feedback-display#spinner",
+      "spec": {
+        "root": "loading",
+        "elements": {
+          "loading": {
+            "type": "Loading",
+            "props": {
+              "label": "Loading orders",
+              "description": "This usually takes a second",
+              "minHeight": 120
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Empty",
+      "package": "@duxweb/lumi-ui",
+      "category": "feedback",
+      "description": "An empty area: a glyph, why it is empty and what to do next",
+      "href": "/ui/feedback-display#empty",
+      "spec": {
+        "root": "empty",
+        "elements": {
+          "empty": {
+            "type": "Empty",
+            "props": {
+              "icon": "inbox",
+              "title": "No messages",
+              "description": "New messages appear here",
+              "size": "sm"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Tag",
+      "package": "@duxweb/lumi-ui",
+      "category": "feedback",
+      "description": "A compact label that can be closed, checked or carry an avatar",
+      "href": "/ui/feedback-display#tags",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm",
+              "align": "center"
+            },
+            "children": [
+              "first",
+              "second"
+            ]
+          },
+          "first": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "sm"
+            },
+            "children": [
+              "design",
+              "urgent",
+              "person"
+            ]
+          },
+          "second": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "sm"
+            },
+            "children": [
+              "closable",
+              "checked"
+            ]
+          },
+          "design": {
+            "type": "Tag",
+            "props": {
+              "label": "Design",
+              "tone": "brand"
+            },
+            "children": []
+          },
+          "urgent": {
+            "type": "Tag",
+            "props": {
+              "label": "Urgent",
+              "tone": "danger",
+              "dot": true
+            },
+            "children": []
+          },
+          "person": {
+            "type": "Tag",
+            "props": {
+              "label": "Ada",
+              "avatar": {
+                "name": "Ada Lovelace"
+              }
+            },
+            "children": []
+          },
+          "closable": {
+            "type": "Tag",
+            "props": {
+              "label": "Q3 report",
+              "closable": true
+            },
+            "children": []
+          },
+          "checked": {
+            "type": "Tag",
+            "props": {
+              "label": "Selected",
+              "checkable": true,
+              "checked": true
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "TagGroup",
+      "package": "@duxweb/lumi-ui",
+      "category": "feedback",
+      "description": "A row of tags bound to an array, removable or selectable",
+      "href": "/ui/feedback-display#tag-group",
+      "spec": {
+        "root": "row",
+        "elements": {
+          "row": {
+            "type": "Stack",
+            "props": {
+              "align": "center"
+            },
+            "children": [
+              "group"
+            ]
+          },
+          "group": {
+            "type": "TagGroup",
+            "props": {
+              "multiple": true,
+              "defaultValue": [
+                "design",
+                "sales"
+              ],
+              "options": [
+                {
+                  "label": "Design",
+                  "value": "design"
+                },
+                {
+                  "label": "Engineering",
+                  "value": "engineering"
+                },
+                {
+                  "label": "Marketing",
+                  "value": "marketing"
+                },
+                {
+                  "label": "Sales",
+                  "value": "sales"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Kbd",
+      "package": "@duxweb/lumi-ui",
+      "category": "feedback",
+      "description": "A keyboard shortcut as key chips, one key or a combination",
+      "href": "/ui/feedback-display#kbd",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm"
+            },
+            "children": [
+              "search",
+              "palette",
+              "save"
+            ]
+          },
+          "search": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "justify": "between",
+              "align": "center",
+              "gap": "lg"
+            },
+            "children": [
+              "search-label",
+              "search-keys"
+            ]
+          },
+          "search-label": {
+            "type": "Text",
+            "props": {
+              "text": "Search"
+            },
+            "children": []
+          },
+          "search-keys": {
+            "type": "Kbd",
+            "props": {
+              "keys": [
+                "⌘",
+                "K"
+              ]
+            },
+            "children": []
+          },
+          "palette": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "justify": "between",
+              "align": "center",
+              "gap": "lg"
+            },
+            "children": [
+              "palette-label",
+              "palette-keys"
+            ]
+          },
+          "palette-label": {
+            "type": "Text",
+            "props": {
+              "text": "Commands"
+            },
+            "children": []
+          },
+          "palette-keys": {
+            "type": "Kbd",
+            "props": {
+              "keys": [
+                "Ctrl",
+                "Shift",
+                "P"
+              ]
+            },
+            "children": []
+          },
+          "save": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "justify": "between",
+              "align": "center",
+              "gap": "lg"
+            },
+            "children": [
+              "save-label",
+              "save-keys"
+            ]
+          },
+          "save-label": {
+            "type": "Text",
+            "props": {
+              "text": "Save"
+            },
+            "children": []
+          },
+          "save-keys": {
+            "type": "Kbd",
+            "props": {
+              "keys": [
+                "⌘",
+                "S"
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ScrollArea",
+      "package": "@duxweb/lumi-ui",
+      "category": "feedback",
+      "description": "Scrolls its content in a fixed height with slim themed scrollbars",
+      "href": "/ui/feedback-display#scroll-area",
+      "spec": {
+        "root": "area",
+        "elements": {
+          "area": {
+            "type": "ScrollArea",
+            "props": {
+              "height": 132
+            },
+            "children": [
+              "list"
+            ]
+          },
+          "list": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm"
+            },
+            "children": [
+              "v1",
+              "v2",
+              "v3",
+              "v4",
+              "v5",
+              "v6",
+              "v7"
+            ]
+          },
+          "v1": {
+            "type": "Text",
+            "props": {
+              "text": "v2.6.0 · Code editor"
+            },
+            "children": []
+          },
+          "v2": {
+            "type": "Text",
+            "props": {
+              "text": "v2.5.0 · Kanban boards"
+            },
+            "children": []
+          },
+          "v3": {
+            "type": "Text",
+            "props": {
+              "text": "v2.4.0 · Schedule calendar"
+            },
+            "children": []
+          },
+          "v4": {
+            "type": "Text",
+            "props": {
+              "text": "v2.3.0 · Record picker"
+            },
+            "children": []
+          },
+          "v5": {
+            "type": "Text",
+            "props": {
+              "text": "v2.2.0 · Tree filter"
+            },
+            "children": []
+          },
+          "v6": {
+            "type": "Text",
+            "props": {
+              "text": "v2.1.0 · Color swatches"
+            },
+            "children": []
+          },
+          "v7": {
+            "type": "Text",
+            "props": {
+              "text": "v2.0.0 · Native Spec"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Calendar",
+      "package": "@duxweb/lumi-ui",
+      "category": "feedback",
+      "description": "An inline month with single, range or multiple selection and marks",
+      "href": "/ui/feedback-display#calendar",
+      "scale": 0.66,
+      "spec": {
+        "root": "calendar",
+        "elements": {
+          "calendar": {
+            "type": "Calendar",
+            "props": {
+              "mode": "range",
+              "month": "2026-02-01",
+              "defaultValue": [
+                "2026-02-09",
+                "2026-02-13"
+              ],
+              "marks": [
+                {
+                  "date": "2026-02-18",
+                  "tone": "brand"
+                },
+                {
+                  "date": "2026-02-24",
+                  "tone": "success"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Listbox",
+      "package": "@duxweb/lumi-ui",
+      "category": "feedback",
+      "description": "An always-open list of options with icons, descriptions and groups",
+      "href": "/ui/feedback-display#listbox",
+      "scale": 0.85,
+      "spec": {
+        "root": "list",
+        "elements": {
+          "list": {
+            "type": "Listbox",
+            "props": {
+              "ariaLabel": "Plan",
+              "defaultValue": "team",
+              "options": [
+                {
+                  "label": "Starter",
+                  "value": "starter",
+                  "icon": "user",
+                  "description": "One seat, core features"
+                },
+                {
+                  "label": "Team",
+                  "value": "team",
+                  "icon": "users",
+                  "description": "Up to 20 seats"
+                },
+                {
+                  "label": "Enterprise",
+                  "value": "enterprise",
+                  "icon": "building-03",
+                  "description": "SSO and audit logs"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Menu",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "A button that opens a list of commands with icons and shortcuts",
+      "href": "/ui/menus#menu",
+      "spec": {
+        "root": "column",
+        "elements": {
+          "column": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm",
+              "align": "start"
+            },
+            "children": [
+              "menu",
+              "panel"
+            ]
+          },
+          "menu": {
+            "type": "Menu",
+            "props": {
+              "label": "Actions",
+              "appearance": "outline",
+              "size": "sm",
+              "items": [
+                {
+                  "key": "edit",
+                  "label": "Edit"
+                }
+              ]
+            },
+            "children": []
+          },
+          "panel": {
+            "type": "Listbox",
+            "props": {
+              "ariaLabel": "Actions",
+              "options": [
+                {
+                  "label": "Edit",
+                  "value": "edit",
+                  "icon": "pencil-edit-02"
+                },
+                {
+                  "label": "Duplicate",
+                  "value": "duplicate",
+                  "icon": "copy-01"
+                },
+                {
+                  "label": "Archive",
+                  "value": "archive",
+                  "icon": "archive-02"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Tooltip",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "A short hint on hover and focus of a single child, such as an icon",
+      "href": "/ui/menus#tooltip",
+      "spec": {
+        "root": "column",
+        "elements": {
+          "column": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm",
+              "align": "center"
+            },
+            "children": [
+              "bubble",
+              "row"
+            ]
+          },
+          "bubble": {
+            "type": "Badge",
+            "props": {
+              "label": "Copy link",
+              "tone": "primary",
+              "appearance": "solid"
+            },
+            "children": []
+          },
+          "row": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "sm"
+            },
+            "children": [
+              "copy",
+              "share",
+              "more"
+            ]
+          },
+          "copy": {
+            "type": "Tooltip",
+            "props": {
+              "content": "Copy link"
+            },
+            "children": [
+              "copy-button"
+            ]
+          },
+          "copy-button": {
+            "type": "Button",
+            "props": {
+              "icon": "copy-01",
+              "appearance": "outline",
+              "shape": "square",
+              "aria-label": "Copy link"
+            },
+            "children": []
+          },
+          "share": {
+            "type": "Tooltip",
+            "props": {
+              "content": "Share"
+            },
+            "children": [
+              "share-button"
+            ]
+          },
+          "share-button": {
+            "type": "Button",
+            "props": {
+              "icon": "share-08",
+              "appearance": "ghost",
+              "shape": "square",
+              "aria-label": "Share"
+            },
+            "children": []
+          },
+          "more": {
+            "type": "Tooltip",
+            "props": {
+              "content": "More"
+            },
+            "children": [
+              "more-button"
+            ]
+          },
+          "more-button": {
+            "type": "Button",
+            "props": {
+              "icon": "more-horizontal",
+              "appearance": "ghost",
+              "shape": "square",
+              "aria-label": "More"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Accordion",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "Sections that fold open, one at a time or several",
+      "href": "/ui/menus#accordion",
+      "scale": 0.85,
+      "spec": {
+        "root": "accordion",
+        "elements": {
+          "accordion": {
+            "type": "Accordion",
+            "props": {
+              "defaultOpen": [
+                "shipping"
+              ],
+              "items": [
+                {
+                  "key": "shipping",
+                  "title": "Shipping",
+                  "content": "Orders ship within two working days"
+                },
+                {
+                  "key": "returns",
+                  "title": "Returns",
+                  "content": "Return any item within 30 days"
+                },
+                {
+                  "key": "warranty",
+                  "title": "Warranty",
+                  "content": "Two years on every product"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Popover",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "A floating panel anchored to a trigger, with any body and actions",
+      "href": "/ui/overlays-media#popover",
+      "spec": {
+        "root": "column",
+        "elements": {
+          "column": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm",
+              "align": "center"
+            },
+            "children": [
+              "popover",
+              "panel"
+            ]
+          },
+          "popover": {
+            "type": "Popover",
+            "props": {
+              "label": "Share",
+              "icon": "share-08",
+              "appearance": "outline",
+              "size": "sm",
+              "title": "Invite people"
+            },
+            "children": []
+          },
+          "panel": {
+            "type": "Card",
+            "props": {
+              "title": "Invite people",
+              "description": "They get edit access"
+            },
+            "children": [
+              "row"
+            ]
+          },
+          "row": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "sm"
+            },
+            "children": [
+              "email",
+              "invite"
+            ]
+          },
+          "email": {
+            "type": "Input",
+            "props": {
+              "placeholder": "name@company.com",
+              "size": "sm",
+              "ariaLabel": "Email"
+            },
+            "children": []
+          },
+          "invite": {
+            "type": "Button",
+            "props": {
+              "label": "Invite",
+              "size": "sm"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Popconfirm",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "An inline are-you-sure bubble beside a destructive action",
+      "href": "/ui/overlays-media#popconfirm",
+      "scale": 0.85,
+      "spec": {
+        "root": "column",
+        "elements": {
+          "column": {
+            "type": "Stack",
+            "props": {
+              "gap": "md",
+              "align": "center"
+            },
+            "children": [
+              "panel",
+              "trigger"
+            ]
+          },
+          "panel": {
+            "type": "Card",
+            "props": {
+              "title": "Remove this member?",
+              "description": "They lose access right away"
+            },
+            "children": [
+              "actions"
+            ]
+          },
+          "actions": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "sm",
+              "justify": "end"
+            },
+            "children": [
+              "keep",
+              "remove"
+            ]
+          },
+          "keep": {
+            "type": "Button",
+            "props": {
+              "label": "Keep",
+              "appearance": "outline",
+              "size": "sm"
+            },
+            "children": []
+          },
+          "remove": {
+            "type": "Button",
+            "props": {
+              "label": "Remove",
+              "appearance": "danger",
+              "size": "sm"
+            },
+            "children": []
+          },
+          "trigger": {
+            "type": "Popconfirm",
+            "props": {
+              "title": "Remove this member?",
+              "label": "Remove",
+              "icon": "delete-02",
+              "appearance": "ghost",
+              "size": "sm"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Image",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "An image in a fixed ratio with a shimmer, a fallback and a viewer",
+      "href": "/ui/overlays-media#image",
+      "spec": {
+        "root": "row",
+        "elements": {
+          "row": {
+            "type": "Grid",
+            "props": {
+              "minColumnWidth": 120,
+              "gap": "sm"
+            },
+            "children": [
+              "lake",
+              "forest"
+            ]
+          },
+          "lake": {
+            "type": "Image",
+            "props": {
+              "src": "/media/lake.svg",
+              "alt": "Lake",
+              "aspectRatio": "4/3",
+              "caption": "Lake at dawn"
+            },
+            "children": []
+          },
+          "forest": {
+            "type": "Image",
+            "props": {
+              "src": "/media/forest.svg",
+              "alt": "Forest",
+              "aspectRatio": "4/3",
+              "caption": "Pine forest"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Carousel",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "Slides on a snapping track with arrows and dots",
+      "href": "/ui/overlays-media#carousel",
+      "scale": 0.85,
+      "spec": {
+        "root": "carousel",
+        "elements": {
+          "carousel": {
+            "type": "Carousel",
+            "props": {
+              "aspectRatio": "21/9",
+              "items": [
+                {
+                  "url": "/media/dunes.svg",
+                  "alt": "Dunes",
+                  "title": "Dunes"
+                },
+                {
+                  "url": "/media/lake.svg",
+                  "alt": "Lake",
+                  "title": "Lake"
+                },
+                {
+                  "url": "/media/canyon.svg",
+                  "alt": "Canyon",
+                  "title": "Canyon"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Lightbox",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "A full-screen image viewer with zoom, paging and captions",
+      "href": "/ui/overlays-media#lightbox",
+      "spec": {
+        "root": "column",
+        "elements": {
+          "column": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm",
+              "align": "stretch"
+            },
+            "children": [
+              "grid",
+              "hint",
+              "viewer"
+            ]
+          },
+          "viewer": {
+            "type": "Lightbox",
+            "props": {
+              "open": false,
+              "items": [
+                {
+                  "url": "/media/night.svg",
+                  "alt": "Night"
+                },
+                {
+                  "url": "/media/canyon.svg",
+                  "alt": "Canyon"
+                },
+                {
+                  "url": "/media/dunes.svg",
+                  "alt": "Dunes"
+                }
+              ]
+            },
+            "children": []
+          },
+          "grid": {
+            "type": "Grid",
+            "props": {
+              "minColumnWidth": 72,
+              "gap": "sm"
+            },
+            "children": [
+              "one",
+              "two",
+              "three"
+            ]
+          },
+          "one": {
+            "type": "Image",
+            "props": {
+              "src": "/media/night.svg",
+              "alt": "Night",
+              "aspectRatio": "1/1",
+              "preview": true
+            },
+            "children": []
+          },
+          "two": {
+            "type": "Image",
+            "props": {
+              "src": "/media/canyon.svg",
+              "alt": "Canyon",
+              "aspectRatio": "1/1",
+              "preview": true
+            },
+            "children": []
+          },
+          "three": {
+            "type": "Image",
+            "props": {
+              "src": "/media/dunes.svg",
+              "alt": "Dunes",
+              "aspectRatio": "1/1",
+              "preview": true
+            },
+            "children": []
+          },
+          "hint": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "sm",
+              "align": "center",
+              "justify": "center"
+            },
+            "children": [
+              "keys",
+              "hint-text"
+            ]
+          },
+          "keys": {
+            "type": "Kbd",
+            "props": {
+              "keys": [
+                "←",
+                "→"
+              ],
+              "size": "sm"
+            },
+            "children": []
+          },
+          "hint-text": {
+            "type": "Text",
+            "props": {
+              "text": "Browse full screen",
+              "variant": "caption"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ImageGrid",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "Image tiles over a bound list; drag to reorder, the first is the cover",
+      "href": "/ui/overlays-media#image-grid",
+      "scale": 0.6,
+      "spec": {
+        "root": "grid",
+        "elements": {
+          "grid": {
+            "type": "ImageGrid",
+            "props": {
+              "ariaLabel": "Product images",
+              "defaultValue": [
+                {
+                  "url": "/media/canyon.svg",
+                  "alt": "Canyon"
+                },
+                {
+                  "url": "/media/lake.svg",
+                  "alt": "Lake"
+                },
+                {
+                  "url": "/media/forest.svg",
+                  "alt": "Forest"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Card",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "A surface with a title, an icon, header actions or a whole-card link",
+      "href": "/ui/cards#card",
+      "spec": {
+        "root": "card",
+        "elements": {
+          "card": {
+            "type": "Card",
+            "props": {
+              "title": "Billing",
+              "description": "Pro plan · renews Sep 1",
+              "icon": "credit-card"
+            },
+            "slots": {
+              "headerEnd": [
+                "manage"
+              ]
+            },
+            "children": [
+              "seats"
+            ]
+          },
+          "manage": {
+            "type": "Button",
+            "props": {
+              "label": "Manage",
+              "appearance": "outline",
+              "size": "sm"
+            },
+            "children": []
+          },
+          "seats": {
+            "type": "Progress",
+            "props": {
+              "label": "Seats used",
+              "value": 64
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Frame",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "A well with a header around an inner panel, made for data grids",
+      "href": "/ui/cards#frame",
+      "scale": 0.85,
+      "spec": {
+        "root": "frame",
+        "elements": {
+          "frame": {
+            "type": "Frame",
+            "props": {
+              "title": "Storage",
+              "summary": "12.4 of 20 GB"
+            },
+            "children": [
+              "usage"
+            ]
+          },
+          "usage": {
+            "type": "Progress",
+            "props": {
+              "label": "Files and media",
+              "value": 62,
+              "tone": "brand"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Example",
+      "package": "@duxweb/lumi-admin",
+      "category": "surfaces",
+      "description": "A documented example card with Preview and Code views and an anchor",
+      "href": "/ui/cards#card",
+      "scale": 0.85,
+      "spec": {
+        "root": "example",
+        "elements": {
+          "example": {
+            "type": "Example",
+            "props": {
+              "id": "overview-example",
+              "title": "Appearances",
+              "description": "Solid leads, outline follows"
+            },
+            "children": [
+              "row"
+            ]
+          },
+          "row": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "sm"
+            },
+            "children": [
+              "solid",
+              "outline"
+            ]
+          },
+          "solid": {
+            "type": "Button",
+            "props": {
+              "label": "Solid"
+            },
+            "children": []
+          },
+          "outline": {
+            "type": "Button",
+            "props": {
+              "label": "Outline",
+              "appearance": "outline"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "DashboardCard",
+      "package": "@duxweb/lumi-admin",
+      "category": "surfaces",
+      "description": "A dashboard panel with a title, a header action and a footer line",
+      "href": "/ui/cards#dashboard-card",
+      "scale": 0.75,
+      "spec": {
+        "root": "card",
+        "elements": {
+          "card": {
+            "type": "DashboardCard",
+            "props": {
+              "title": "Team load",
+              "description": "Open tasks per person"
+            },
+            "children": [
+              "load"
+            ]
+          },
+          "load": {
+            "type": "ProportionList",
+            "props": {
+              "ariaLabel": "Open tasks per person",
+              "items": [
+                {
+                  "key": "ada",
+                  "label": "Ada",
+                  "value": 12
+                },
+                {
+                  "key": "mina",
+                  "label": "Mina",
+                  "value": 9
+                },
+                {
+                  "key": "omar",
+                  "label": "Omar",
+                  "value": 5
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Stack",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "A flex row or column with a gap, alignment and wrapping",
+      "href": "/ui/cards#layout",
+      "spec": {
+        "root": "row",
+        "elements": {
+          "row": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm"
+            },
+            "children": [
+              "a",
+              "b",
+              "c"
+            ]
+          },
+          "a": {
+            "type": "Card",
+            "props": {
+              "title": "Header"
+            },
+            "children": []
+          },
+          "b": {
+            "type": "Card",
+            "props": {
+              "title": "Content"
+            },
+            "children": []
+          },
+          "c": {
+            "type": "Card",
+            "props": {
+              "title": "Footer"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Grid",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "Columns that drop as the container narrows, for cards and fields",
+      "href": "/ui/cards#layout",
+      "spec": {
+        "root": "grid",
+        "elements": {
+          "grid": {
+            "type": "Grid",
+            "props": {
+              "minColumnWidth": 80,
+              "gap": "sm"
+            },
+            "children": [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e",
+              "f"
+            ]
+          },
+          "a": {
+            "type": "Card",
+            "props": {
+              "title": "1"
+            },
+            "children": []
+          },
+          "b": {
+            "type": "Card",
+            "props": {
+              "title": "2"
+            },
+            "children": []
+          },
+          "c": {
+            "type": "Card",
+            "props": {
+              "title": "3"
+            },
+            "children": []
+          },
+          "d": {
+            "type": "Card",
+            "props": {
+              "title": "4"
+            },
+            "children": []
+          },
+          "e": {
+            "type": "Card",
+            "props": {
+              "title": "5"
+            },
+            "children": []
+          },
+          "f": {
+            "type": "Card",
+            "props": {
+              "title": "6"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Fragment",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "Groups children without a surface; split puts the last one aside",
+      "href": "/ui/cards#layout",
+      "spec": {
+        "root": "split",
+        "elements": {
+          "split": {
+            "type": "Fragment",
+            "props": {
+              "layout": "split",
+              "asideWidth": 104
+            },
+            "children": [
+              "main",
+              "aside"
+            ]
+          },
+          "main": {
+            "type": "Card",
+            "props": {
+              "title": "Main",
+              "description": "Fills the remaining width"
+            },
+            "children": []
+          },
+          "aside": {
+            "type": "Card",
+            "props": {
+              "title": "Aside",
+              "description": "Fixed width"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Tabs",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "Switches between sibling views in one place",
+      "href": "/ui/navigation#tabs",
+      "spec": {
+        "root": "tabs",
+        "elements": {
+          "tabs": {
+            "type": "Tabs",
+            "props": {
+              "defaultValue": "overview",
+              "items": [
+                {
+                  "label": "Overview",
+                  "value": "overview",
+                  "content": "Sales rose 18% this quarter, led by new accounts"
+                },
+                {
+                  "label": "Activity",
+                  "value": "activity"
+                },
+                {
+                  "label": "Settings",
+                  "value": "settings"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Segmented",
+      "package": "@duxweb/lumi-admin",
+      "category": "surfaces",
+      "description": "A small set of exclusive views of the same data",
+      "href": "/ui/navigation#segmented",
+      "spec": {
+        "root": "column",
+        "elements": {
+          "column": {
+            "type": "Stack",
+            "props": {
+              "gap": "md",
+              "align": "center"
+            },
+            "children": [
+              "period",
+              "view"
+            ]
+          },
+          "period": {
+            "type": "Segmented",
+            "props": {
+              "ariaLabel": "Period",
+              "value": "week",
+              "options": [
+                {
+                  "value": "day",
+                  "label": "Day"
+                },
+                {
+                  "value": "week",
+                  "label": "Week"
+                },
+                {
+                  "value": "month",
+                  "label": "Month"
+                }
+              ]
+            },
+            "children": []
+          },
+          "view": {
+            "type": "Segmented",
+            "props": {
+              "ariaLabel": "View",
+              "value": "board",
+              "options": [
+                {
+                  "value": "list",
+                  "label": "List"
+                },
+                {
+                  "value": "board",
+                  "label": "Board"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Stepper",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "Progress through ordered steps, optionally clickable",
+      "href": "/ui/navigation#stepper",
+      "spec": {
+        "root": "stepper",
+        "elements": {
+          "stepper": {
+            "type": "Stepper",
+            "props": {
+              "value": "details",
+              "items": [
+                {
+                  "key": "account",
+                  "label": "Account",
+                  "status": "complete"
+                },
+                {
+                  "key": "details",
+                  "label": "Details",
+                  "status": "current"
+                },
+                {
+                  "key": "review",
+                  "label": "Review",
+                  "status": "upcoming"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Breadcrumb",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "The path to the current page; long paths collapse in the middle",
+      "href": "/ui/navigation#breadcrumb",
+      "spec": {
+        "root": "column",
+        "elements": {
+          "column": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm",
+              "align": "center"
+            },
+            "children": [
+              "path",
+              "title"
+            ]
+          },
+          "path": {
+            "type": "Breadcrumb",
+            "props": {
+              "items": [
+                {
+                  "key": "home",
+                  "label": "Home",
+                  "icon": "home"
+                },
+                {
+                  "key": "products",
+                  "label": "Products"
+                },
+                {
+                  "key": "lamp",
+                  "label": "Aurora lamp"
+                }
+              ]
+            },
+            "children": []
+          },
+          "title": {
+            "type": "Heading",
+            "props": {
+              "text": "Aurora lamp",
+              "level": "h3"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Pagination",
+      "package": "@duxweb/lumi-ui",
+      "category": "surfaces",
+      "description": "Moves through pages of a list, with a total and page size",
+      "href": "/ui/navigation#pagination",
+      "spec": {
+        "root": "pages",
+        "elements": {
+          "pages": {
+            "type": "Pagination",
+            "props": {
+              "page": 3,
+              "pageSize": 10,
+              "total": 120
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Table",
+      "package": "@duxweb/lumi-ui",
+      "category": "display",
+      "description": "Rows and columns with typed cells, sorting, selection and totals",
+      "href": "/ui/tables#column-kinds",
+      "scale": 0.85,
+      "spec": {
+        "root": "table",
+        "elements": {
+          "table": {
+            "type": "Table",
+            "props": {
+              "rowKey": "id",
+              "columns": [
+                {
+                  "field": "name",
+                  "label": "Product"
+                },
+                {
+                  "field": "status",
+                  "label": "Status",
+                  "kind": "badge",
+                  "toneMap": {
+                    "Active": "success",
+                    "Draft": "warning"
+                  }
+                },
+                {
+                  "field": "price",
+                  "label": "Price",
+                  "kind": "currency",
+                  "currency": "USD",
+                  "align": "right"
+                }
+              ],
+              "rows": [
+                {
+                  "id": 1,
+                  "name": "Aurora lamp",
+                  "status": "Active",
+                  "price": 48
+                },
+                {
+                  "id": 2,
+                  "name": "Nimbus chair",
+                  "status": "Draft",
+                  "price": 219
+                },
+                {
+                  "id": 3,
+                  "name": "Orbit clock",
+                  "status": "Active",
+                  "price": 32
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "DescriptionList",
+      "package": "@duxweb/lumi-ui",
+      "category": "display",
+      "description": "Label and value pairs in responsive columns or rows",
+      "href": "/ui/tables#description-list",
+      "spec": {
+        "root": "list",
+        "elements": {
+          "list": {
+            "type": "DescriptionList",
+            "props": {
+              "layout": "rows",
+              "items": [
+                {
+                  "label": "Order",
+                  "value": "#1042"
+                },
+                {
+                  "label": "Customer",
+                  "value": "Ada Lovelace"
+                },
+                {
+                  "label": "Status",
+                  "value": "Paid"
+                },
+                {
+                  "label": "Total",
+                  "value": "$248.00"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Filters",
+      "package": "@duxweb/lumi-ui",
+      "category": "display",
+      "description": "Controlled list filters: search, chips and advanced conditions",
+      "href": "/ui/tables#filters",
+      "scale": 0.8,
+      "spec": {
+        "root": "filters",
+        "elements": {
+          "filters": {
+            "type": "Filters",
+            "props": {
+              "applyMode": "immediate",
+              "defaultValue": {
+                "status": "active"
+              },
+              "schema": {
+                "fields": [
+                  {
+                    "field": "q",
+                    "label": "Search",
+                    "widget": "search",
+                    "placeholder": "Search orders…",
+                    "primary": true
+                  },
+                  {
+                    "field": "status",
+                    "label": "Status",
+                    "widget": "chips",
+                    "primary": true,
+                    "options": [
+                      {
+                        "label": "Active",
+                        "value": "active"
+                      },
+                      {
+                        "label": "Paused",
+                        "value": "paused"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Timeline",
+      "package": "@duxweb/lumi-ui",
+      "category": "display",
+      "description": "Events in order on one rule, each with a time and a status",
+      "href": "/ui/lists#timeline",
+      "spec": {
+        "root": "timeline",
+        "elements": {
+          "timeline": {
+            "type": "Timeline",
+            "props": {
+              "items": [
+                {
+                  "key": "placed",
+                  "title": "Order placed",
+                  "timestamp": "09:12",
+                  "status": "complete"
+                },
+                {
+                  "key": "packed",
+                  "title": "Packed",
+                  "timestamp": "11:40",
+                  "status": "complete"
+                },
+                {
+                  "key": "shipped",
+                  "title": "Out for delivery",
+                  "timestamp": "14:05",
+                  "status": "current"
+                },
+                {
+                  "key": "delivered",
+                  "title": "Delivered",
+                  "status": "upcoming"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ActivityFeed",
+      "package": "@duxweb/lumi-ui",
+      "category": "display",
+      "description": "Who did what, newest first, with context and a status",
+      "href": "/ui/lists#activity-feed",
+      "spec": {
+        "root": "feed",
+        "elements": {
+          "feed": {
+            "type": "ActivityFeed",
+            "props": {
+              "items": [
+                {
+                  "key": "1",
+                  "actor": "Mina Park",
+                  "action": "moved",
+                  "target": "Pricing review",
+                  "context": "Launch board",
+                  "timestamp": "2m"
+                },
+                {
+                  "key": "2",
+                  "actor": "Omar Haddad",
+                  "action": "commented on",
+                  "target": "Q3 report",
+                  "status": {
+                    "label": "Open",
+                    "tone": "info"
+                  },
+                  "timestamp": "1h"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "AuditLog",
+      "package": "@duxweb/lumi-admin",
+      "category": "display",
+      "description": "A record's change history from the audit log: who changed what, and when",
+      "href": "/products/5",
+      "spec": {
+        "root": "feed",
+        "elements": {
+          "feed": {
+            "type": "ActivityFeed",
+            "props": {
+              "items": [
+                {
+                  "key": "2",
+                  "actor": "Ada Admin",
+                  "action": "updated",
+                  "target": "price, status",
+                  "timestamp": "Aug 10, 8:02 AM"
+                },
+                {
+                  "key": "1",
+                  "actor": "Ada Admin",
+                  "action": "created",
+                  "target": "#5",
+                  "timestamp": "Aug 10, 8:01 AM"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "RecordList",
+      "package": "@duxweb/lumi-admin",
+      "category": "display",
+      "description": "Compact record rows with a status and a figure, for side panels",
+      "href": "/ui/lists#record-list",
+      "scale": 0.85,
+      "spec": {
+        "root": "list",
+        "elements": {
+          "list": {
+            "type": "RecordList",
+            "props": {
+              "items": [
+                {
+                  "key": "1",
+                  "title": "Aurora lamp",
+                  "description": "SKU-2041",
+                  "status": {
+                    "label": "Low",
+                    "tone": "warning"
+                  },
+                  "value": "4 left"
+                },
+                {
+                  "key": "2",
+                  "title": "Nimbus chair",
+                  "description": "SKU-1180",
+                  "status": {
+                    "label": "OK",
+                    "tone": "success"
+                  },
+                  "value": "38"
+                },
+                {
+                  "key": "3",
+                  "title": "Orbit clock",
+                  "description": "SKU-0932",
+                  "status": {
+                    "label": "OK",
+                    "tone": "success"
+                  },
+                  "value": "112"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ProportionList",
+      "package": "@duxweb/lumi-admin",
+      "category": "display",
+      "description": "A ranking with readings and shares over thin bars",
+      "href": "/ui/lists#proportions",
+      "scale": 0.8,
+      "spec": {
+        "root": "list",
+        "elements": {
+          "list": {
+            "type": "ProportionList",
+            "props": {
+              "ariaLabel": "Orders by channel",
+              "showShare": true,
+              "items": [
+                {
+                  "key": "web",
+                  "label": "Web store",
+                  "value": 4820
+                },
+                {
+                  "key": "app",
+                  "label": "Mobile app",
+                  "value": 3110
+                },
+                {
+                  "key": "retail",
+                  "label": "Retail",
+                  "value": 1460
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Pipeline",
+      "package": "@duxweb/lumi-admin",
+      "category": "display",
+      "description": "One population split across ordered stages in a single bar",
+      "href": "/ui/lists#pipeline",
+      "scale": 0.75,
+      "spec": {
+        "root": "pipeline",
+        "elements": {
+          "pipeline": {
+            "type": "Pipeline",
+            "props": {
+              "ariaLabel": "Orders by status",
+              "stages": [
+                {
+                  "key": "new",
+                  "label": "New",
+                  "value": 18,
+                  "tone": "info"
+                },
+                {
+                  "key": "paid",
+                  "label": "Paid",
+                  "value": 26,
+                  "tone": "success"
+                },
+                {
+                  "key": "packed",
+                  "label": "Packed",
+                  "value": 11,
+                  "tone": "warning"
+                },
+                {
+                  "key": "late",
+                  "label": "Late",
+                  "value": 4,
+                  "tone": "danger"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Chart",
+      "package": "@duxweb/lumi-ui",
+      "category": "display",
+      "description": "Area, line, bar and donut charts with an accessible data table",
+      "href": "/ui/charts",
+      "spec": {
+        "root": "chart",
+        "elements": {
+          "chart": {
+            "type": "Chart",
+            "props": {
+              "type": "area",
+              "height": 150,
+              "ariaLabel": "Weekly visits",
+              "points": [
+                {
+                  "label": "Mon",
+                  "value": 18
+                },
+                {
+                  "label": "Tue",
+                  "value": 32
+                },
+                {
+                  "label": "Wed",
+                  "value": 24
+                },
+                {
+                  "label": "Thu",
+                  "value": 48
+                },
+                {
+                  "label": "Fri",
+                  "value": 39
+                },
+                {
+                  "label": "Sat",
+                  "value": 52
+                },
+                {
+                  "label": "Sun",
+                  "value": 44
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "BarChart",
+      "package": "@duxweb/lumi-admin",
+      "category": "display",
+      "description": "Columns for a handful of days or categories, with a hover reading",
+      "href": "/ui/stats",
+      "scale": 0.7,
+      "spec": {
+        "root": "chart",
+        "elements": {
+          "chart": {
+            "type": "BarChart",
+            "props": {
+              "ariaLabel": "Orders by weekday",
+              "highlight": "thu",
+              "points": [
+                {
+                  "key": "mon",
+                  "label": "Mon",
+                  "value": 18
+                },
+                {
+                  "key": "tue",
+                  "label": "Tue",
+                  "value": 32
+                },
+                {
+                  "key": "wed",
+                  "label": "Wed",
+                  "value": 24
+                },
+                {
+                  "key": "thu",
+                  "label": "Thu",
+                  "value": 48
+                },
+                {
+                  "key": "fri",
+                  "label": "Fri",
+                  "value": 39
+                },
+                {
+                  "key": "sat",
+                  "label": "Sat",
+                  "value": 21
+                },
+                {
+                  "key": "sun",
+                  "label": "Sun",
+                  "value": 15
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "FunnelChart",
+      "package": "@duxweb/lumi-admin",
+      "category": "display",
+      "description": "A conversion funnel of ordered stages as tapering bands",
+      "href": "/ui/stats",
+      "scale": 0.6,
+      "spec": {
+        "root": "funnel",
+        "elements": {
+          "funnel": {
+            "type": "FunnelChart",
+            "props": {
+              "ariaLabel": "Checkout conversion",
+              "stages": [
+                {
+                  "key": "visits",
+                  "label": "Visits",
+                  "value": 12000
+                },
+                {
+                  "key": "carts",
+                  "label": "Carts",
+                  "value": 4200
+                },
+                {
+                  "key": "checkout",
+                  "label": "Checkout",
+                  "value": 1900
+                },
+                {
+                  "key": "paid",
+                  "label": "Paid",
+                  "value": 1250
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "MatrixChart",
+      "package": "@duxweb/lumi-admin",
+      "category": "display",
+      "description": "A dot-matrix trend for a daily series, with a list of values",
+      "href": "/ui/stats",
+      "scale": 0.85,
+      "spec": {
+        "root": "matrix",
+        "elements": {
+          "matrix": {
+            "type": "MatrixChart",
+            "props": {
+              "ariaLabel": "Daily sign-ups",
+              "rows": 4,
+              "labelEvery": 7,
+              "points": [
+                {
+                  "key": "d1",
+                  "label": "1",
+                  "value": 3
+                },
+                {
+                  "key": "d2",
+                  "label": "2",
+                  "value": 5
+                },
+                {
+                  "key": "d3",
+                  "label": "3",
+                  "value": 2
+                },
+                {
+                  "key": "d4",
+                  "label": "4",
+                  "value": 7
+                },
+                {
+                  "key": "d5",
+                  "label": "5",
+                  "value": 6
+                },
+                {
+                  "key": "d6",
+                  "label": "6",
+                  "value": 4
+                },
+                {
+                  "key": "d7",
+                  "label": "7",
+                  "value": 8
+                },
+                {
+                  "key": "d8",
+                  "label": "8",
+                  "value": 5
+                },
+                {
+                  "key": "d9",
+                  "label": "9",
+                  "value": 9
+                },
+                {
+                  "key": "d10",
+                  "label": "10",
+                  "value": 6
+                },
+                {
+                  "key": "d11",
+                  "label": "11",
+                  "value": 3
+                },
+                {
+                  "key": "d12",
+                  "label": "12",
+                  "value": 7
+                },
+                {
+                  "key": "d13",
+                  "label": "13",
+                  "value": 8
+                },
+                {
+                  "key": "d14",
+                  "label": "14",
+                  "value": 10
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "MetricCard",
+      "package": "@duxweb/lumi-admin",
+      "category": "display",
+      "description": "A headline figure with a unit, a change chip and a sparkline",
+      "href": "/ui/stats",
+      "scale": 0.85,
+      "spec": {
+        "root": "metric",
+        "elements": {
+          "metric": {
+            "type": "MetricCard",
+            "props": {
+              "label": "Revenue",
+              "value": "48.2k",
+              "unit": "USD",
+              "icon": "chart-line",
+              "change": "+12%",
+              "tone": "success",
+              "series": [
+                12,
+                18,
+                15,
+                22,
+                26,
+                24,
+                31
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "StatStrip",
+      "package": "@duxweb/lumi-admin",
+      "category": "display",
+      "description": "Totals above a table, from the same snapshot as its rows",
+      "href": "/ui/stats",
+      "scale": 0.55,
+      "spec": {
+        "root": "strip",
+        "elements": {
+          "strip": {
+            "type": "StatStrip",
+            "props": {
+              "items": [
+                {
+                  "key": "orders",
+                  "label": "Orders",
+                  "value": "1,284",
+                  "change": "+8%",
+                  "tone": "success"
+                },
+                {
+                  "key": "revenue",
+                  "label": "Revenue",
+                  "value": "$48.2k",
+                  "change": "+12%",
+                  "tone": "success"
+                },
+                {
+                  "key": "refunds",
+                  "label": "Refunds",
+                  "value": "23",
+                  "change": "-4%",
+                  "tone": "danger"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ChatThread",
+      "package": "@duxweb/lumi-ui",
+      "category": "agent",
+      "description": "A conversation of agent messages that keeps the newest in view",
+      "href": "/ui/ai#chat-thread",
+      "scale": 0.7,
+      "spec": {
+        "root": "thread",
+        "elements": {
+          "thread": {
+            "type": "ChatThread",
+            "props": {
+              "ariaLabel": "Conversation",
+              "maxHeight": 240,
+              "messages": [
+                {
+                  "id": "u1",
+                  "role": "user",
+                  "parts": [
+                    {
+                      "type": "text",
+                      "text": "Which orders need attention today?"
+                    }
+                  ]
+                },
+                {
+                  "id": "a1",
+                  "role": "assistant",
+                  "parts": [
+                    {
+                      "type": "text",
+                      "text": "Three paid orders have waited over **24 hours** to ship, all from the Chengdu warehouse"
+                    }
+                  ]
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "PromptInput",
+      "package": "@duxweb/lumi-ui",
+      "category": "agent",
+      "description": "The message box of a chat, with attachments, context and a model",
+      "href": "/ui/ai#prompt-input",
+      "scale": 0.85,
+      "spec": {
+        "root": "prompt",
+        "elements": {
+          "prompt": {
+            "type": "PromptInput",
+            "props": {
+              "ariaLabel": "Message",
+              "value": "Summarise this week's refunds",
+              "attachable": true,
+              "mentionable": true,
+              "attachments": [
+                {
+                  "id": "sales",
+                  "name": "sales-august.csv",
+                  "mediaType": "text/csv",
+                  "size": 18432
+                }
+              ],
+              "model": "auto",
+              "models": [
+                {
+                  "label": "Auto",
+                  "value": "auto"
+                },
+                {
+                  "label": "Fast",
+                  "value": "fast"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ChatMessage",
+      "package": "@duxweb/lumi-ui",
+      "category": "agent",
+      "description": "One message: a user bubble, or an answer with sources and actions",
+      "href": "/ui/ai#chat-message",
+      "scale": 0.8,
+      "spec": {
+        "root": "message",
+        "elements": {
+          "message": {
+            "type": "ChatMessage",
+            "props": {
+              "id": "answer",
+              "role": "assistant",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Yes. It was delivered **6 days ago**, inside the 14-day window [1]"
+                },
+                {
+                  "type": "source",
+                  "sourceId": "policy",
+                  "title": "Refund policy",
+                  "kind": "document"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "MessageActions",
+      "package": "@duxweb/lumi-ui",
+      "category": "agent",
+      "description": "Copy, regenerate and rate an answer",
+      "href": "/ui/ai#message-actions",
+      "spec": {
+        "root": "row",
+        "elements": {
+          "row": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm",
+              "align": "center"
+            },
+            "children": [
+              "answer",
+              "actions"
+            ]
+          },
+          "answer": {
+            "type": "Text",
+            "props": {
+              "text": "Refund approved for ORD-01042"
+            },
+            "children": []
+          },
+          "actions": {
+            "type": "MessageActions",
+            "props": {
+              "text": "Refund approved for ORD-01042"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Thinking",
+      "package": "@duxweb/lumi-ui",
+      "category": "agent",
+      "description": "A working pill with the phase and time, folding out its steps",
+      "href": "/ui/ai#thinking",
+      "spec": {
+        "root": "thinking",
+        "elements": {
+          "thinking": {
+            "type": "Thinking",
+            "props": {
+              "state": "done",
+              "duration": 3800,
+              "open": true,
+              "steps": [
+                {
+                  "label": "Filtered paid orders unshipped for a day",
+                  "status": "done"
+                },
+                {
+                  "label": "Checked the warehouse of each order",
+                  "status": "done"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ToolCall",
+      "package": "@duxweb/lumi-ui",
+      "category": "agent",
+      "description": "A tool the agent called, its status, time, input and output",
+      "href": "/ui/ai#tool-call",
+      "spec": {
+        "root": "calls",
+        "elements": {
+          "calls": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm"
+            },
+            "children": [
+              "search",
+              "track"
+            ]
+          },
+          "search": {
+            "type": "ToolCall",
+            "props": {
+              "toolName": "orders.search",
+              "title": "Search orders",
+              "icon": "search",
+              "status": "success",
+              "duration": 640,
+              "input": {
+                "status": "paid"
+              }
+            },
+            "children": []
+          },
+          "track": {
+            "type": "ToolCall",
+            "props": {
+              "toolName": "courier.track",
+              "title": "Track parcel",
+              "icon": "package",
+              "status": "running",
+              "input": {
+                "tracking": "SF1234567890"
+              }
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Approval",
+      "package": "@duxweb/lumi-ui",
+      "category": "agent",
+      "description": "Asks before a registered action runs, with the items it affects",
+      "href": "/ui/ai#approval",
+      "scale": 0.68,
+      "spec": {
+        "root": "approval",
+        "elements": {
+          "approval": {
+            "type": "Approval",
+            "props": {
+              "title": "Send shipping reminders",
+              "description": "Only the warehouse is notified",
+              "action": "orders.remind",
+              "status": "pending",
+              "selected": [
+                "ORD-00017",
+                "ORD-00020"
+              ],
+              "items": [
+                {
+                  "id": "ORD-00017",
+                  "label": "ORD-00017",
+                  "description": "Chengdu"
+                },
+                {
+                  "id": "ORD-00020",
+                  "label": "ORD-00020",
+                  "description": "Chengdu"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "AgentQuestion",
+      "package": "@duxweb/lumi-ui",
+      "category": "agent",
+      "description": "A question the agent asks before it goes on, answered with a choice or a line of text",
+      "href": "/ui/ai#agent-question",
+      "scale": 0.8,
+      "spec": {
+        "root": "question",
+        "elements": {
+          "question": {
+            "type": "AgentQuestion",
+            "props": {
+              "title": "Which courier should ship it",
+              "status": "pending",
+              "options": [
+                {
+                  "value": "sf",
+                  "label": "SF Express",
+                  "description": "Next day"
+                },
+                {
+                  "value": "ems",
+                  "label": "EMS",
+                  "description": "2 to 3 days"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "AgentMentionPicker",
+      "package": "@duxweb/lumi-ui",
+      "category": "agent",
+      "description": "Search and pick orders, articles or customers to reference with @",
+      "href": "/ui/ai#agent-mention-picker",
+      "scale": 0.7,
+      "spec": {
+        "root": "picker",
+        "elements": {
+          "picker": {
+            "type": "AgentMentionPicker",
+            "props": {
+              "types": [
+                {
+                  "value": "orders",
+                  "label": "Orders",
+                  "icon": "shopping-bag-01"
+                },
+                {
+                  "value": "articles",
+                  "label": "Articles",
+                  "icon": "news"
+                },
+                {
+                  "value": "customers",
+                  "label": "Customers",
+                  "icon": "user"
+                }
+              ],
+              "options": [
+                {
+                  "value": 17,
+                  "label": "ORD-00017",
+                  "description": "Blue Pine Retail",
+                  "type": "orders"
+                },
+                {
+                  "value": 20,
+                  "label": "ORD-00020",
+                  "description": "Orchid Supply",
+                  "type": "orders"
+                },
+                {
+                  "value": 3,
+                  "label": "Shipping rules for the holidays",
+                  "description": "Avery Chen",
+                  "type": "articles"
+                },
+                {
+                  "value": 1,
+                  "label": "Northwind Studio",
+                  "description": "ops@northwind.test",
+                  "type": "customers"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "AgentSessionList",
+      "package": "@duxweb/lumi-ui",
+      "category": "agent",
+      "description": "Past conversations with a status dot before each title",
+      "href": "/ui/ai#agent-session-list",
+      "scale": 0.75,
+      "spec": {
+        "root": "sessions",
+        "elements": {
+          "sessions": {
+            "type": "AgentSessionList",
+            "props": {
+              "sessions": [
+                {
+                  "id": "s1",
+                  "title": "Unshipped Chengdu orders",
+                  "preview": "Approve the reminders to notify the warehouse",
+                  "time": "14:20",
+                  "status": "waiting",
+                  "group": "Today"
+                },
+                {
+                  "id": "s2",
+                  "title": "Refund spike this week",
+                  "preview": "Checking the courier notes",
+                  "time": "13:05",
+                  "status": "running",
+                  "group": "Today"
+                },
+                {
+                  "id": "s3",
+                  "title": "August sales report",
+                  "preview": "Revenue grew 12% on returning customers",
+                  "time": "Yesterday",
+                  "group": "Earlier"
+                }
+              ],
+              "value": "s1"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "AgentPlan",
+      "package": "@duxweb/lumi-ui",
+      "category": "agent",
+      "description": "The steps an agent intends to take, with their progress",
+      "href": "/ui/ai#agent-plan",
+      "scale": 0.85,
+      "spec": {
+        "root": "plan",
+        "elements": {
+          "plan": {
+            "type": "AgentPlan",
+            "props": {
+              "title": "Build a low-stock alert page",
+              "steps": [
+                {
+                  "id": "read",
+                  "label": "Read inventory thresholds",
+                  "status": "done"
+                },
+                {
+                  "id": "draft",
+                  "label": "Draft the page Spec",
+                  "status": "done"
+                },
+                {
+                  "id": "check",
+                  "label": "Check it against the Catalog",
+                  "status": "running"
+                },
+                {
+                  "id": "menu",
+                  "label": "Add a menu entry",
+                  "status": "pending"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ChangeDiff",
+      "package": "@duxweb/lumi-ui",
+      "category": "agent",
+      "description": "What a change does: field edits, or two texts line by line",
+      "href": "/ui/ai#change-diff",
+      "scale": 0.85,
+      "spec": {
+        "root": "diff",
+        "elements": {
+          "diff": {
+            "type": "ChangeDiff",
+            "props": {
+              "title": "ORD-00020",
+              "fields": [
+                {
+                  "field": "shipping",
+                  "label": "Shipping",
+                  "before": "Standard",
+                  "after": "Express"
+                },
+                {
+                  "field": "priority",
+                  "label": "Priority",
+                  "before": "Normal",
+                  "after": "High"
+                },
+                {
+                  "field": "note",
+                  "label": "Note",
+                  "after": "Customer asked for faster delivery"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ContextChips",
+      "package": "@duxweb/lumi-ui",
+      "category": "agent",
+      "description": "What the agent can see: the page, attached items and token use",
+      "href": "/ui/ai#context-chips",
+      "spec": {
+        "root": "context",
+        "elements": {
+          "context": {
+            "type": "ContextChips",
+            "props": {
+              "viewing": "Order detail · 1",
+              "shared": true,
+              "items": [
+                {
+                  "id": "customer",
+                  "label": "Avery Chen",
+                  "kind": "record",
+                  "icon": "user"
+                },
+                {
+                  "id": "selection",
+                  "label": "3 selected rows",
+                  "kind": "selection"
+                }
+              ],
+              "usage": {
+                "used": 104000,
+                "limit": 128000,
+                "unit": "tokens"
+              }
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Form",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Groups fields, tracks validation and fires a submit event",
+      "href": "/forms/controls-plus",
+      "scale": 0.8,
+      "spec": {
+        "root": "form",
+        "elements": {
+          "form": {
+            "type": "Form",
+            "props": {},
+            "children": [
+              "name",
+              "email",
+              "submit"
+            ]
+          },
+          "name": {
+            "type": "FormField",
+            "props": {
+              "name": "name",
+              "label": "Name",
+              "value": "Ada Lovelace",
+              "required": true
+            },
+            "children": []
+          },
+          "email": {
+            "type": "FormField",
+            "props": {
+              "name": "email",
+              "label": "Email",
+              "value": "ada@lumi.dev",
+              "type": "email"
+            },
+            "children": []
+          },
+          "submit": {
+            "type": "Button",
+            "props": {
+              "label": "Create account",
+              "type": "submit"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "FormField",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "One labelled field with its control, help and error",
+      "href": "/forms/elements#validation",
+      "scale": 0.85,
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "md"
+            },
+            "children": [
+              "username",
+              "plan"
+            ]
+          },
+          "username": {
+            "type": "FormField",
+            "props": {
+              "name": "username",
+              "label": "Username",
+              "required": true,
+              "value": "ada",
+              "invalid": true,
+              "error": "That username is taken."
+            },
+            "children": []
+          },
+          "plan": {
+            "type": "FormField",
+            "props": {
+              "name": "plan",
+              "label": "Plan",
+              "fieldType": "enum",
+              "widget": "Select",
+              "value": "team",
+              "options": [
+                {
+                  "label": "Team",
+                  "value": "team"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Input",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Single-line text with prefix, suffix, clear button and masks",
+      "href": "/forms/elements#elements",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm"
+            },
+            "children": [
+              "name",
+              "site",
+              "search"
+            ]
+          },
+          "name": {
+            "type": "Input",
+            "props": {
+              "ariaLabel": "Name",
+              "value": "Ada Lovelace",
+              "clearable": true
+            },
+            "children": []
+          },
+          "site": {
+            "type": "Input",
+            "props": {
+              "ariaLabel": "Website",
+              "prefix": "https://",
+              "value": "lumi.dev"
+            },
+            "children": []
+          },
+          "search": {
+            "type": "Input",
+            "props": {
+              "ariaLabel": "Search",
+              "appearance": "filled",
+              "placeholder": "Search…"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Textarea",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Multi-line text that can grow with its content",
+      "href": "/forms/elements#appearance",
+      "spec": {
+        "root": "field",
+        "elements": {
+          "field": {
+            "type": "FormField",
+            "props": {
+              "name": "notes",
+              "label": "Notes",
+              "fieldType": "text",
+              "widget": "Textarea",
+              "rows": 3,
+              "value": "Ship the lamp in recycled packaging.\nLeave at the front desk."
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "RichText",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Markdown entry with a formatting toolbar and a preview",
+      "href": "/forms/elements#rich-text",
+      "scale": 0.85,
+      "spec": {
+        "root": "editor",
+        "elements": {
+          "editor": {
+            "type": "RichText",
+            "props": {
+              "ariaLabel": "Release notes",
+              "rows": 4,
+              "defaultValue": "## Release notes\n\n- Ships **markdown**\n- And `code`"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "NumberInput",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Numbers with bounds, steps, precision and units",
+      "href": "/forms/elements#elements",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm"
+            },
+            "children": [
+              "qty",
+              "price"
+            ]
+          },
+          "qty": {
+            "type": "NumberInput",
+            "props": {
+              "ariaLabel": "Quantity",
+              "value": 3,
+              "min": 1
+            },
+            "children": []
+          },
+          "price": {
+            "type": "NumberInput",
+            "props": {
+              "ariaLabel": "Price",
+              "value": 19.9,
+              "precision": 2,
+              "prefix": "$"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Select",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Picks one option, with search, clearing and remote options",
+      "href": "/forms/elements#elements",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm"
+            },
+            "children": [
+              "country",
+              "status"
+            ]
+          },
+          "country": {
+            "type": "Select",
+            "props": {
+              "ariaLabel": "Country",
+              "value": "jp",
+              "clearable": true,
+              "options": [
+                {
+                  "label": "Japan",
+                  "value": "jp"
+                },
+                {
+                  "label": "Germany",
+                  "value": "de"
+                }
+              ]
+            },
+            "children": []
+          },
+          "status": {
+            "type": "Select",
+            "props": {
+              "ariaLabel": "Status",
+              "appearance": "filled",
+              "placeholder": "Choose a status",
+              "options": [
+                {
+                  "label": "Active",
+                  "value": "active"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "MultiSelect",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Picks several options shown as chips in the trigger",
+      "href": "/forms/elements#elements",
+      "spec": {
+        "root": "select",
+        "elements": {
+          "select": {
+            "type": "MultiSelect",
+            "props": {
+              "ariaLabel": "Channels",
+              "value": [
+                "web",
+                "app",
+                "retail"
+              ],
+              "options": [
+                {
+                  "label": "Web",
+                  "value": "web"
+                },
+                {
+                  "label": "App",
+                  "value": "app"
+                },
+                {
+                  "label": "Retail",
+                  "value": "retail"
+                },
+                {
+                  "label": "Partners",
+                  "value": "partners"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Cascader",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "A path through a tree, one column per level",
+      "href": "/forms/async-tree#cascader",
+      "spec": {
+        "root": "cascader",
+        "elements": {
+          "cascader": {
+            "type": "Cascader",
+            "props": {
+              "ariaLabel": "Region",
+              "value": [
+                "asia",
+                "japan",
+                "tokyo"
+              ],
+              "options": [
+                {
+                  "label": "Asia",
+                  "value": "asia",
+                  "children": [
+                    {
+                      "label": "Japan",
+                      "value": "japan",
+                      "children": [
+                        {
+                          "label": "Tokyo",
+                          "value": "tokyo"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Checkbox",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "A single on or off choice with a label",
+      "href": "/forms/elements#elements",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm"
+            },
+            "children": [
+              "updates",
+              "remember",
+              "terms"
+            ]
+          },
+          "updates": {
+            "type": "Checkbox",
+            "props": {
+              "label": "Email me product updates",
+              "value": true
+            },
+            "children": []
+          },
+          "remember": {
+            "type": "Checkbox",
+            "props": {
+              "label": "Remember this device",
+              "value": false
+            },
+            "children": []
+          },
+          "terms": {
+            "type": "Checkbox",
+            "props": {
+              "label": "Accepted terms",
+              "value": true,
+              "disabled": true
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "CheckboxGroup",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Picks several options, all visible at once",
+      "href": "/forms/elements#elements",
+      "spec": {
+        "root": "group",
+        "elements": {
+          "group": {
+            "type": "CheckboxGroup",
+            "props": {
+              "ariaLabel": "Notify me about",
+              "value": [
+                "orders",
+                "stock"
+              ],
+              "options": [
+                {
+                  "label": "New orders",
+                  "value": "orders"
+                },
+                {
+                  "label": "Low stock",
+                  "value": "stock"
+                },
+                {
+                  "label": "Weekly digest",
+                  "value": "digest"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "RadioGroup",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Picks one option, all visible at once",
+      "href": "/forms/elements#elements",
+      "spec": {
+        "root": "group",
+        "elements": {
+          "group": {
+            "type": "RadioGroup",
+            "props": {
+              "ariaLabel": "Shipping",
+              "value": "express",
+              "options": [
+                {
+                  "label": "Standard · 3–5 days",
+                  "value": "standard"
+                },
+                {
+                  "label": "Express · next day",
+                  "value": "express"
+                },
+                {
+                  "label": "Pick up in store",
+                  "value": "pickup"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Switch",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Turns a setting on or off with immediate effect",
+      "href": "/forms/elements#elements",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "md"
+            },
+            "children": [
+              "alerts",
+              "digest",
+              "beta"
+            ]
+          },
+          "alerts": {
+            "type": "Switch",
+            "props": {
+              "label": "Order alerts",
+              "value": true
+            },
+            "children": []
+          },
+          "digest": {
+            "type": "Switch",
+            "props": {
+              "label": "Weekly digest",
+              "value": false
+            },
+            "children": []
+          },
+          "beta": {
+            "type": "Switch",
+            "props": {
+              "label": "Beta features",
+              "value": true,
+              "disabled": true
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "DatePicker",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "A single ISO date from a calendar, optionally bounded",
+      "href": "/forms/elements#date-and-time",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm"
+            },
+            "children": [
+              "due",
+              "empty"
+            ]
+          },
+          "due": {
+            "type": "DatePicker",
+            "props": {
+              "ariaLabel": "Due date",
+              "value": "2026-08-10"
+            },
+            "children": []
+          },
+          "empty": {
+            "type": "DatePicker",
+            "props": {
+              "ariaLabel": "Start date",
+              "appearance": "filled",
+              "placeholder": "Pick a date"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "TimePicker",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "A time of day with a minute step and optional seconds",
+      "href": "/forms/elements#date-and-time",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm"
+            },
+            "children": [
+              "open",
+              "close"
+            ]
+          },
+          "open": {
+            "type": "TimePicker",
+            "props": {
+              "ariaLabel": "Opens",
+              "value": "09:30"
+            },
+            "children": []
+          },
+          "close": {
+            "type": "TimePicker",
+            "props": {
+              "ariaLabel": "Closes",
+              "value": "18:45:00",
+              "seconds": true
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "DateTimePicker",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "A local date and time in one field",
+      "href": "/forms/elements#date-and-time",
+      "spec": {
+        "root": "picker",
+        "elements": {
+          "picker": {
+            "type": "DateTimePicker",
+            "props": {
+              "ariaLabel": "Publish at",
+              "value": "2026-08-10T09:30"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "DateRangePicker",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "A start and end date over two months, with presets",
+      "href": "/forms/elements#date-and-time",
+      "spec": {
+        "root": "picker",
+        "elements": {
+          "picker": {
+            "type": "DateRangePicker",
+            "props": {
+              "ariaLabel": "Period",
+              "value": [
+                "2026-08-01",
+                "2026-08-14"
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "TagsInput",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Free-text tags as removable chips",
+      "href": "/forms/elements#elements",
+      "spec": {
+        "root": "tags",
+        "elements": {
+          "tags": {
+            "type": "TagsInput",
+            "props": {
+              "ariaLabel": "Keywords",
+              "value": [
+                "design",
+                "react",
+                "admin"
+              ],
+              "placeholder": "Add a tag"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Upload",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Sends files with progress, cancel and retry",
+      "href": "/forms/upload",
+      "spec": {
+        "root": "upload",
+        "elements": {
+          "upload": {
+            "type": "Upload",
+            "props": {
+              "ariaLabel": "Attachments",
+              "variant": "dropzone",
+              "hint": "PNG or JPG up to 5 MB"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Slider",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "A number or a range picked along a track, with marks",
+      "href": "/forms/controls-plus#slider",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "lg"
+            },
+            "children": [
+              "volume",
+              "price"
+            ]
+          },
+          "volume": {
+            "type": "Slider",
+            "props": {
+              "ariaLabel": "Volume",
+              "value": 60
+            },
+            "children": []
+          },
+          "price": {
+            "type": "Slider",
+            "props": {
+              "ariaLabel": "Price range",
+              "range": true,
+              "value": [
+                20,
+                80
+              ],
+              "marks": [
+                {
+                  "value": 0,
+                  "label": "$0"
+                },
+                {
+                  "value": 50,
+                  "label": "$50"
+                },
+                {
+                  "value": 100,
+                  "label": "$100"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "RadioCards",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Picks one option shown as a card with an icon and details",
+      "href": "/forms/controls-plus#choice-cards",
+      "scale": 0.85,
+      "spec": {
+        "root": "cards",
+        "elements": {
+          "cards": {
+            "type": "RadioCards",
+            "props": {
+              "ariaLabel": "Plan",
+              "columns": 2,
+              "value": "pro",
+              "options": [
+                {
+                  "value": "basic",
+                  "label": "Basic",
+                  "description": "For small teams",
+                  "icon": "user",
+                  "extra": "$9"
+                },
+                {
+                  "value": "pro",
+                  "label": "Pro",
+                  "description": "Everything included",
+                  "icon": "rocket-01",
+                  "extra": "$29",
+                  "badge": "Popular"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "CheckboxCards",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Picks several options shown as cards",
+      "href": "/forms/controls-plus#choice-cards",
+      "scale": 0.85,
+      "spec": {
+        "root": "cards",
+        "elements": {
+          "cards": {
+            "type": "CheckboxCards",
+            "props": {
+              "ariaLabel": "Add-ons",
+              "columns": 2,
+              "value": [
+                "backup",
+                "support"
+              ],
+              "options": [
+                {
+                  "value": "backup",
+                  "label": "Daily backups",
+                  "description": "Kept for 30 days",
+                  "icon": "database"
+                },
+                {
+                  "value": "support",
+                  "label": "Priority support",
+                  "description": "Answers within 1 hour",
+                  "icon": "headset"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "TagSelect",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "A row of checkable tags for filters, with counts",
+      "href": "/forms/controls-plus#tag-select",
+      "spec": {
+        "root": "row",
+        "elements": {
+          "row": {
+            "type": "Stack",
+            "props": {
+              "align": "center"
+            },
+            "children": [
+              "select"
+            ]
+          },
+          "select": {
+            "type": "TagSelect",
+            "props": {
+              "ariaLabel": "Status",
+              "multiple": true,
+              "value": [
+                "open",
+                "late"
+              ],
+              "options": [
+                {
+                  "label": "Open",
+                  "value": "open",
+                  "count": 12
+                },
+                {
+                  "label": "Late",
+                  "value": "late",
+                  "count": 3
+                },
+                {
+                  "label": "Done",
+                  "value": "done",
+                  "count": 48
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Rating",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "A score as stars or another icon, with half steps",
+      "href": "/forms/controls-plus#rating",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "md",
+              "align": "center"
+            },
+            "children": [
+              "stars",
+              "hearts"
+            ]
+          },
+          "stars": {
+            "type": "Rating",
+            "props": {
+              "ariaLabel": "Rating",
+              "value": 3.5,
+              "allowHalf": true,
+              "size": "lg"
+            },
+            "children": []
+          },
+          "hearts": {
+            "type": "Rating",
+            "props": {
+              "ariaLabel": "Favourites",
+              "value": 4,
+              "icon": "favourite",
+              "tone": "brand"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ColorPicker",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "A hex color from an area, a hue strip, presets or the eyedropper",
+      "href": "/forms/controls-plus#color-picker",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm"
+            },
+            "children": [
+              "brand",
+              "accent"
+            ]
+          },
+          "brand": {
+            "type": "ColorPicker",
+            "props": {
+              "ariaLabel": "Brand color",
+              "value": "#2563eb"
+            },
+            "children": []
+          },
+          "accent": {
+            "type": "ColorPicker",
+            "props": {
+              "ariaLabel": "Accent color",
+              "value": "#16a34a",
+              "appearance": "filled"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ColorSwatches",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Picks a color from an inline row of swatches",
+      "href": "/forms/controls-plus#color-swatches",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "md",
+              "align": "center"
+            },
+            "children": [
+              "circle",
+              "square"
+            ]
+          },
+          "circle": {
+            "type": "ColorSwatches",
+            "props": {
+              "ariaLabel": "Label color",
+              "value": "#2563eb",
+              "swatches": [
+                "#ef4444",
+                "#f59e0b",
+                "#22c55e",
+                "#2563eb",
+                "#8b5cf6",
+                "#ec4899"
+              ]
+            },
+            "children": []
+          },
+          "square": {
+            "type": "ColorSwatches",
+            "props": {
+              "ariaLabel": "Theme",
+              "value": "#0f172a",
+              "shape": "square",
+              "swatches": [
+                "#0f172a",
+                "#64748b",
+                "#e2e8f0",
+                "#0ea5e9"
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "IconPicker",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Picks a HugeIcons icon by name from a searchable grid",
+      "href": "/forms/controls-plus#icon-picker",
+      "spec": {
+        "root": "rows",
+        "elements": {
+          "rows": {
+            "type": "Stack",
+            "props": {
+              "gap": "md",
+              "align": "center"
+            },
+            "children": [
+              "picker",
+              "icons"
+            ]
+          },
+          "picker": {
+            "type": "IconPicker",
+            "props": {
+              "ariaLabel": "Menu icon",
+              "value": "rocket-01"
+            },
+            "children": []
+          },
+          "icons": {
+            "type": "Stack",
+            "props": {
+              "direction": "horizontal",
+              "gap": "md"
+            },
+            "children": [
+              "i1",
+              "i2",
+              "i3",
+              "i4",
+              "i5"
+            ]
+          },
+          "i1": {
+            "type": "Icon",
+            "props": {
+              "name": "home"
+            },
+            "children": []
+          },
+          "i2": {
+            "type": "Icon",
+            "props": {
+              "name": "rocket-01",
+              "tone": "brand"
+            },
+            "children": []
+          },
+          "i3": {
+            "type": "Icon",
+            "props": {
+              "name": "package"
+            },
+            "children": []
+          },
+          "i4": {
+            "type": "Icon",
+            "props": {
+              "name": "chart-line"
+            },
+            "children": []
+          },
+          "i5": {
+            "type": "Icon",
+            "props": {
+              "name": "settings"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "InputOTP",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "A one-time code in separate boxes, with paste and arrows",
+      "href": "/forms/controls-plus#one-time-code",
+      "spec": {
+        "root": "row",
+        "elements": {
+          "row": {
+            "type": "Stack",
+            "props": {
+              "align": "center"
+            },
+            "children": [
+              "otp"
+            ]
+          },
+          "otp": {
+            "type": "InputOTP",
+            "props": {
+              "ariaLabel": "Verification code",
+              "length": 6,
+              "group": 3,
+              "value": "4821"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "SignaturePad",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Draws a signature and keeps it as an image",
+      "href": "/forms/controls-plus#signature-pad",
+      "spec": {
+        "root": "pad",
+        "elements": {
+          "pad": {
+            "type": "SignaturePad",
+            "props": {
+              "ariaLabel": "Signature",
+              "height": 120,
+              "placeholder": "Sign here"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Tree",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "A hierarchy that expands, selects, checks and searches",
+      "href": "/forms/async-tree#tree",
+      "scale": 0.9,
+      "spec": {
+        "root": "tree",
+        "elements": {
+          "tree": {
+            "type": "Tree",
+            "props": {
+              "ariaLabel": "Catalog",
+              "checkable": true,
+              "defaultExpandAll": true,
+              "value": [
+                "lamps"
+              ],
+              "items": [
+                {
+                  "label": "Home",
+                  "value": "home",
+                  "children": [
+                    {
+                      "label": "Lamps",
+                      "value": "lamps"
+                    },
+                    {
+                      "label": "Chairs",
+                      "value": "chairs"
+                    }
+                  ]
+                },
+                {
+                  "label": "Outdoor",
+                  "value": "outdoor",
+                  "children": [
+                    {
+                      "label": "Tents",
+                      "value": "tents"
+                    }
+                  ]
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "TreeSelect",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "A select whose panel is a tree, showing the chosen path",
+      "href": "/forms/async-tree#tree-select",
+      "spec": {
+        "root": "select",
+        "elements": {
+          "select": {
+            "type": "TreeSelect",
+            "props": {
+              "ariaLabel": "Category",
+              "showPath": true,
+              "value": "audio",
+              "items": [
+                {
+                  "label": "Electronics",
+                  "value": "electronics",
+                  "children": [
+                    {
+                      "label": "Audio",
+                      "value": "audio"
+                    }
+                  ]
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "CascaderPanel",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Cascader columns shown inline, without a trigger",
+      "href": "/forms/async-tree#cascader-panel",
+      "scale": 0.65,
+      "spec": {
+        "root": "panel",
+        "elements": {
+          "panel": {
+            "type": "CascaderPanel",
+            "props": {
+              "ariaLabel": "Region",
+              "value": [
+                "asia",
+                "japan"
+              ],
+              "options": [
+                {
+                  "label": "Asia",
+                  "value": "asia",
+                  "children": [
+                    {
+                      "label": "Japan",
+                      "value": "japan",
+                      "children": [
+                        {
+                          "label": "Tokyo",
+                          "value": "tokyo"
+                        },
+                        {
+                          "label": "Osaka",
+                          "value": "osaka"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Korea",
+                      "value": "korea"
+                    }
+                  ]
+                },
+                {
+                  "label": "Europe",
+                  "value": "europe",
+                  "children": [
+                    {
+                      "label": "Germany",
+                      "value": "germany"
+                    }
+                  ]
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "RecordPicker",
+      "package": "@duxweb/lumi-admin",
+      "category": "elements",
+      "description": "Picks one or several records from a searchable table in a dialog",
+      "href": "/forms/async-tree#record-picker",
+      "spec": {
+        "root": "field",
+        "elements": {
+          "field": {
+            "type": "FormField",
+            "props": {
+              "name": "customer",
+              "label": "Customer",
+              "help": "Search all customers in a dialog"
+            },
+            "children": [
+              "picker"
+            ]
+          },
+          "picker": {
+            "type": "RecordPicker",
+            "props": {
+              "ariaLabel": "Customer",
+              "resource": "customers",
+              "placeholder": "Choose a customer…",
+              "columns": [
+                {
+                  "field": "name",
+                  "label": "Name"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "TreeFilter",
+      "package": "@duxweb/lumi-admin",
+      "category": "elements",
+      "description": "A side tree that narrows a list to one branch",
+      "href": "/forms/async-tree",
+      "scale": 0.85,
+      "spec": {
+        "root": "filter",
+        "elements": {
+          "filter": {
+            "type": "TreeFilter",
+            "props": {
+              "title": "Categories",
+              "defaultExpandAll": true,
+              "value": "lamps",
+              "items": [
+                {
+                  "label": "Home",
+                  "value": "home",
+                  "children": [
+                    {
+                      "label": "Lamps",
+                      "value": "lamps"
+                    },
+                    {
+                      "label": "Chairs",
+                      "value": "chairs"
+                    }
+                  ]
+                },
+                {
+                  "label": "Outdoor",
+                  "value": "outdoor"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "AutoComplete",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Free text that suggests matching options as you type",
+      "href": "/forms/async-select#autocomplete",
+      "spec": {
+        "root": "column",
+        "elements": {
+          "column": {
+            "type": "Stack",
+            "props": {
+              "gap": "sm"
+            },
+            "children": [
+              "input",
+              "suggestions"
+            ]
+          },
+          "input": {
+            "type": "AutoComplete",
+            "props": {
+              "ariaLabel": "City",
+              "value": "Ber"
+            },
+            "children": []
+          },
+          "suggestions": {
+            "type": "Listbox",
+            "props": {
+              "ariaLabel": "Suggestions",
+              "options": [
+                {
+                  "label": "Berlin",
+                  "value": "berlin"
+                },
+                {
+                  "label": "Bergen",
+                  "value": "bergen"
+                },
+                {
+                  "label": "Bern",
+                  "value": "bern"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Mention",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Text where @ opens suggestions and inserts a mention",
+      "href": "/forms/async-select#mention",
+      "spec": {
+        "root": "mention",
+        "elements": {
+          "mention": {
+            "type": "Mention",
+            "props": {
+              "ariaLabel": "Comment",
+              "rows": 3,
+              "value": "Thanks @Mina for the review — @Omar can you ship it?"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Transfer",
+      "package": "@duxweb/lumi-ui",
+      "category": "elements",
+      "description": "Moves checked items between an available and a chosen list",
+      "href": "/forms/async-select#transfer",
+      "scale": 0.45,
+      "spec": {
+        "root": "transfer",
+        "elements": {
+          "transfer": {
+            "type": "Transfer",
+            "props": {
+              "ariaLabel": "Members",
+              "value": [
+                "mina"
+              ],
+              "options": [
+                {
+                  "label": "Ada Lovelace",
+                  "value": "ada"
+                },
+                {
+                  "label": "Grace Hopper",
+                  "value": "grace"
+                },
+                {
+                  "label": "Mina Park",
+                  "value": "mina"
+                },
+                {
+                  "label": "Omar Haddad",
+                  "value": "omar"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Repeater",
+      "package": "@duxweb/lumi-ui",
+      "category": "forms",
+      "description": "Editable rows over a state array, with totals and reordering",
+      "href": "/forms/repeater#order-lines",
+      "scale": 0.55,
+      "spec": {
+        "root": "lines",
+        "state": {
+          "lines": [
+            {
+              "id": "l1",
+              "product": "Wireless mouse",
+              "qty": 2,
+              "price": 39
+            },
+            {
+              "id": "l2",
+              "product": "USB-C hub",
+              "qty": 1,
+              "price": 59
+            }
+          ]
+        },
+        "elements": {
+          "lines": {
+            "type": "Repeater",
+            "props": {
+              "ariaLabel": "Order lines",
+              "value": {
+                "$bindState": "/lines"
+              },
+              "rowKey": "id",
+              "columns": [
+                {
+                  "key": "product",
+                  "label": "Product"
+                },
+                {
+                  "key": "qty",
+                  "label": "Qty",
+                  "width": 90
+                },
+                {
+                  "key": "price",
+                  "label": "Price",
+                  "width": 110,
+                  "prefix": "$",
+                  "precision": 2
+                }
+              ],
+              "summary": [
+                {
+                  "key": "qty",
+                  "op": "sum"
+                }
+              ],
+              "newRow": {
+                "product": "",
+                "qty": 1,
+                "price": 0
+              }
+            },
+            "repeat": {
+              "statePath": "/lines",
+              "key": "id"
+            },
+            "children": [
+              "line"
+            ]
+          },
+          "line": {
+            "type": "RepeaterRow",
+            "props": {},
+            "children": [
+              "product",
+              "qty",
+              "price"
+            ]
+          },
+          "product": {
+            "type": "Input",
+            "props": {
+              "ariaLabel": "Product",
+              "value": {
+                "$bindItem": "product"
+              }
+            },
+            "children": []
+          },
+          "qty": {
+            "type": "NumberInput",
+            "props": {
+              "ariaLabel": "Qty",
+              "min": 1,
+              "value": {
+                "$bindItem": "qty"
+              }
+            },
+            "children": []
+          },
+          "price": {
+            "type": "NumberInput",
+            "props": {
+              "ariaLabel": "Price",
+              "min": 0,
+              "value": {
+                "$bindItem": "price"
+              }
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "SkuEditor",
+      "package": "@duxweb/lumi-admin",
+      "category": "forms",
+      "description": "Product options and the variant matrix they generate",
+      "href": "/forms/repeater#sku-editor",
+      "scale": 0.38,
+      "spec": {
+        "root": "editor",
+        "elements": {
+          "editor": {
+            "type": "SkuEditor",
+            "props": {
+              "value": {
+                "attributes": [
+                  {
+                    "name": "Color",
+                    "values": [
+                      "Black",
+                      "White"
+                    ]
+                  },
+                  {
+                    "name": "Size",
+                    "values": [
+                      "M",
+                      "L"
+                    ]
+                  }
+                ],
+                "variants": [
+                  {
+                    "key": "Black/M",
+                    "options": {
+                      "Color": "Black",
+                      "Size": "M"
+                    },
+                    "price": 29,
+                    "stock": 12,
+                    "sku": "TEE-BK-M"
+                  },
+                  {
+                    "key": "Black/L",
+                    "options": {
+                      "Color": "Black",
+                      "Size": "L"
+                    },
+                    "price": 29,
+                    "stock": 8,
+                    "sku": "TEE-BK-L"
+                  },
+                  {
+                    "key": "White/M",
+                    "options": {
+                      "Color": "White",
+                      "Size": "M"
+                    },
+                    "price": 29,
+                    "stock": 20,
+                    "sku": "TEE-WH-M"
+                  },
+                  {
+                    "key": "White/L",
+                    "options": {
+                      "Color": "White",
+                      "Size": "L"
+                    },
+                    "price": 29,
+                    "stock": 5,
+                    "sku": "TEE-WH-L"
+                  }
+                ]
+              }
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Page",
+      "package": "@duxweb/lumi-admin",
+      "category": "pages",
+      "description": "The page surface: one content measure and section rhythm",
+      "href": "/dashboards/boards",
+      "scale": 0.55,
+      "spec": {
+        "root": "page",
+        "elements": {
+          "page": {
+            "type": "Page",
+            "props": {
+              "stack": true
+            },
+            "children": [
+              "header",
+              "grid"
+            ]
+          },
+          "header": {
+            "type": "PageHeader",
+            "props": {
+              "title": "Projects",
+              "description": "Everything your team is working on"
+            },
+            "children": []
+          },
+          "grid": {
+            "type": "Grid",
+            "props": {
+              "columns": 2
+            },
+            "children": [
+              "one",
+              "two"
+            ]
+          },
+          "one": {
+            "type": "Card",
+            "props": {
+              "title": "Atlas rollout",
+              "description": "Due Sep 12"
+            },
+            "children": []
+          },
+          "two": {
+            "type": "Card",
+            "props": {
+              "title": "Pricing review",
+              "description": "Due Sep 20"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "PageHeader",
+      "package": "@duxweb/lumi-admin",
+      "category": "pages",
+      "description": "A page title and description with action and meta slots",
+      "href": "/dashboards/boards",
+      "scale": 0.7,
+      "spec": {
+        "root": "header",
+        "elements": {
+          "header": {
+            "type": "PageHeader",
+            "props": {
+              "title": "Products",
+              "description": "Manage your catalog and pricing"
+            },
+            "slots": {
+              "actions": [
+                "export",
+                "create"
+              ]
+            },
+            "children": []
+          },
+          "export": {
+            "type": "Button",
+            "props": {
+              "label": "Export",
+              "appearance": "outline",
+              "icon": "download"
+            },
+            "children": []
+          },
+          "create": {
+            "type": "Button",
+            "props": {
+              "label": "New product",
+              "icon": "plus"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "PageFrame",
+      "package": "@duxweb/lumi-admin",
+      "category": "surfaces",
+      "description": "A page frame with header, aside, body and summary slots",
+      "href": "/ui/cards#frame",
+      "scale": 0.7,
+      "spec": {
+        "root": "frame",
+        "elements": {
+          "frame": {
+            "type": "PageFrame",
+            "props": {
+              "title": "Inventory",
+              "description": "Stock across warehouses",
+              "summary": "3 warehouses"
+            },
+            "children": [
+              "body"
+            ]
+          },
+          "body": {
+            "type": "Skeleton",
+            "props": {
+              "variant": "text",
+              "lines": 3,
+              "animated": false
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ListPage",
+      "package": "@duxweb/lumi-admin",
+      "category": "pages",
+      "description": "A data-backed list with filters, paging, sorting and bulk actions",
+      "href": "/products",
+      "scale": 0.5,
+      "spec": {
+        "root": "page",
+        "elements": {
+          "page": {
+            "type": "Page",
+            "props": {
+              "stack": true
+            },
+            "children": [
+              "header",
+              "grid"
+            ]
+          },
+          "header": {
+            "type": "PageHeader",
+            "props": {
+              "title": "Products",
+              "description": "Manage your catalog"
+            },
+            "slots": {
+              "actions": [
+                "create"
+              ]
+            },
+            "children": []
+          },
+          "create": {
+            "type": "Button",
+            "props": {
+              "label": "New product",
+              "icon": "plus"
+            },
+            "children": []
+          },
+          "grid": {
+            "type": "DataGrid",
+            "props": {
+              "rowKey": "id",
+              "page": 1,
+              "pageSize": 10,
+              "total": 3,
+              "selectable": true,
+              "columns": [
+                {
+                  "field": "name",
+                  "label": "Product"
+                },
+                {
+                  "field": "status",
+                  "label": "Status",
+                  "kind": "badge",
+                  "toneMap": {
+                    "Active": "success",
+                    "Draft": "warning"
+                  }
+                },
+                {
+                  "field": "price",
+                  "label": "Price",
+                  "kind": "currency",
+                  "currency": "USD",
+                  "align": "right"
+                }
+              ],
+              "rows": [
+                {
+                  "id": 1,
+                  "name": "Aurora lamp",
+                  "status": "Active",
+                  "price": 48
+                },
+                {
+                  "id": 2,
+                  "name": "Nimbus chair",
+                  "status": "Draft",
+                  "price": 219
+                },
+                {
+                  "id": 3,
+                  "name": "Orbit clock",
+                  "status": "Active",
+                  "price": 32
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "DataGrid",
+      "package": "@duxweb/lumi-admin",
+      "category": "pages",
+      "description": "A results grid with selection, row actions and pagination",
+      "href": "/products",
+      "scale": 0.55,
+      "spec": {
+        "root": "grid",
+        "elements": {
+          "grid": {
+            "type": "DataGrid",
+            "props": {
+              "rowKey": "id",
+              "page": 1,
+              "pageSize": 10,
+              "total": 3,
+              "selectable": true,
+              "selectedKeys": [
+                2
+              ],
+              "columns": [
+                {
+                  "field": "name",
+                  "label": "Customer",
+                  "kind": "entity",
+                  "descriptionField": "email"
+                },
+                {
+                  "field": "orders",
+                  "label": "Orders",
+                  "align": "right"
+                }
+              ],
+              "rows": [
+                {
+                  "id": 1,
+                  "name": "Ada Lovelace",
+                  "email": "ada@lumi.dev",
+                  "orders": 12
+                },
+                {
+                  "id": 2,
+                  "name": "Grace Hopper",
+                  "email": "grace@lumi.dev",
+                  "orders": 7
+                },
+                {
+                  "id": 3,
+                  "name": "Mina Park",
+                  "email": "mina@lumi.dev",
+                  "orders": 21
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "FilterBar",
+      "package": "@duxweb/lumi-admin",
+      "category": "pages",
+      "description": "The list toolbar: search, quick filters and an advanced panel",
+      "href": "/orders",
+      "scale": 0.65,
+      "spec": {
+        "root": "bar",
+        "elements": {
+          "bar": {
+            "type": "FilterBar",
+            "props": {
+              "applyMode": "immediate",
+              "defaultValue": {},
+              "schema": {
+                "fields": [
+                  {
+                    "field": "q",
+                    "label": "Search",
+                    "widget": "search",
+                    "placeholder": "Search orders…",
+                    "primary": true
+                  },
+                  {
+                    "field": "status",
+                    "label": "Status",
+                    "widget": "select",
+                    "placeholder": "Status",
+                    "primary": true,
+                    "options": [
+                      {
+                        "label": "Paid",
+                        "value": "paid"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "DetailPage",
+      "package": "@duxweb/lumi-admin",
+      "category": "pages",
+      "description": "A record summary, its content and an activity timeline",
+      "href": "/products/1",
+      "scale": 0.5,
+      "spec": {
+        "root": "page",
+        "elements": {
+          "page": {
+            "type": "DetailPage",
+            "props": {
+              "title": "Aurora lamp",
+              "fields": [
+                {
+                  "key": "sku",
+                  "label": "SKU",
+                  "value": "SKU-2041"
+                },
+                {
+                  "key": "price",
+                  "label": "Price",
+                  "value": "$48.00"
+                },
+                {
+                  "key": "stock",
+                  "label": "Stock",
+                  "value": 38
+                }
+              ],
+              "timeline": {
+                "items": [
+                  {
+                    "key": "updated",
+                    "title": "Price updated",
+                    "timestamp": "Today",
+                    "status": "current"
+                  },
+                  {
+                    "key": "created",
+                    "title": "Created",
+                    "timestamp": "Aug 2",
+                    "status": "complete"
+                  }
+                ]
+              }
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "FormPage",
+      "package": "@duxweb/lumi-admin",
+      "category": "forms",
+      "description": "A form with business validation, dirty guards and one value path",
+      "href": "/products/new",
+      "scale": 0.5,
+      "spec": {
+        "root": "page",
+        "state": {
+          "product": {
+            "name": "Aurora lamp",
+            "price": 48
+          }
+        },
+        "elements": {
+          "page": {
+            "type": "FormPage",
+            "props": {
+              "title": "Create product",
+              "resource": "products",
+              "valuesPath": "/product"
+            },
+            "children": [
+              "name",
+              "price"
+            ]
+          },
+          "name": {
+            "type": "FormField",
+            "props": {
+              "name": "name",
+              "label": "Name",
+              "required": true,
+              "value": {
+                "$bindState": "/product/name"
+              }
+            },
+            "children": []
+          },
+          "price": {
+            "type": "FormField",
+            "props": {
+              "name": "price",
+              "label": "Price",
+              "fieldType": "number",
+              "value": {
+                "$bindState": "/product/price"
+              }
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "SettingsPage",
+      "package": "@duxweb/lumi-admin",
+      "category": "pages",
+      "description": "Settings sections with their own navigation",
+      "href": "/settings/profile",
+      "scale": 0.5,
+      "spec": {
+        "root": "page",
+        "elements": {
+          "page": {
+            "type": "SettingsPage",
+            "props": {
+              "title": "Settings",
+              "value": "profile",
+              "sections": [
+                {
+                  "value": "profile",
+                  "label": "Profile",
+                  "title": "Profile",
+                  "description": "How others see you"
+                },
+                {
+                  "value": "notifications",
+                  "label": "Notifications"
+                },
+                {
+                  "value": "security",
+                  "label": "Security"
+                }
+              ]
+            },
+            "children": [
+              "name"
+            ]
+          },
+          "name": {
+            "type": "FormField",
+            "props": {
+              "name": "displayName",
+              "label": "Display name",
+              "value": "Ada Lovelace"
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "SettingsForm",
+      "package": "@duxweb/lumi-admin",
+      "category": "pages",
+      "description": "One settings card that saves each change to its record",
+      "href": "/settings/profile",
+      "scale": 0.7,
+      "spec": {
+        "root": "form",
+        "state": {
+          "prefs": {
+            "digest": true
+          }
+        },
+        "elements": {
+          "form": {
+            "type": "SettingsForm",
+            "props": {
+              "title": "Notifications",
+              "description": "Choose what reaches your inbox",
+              "resource": "users",
+              "valuesPath": "/prefs"
+            },
+            "children": [
+              "digest"
+            ]
+          },
+          "digest": {
+            "type": "Switch",
+            "props": {
+              "label": "Weekly digest",
+              "value": {
+                "$bindState": "/prefs/digest"
+              }
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "DashboardPage",
+      "package": "@duxweb/lumi-admin",
+      "category": "pages",
+      "description": "Dashboard metrics above its content panels",
+      "href": "/dashboards/projects",
+      "scale": 0.45,
+      "spec": {
+        "root": "page",
+        "elements": {
+          "page": {
+            "type": "DashboardPage",
+            "props": {
+              "title": "Overview",
+              "metrics": [
+                {
+                  "key": "revenue",
+                  "label": "Revenue",
+                  "value": "$48.2k",
+                  "change": "+12%",
+                  "tone": "success"
+                },
+                {
+                  "key": "orders",
+                  "label": "Orders",
+                  "value": "1,284",
+                  "change": "+8%",
+                  "tone": "success"
+                },
+                {
+                  "key": "refunds",
+                  "label": "Refunds",
+                  "value": "23",
+                  "change": "-4%",
+                  "tone": "danger"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "Kanban",
+      "package": "@duxweb/lumi-admin",
+      "category": "pages",
+      "description": "Columns of cards moved by drag and drop or from the keyboard",
+      "href": "/dashboards/boards",
+      "scale": 0.42,
+      "spec": {
+        "root": "board",
+        "elements": {
+          "board": {
+            "type": "Kanban",
+            "props": {
+              "readonly": true,
+              "today": "2026-08-10",
+              "columns": [
+                {
+                  "value": "todo",
+                  "title": "To do"
+                },
+                {
+                  "value": "doing",
+                  "title": "In progress"
+                },
+                {
+                  "value": "done",
+                  "title": "Done",
+                  "done": true
+                }
+              ],
+              "value": [
+                {
+                  "id": 1,
+                  "title": "Draft launch email",
+                  "status": "todo",
+                  "tags": [
+                    {
+                      "label": "Marketing",
+                      "tone": "info"
+                    }
+                  ],
+                  "priority": "high"
+                },
+                {
+                  "id": 2,
+                  "title": "Review pricing",
+                  "status": "doing",
+                  "assignee": {
+                    "name": "Mina Park"
+                  },
+                  "dueDate": "2026-08-12"
+                },
+                {
+                  "id": 3,
+                  "title": "Ship onboarding",
+                  "status": "done",
+                  "tags": [
+                    {
+                      "label": "Product",
+                      "tone": "success"
+                    }
+                  ]
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ScheduleCalendar",
+      "package": "@duxweb/lumi-admin",
+      "category": "pages",
+      "description": "A month and week calendar of dated events as tone chips",
+      "href": "/dashboards/boards",
+      "scale": 0.34,
+      "spec": {
+        "root": "calendar",
+        "elements": {
+          "calendar": {
+            "type": "ScheduleCalendar",
+            "props": {
+              "view": "month",
+              "date": "2026-02-01",
+              "today": "2026-02-10",
+              "events": [
+                {
+                  "id": 1,
+                  "title": "Launch review",
+                  "start": "2026-02-03",
+                  "allDay": true,
+                  "tone": "info"
+                },
+                {
+                  "id": 2,
+                  "title": "Team offsite",
+                  "start": "2026-02-11",
+                  "end": "2026-02-12",
+                  "allDay": true,
+                  "tone": "success"
+                },
+                {
+                  "id": 3,
+                  "title": "Pricing call",
+                  "start": "2026-02-18T10:00",
+                  "tone": "warning"
+                },
+                {
+                  "id": 4,
+                  "title": "Board meeting",
+                  "start": "2026-02-24T15:00",
+                  "tone": "danger"
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      }
+    }
+  ]
+}

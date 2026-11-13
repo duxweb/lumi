@@ -1,0 +1,44 @@
+---
+title: "Html"
+description: "把 HTML 片段（如富文本编辑器保存的文章正文）渲染成 Prose 样式的排版内容。"
+---
+
+<ComponentPreview name="Html" />
+
+把 HTML 片段（如富文本编辑器保存的文章正文）渲染成 Prose 样式的排版内容。标记先经过清理：移除脚本、事件处理器、行内样式、表单、框架和不安全的地址，id 加前缀以免与页面冲突，外部链接在新标签页打开且无法访问来源页面。清理器首次使用时加载，加载完成前区域为空。
+
+## 示例
+
+```json
+{
+  "root": "html-1",
+  "elements": {
+    "html-1": {
+      "type": "Html",
+      "props": {
+        "size": "sm",
+        "content": "<h3>Returns</h3><p>Items can be returned within <strong>30 days</strong> of delivery</p><ul><li>Unused and in original packaging</li><li>With the order number</li></ul>"
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `content`（必填） | HTML 片段，如富文本编辑器保存的文章正文。显示前用 DOMPurify 过滤：移除脚本、事件属性、行内样式、表单、框架与不安全的地址，id 加前缀避免与页面冲突，站外链接在新标签页打开且无法访问来源页。过滤器首次使用时按需加载，加载完成前区域为空。 | `string` |  |
+| `size` | 正文字号，同 Prose。 | `"sm" \| "md" \| "lg"` | `"md"` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

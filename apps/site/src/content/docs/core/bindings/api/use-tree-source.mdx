@@ -1,0 +1,55 @@
+---
+title: "useTreeSource"
+description: "useTreeSource React hook 的签名、参数和返回值。"
+---
+
+Remote nodes for a hierarchical control. A full source reads the whole
+resource once; a lazy one reads the root level, then each level as its
+parent opens. Chosen values are echoed: their rows are read by ID and the
+branches leading to them are loaded, so labels and paths resolve.
+
+```typescript
+useTreeSource(input: TreeSource, options?: { value?: unknown; }): TreeSourceState
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `input` | `{ resource: string; dataProviderName?: string \| undefined; meta?: Record<string, unknown> \| undefined; filters?: { field: string; operator: "null" \| "in" \| "eq" \| "ne" \| "lt" \| "lte" \| ... 6 more ... \| "nnull"; value: unknown; }[] \| undefined; ... 8 more ...; pageSize?: number \| undefined; }` | 是 |  |
+| `options` | `{ value?: unknown; }` | 否 |  |
+
+`input` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `childrenField` | `string \| undefined` | 否 | The field holding a row's nested children, for a backend that answers a tree. |
+| `dataProviderName` | `string \| undefined` | 否 | 多数据源名称；省略时使用 default。 |
+| `filters` | `{ field: string; operator: "null" \| "in" \| "eq" \| "ne" \| "lt" \| "lte" \| "gt" \| "gte" \| "like" \| "nlike" \| "nin" \| "between" \| "nnull"; value: unknown; }[] \| undefined` | 否 | Conditions every request carries. |
+| `labelField` | `string \| undefined` | 否 | The field shown; the first of `label`, `name`, `title` with a value, else the id, when left out. |
+| `lazy` | `boolean \| undefined` | 否 | Requests each level when its parent opens, instead of the whole resource once. |
+| `leafField` | `string \| undefined` | 否 | A field telling whether a row has no children, so a lazy node shows no expander. |
+| `meta` | `Record<string, unknown> \| undefined` | 否 | 原样传给 DataProvider 的扩展数据。 |
+| `pageSize` | `number \| undefined` | 否 | Rows per request; 1000 by default. |
+| `parentField` | `string \| undefined` | 否 | The field linking a flat row to its parent; `parentId` by default. |
+| `resource` | `string` | 是 | The resource the nodes come from. |
+| `rootValue` | `string \| number \| undefined` | 否 | The parent value of root rows; rows with an empty parent when left out. |
+| `searchField` | `string \| undefined` | 否 | The field a search filters with `like` on the server; a lazy source needs it to search. |
+| `valueField` | `string \| undefined` | 否 | The field used as a node's value; `id` by default. |
+
+`options` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `value` | `unknown` | 否 |  |
+
+返回 `TreeSourceState`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `items` | `TreeSourceNode[]` | 是 | The nodes loaded so far, as a tree. |
+| `loadChildren` | `((node: { value: unknown; }) => Promise<void>) \| undefined` | 否 | Loads one node's children; only present for a `lazy` source. |
+| `loading` | `boolean` | 是 | The first level (or the whole resource) is loading. |
+| `search` | `((query: string) => void) \| undefined` | 否 | Server search; only present for a `lazy` source with a `searchField`. |
+| `searching` | `boolean` | 是 | A server search is under way. |
+| `selectedNodes` | `TreeSourceNode[]` | 是 | The chosen nodes, also when their branch has not been loaded yet. |

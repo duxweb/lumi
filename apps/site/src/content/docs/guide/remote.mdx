@@ -1,0 +1,134 @@
+---
+title: "从后端加载"
+description: "菜单、页面和主题由后端按用户、角色或租户返回：manifest 接口、页面接口、一个接口返回所有页面，以及让页面 JSON 不直接可读。"
+---
+
+静态文件够用时，manifest 和页面就是放在服务器上的 JSON 文件。要按用户返回不同的菜单、从数据库生成页面时，把它们的地址换成后端接口，前端不用改。
+
+## 从后端加载菜单
+
+`config.json` 的 `manifest` 可以是后端接口，菜单就能按用户、角色或租户返回：
+
+```jsonc
+{
+  "data": { "url": "https://api.example.com" },
+  "panels": {
+    // 后端按当前用户返回 manifest
+    "manifest": "https://api.example.com/admin/manifest",
+    // 先确认已登录，再请求 manifest
+    "manifestAuth": "protected"
+  }
+}
+```
+
+- 接口直接返回 manifest 本身（`{ "app", "routes" }`），不要包在 `{ "data": … }` 里。
+- 请求发往本站或后端（`data` 的 `url`）所在的域名时，会和数据请求一样带上登录凭证、`Accept-Language` 和 `X-Tenant`；token 过期时先续期再重发。发往其他域名（如 CDN）的请求不带凭证。
+- `manifestAuth: "protected"` 时，没登录先进登录页，登录后再请求 manifest；登录、退出、切换账号后都会重新请求，不会看到上一个账号的菜单。
+- 隐藏菜单只是体验。后端返回菜单时，可以只返回这个用户能看的路由，但接口本身仍要检查权限。
+- `manifest` 的相对地址相对于 `config.json`。
+
+另一种做法是 manifest 写全部路由，用每个路由的 `access` 按权限隐藏，见 [路由](/guide/menus/#路由) 和 [权限标识](/guide/backend-auth/#权限标识)。
+
+## 从后端加载页面
+
+路由的 `page.src` 也可以是后端接口，页面 JSON 由后端生成或从数据库读出：
+
+```jsonc
+{
+  "app": { "id": "shop", "title": "示例商城" },
+  "routes": [
+    {
+      "name": "orders",
+      "path": "/orders",
+      // 后端返回这个页面的 JSON
+      "page": { "src": "https://api.example.com/admin/pages/orders" },
+      "menu": { "label": "订单", "icon": "shopping-cart" }
+    }
+  ]
+}
+```
+
+- 接口直接返回页面 JSON（`{ "root", "elements", "state" }`）。凭证规则和 manifest 相同。
+- 页面在第一次打开时才请求，结果会缓存；返回 `ETag` 时下次带 `If-None-Match`，没变化可以回 304。
+- 加载后会按组件目录校验，有错误时页面显示错误详情，不会渲染出半个页面。
+- `page.src` 的相对地址相对于 manifest 的地址。
+- 页面只放结构和动作，列表数据仍由页面里的 `Query`、`ListPage` 请求，不要把数据写死在页面 JSON 里。
+
+### 一个接口返回所有页面
+
+每个页面一个地址太散时，可以在 panel 上配 `pages`，所有页面都从同一个接口取，用 `path` 区分：
+
+```jsonc
+// config.json
+{
+  "data": { "url": "https://api.example.com" },
+  "panels": {
+    "manifest": "/manifest.json",
+    "pages": {
+      // 页面接口，相对于 data.url，和数据请求一样经过 DataProvider
+      "endpoint": "/admin/page",
+      // 默认 POST；写 GET 时参数放在查询串里
+      "method": "POST",
+      // 可选：每次都带上的固定参数
+      "data": { "app": "shop" }
+    }
+  }
+}
+```
+
+manifest 里的 `page.src` 就只写页面名：
+
+```jsonc
+{
+  "app": { "id": "shop", "title": "示例商城" },
+  "routes": [
+    // 不是完整 URL，所以发给 pages 接口，path 是 "orders/list"
+    {
+      "name": "orders",
+      "path": "/orders",
+      "page": { "src": "orders/list" },
+      "menu": { "label": "订单", "icon": "shopping-cart" }
+    }
+  ]
+}
+```
+
+打开订单页时，后台请求 `POST https://api.example.com/admin/page`，请求体是 `{ "app": "shop", "path": "orders/list" }`。
+
+- 后端返回的结果按 DataProvider 的约定解包（默认取 `data`），解包后就是页面 JSON。请求会经过 `onRequest`、`onResponse`，签名和 401 续期都照常生效。
+- 弹窗的 `src`（如 `openDrawer` 的 `"src": "/pages/article-edit.json"`）也走这个接口，`path` 就是 `src` 原样。
+- 每个 `path` 只请求一次，之后用缓存，`id`、`params` 不会出现在请求里。接口返回错误时页面显示加载失败。
+- 写完整 URL（`https://…`）的 `src` 仍然直接请求，不经过接口。manifest、扩展模块和图片也不经过接口。
+
+### 不让页面 JSON 直接可读
+
+默认情况下，打开浏览器的 Network 面板就能看到页面 JSON 的原文。不想这么直白时，后端可以把 JSON 打包后再返回：
+
+```json
+{
+  "packed": "q1Yqys8vUbJSKkhMT1XSUUrNSc1NzSspVrKqhghZVSuVVBakKlkphaRWlCjpKBUU5ReApUtAfCslj0yl2traWgA="
+}
+```
+
+`packed` 的值按三步生成：
+
+1. 把页面 JSON 序列化成文本（UTF-8）。
+2. 用 raw deflate 压缩（没有 zlib 头，Go 是 `compress/flate`，PHP 是 `gzdeflate`，Node 是 `zlib.deflateRawSync`）。
+3. 可选：用密钥的 UTF-8 字节循环异或压缩结果；然后 base64 编码。
+
+```jsonc
+// config.json
+{
+  "data": { "url": "https://api.example.com" },
+  "panels": { "manifest": "/manifest.json" },
+  // 后端做了第 3 步的异或时才需要，两边用同一个密钥
+  "packKey": "any-shared-text"
+}
+```
+
+- 菜单（manifest）、页面和主题都可以这样返回，直接请求的文件和 `pages` 接口返回的都支持。解包后照常校验和缓存。
+- 没打包的 JSON 照常加载，可以只打包一部分，开发环境保持原样。
+- 密钥不对或数据损坏时，页面显示加载失败。
+- JS 侧用 `packDocument(value, { key })`（`@duxweb/lumi/catalog`）可以生成同样的格式，适合 Node 后端或构建脚本。
+
+这只是不让人随手看到，不是加密：浏览器要渲染页面，解包后的内容仍在内存里，密钥也在 `config.json` 里。真正不能让用户知道的内容不要放进页面 JSON，由后端按权限决定返回什么。

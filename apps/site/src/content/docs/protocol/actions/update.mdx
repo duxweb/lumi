@@ -1,0 +1,48 @@
+---
+title: "update"
+description: "更新一条记录，成功后刷新这个资源的查询。"
+---
+
+更新一条记录，成功后刷新这个资源的查询。`mutationMode` 为 `optimistic` 时立即显示改动、失败回滚；为 `undoable` 时还会先显示撤销提示，等 `undoableTimeout` 毫秒再提交。
+
+## 用法
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "标记发货" },
+      "on": {
+        // 点击按钮时执行
+        "press": {
+          "action": "update",
+          "params": {
+            // 数据资源名，如 orders
+            "resource": "orders",
+            // 要更新的记录主键，必须有值
+            "id": { "$state": "/order/id" },
+            // 只提交要改的字段
+            "values": { "status": "shipped" }
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| `resource`（必填） | 数据资源名，如 `orders`。 | `string` |
+| `dataProviderName` | 使用哪个数据源；省略时用当前范围的数据源，没有就是 default。 | `string` |
+| `meta` | 原样传给 DataProvider 的扩展数据。 | `object` |
+| `id` | 要更新的记录主键，必须有值。 | `string \| number` |
+| `values` | 要修改的字段。 | `object` |
+| `resultPath` | 把保存结果 `{ data }` 写进页面状态的路径。 | `string` |
+| `mutationMode` | `pessimistic` 等服务器返回，`optimistic` 立即显示，`undoable` 可撤销。 | `"pessimistic" \| "optimistic" \| "undoable"` |
+| `undoableTimeout` | `undoable` 模式下等待撤销的毫秒数，默认 5000。 | `integer` |

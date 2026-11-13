@@ -1,0 +1,14 @@
+{
+  "root": "home",
+  "elements": {
+    "home": {
+      "type": "Card",
+      "props": { "title": "Served without a build", "description": "This page, the menu, the theme and the messages are JSON files next to a prebuilt base script." },
+      "children": ["ready"]
+    },
+    "ready": {
+      "type": "Alert",
+      "props": { "tone": "success", "title": "Edit any JSON file and reload", "message": "No bundler, no compile step: the backend owns every page." }
+    }
+  }
+}

@@ -1,0 +1,80 @@
+---
+title: "主题"
+description: "theme.json 调整主色、语义色、圆角、字号和深色模式，主题可以来自文件、接口或内嵌对象，以及自定义 CSS 可用的变量。"
+---
+
+在 `config.json` 里写 `"theme": "/theme.json"`，或直接内嵌对象：
+
+```jsonc
+{
+  // light、dark，或跟随系统
+  "mode": "system",
+  // 主色
+  "primary": "#2d5bff",
+  // 圆角大小
+  "radius": "md",
+  // 字号档位
+  "fontSize": "md"
+}
+```
+
+| 字段 | 说明 |
+| --- | --- |
+| `mode` | `light`、`dark` 或 `system`（跟随系统）。 |
+| `primary` | 主色，用于主按钮和选中状态，`#rrggbb`。 |
+| `brand` | 品牌色，用于 `brand` 外观的按钮和强调。 |
+| `neutral`、`success`、`warning`、`danger`、`info` | 各语义色。 |
+| `radius` | 圆角：`sm`、`md`、`lg`。 |
+| `fontSize` | 整体字号：`sm`、`md`、`lg`。 |
+| `fontSizes` | 单独调整某一级字号（像素），如 `{ "body": 15, "page": 24 }`。级别有 `caption`、`label`、`body`、`title`、`section`、`page`、`metric`。 |
+
+只调这些语义变量，组件会一起变化，不需要改 CSS。
+
+## 各个颜色管什么
+
+| 颜色 | 影响 |
+| --- | --- |
+| `primary` | 主按钮（`solid` 外观）、勾选、选中的菜单和标签页。不写时是接近黑色的中性色。 |
+| `brand` | `brand` 外观的按钮、链接、焦点环、`info` 提示的默认颜色。默认 `#2d5bff`。 |
+| `neutral` | 灰色系的色相：文字次要色、边框、背景、侧栏都从它混出来。写一个带点蓝或带点暖的灰，整套灰都会跟着偏。 |
+| `success`、`warning`、`danger`、`info` | 徽标、提示、表格状态、删除按钮等语义颜色。 |
+
+颜色只接受 `#rrggbb`。深色模式下用同一组颜色，组件自己调整明暗，不需要再写一套。
+
+## 深色模式
+
+- `mode` 是默认值。`system` 跟随操作系统，系统切换时页面跟着变。
+- 页头右侧有一个切换按钮，依次切换浅色、深色、跟随系统。读者选过之后，以他的选择为准，保存在浏览器里（按 `config.json` 的 `cacheKey` 区分）。
+- 深色时根元素带 `data-theme="dark"`，自定义 CSS 可以用 `[data-theme="dark"] .my-card { … }` 写深色样式。
+
+## 主题从哪里来
+
+`theme` 可以是文件地址、后端接口或内嵌对象。接口返回的就是上面的 JSON，可以按租户返回不同的主色；发往本站或当前后台的后端（`data` 的 `url`）的请求会带上登录凭证。内容会先校验，写错字段会报错，不会静默忽略。
+
+## 自定义 CSS
+
+主题字段不够用时，在 HTML 里 `lumi-admin.css` 后面再引一个自己的样式文件，读写下面这些变量。只用这里列出的公开变量；`--lumi-ui-` 开头的是内部变量，升级时可能改名。
+
+| 变量 | 含义 |
+| --- | --- |
+| `--background`、`--foreground` | 页面背景和正文颜色 |
+| `--card`、`--popover`、`--sidebar` | 卡片、弹出层、侧栏的背景 |
+| `--primary`、`--brand`、`--muted-foreground` | 主色、品牌色、次要文字 |
+| `--border`、`--input`、`--ring` | 边框、输入框边框、焦点环 |
+| `--success`、`--warning`、`--destructive`、`--info` | 语义色 |
+| `--lumi-fs-caption` … `--lumi-fs-metric` | 各级字号，对应 `fontSizes` |
+| `--lumi-radius-control`、`--lumi-radius-panel`、`--lumi-radius-overlay` | 控件、卡片、弹窗的圆角 |
+| `--lumi-control-sm`、`--lumi-control-md`、`--lumi-control-lg` | 控件高度 |
+
+```css
+/* 只把卡片的圆角调大 */
+:root {
+  --lumi-radius-panel: 16px;
+}
+/* 浅色模式下，页面背景换成偏暖的白 */
+[data-theme='light'] {
+  --background: #fbfaf8;
+}
+```
+
+页面 JSON 里大多数组件也接受 `className`，可以挂上自己的类名。

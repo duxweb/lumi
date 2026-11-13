@@ -1,0 +1,682 @@
+{
+  "root": "demo",
+  "state": {
+    "period": "week"
+  },
+  "elements": {
+    "demo": {
+      "type": "Fragment",
+      "props": {},
+      "children": [
+        "strip",
+        "metrics",
+        "trend",
+        "mix",
+        "conversion"
+      ]
+    },
+    "strip": {
+      "type": "StatStrip",
+      "props": {
+        "ariaLabel": {
+          "$t": "Order totals"
+        },
+        "items": [
+          {
+            "key": "total",
+            "label": {
+              "$t": "Orders"
+            },
+            "icon": "receipt",
+            "value": 27,
+            "hint": {
+              "$t": "Last 28 days"
+            },
+            "change": "+12%",
+            "tone": "success",
+            "series": [
+              3,
+              5,
+              4,
+              6,
+              5,
+              7,
+              8
+            ]
+          },
+          {
+            "key": "toShip",
+            "label": {
+              "$t": "To ship"
+            },
+            "icon": "truck",
+            "value": 12,
+            "badge": {
+              "$t": "3 overdue"
+            },
+            "tone": "warning"
+          },
+          {
+            "key": "refunding",
+            "label": {
+              "$t": "Refunding"
+            },
+            "icon": "undo",
+            "value": 3,
+            "hint": {
+              "$t": "Awaiting review"
+            }
+          },
+          {
+            "key": "watching",
+            "label": {
+              "$t": "Watching"
+            },
+            "icon": "sparkles",
+            "value": 5,
+            "hint": {
+              "$t": "Flagged by the team"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "metrics": {
+      "type": "DashboardCard",
+      "props": {
+        "title": {
+          "$t": "Metric cards"
+        },
+        "description": {
+          "$t": "Headline figures with unit, change and sparkline"
+        },
+        "span": "full"
+      },
+      "children": [
+        "metrics-grid"
+      ]
+    },
+    "m1": {
+      "type": "MetricCard",
+      "props": {
+        "label": {
+          "$t": "Revenue"
+        },
+        "value": "131.5",
+        "unit": {
+          "$t": "k USD"
+        },
+        "icon": "wallet",
+        "change": "+8.2%",
+        "tone": "success",
+        "series": [
+          90,
+          96,
+          104,
+          99,
+          112,
+          120,
+          131
+        ],
+        "description": {
+          "$t": "Compared with the previous 28 days"
+        }
+      },
+      "children": []
+    },
+    "m2": {
+      "type": "MetricCard",
+      "props": {
+        "label": {
+          "$t": "Refund rate"
+        },
+        "value": "2.4",
+        "unit": "%",
+        "icon": "undo",
+        "change": {
+          "$t": "+0.6 pt"
+        },
+        "tone": "warning",
+        "description": {
+          "$t": "Above the 2% target"
+        },
+        "series": [
+          2.1,
+          2.0,
+          2.2,
+          2.1,
+          2.3,
+          2.5,
+          2.4
+        ]
+      },
+      "children": []
+    },
+    "m3": {
+      "type": "MetricCard",
+      "props": {
+        "label": {
+          "$t": "Avg. order"
+        },
+        "value": "87",
+        "unit": {
+          "$t": "USD"
+        },
+        "icon": "receipt",
+        "change": "-1.1%",
+        "tone": "danger",
+        "series": [
+          92,
+          91,
+          90,
+          89,
+          88,
+          88,
+          87
+        ],
+        "description": {
+          "$t": "Compared with the previous 28 days"
+        }
+      },
+      "children": []
+    },
+    "trend": {
+      "type": "DashboardCard",
+      "props": {
+        "title": {
+          "$t": "Daily revenue"
+        },
+        "description": {
+          "$t": "MatrixChart with a note on the outlier day"
+        },
+        "span": "full"
+      },
+      "slots": {
+        "action": [
+          "trend-period"
+        ]
+      },
+      "children": [
+        "trend-chart",
+        "trend-bars"
+      ]
+    },
+    "trend-period": {
+      "type": "Segmented",
+      "props": {
+        "ariaLabel": {
+          "$t": "Trend view"
+        },
+        "value": {
+          "$bindState": "/period"
+        },
+        "options": [
+          {
+            "value": "week",
+            "label": {
+              "$t": "Matrix"
+            }
+          },
+          {
+            "value": "bars",
+            "label": {
+              "$t": "Bars"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "trend-chart": {
+      "type": "MatrixChart",
+      "props": {
+        "ariaLabel": {
+          "$t": "Daily revenue"
+        },
+        "points": [
+          {
+            "key": "08-01",
+            "label": {
+              "$t": "01 Aug"
+            },
+            "value": 4200,
+            "display": "$4,200"
+          },
+          {
+            "key": "08-02",
+            "label": {
+              "$t": "02 Aug"
+            },
+            "value": 3900,
+            "display": "$3,900"
+          },
+          {
+            "key": "08-03",
+            "label": {
+              "$t": "03 Aug"
+            },
+            "value": 5100,
+            "display": "$5,100"
+          },
+          {
+            "key": "08-04",
+            "label": {
+              "$t": "04 Aug"
+            },
+            "value": 562,
+            "display": "$562",
+            "note": {
+              "$t": "Payment callbacks failed"
+            }
+          },
+          {
+            "key": "08-05",
+            "label": {
+              "$t": "05 Aug"
+            },
+            "value": 4800,
+            "display": "$4,800"
+          },
+          {
+            "key": "08-06",
+            "label": {
+              "$t": "06 Aug"
+            },
+            "value": 5300,
+            "display": "$5,300"
+          },
+          {
+            "key": "08-07",
+            "label": {
+              "$t": "07 Aug"
+            },
+            "value": 4950,
+            "display": "$4,950"
+          },
+          {
+            "key": "08-08",
+            "label": {
+              "$t": "08 Aug"
+            },
+            "value": 6100,
+            "display": "$6,100"
+          },
+          {
+            "key": "08-09",
+            "label": {
+              "$t": "09 Aug"
+            },
+            "value": 5800,
+            "display": "$5,800"
+          },
+          {
+            "key": "08-10",
+            "label": {
+              "$t": "10 Aug"
+            },
+            "value": 6420,
+            "display": "$6,420"
+          }
+        ],
+        "rows": 6,
+        "labelEvery": 2
+      },
+      "visible": {
+        "$state": "/period",
+        "eq": "week"
+      },
+      "children": []
+    },
+    "mix": {
+      "type": "DashboardCard",
+      "props": {
+        "title": {
+          "$t": "Where orders stand"
+        },
+        "description": {
+          "$t": "Pipeline, ranking and column chart from the same counts"
+        },
+        "span": "full"
+      },
+      "children": [
+        "pipeline",
+        "mix-detail"
+      ]
+    },
+    "mix-detail": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 320,
+        "gap": "lg"
+      },
+      "children": [
+        "share-group",
+        "bars-group"
+      ]
+    },
+    "share-group": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "share-label",
+        "share"
+      ]
+    },
+    "share-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "By warehouse"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "bars-group": {
+      "type": "Stack",
+      "props": {
+        "gap": "sm"
+      },
+      "children": [
+        "bars-label",
+        "bars"
+      ]
+    },
+    "bars-label": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "By channel"
+        },
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "conversion": {
+      "type": "DashboardCard",
+      "props": {
+        "title": {
+          "$t": "Conversion"
+        },
+        "description": {
+          "$t": "FunnelChart: each stage against the first, with the conversion and drop-off between steps"
+        },
+        "span": "full"
+      },
+      "children": [
+        "funnel"
+      ]
+    },
+    "funnel": {
+      "type": "FunnelChart",
+      "props": {
+        "ariaLabel": {
+          "$t": "Conversion funnel"
+        },
+        "stages": [
+          {
+            "key": "visits",
+            "label": {
+              "$t": "Visits"
+            },
+            "value": 18420
+          },
+          {
+            "key": "carts",
+            "label": {
+              "$t": "Added to cart"
+            },
+            "value": 2310
+          },
+          {
+            "key": "checkout",
+            "label": {
+              "$t": "Checkout"
+            },
+            "value": 1388
+          },
+          {
+            "key": "paid",
+            "label": {
+              "$t": "Paid"
+            },
+            "value": 1086
+          }
+        ]
+      },
+      "children": []
+    },
+    "pipeline": {
+      "type": "Pipeline",
+      "props": {
+        "ariaLabel": {
+          "$t": "Order pipeline"
+        },
+        "stages": [
+          {
+            "key": "pending",
+            "label": {
+              "$t": "Pending"
+            },
+            "value": 5,
+            "tone": "muted"
+          },
+          {
+            "key": "paid",
+            "label": {
+              "$t": "Paid"
+            },
+            "value": 12,
+            "tone": "warning"
+          },
+          {
+            "key": "shipped",
+            "label": {
+              "$t": "Shipped"
+            },
+            "value": 7,
+            "tone": "success"
+          },
+          {
+            "key": "cancelled",
+            "label": {
+              "$t": "Cancelled"
+            },
+            "value": 3,
+            "tone": "danger"
+          }
+        ]
+      },
+      "children": []
+    },
+    "share": {
+      "type": "ProportionList",
+      "props": {
+        "ariaLabel": {
+          "$t": "Orders by warehouse"
+        },
+        "showShare": true,
+        "items": [
+          {
+            "key": "sh",
+            "label": {
+              "$t": "Shanghai"
+            },
+            "value": 11,
+            "display": {
+              "$t": "11 orders"
+            }
+          },
+          {
+            "key": "cd",
+            "label": {
+              "$t": "Chengdu"
+            },
+            "value": 9,
+            "display": {
+              "$t": "9 orders"
+            },
+            "tone": "warning"
+          },
+          {
+            "key": "sz",
+            "label": {
+              "$t": "Shenzhen"
+            },
+            "value": 7,
+            "display": {
+              "$t": "7 orders"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "bars": {
+      "type": "BarChart",
+      "props": {
+        "ariaLabel": {
+          "$t": "Orders by channel"
+        },
+        "caption": {
+          "$t": "Last 28 days"
+        },
+        "points": [
+          {
+            "key": "web",
+            "label": {
+              "$t": "Web"
+            },
+            "value": 14
+          },
+          {
+            "key": "app",
+            "label": {
+              "$t": "App"
+            },
+            "value": 9
+          },
+          {
+            "key": "store",
+            "label": {
+              "$t": "Store"
+            },
+            "value": 4
+          }
+        ]
+      },
+      "children": []
+    },
+    "trend-bars": {
+      "type": "BarChart",
+      "props": {
+        "ariaLabel": {
+          "$t": "Daily revenue bars"
+        },
+        "points": [
+          {
+            "key": "08-01",
+            "label": {
+              "$t": "01 Aug"
+            },
+            "value": 4200,
+            "display": "$4,200"
+          },
+          {
+            "key": "08-02",
+            "label": {
+              "$t": "02 Aug"
+            },
+            "value": 3900,
+            "display": "$3,900"
+          },
+          {
+            "key": "08-03",
+            "label": {
+              "$t": "03 Aug"
+            },
+            "value": 5100,
+            "display": "$5,100"
+          },
+          {
+            "key": "08-04",
+            "label": {
+              "$t": "04 Aug"
+            },
+            "value": 562,
+            "display": "$562",
+            "tone": "danger"
+          },
+          {
+            "key": "08-05",
+            "label": {
+              "$t": "05 Aug"
+            },
+            "value": 4800,
+            "display": "$4,800"
+          },
+          {
+            "key": "08-06",
+            "label": {
+              "$t": "06 Aug"
+            },
+            "value": 5300,
+            "display": "$5,300"
+          },
+          {
+            "key": "08-07",
+            "label": {
+              "$t": "07 Aug"
+            },
+            "value": 4950,
+            "display": "$4,950"
+          },
+          {
+            "key": "08-08",
+            "label": {
+              "$t": "08 Aug"
+            },
+            "value": 6100,
+            "display": "$6,100"
+          },
+          {
+            "key": "08-09",
+            "label": {
+              "$t": "09 Aug"
+            },
+            "value": 5800,
+            "display": "$5,800"
+          },
+          {
+            "key": "08-10",
+            "label": {
+              "$t": "10 Aug"
+            },
+            "value": 6420,
+            "display": "$6,420"
+          }
+        ]
+      },
+      "visible": {
+        "$state": "/period",
+        "eq": "bars"
+      },
+      "children": []
+    },
+    "metrics-grid": {
+      "type": "Grid",
+      "props": {
+        "columns": 3,
+        "gap": "md"
+      },
+      "children": [
+        "m1",
+        "m2",
+        "m3"
+      ]
+    }
+  }
+}

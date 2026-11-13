@@ -1,0 +1,125 @@
+---
+title: "弹窗与复用"
+description: "几个页面共用的内容只写一次：按地址打开的弹窗页面，和用 Include 引入的页面片段。"
+---
+
+同一个编辑表单、同一块统计卡片，常常好几个页面都要用。把它写成一个单独的页面 JSON，需要的地方按地址引用。
+
+## 共用弹窗
+
+编辑表单、详情这类弹窗，常常好几个页面都要用。把它写成一个单独的页面 JSON，任何页面都用 [openDrawer](/protocol/actions/open-drawer/) 按地址打开，不用复制，也不用注册。
+
+列表页里的按钮：
+
+```jsonc
+{
+  "type": "Button",
+  "props": { "label": "编辑" },
+  "on": {
+    "press": {
+      "action": "openDrawer",
+      "params": {
+        // 弹窗的内容：一个普通的页面 JSON
+        "src": "/pages/article-edit.json",
+        // 这条记录，弹窗页面里用 /drawer/id 读取
+        "id": { "$state": "/table/row/id" },
+        "title": "编辑文章",
+        // drawer（默认）从侧边滑出，modal 居中弹出
+        "mode": "drawer"
+      }
+    }
+  },
+  "children": []
+}
+```
+
+弹窗页面 `pages/article-edit.json`：
+
+```jsonc
+{
+  "root": "form",
+  "elements": {
+    // 用打开时传进来的 id 读这条记录，保存时更新它
+    "form": {
+      "type": "FormPage",
+      "props": {
+        "resource": "articles",
+        "title": "编辑文章",
+        "id": { "$state": "/drawer/id" },
+        // 表单值在页面状态里的位置
+        "valuesPath": "/values"
+      },
+      // 保存成功后关闭这一层
+      "on": { "saved": { "action": "closeDrawer", "params": {} } },
+      "children": ["title"]
+    },
+    // 标题字段，绑定到表单值
+    "title": {
+      "type": "Input",
+      "props": {
+        "ariaLabel": "标题",
+        "value": { "$bindState": "/values/title" }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+- **只加载一次**：页面 JSON 只按 `src` 请求，并缓存起来。`id` 和 `params` 不会进这个请求，而是写进弹窗页面的状态：`/drawer/id`、`/drawer/params`。这和异步组件一样，加载的是组件本身，参数在渲染时传进去。
+- **地址可分享**：打开后后台的地址变成 `?drawer=/pages/article-edit.json&record=12`，可以刷新、分享，浏览器后退会关闭弹窗。
+- **离开前提醒**：弹窗里有没保存的改动时，关闭前会先确认。
+- **叠加**：在弹窗里再 `openDrawer` 会叠在上面（比如在订单弹窗里看客户），最多三层；关闭只关最上面一层。
+- **刷新列表**：保存后同一资源的列表会自动刷新。用 `request` 这类自定义请求时，在后面加一个 `invalidate`。
+- **地址限制**：`src` 只能是本站路径或相对于 manifest 的路径。地址栏里别的网站的地址会被忽略，别人没法用链接让你加载陌生的页面。
+- **代码写的弹窗**：用 `name` 打开在代码里注册的抽屉（扩展的 `drawers`），两种写法可以并存。
+
+## 复用页面片段
+
+几个页面里一样的区块，比如订单的统计卡片，单独写成一个 JSON 页面，用 `Include` 引进来：
+
+```jsonc
+{
+  "root": "page",
+  "elements": {
+    "page": { "type": "Stack", "props": {}, "children": ["stats", "list"] },
+    // 显示 blocks/order-stats.json，把当前客户传给它
+    "stats": {
+      "type": "Include",
+      "props": {
+        "src": "/blocks/order-stats.json",
+        // 传给被引用页面的值：当前地址里的 id
+        "params": { "customerId": { "$state": "/route/params/id" } }
+      },
+      "children": []
+    },
+    // 页面的其他内容
+    "list": { "type": "Text", "props": { "text": "订单列表" }, "children": [] }
+  }
+}
+```
+
+被引用的页面从 `/include/params` 读传进来的值：
+
+```jsonc
+// blocks/order-stats.json
+{
+  "root": "stats",
+  "elements": {
+    "stats": {
+      "type": "Text",
+      "props": {
+        // 读外层传进来的 customerId
+        "text": { "$template": "客户 ${/include/params/customerId} 的订单统计" }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+- `src` 的写法和路由的 `page.src` 一样；配置了 [`pages`](/guide/remote/#一个接口返回所有页面) 时也走页面接口。
+- 第一次显示时才加载，按 `src` 缓存，多个地方引用同一个页面只请求一次。
+- 被引用的页面有自己独立的状态，和外层页面互不影响。要把结果交回外层，用数据请求和刷新，而不是共享状态。
+- `params` 可以绑定状态；值变化时被引用的页面重新开始，自己的状态也回到初始值。
+- 页面直接或间接引用自己，或者嵌套超过 8 层时，那个位置显示错误，不会无限加载。

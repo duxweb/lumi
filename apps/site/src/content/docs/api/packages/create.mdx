@@ -1,0 +1,70 @@
+---
+title: "@duxweb/create-lumi API"
+description: "@duxweb/create-lumi 的全部公开方法、类型、参数和返回值。"
+---
+
+Scaffolding CLI for Lumi applications. 入口：`@duxweb/create-lumi`。共 4 个公开符号，由 TypeScript 入口自动生成。
+
+## 函数
+
+### createApp
+
+Scaffolds a project from a template into a new, empty directory, adds the AI files unless `ai` is false, optionally installs dependencies and runs `git init`; answers the project's path.
+
+```typescript
+createApp(options?: CreateAppOptions): Promise<string>
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `options` | `CreateAppOptions` | 否 |  |
+
+`options` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `ai` | `boolean \| undefined` | 否 | Writes the Lumi skill; `false` leaves it out. |
+| `cwd` | `string \| undefined` | 否 |  |
+| `git` | `boolean \| undefined` | 否 |  |
+| `install` | `boolean \| undefined` | 否 |  |
+| `name` | `string \| undefined` | 否 |  |
+| `pm` | `"pnpm" \| "npm" \| "yarn" \| undefined` | 否 |  |
+| `template` | `"react" \| undefined` | 否 |  |
+
+返回 `Promise<string>`。
+
+### createProgram
+
+The `create-lumi` command line program.
+
+```typescript
+createProgram(): Command
+```
+
+返回 `Command`。
+
+## 接口
+
+### CreateAppOptions
+
+```typescript
+interface CreateAppOptions
+```
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `ai` | `boolean \| undefined` | 否 | Writes the Lumi skill; `false` leaves it out. |
+| `cwd` | `string \| undefined` | 否 |  |
+| `git` | `boolean \| undefined` | 否 |  |
+| `install` | `boolean \| undefined` | 否 |  |
+| `name` | `string \| undefined` | 否 |  |
+| `pm` | `"pnpm" \| "npm" \| "yarn" \| undefined` | 否 |  |
+| `template` | `"react" \| undefined` | 否 |  |
+
+## 类型
+
+### TemplateName
+
+```typescript
+type TemplateName = "react"
+```

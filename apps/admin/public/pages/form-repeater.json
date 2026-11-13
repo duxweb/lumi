@@ -1,0 +1,988 @@
+{
+  "root": "page",
+  "state": {
+    "order": {
+      "customer": "Northwind Trading",
+      "items": [
+        {
+          "id": "line-1",
+          "product": "Wireless mouse",
+          "qty": 2,
+          "price": 89
+        },
+        {
+          "id": "line-2",
+          "product": "USB-C hub",
+          "qty": 6,
+          "price": 249
+        },
+        {
+          "id": "line-3",
+          "product": "Laptop stand",
+          "qty": 3,
+          "price": 99
+        }
+      ]
+    },
+    "orderForm": {
+      "fieldErrors": {},
+      "errorDisplay": "tooltip"
+    },
+    "contacts": [
+      {
+        "id": "contact-1",
+        "name": "Lin Wei",
+        "role": "buyer",
+        "email": "lin.wei@northwind.cn",
+        "phone": "138 0013 8000",
+        "note": "Weekdays 9:00–18:00."
+      },
+      {
+        "id": "contact-2",
+        "name": "Zhou Min",
+        "role": "finance",
+        "email": "zhou.min@northwind.cn",
+        "phone": "139 0013 9000",
+        "note": ""
+      }
+    ],
+    "product": {
+      "sku": {
+        "attributes": [
+          {
+            "name": "Color",
+            "values": [
+              "Graphite",
+              "Silver"
+            ]
+          },
+          {
+            "name": "Storage",
+            "values": [
+              "256 GB",
+              "512 GB"
+            ]
+          }
+        ],
+        "variants": [
+          {
+            "key": "Color:Graphite|Storage:256 GB",
+            "options": {
+              "Color": "Graphite",
+              "Storage": "256 GB"
+            },
+            "price": 5999,
+            "stock": 26,
+            "sku": "PB14-GRA-256"
+          },
+          {
+            "key": "Color:Graphite|Storage:512 GB",
+            "options": {
+              "Color": "Graphite",
+              "Storage": "512 GB"
+            },
+            "price": 6999,
+            "stock": 32,
+            "sku": "PB14-GRA-512"
+          },
+          {
+            "key": "Color:Silver|Storage:256 GB",
+            "options": {
+              "Color": "Silver",
+              "Storage": "256 GB"
+            },
+            "price": 5999,
+            "stock": 38,
+            "sku": "PB14-SIL-256"
+          },
+          {
+            "key": "Color:Silver|Storage:512 GB",
+            "options": {
+              "Color": "Silver",
+              "Storage": "512 GB"
+            },
+            "price": 6999,
+            "stock": 0,
+            "sku": "PB14-SIL-512"
+          }
+        ]
+      }
+    },
+    "productForm": {
+      "fieldErrors": {}
+    },
+    "bundle": {
+      "attributes": [
+        {
+          "name": "Box",
+          "values": [
+            "Standard",
+            "Gift box",
+            "Family pack"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "key": "Box:Standard",
+          "options": {
+            "Box": "Standard"
+          },
+          "cost": 42,
+          "sale": 69,
+          "stock": 120,
+          "weight": 0.45,
+          "warehouse": "shanghai",
+          "barcode": "6901234500011"
+        },
+        {
+          "key": "Box:Gift box",
+          "options": {
+            "Box": "Gift box"
+          },
+          "cost": 58,
+          "sale": 99,
+          "stock": 40,
+          "weight": 0.8,
+          "warehouse": "shanghai",
+          "barcode": "6901234500028"
+        },
+        {
+          "key": "Box:Family pack",
+          "options": {
+            "Box": "Family pack"
+          },
+          "cost": 96,
+          "sale": 159,
+          "stock": 18,
+          "weight": 1.6,
+          "warehouse": "shenzhen",
+          "barcode": ""
+        }
+      ]
+    },
+    "bundleForm": {
+      "fieldErrors": {}
+    }
+  },
+  "elements": {
+    "page": {
+      "type": "Page",
+      "props": {
+        "ariaLabel": {
+          "$t": "Repeater & SKU editor"
+        },
+        "stack": true
+      },
+      "children": [
+        "header",
+        "order-card",
+        "contacts-card",
+        "sku-card",
+        "bundle-card"
+      ]
+    },
+    "header": {
+      "type": "PageHeader",
+      "props": {
+        "title": {
+          "$t": "Repeater & SKU editor"
+        },
+        "description": {
+          "$t": "Repeatable sub-forms over a state array: rows render through native repeat, cells bind with $bindItem, and field errors use dot paths such as items.1.qty"
+        }
+      },
+      "children": []
+    },
+    "order-card": {
+      "type": "Example",
+      "props": {
+        "id": "order-lines",
+        "title": {
+          "$t": "Order lines"
+        },
+        "description": {
+          "$t": "A table repeater with computed line totals and a totals row. Drag the handle to reorder, or focus it and press the arrow keys; errors follow their row"
+        }
+      },
+      "children": [
+        "order-form"
+      ]
+    },
+    "order-form": {
+      "type": "Form",
+      "props": {},
+      "children": [
+        "order-repeater",
+        "order-actions"
+      ],
+      "on": {
+        "submit": [
+          {
+            "action": "setState",
+            "params": {
+              "statePath": "/orderForm/fieldErrors",
+              "value": {}
+            }
+          },
+          {
+            "action": "toast",
+            "params": {
+              "message": {
+                "$t": "{customer}: first line {product} × {qty}. Nothing was sent",
+                "params": {
+                  "customer": {
+                    "$state": "/order/customer"
+                  },
+                  "product": {
+                    "$state": "/order/items/0/product"
+                  },
+                  "qty": {
+                    "$state": "/order/items/0/qty"
+                  }
+                }
+              },
+              "tone": "success"
+            }
+          }
+        ]
+      }
+    },
+    "order-repeater": {
+      "type": "Repeater",
+      "props": {
+        "value": {
+          "$bindState": "/order/items"
+        },
+        "errors": {
+          "$bindState": "/orderForm/fieldErrors"
+        },
+        "name": "items",
+        "layout": "table",
+        "rowKey": "id",
+        "min": 1,
+        "max": 8,
+        "newRow": {
+          "product": "",
+          "qty": 1,
+          "price": 0
+        },
+        "columns": [
+          {
+            "key": "product",
+            "label": {
+              "$t": "Product"
+            },
+            "required": true
+          },
+          {
+            "key": "qty",
+            "label": {
+              "$t": "Qty"
+            },
+            "width": 120,
+            "required": true
+          },
+          {
+            "key": "price",
+            "label": {
+              "$t": "Unit price"
+            },
+            "width": 160,
+            "prefix": "¥",
+            "precision": 2
+          },
+          {
+            "key": "total",
+            "label": {
+              "$t": "Line total"
+            },
+            "width": 140,
+            "align": "end",
+            "compute": {
+              "op": "product",
+              "fields": [
+                "qty",
+                "price"
+              ]
+            },
+            "prefix": "¥",
+            "precision": 2
+          }
+        ],
+        "summary": [
+          {
+            "key": "qty",
+            "op": "sum"
+          },
+          {
+            "key": "total",
+            "op": "sum"
+          }
+        ],
+        "addLabel": {
+          "$t": "Add line"
+        },
+        "ariaLabel": {
+          "$t": "Order lines"
+        },
+        "errorDisplay": {
+          "$state": "/orderForm/errorDisplay"
+        }
+      },
+      "children": [
+        "order-row"
+      ],
+      "repeat": {
+        "statePath": "/order/items",
+        "key": "id"
+      }
+    },
+    "order-row": {
+      "type": "RepeaterRow",
+      "props": {},
+      "children": [
+        "order-product",
+        "order-qty",
+        "order-price"
+      ]
+    },
+    "order-product": {
+      "type": "Input",
+      "props": {
+        "value": {
+          "$bindItem": "product"
+        },
+        "placeholder": {
+          "$t": "Product name"
+        },
+        "ariaLabel": {
+          "$t": "Product"
+        },
+        "checks": [
+          {
+            "type": "required",
+            "message": {
+              "$t": "Enter a product"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "order-qty": {
+      "type": "NumberInput",
+      "props": {
+        "value": {
+          "$bindItem": "qty"
+        },
+        "min": 1,
+        "precision": 0,
+        "ariaLabel": {
+          "$t": "Qty"
+        },
+        "checks": [
+          {
+            "type": "required",
+            "message": {
+              "$t": "Enter a quantity"
+            }
+          },
+          {
+            "type": "min",
+            "args": {
+              "min": 1
+            },
+            "message": {
+              "$t": "At least 1"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "order-price": {
+      "type": "NumberInput",
+      "props": {
+        "value": {
+          "$bindItem": "price"
+        },
+        "min": 0,
+        "precision": 2,
+        "prefix": "¥",
+        "ariaLabel": {
+          "$t": "Unit price"
+        },
+        "checks": [
+          {
+            "type": "required",
+            "message": {
+              "$t": "Enter a price"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "order-actions": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "order-submit",
+        "order-stock",
+        "order-clear",
+        "order-mode"
+      ]
+    },
+    "order-submit": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Validate order"
+        },
+        "type": "submit",
+        "icon": "check"
+      },
+      "children": []
+    },
+    "order-stock": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Simulate stock check"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/orderForm/fieldErrors",
+            "value": {
+              "items.1.qty": {
+                "$t": "Only 4 left in stock"
+              },
+              "items.2.price": {
+                "$t": "Below the floor price of ¥120.00"
+              }
+            }
+          }
+        }
+      }
+    },
+    "order-clear": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Clear errors"
+        },
+        "appearance": "ghost"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/orderForm/fieldErrors",
+            "value": {}
+          }
+        }
+      }
+    },
+    "contacts-card": {
+      "type": "Example",
+      "props": {
+        "id": "contacts",
+        "title": {
+          "$t": "Contacts"
+        },
+        "description": {
+          "$t": "The card layout suits longer rows. Duplicate a contact to start from its values; at most four"
+        }
+      },
+      "children": [
+        "contacts-repeater"
+      ]
+    },
+    "contacts-repeater": {
+      "type": "Repeater",
+      "props": {
+        "value": {
+          "$bindState": "/contacts"
+        },
+        "layout": "card",
+        "rowKey": "id",
+        "max": 4,
+        "duplicable": true,
+        "newRow": {
+          "name": "",
+          "role": "buyer",
+          "email": "",
+          "phone": "",
+          "note": ""
+        },
+        "columns": [
+          {
+            "key": "name",
+            "label": {
+              "$t": "Name"
+            },
+            "required": true
+          },
+          {
+            "key": "role",
+            "label": {
+              "$t": "Role"
+            }
+          },
+          {
+            "key": "email",
+            "label": {
+              "$t": "Email"
+            }
+          },
+          {
+            "key": "phone",
+            "label": {
+              "$t": "Phone"
+            }
+          },
+          {
+            "key": "note",
+            "label": {
+              "$t": "Note"
+            },
+            "span": 2
+          }
+        ],
+        "rowLabel": {
+          "$t": "Contact {index}"
+        },
+        "addLabel": {
+          "$t": "Add contact"
+        },
+        "ariaLabel": {
+          "$t": "Contacts"
+        }
+      },
+      "children": [
+        "contact-row"
+      ],
+      "repeat": {
+        "statePath": "/contacts",
+        "key": "id"
+      }
+    },
+    "contact-row": {
+      "type": "RepeaterRow",
+      "props": {},
+      "children": [
+        "contact-name",
+        "contact-role",
+        "contact-email",
+        "contact-phone",
+        "contact-note"
+      ]
+    },
+    "contact-name": {
+      "type": "Input",
+      "props": {
+        "value": {
+          "$bindItem": "name"
+        },
+        "placeholder": {
+          "$t": "Full name"
+        }
+      },
+      "children": []
+    },
+    "contact-role": {
+      "type": "Select",
+      "props": {
+        "value": {
+          "$bindItem": "role"
+        },
+        "options": [
+          {
+            "label": {
+              "$t": "Buyer"
+            },
+            "value": "buyer"
+          },
+          {
+            "label": {
+              "$t": "Finance"
+            },
+            "value": "finance"
+          },
+          {
+            "label": {
+              "$t": "Logistics"
+            },
+            "value": "logistics"
+          }
+        ]
+      },
+      "children": []
+    },
+    "contact-email": {
+      "type": "Input",
+      "props": {
+        "value": {
+          "$bindItem": "email"
+        },
+        "type": "email",
+        "placeholder": "name@company.com"
+      },
+      "children": []
+    },
+    "contact-phone": {
+      "type": "Input",
+      "props": {
+        "value": {
+          "$bindItem": "phone"
+        },
+        "type": "tel",
+        "placeholder": {
+          "$t": "Phone number"
+        }
+      },
+      "children": []
+    },
+    "contact-note": {
+      "type": "Textarea",
+      "props": {
+        "value": {
+          "$bindItem": "note"
+        },
+        "rows": 2,
+        "placeholder": {
+          "$t": "Delivery hours, preferred channel…"
+        }
+      },
+      "children": []
+    },
+    "sku-card": {
+      "type": "Example",
+      "props": {
+        "id": "sku-editor",
+        "title": {
+          "$t": "Product specifications"
+        },
+        "description": {
+          "$t": "Each specification is a tag list; the variant table is every combination. Editing specifications keeps the price, stock and code of matching variants"
+        }
+      },
+      "children": [
+        "sku-editor",
+        "sku-actions"
+      ]
+    },
+    "sku-editor": {
+      "type": "SkuEditor",
+      "props": {
+        "value": {
+          "$bindState": "/product/sku"
+        },
+        "errors": {
+          "$bindState": "/productForm/fieldErrors"
+        },
+        "name": "sku",
+        "pricePrefix": "¥",
+        "ariaLabel": {
+          "$t": "Product specifications"
+        }
+      },
+      "children": []
+    },
+    "sku-actions": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "sku-check",
+        "sku-clear"
+      ]
+    },
+    "sku-check": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Simulate server validation"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/productForm/fieldErrors",
+            "value": {
+              "sku.variants.3.stock": {
+                "$t": "Stock is required for a sellable variant"
+              },
+              "sku.variants.1.sku": {
+                "$t": "This code is already used by another product"
+              }
+            }
+          }
+        }
+      }
+    },
+    "sku-clear": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Clear errors"
+        },
+        "appearance": "ghost"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/productForm/fieldErrors",
+            "value": {}
+          }
+        }
+      }
+    },
+    "bundle-card": {
+      "type": "Example",
+      "props": {
+        "id": "sku-bundles",
+        "title": {
+          "$t": "Bundles with custom columns"
+        },
+        "description": {
+          "$t": "The same editor with its own columns and wording: cost and sale price, stock, weight, warehouse and barcode for each bundle"
+        }
+      },
+      "children": [
+        "bundle-editor",
+        "bundle-actions"
+      ]
+    },
+    "bundle-editor": {
+      "type": "SkuEditor",
+      "props": {
+        "value": {
+          "$bindState": "/bundle"
+        },
+        "errors": {
+          "$bindState": "/bundleForm/fieldErrors"
+        },
+        "name": "bundle",
+        "pricePrefix": "¥",
+        "maxAttributes": 2,
+        "columns": [
+          {
+            "key": "cost",
+            "kind": "currency",
+            "label": {
+              "$t": "Cost price"
+            },
+            "required": true,
+            "min": 0,
+            "width": 140
+          },
+          {
+            "key": "sale",
+            "kind": "currency",
+            "label": {
+              "$t": "Sale price"
+            },
+            "required": true,
+            "min": 0,
+            "width": 140
+          },
+          {
+            "key": "stock",
+            "kind": "number",
+            "precision": 0,
+            "min": 0,
+            "width": 112
+          },
+          {
+            "key": "weight",
+            "kind": "number",
+            "label": {
+              "$t": "Weight"
+            },
+            "suffix": "kg",
+            "precision": 2,
+            "min": 0,
+            "defaultValue": 0.5,
+            "width": 120
+          },
+          {
+            "key": "warehouse",
+            "kind": "select",
+            "label": {
+              "$t": "Warehouse"
+            },
+            "options": [
+              {
+                "value": "shanghai",
+                "label": {
+                  "$t": "Shanghai"
+                }
+              },
+              {
+                "value": "shenzhen",
+                "label": {
+                  "$t": "Shenzhen"
+                }
+              }
+            ],
+            "defaultValue": "shanghai",
+            "width": 136
+          },
+          {
+            "key": "barcode",
+            "kind": "text",
+            "label": {
+              "$t": "Barcode"
+            },
+            "placeholder": {
+              "$t": "Optional"
+            },
+            "width": 168
+          }
+        ],
+        "labels": {
+          "title": {
+            "$t": "Bundle setup"
+          },
+          "count": {
+            "$t": "{count} bundles"
+          },
+          "filled": {
+            "$t": "Applied to {count} bundles"
+          },
+          "attributes": {
+            "$t": "Bundle options"
+          },
+          "attributeName": {
+            "$t": "Option name"
+          },
+          "attributeNamePlaceholder": {
+            "$t": "e.g. Box"
+          },
+          "valuesPlaceholder": {
+            "$t": "Type an option, press Enter"
+          },
+          "addAttribute": {
+            "$t": "Add option"
+          },
+          "removeAttribute": {
+            "$t": "Remove option {name}"
+          },
+          "attributeValues": {
+            "$t": "Choices of {name}"
+          },
+          "empty": {
+            "$t": "Add an option with at least one choice to build bundles"
+          }
+        },
+        "ariaLabel": {
+          "$t": "Bundle setup"
+        }
+      },
+      "children": []
+    },
+    "bundle-actions": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "bundle-check",
+        "bundle-clear"
+      ]
+    },
+    "bundle-check": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Simulate server validation"
+        },
+        "appearance": "outline"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/bundleForm/fieldErrors",
+            "value": {
+              "bundle.variants.1.sale": {
+                "$t": "The sale price must be above the cost price"
+              },
+              "bundle.variants.2.barcode": {
+                "$t": "A barcode is required before the bundle ships"
+              }
+            }
+          }
+        }
+      }
+    },
+    "bundle-clear": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "Clear errors"
+        },
+        "appearance": "ghost"
+      },
+      "children": [],
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/bundleForm/fieldErrors",
+            "value": {}
+          }
+        }
+      }
+    },
+    "order-mode": {
+      "type": "Segmented",
+      "props": {
+        "options": [
+          {
+            "value": "tooltip",
+            "label": {
+              "$t": "Tooltip errors"
+            }
+          },
+          {
+            "value": "inline",
+            "label": {
+              "$t": "Inline errors"
+            }
+          }
+        ],
+        "value": {
+          "$bindState": "/orderForm/errorDisplay"
+        },
+        "ariaLabel": {
+          "$t": "Error display"
+        }
+      },
+      "children": []
+    }
+  }
+}

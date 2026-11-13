@@ -1,0 +1,57 @@
+---
+title: "ToolCall"
+description: "智能体调用的一个工具或操作，显示为一行安静的时间线：图标（运行中为旋转图标）、名称、一行 summary 说明找到了什么，以及耗时。"
+---
+
+<ComponentPreview name="ToolCall" />
+
+智能体调用的一个工具或操作，显示为一行安静的时间线：图标（运行中为旋转图标）、名称、一行 `summary` 说明找到了什么，以及耗时。有输入、输出或错误时可展开，以高亮 JSON 或错误文字显示。在 ChatMessage 内，连续的思考和工具调用收在一行活动记录下。
+
+## 示例
+
+```json
+{
+  "root": "tool-call",
+  "elements": {
+    "tool-call": {
+      "type": "ToolCall",
+      "props": {
+        "toolName": "customers.get",
+        "title": "Read customer",
+        "summary": "Avery Chen, 12 orders",
+        "status": "success",
+        "duration": 412,
+        "input": { "id": 7 },
+        "output": { "name": "Avery Chen", "orders": 12 }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `toolName`（必填） | 工具或已注册动作的名称，如 `orders.search`。 | `string` |  |
+| `title` | 易读的名称，代替工具名显示在行首。 | `string` |  |
+| `icon` | 图标名，来自内置 HugeIcons 图标集，如 `download`、`receipt`。 | `string` |  |
+| `status`（必填） | `pending` 排队、`running` 运行中、`success` 完成、`error` 失败。 | `"pending" \| "running" \| "success" \| "error"` |  |
+| `input` | 调用参数，保留在消息里供宿主和 Agent 使用，界面不显示。 | `unknown` |  |
+| `output` | 返回结果，`success` 时展开可见，以高亮 JSON 显示；字符串原样显示（JSON 字符串会格式化）。 | `unknown` |  |
+| `errorText` | 失败原因，展开后以危险色显示。 | `string` |  |
+| `summary` | 名称后的一句简短结果，如 `找到 41 条失败回调`。 | `string` |  |
+| `duration` | 耗时（毫秒），计入所在轮次顶部的总用时，行内不显示。 | `number` |  |
+| `defaultOpen` | 初始是否打开，只在没有绑定 `open` 时生效。 | `boolean` | `false` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

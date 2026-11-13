@@ -1,0 +1,80 @@
+---
+title: "AgentSessionList"
+description: "会话列表。"
+---
+
+<ComponentPreview name="AgentSessionList" />
+
+会话列表。每行标题前留一个状态点位置（`running` 闪动，`waiting` 等待读者，`unread` 有未读回复，`error` 出错），有没有点标题都对齐。`compact` 每个会话一行；`detailed` 加上时间和最后一句。`group` 开始一个分组标题，如 `Today`。点一行会把它的 id 写入绑定的 `value` 并触发 `change`；`searchable` 加搜索框，`creatable` 加新建对话按钮。
+
+## 示例
+
+```json
+{
+  "root": "agent-session-list",
+  "elements": {
+    "agent-session-list": {
+      "type": "AgentSessionList",
+      "props": {
+        "sessions": [
+          {
+            "id": "s1",
+            "title": "Unshipped Chengdu orders",
+            "preview": "Approve the reminders to notify the warehouse",
+            "time": "14:20",
+            "status": "waiting",
+            "group": "Today"
+          },
+          {
+            "id": "s2",
+            "title": "Refund spike this week",
+            "preview": "Checking the courier notes",
+            "time": "13:05",
+            "status": "running",
+            "group": "Today"
+          },
+          {
+            "id": "s3",
+            "title": "August sales report",
+            "preview": "Revenue grew 12% on returning customers",
+            "time": "Yesterday",
+            "group": "Earlier"
+          }
+        ],
+        "value": { "$bindState": "/session" },
+        "variant": "detailed",
+        "searchable": true,
+        "creatable": true
+      },
+      "children": []
+    }
+  },
+  "state": { "session": "s1" }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `sessions`（必填） | 会话列表，每项 `{ id, title, preview?, time?, status?, group? }`。`status` 为 `running` 处理中（圆点闪烁）、`waiting` 等待处理、`unread` 有新回复、`error` 失败；`group` 变化处显示分组标题，如“今天”。 字段：`id`、`title`、`preview?`、`time?`、`status?`、`group?` | `object[]` |  |
+| `value` | 当前打开的会话 id，按下某一行即写入并触发 `change`。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string \| null` |  |
+| `variant` | `compact` 每个会话一行，适合窄面板；`detailed` 增加时间和最后一句。 | `"compact" \| "detailed"` | `"compact"` |
+| `searchable` | 在列表上方显示搜索框，静态数据按标题和最后一句过滤。 | `boolean` | `false` |
+| `query` | 搜索文字。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `string` |  |
+| `creatable` | 显示“新会话”按钮，按下触发 `create`。 | `boolean` | `false` |
+| `loading` | 加载中，在列表末尾显示加载图标。 | `boolean` | `false` |
+| `hasMore` | 还有更多会话，滚动到底部时触发 `loadMore`。 | `boolean` |  |
+| `emptyText` | 没有会话时的文字。 | `string` |  |
+| `ariaLabel` | 列表的无障碍名称。 | `string` | `"Chats"` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`、`search`、`create`、`loadMore`
+- 插槽：无

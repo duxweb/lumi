@@ -1,0 +1,105 @@
+/* The agent workspace fills the region the shell gives the page: the thread
+   scrolls on its own and the composer stays at the foot. */
+.lumi-admin-page:has(> .lumi-agent-workspace) {
+  height: 100%;
+  max-width: none;
+  padding: 0;
+}
+
+.lumi-agent-workspace {
+  position: relative;
+  display: flex;
+  height: 100%;
+  min-height: 0;
+}
+
+.lumi-agent-workspace__aside {
+  display: flex;
+  width: 17rem;
+  flex-shrink: 0;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--lumi-space-3) var(--lumi-space-2);
+  border-inline-end: 1px solid var(--border);
+  background: var(--background);
+}
+
+/* In the dual layout the conversations take the shell's context column. */
+.lumi-agent-workspace__column {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--lumi-space-3) var(--lumi-space-2);
+}
+
+.lumi-agent-workspace__main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.lumi-agent-workspace__head {
+  display: flex;
+  align-items: center;
+  gap: var(--lumi-space-3);
+  min-height: 2.75rem;
+  padding: var(--lumi-space-2) var(--lumi-space-4);
+}
+
+.lumi-agent-workspace__toggle {
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-md, 0.5rem);
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  cursor: pointer;
+}
+
+.lumi-agent-workspace__toggle:hover {
+  background: var(--muted);
+}
+
+.lumi-agent-workspace__title {
+  overflow: hidden;
+  color: var(--muted-foreground);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lumi-agent-workspace__thread {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--lumi-space-6) var(--lumi-space-4) var(--lumi-space-4);
+}
+
+.lumi-agent-workspace__composer {
+  padding: 0 var(--lumi-space-4) var(--lumi-space-4);
+}
+
+/* Narrow screens lay the conversations over the thread instead of beside it. */
+@media (width < 768px) {
+  .lumi-agent-workspace__aside {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: 2;
+    width: min(20rem, 85%);
+    box-shadow: var(--shadow-lg, 0 10px 30px rgb(0 0 0 / 0.12));
+  }
+
+  .lumi-agent-workspace__aside {
+    padding-top: 3.25rem;
+  }
+
+  .lumi-agent-workspace__head {
+    position: relative;
+    z-index: 3;
+  }
+}

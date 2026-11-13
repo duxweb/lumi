@@ -1,0 +1,734 @@
+{
+  "root": "fragment-1",
+  "elements": {
+    "fragment-1": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "card-2",
+        "card-7",
+        "card-15",
+        "card-19",
+        "card-avatar",
+        "card-10",
+        "card-text",
+        "card-code",
+        "card-content"
+      ]
+    },
+    "card-2": {
+      "type": "Card",
+      "props": {
+        "title": "Table",
+        "description": "Rows with typed columns: code, entity, badge, currency, date and actions."
+      },
+      "children": [
+        "fragment-3"
+      ]
+    },
+    "fragment-3": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "table-4",
+        "grid-table-states"
+      ]
+    },
+    "grid-table-states": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 280
+      },
+      "children": [
+        "table-5",
+        "table-6"
+      ]
+    },
+    "table-4": {
+      "type": "Table",
+      "props": {
+        "rowKey": "id",
+        "selectable": true,
+        "selectedKeys": [
+          2
+        ],
+        "total": 3,
+        "columns": [
+          {
+            "field": "sku",
+            "label": "SKU",
+            "width": "120px",
+            "kind": "code"
+          },
+          {
+            "field": "name",
+            "label": "Product",
+            "kind": "entity",
+            "descriptionField": "note",
+            "sortable": true
+          },
+          {
+            "field": "status",
+            "label": "Status",
+            "width": "110px",
+            "kind": "badge",
+            "valueMap": {
+              "active": "Active",
+              "draft": "Draft"
+            },
+            "toneMap": {
+              "active": "success",
+              "draft": "warning"
+            }
+          },
+          {
+            "field": "price",
+            "label": "Price",
+            "width": "110px",
+            "kind": "currency",
+            "currency": "USD",
+            "sortable": true
+          },
+          {
+            "field": "updatedAt",
+            "label": "Updated",
+            "width": "130px",
+            "kind": "date"
+          },
+          {
+            "field": "actions",
+            "kind": "actions",
+            "actions": [
+              {
+                "value": "view",
+                "label": "View"
+              },
+              {
+                "value": "delete",
+                "label": "Delete",
+                "tone": "danger"
+              }
+            ]
+          }
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "sku": "SKU-0001",
+            "name": "Lumi Lamp",
+            "note": "Warm white",
+            "status": "active",
+            "price": 27,
+            "updatedAt": "2026-08-10"
+          },
+          {
+            "id": 2,
+            "sku": "SKU-0002",
+            "name": "Lumi Shade",
+            "note": "Linen",
+            "status": "draft",
+            "price": 42,
+            "updatedAt": "2026-08-09"
+          },
+          {
+            "id": 3,
+            "sku": "SKU-0003",
+            "name": "Lumi Base",
+            "note": "Oak",
+            "status": "active",
+            "price": 61,
+            "updatedAt": "2026-08-08"
+          }
+        ],
+        "totals": [
+          {
+            "label": "Total",
+            "value": "$130.00",
+            "emphasis": true
+          }
+        ]
+      },
+      "children": []
+    },
+    "table-5": {
+      "type": "Table",
+      "props": {
+        "columns": [
+          {
+            "field": "name",
+            "label": "Name"
+          }
+        ],
+        "rows": [],
+        "empty": {
+          "title": "No records match this filter",
+          "description": "Try clearing the filters or searching for something else",
+          "icon": "search-remove"
+        }
+      },
+      "children": []
+    },
+    "table-6": {
+      "type": "Table",
+      "props": {
+        "columns": [
+          {
+            "field": "name",
+            "label": "Name"
+          }
+        ],
+        "rows": [],
+        "loading": true
+      },
+      "children": []
+    },
+    "card-7": {
+      "type": "Card",
+      "props": {
+        "title": "DescriptionList",
+        "description": "Key/value pairs for a record summary: columns with the label above, or rows with the label beside for a narrow panel."
+      },
+      "children": [
+        "fragment-8"
+      ]
+    },
+    "fragment-8": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "descriptionlist-9",
+        "descriptionlist-rows"
+      ]
+    },
+    "descriptionlist-9": {
+      "type": "DescriptionList",
+      "props": {
+        "items": [
+          {
+            "label": "Name",
+            "value": "Lumi"
+          },
+          {
+            "label": "Status",
+            "value": "Ready"
+          },
+          {
+            "label": "Seats",
+            "value": 12
+          },
+          {
+            "label": "Archived",
+            "value": false
+          },
+          {
+            "label": "Note",
+            "value": "Renews on the first of each month; seats can be added at any time.",
+            "span": "full"
+          }
+        ]
+      },
+      "children": []
+    },
+    "descriptionlist-rows": {
+      "type": "DescriptionList",
+      "props": {
+        "layout": "rows",
+        "items": [
+          {
+            "label": "Owner",
+            "value": "Mia Chen"
+          },
+          {
+            "label": "Plan",
+            "value": "Team"
+          },
+          {
+            "label": "Renews",
+            "value": "2026-12-01"
+          }
+        ]
+      },
+      "children": []
+    },
+    "card-10": {
+      "type": "Card",
+      "props": {
+        "title": "Pagination",
+        "description": "Page controls, with an optional page-size menu and total."
+      },
+      "children": [
+        "fragment-11"
+      ]
+    },
+    "fragment-11": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "pagination-12",
+        "pagination-13",
+        "pagination-14"
+      ]
+    },
+    "pagination-12": {
+      "type": "Pagination",
+      "props": {
+        "page": {
+          "$bindState": "/pagination-12/page"
+        },
+        "pageSize": {
+          "$bindState": "/pagination-12/pageSize"
+        },
+        "total": 32,
+        "showTotal": true,
+        "pageSizeOptions": [
+          10,
+          20,
+          50
+        ]
+      },
+      "children": []
+    },
+    "pagination-13": {
+      "type": "Pagination",
+      "props": {
+        "page": {
+          "$bindState": "/pagination-13/page"
+        },
+        "pageSize": {
+          "$bindState": "/pagination-13/pageSize"
+        },
+        "total": 32
+      },
+      "children": []
+    },
+    "pagination-14": {
+      "type": "Pagination",
+      "props": {
+        "page": {
+          "$bindState": "/pagination-14/page"
+        },
+        "pageSize": {
+          "$bindState": "/pagination-14/pageSize"
+        },
+        "total": 32,
+        "disabled": true
+      },
+      "children": []
+    },
+    "card-15": {
+      "type": "Card",
+      "props": {
+        "title": "Timeline",
+        "description": "What happened to a record, oldest first."
+      },
+      "children": [
+        "fragment-16"
+      ]
+    },
+    "fragment-16": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "timeline-17",
+        "timeline-18"
+      ]
+    },
+    "timeline-17": {
+      "type": "Timeline",
+      "props": {
+        "items": [
+          {
+            "key": "created",
+            "title": "Created",
+            "description": "The record was created.",
+            "timestamp": "2026-08-08 09:12",
+            "status": "complete"
+          },
+          {
+            "key": "review",
+            "title": "Review",
+            "description": "Waiting on an editor.",
+            "timestamp": "2026-08-09 14:30",
+            "status": "current"
+          },
+          {
+            "key": "publish",
+            "title": "Publish",
+            "timestamp": "After review",
+            "status": "upcoming"
+          },
+          {
+            "key": "sync",
+            "title": "Channel sync",
+            "timestamp": "Retrying",
+            "status": "error",
+            "tone": "danger"
+          }
+        ]
+      },
+      "children": []
+    },
+    "timeline-18": {
+      "type": "Timeline",
+      "props": {
+        "items": [],
+        "empty": "Nothing has happened yet"
+      },
+      "children": []
+    },
+    "card-19": {
+      "type": "Card",
+      "props": {
+        "title": "Stepper",
+        "description": "Progress through an ordered task, horizontal or vertical."
+      },
+      "children": [
+        "fragment-20"
+      ]
+    },
+    "fragment-20": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "stepper-21",
+        "stepper-22"
+      ]
+    },
+    "stepper-21": {
+      "type": "Stepper",
+      "props": {
+        "value": {
+          "$bindState": "/stepper-21/value"
+        },
+        "items": [
+          {
+            "key": "account",
+            "label": "Account",
+            "description": "Who this is for",
+            "status": "complete"
+          },
+          {
+            "key": "details",
+            "label": "Details",
+            "description": "What it contains",
+            "status": "current"
+          },
+          {
+            "key": "review",
+            "label": "Review",
+            "status": "upcoming"
+          }
+        ]
+      },
+      "children": []
+    },
+    "stepper-22": {
+      "type": "Stepper",
+      "props": {
+        "value": {
+          "$bindState": "/stepper-22/value"
+        },
+        "orientation": "vertical",
+        "items": [
+          {
+            "key": "account",
+            "label": "Account",
+            "status": "complete"
+          },
+          {
+            "key": "details",
+            "label": "Details",
+            "status": "loading"
+          },
+          {
+            "key": "review",
+            "label": "Review",
+            "status": "upcoming"
+          }
+        ]
+      },
+      "children": []
+    },
+    "text-body-1": {
+      "type": "Text",
+      "props": {
+        "text": "Orders placed before 14:00 ship the same day. Later orders ship the next working day."
+      },
+      "children": []
+    },
+    "text-muted-1": {
+      "type": "Text",
+      "props": {
+        "text": "Delivery estimates exclude public holidays.",
+        "variant": "muted"
+      },
+      "children": []
+    },
+    "text-caption-1": {
+      "type": "Text",
+      "props": {
+        "text": "Updated 2 minutes ago",
+        "variant": "caption"
+      },
+      "children": []
+    },
+    "card-text": {
+      "type": "Card",
+      "props": {
+        "title": "Text",
+        "description": "Paragraphs at a readable measure: body, muted and caption."
+      },
+      "children": [
+        "card-text-body"
+      ]
+    },
+    "card-text-body": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "text-body-1",
+        "text-muted-1",
+        "text-caption-1"
+      ]
+    },
+    "avatar-1": {
+      "type": "Avatar",
+      "props": {
+        "name": "Mia Chen",
+        "showName": true,
+        "description": "Gold member, 4th order",
+        "size": "lg"
+      },
+      "children": []
+    },
+    "avatar-row": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "avatar-2",
+        "avatar-3",
+        "avatar-4",
+        "avatar-5"
+      ]
+    },
+    "avatar-2": {
+      "type": "Avatar",
+      "props": {
+        "name": "Alex Kim",
+        "size": "sm"
+      },
+      "children": []
+    },
+    "avatar-3": {
+      "type": "Avatar",
+      "props": {
+        "name": "Sam Rivera"
+      },
+      "children": []
+    },
+    "avatar-4": {
+      "type": "Avatar",
+      "props": {
+        "name": "Noor Haddad",
+        "size": "lg"
+      },
+      "children": []
+    },
+    "avatar-5": {
+      "type": "Avatar",
+      "props": {
+        "name": "Lena Park",
+        "size": "xl"
+      },
+      "children": []
+    },
+    "card-avatar": {
+      "type": "Card",
+      "props": {
+        "title": "Avatar",
+        "description": "A person or account, alone, with its name, or stacked as a group."
+      },
+      "children": [
+        "card-avatar-body"
+      ]
+    },
+    "card-avatar-body": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "avatar-1",
+        "avatar-row",
+        "avatar-group"
+      ]
+    },
+    "code-1": {
+      "type": "CodeBlock",
+      "props": {
+        "title": "Request",
+        "language": "bash",
+        "code": "curl 'https://api.example.com/orders?status=paid&page=1' \\\n  -H \"Authorization: Bearer $TOKEN\""
+      },
+      "children": []
+    },
+    "code-2": {
+      "type": "CodeBlock",
+      "props": {
+        "title": "View response",
+        "language": "json",
+        "collapsible": true,
+        "code": "{\n  \"data\": [{ \"id\": 1, \"number\": \"ORD-00001\" }],\n  \"meta\": { \"total\": 1 }\n}"
+      },
+      "children": []
+    },
+    "card-code": {
+      "type": "Card",
+      "props": {
+        "title": "Code block",
+        "description": "Read-only source: a request, a response or a handler. Long code scrolls inside a keyboard-reachable region."
+      },
+      "children": [
+        "card-code-body"
+      ]
+    },
+    "card-code-body": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "code-1",
+        "code-2"
+      ]
+    },
+    "avatar-group": {
+      "type": "AvatarGroup",
+      "props": {
+        "items": [
+          {
+            "name": "Mia Chen"
+          },
+          {
+            "name": "Alex Kim"
+          },
+          {
+            "name": "Sam Rivera"
+          },
+          {
+            "name": "Noor Haddad"
+          },
+          {
+            "name": "Li Wei"
+          },
+          {
+            "name": "Jonas Berg"
+          }
+        ],
+        "max": 4,
+        "label": "Reviewers"
+      },
+      "children": []
+    },
+    "card-content": {
+      "type": "Card",
+      "props": {
+        "title": "Long-form content",
+        "description": "Typeset reading text: Prose wraps components, Markdown and Html render source in the same styles"
+      },
+      "children": [
+        "card-content-body"
+      ]
+    },
+    "card-content-body": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "prose-1",
+        "markdown-1",
+        "html-1"
+      ]
+    },
+    "prose-1": {
+      "type": "Prose",
+      "props": {
+        "size": "sm"
+      },
+      "children": [
+        "prose-heading",
+        "prose-text"
+      ]
+    },
+    "prose-heading": {
+      "type": "Heading",
+      "props": {
+        "text": "Release notes",
+        "level": "h3"
+      },
+      "children": []
+    },
+    "prose-text": {
+      "type": "Text",
+      "props": {
+        "text": "Orders now sync every five minutes and failed payments retry twice before they alert"
+      },
+      "children": []
+    },
+    "markdown-1": {
+      "type": "Markdown",
+      "props": {
+        "size": "sm",
+        "content": "## Checklist\n\n- [x] Connect the payment provider\n- [ ] Invite the finance team\n\nRead the [setup guide](https://example.com/docs) for `webhook` details"
+      },
+      "children": []
+    },
+    "html-1": {
+      "type": "Html",
+      "props": {
+        "size": "sm",
+        "content": "<h3>Returns</h3><p>Items can be returned within <strong>30 days</strong> of delivery</p><ul><li>Unused and in original packaging</li><li>With the order number</li></ul>"
+      },
+      "children": []
+    }
+  },
+  "state": {
+    "pagination-12": {
+      "page": 1,
+      "pageSize": 10
+    },
+    "pagination-13": {
+      "page": 2,
+      "pageSize": 10
+    },
+    "pagination-14": {
+      "page": 1,
+      "pageSize": 10
+    },
+    "stepper-21": {
+      "value": "details"
+    },
+    "stepper-22": {
+      "value": "details"
+    }
+  }
+}

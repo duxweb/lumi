@@ -1,0 +1,119 @@
+---
+title: "多语言"
+description: "config.json 设置默认语言、货币和时区；账号菜单切换语言；公共翻译文件、页面自己的翻译和菜单的翻译怎么写。"
+---
+
+语言、货币和时区写在 `config.json` 的 `i18n` 里，对所有后台生效：
+
+```jsonc
+{
+  "data": { "url": "/api" },
+  "panels": { "manifest": "/manifest.json" },
+  "i18n": {
+    "locale": "zh-CN",
+    "fallbackLocale": "en-US",
+    // 数字、金额和时间的格式
+    "format": {
+      "currency": "CNY",
+      // 金额以元为单位，不是分
+      "currencyUnit": "major",
+      // 显示时间用的时区
+      "timeZone": "Asia/Shanghai",
+      // 日期时间以 UTC ISO 字符串提交
+      "dateTimeInput": "iso-utc"
+    }
+  }
+}
+```
+
+- `locale`：默认语言。内置中文和英文文案。
+- `translations`：所有页面共用的翻译，按语言写，值是对象或 JSON 地址。页面自己的文字写在页面里，见下文 [页面自己的翻译](#页面自己的翻译)。
+- `format`：金额的币种，金额单位是元（`major`）还是分（`minor`），显示用的时区。后端的时间统一用 UTC 的 ISO 字符串。四项要一起写。
+
+## 切换语言
+
+在 manifest 的 `app.locales` 里列出两种以上语言，账号菜单里就会出现切换项；读者的选择保存在浏览器里，之后的请求带上新的 `Accept-Language`，列表会重新请求：
+
+```jsonc
+{
+  "app": {
+    "id": "shop",
+    // 账号菜单里可切换的语言
+    "locales": [
+      { "value": "zh-CN", "label": "简体中文" },
+      { "value": "en-US", "label": "English" }
+    ]
+  },
+  "routes": []
+}
+```
+
+## 翻译文件
+
+`i18n.translations` 的每种语言是一个扁平的 JSON，键是原文（或你定的键），值是译文。它合并在 Lumi 自带的文案上面，同名的键会覆盖自带的：
+
+```jsonc
+{
+  // 键是原文，值是译文
+  "Orders": "订单",
+  // {name} 是占位符，翻译时保留
+  "Delete {name}?": "删除 {name}？",
+  // lumi. 开头的是 Lumi 自带的文案，可以覆盖
+  "lumi.common.confirm": "好的"
+}
+```
+
+页面里用 `{ "$t": "Delete {name}?", "params": { "name": { "$item": "name" } } }` 翻译带参数的文字；菜单用 `labelKey`。Lumi 自带文案的键都以 `lumi.` 开头，完整列表见 [locale-reference.json](/locale-reference.json)。
+
+## 页面自己的翻译
+
+`config.json` 里只放公共的词，比如"保存"、菜单名。某个页面自己的文字写在这个页面的 JSON 里，顶层加 `translations`：
+
+```jsonc
+// pages/orders.json
+{
+  "root": "page",
+  // 这个页面自己的翻译，和页面一起加载，不用额外请求
+  "translations": {
+    "zh-CN": { "orders.title": "订单", "orders.total": "共 {count} 单" },
+    "en-US": { "orders.title": "Orders", "orders.total": "{count} orders" }
+  },
+  "elements": {
+    "page": { "type": "Stack", "props": {}, "children": ["title", "total"] },
+    // 标题：按键 orders.title 翻译
+    "title": {
+      "type": "Heading",
+      "props": { "text": { "$t": "orders.title" } },
+      "children": []
+    },
+    // 带参数的翻译：{count} 换成状态里的 /total
+    "total": {
+      "type": "Text",
+      "props": {
+        "text": {
+          "$t": "orders.total",
+          "params": { "count": { "$state": "/total" } }
+        }
+      },
+      "children": []
+    }
+  },
+  "state": { "total": 0 }
+}
+```
+
+`$t` 按这个顺序找：
+
+1. 本页 `translations` 里当前语言的文字；
+2. `config.json` 的 `i18n.translations` 和 Lumi 自带文案（先当前语言，再 `fallbackLocale`）；
+3. 本页 `translations` 里 `fallbackLocale` 的文字；
+4. `$t` 的 `default`，都没有就显示键名。
+
+- 只在这个页面生效。本页和公共翻译重名时，本页优先，别的页面不受影响。
+- 弹窗打开的页面、`Include` 引进来的页面各用各的 `translations`，不会继承外层页面的，都能用公共翻译。
+- 一份 JSON 带全部语言，切换语言时页面不用重新请求。
+- 每种语言可以是扁平的键（`"orders.title"`），也可以是嵌套对象（`{ "orders": { "title": … } }`），两种写法用同一个键 `orders.title` 读取。
+
+## 菜单的翻译
+
+菜单的 `label` 是普通文字。要翻译时在路由的 `menu` 里加 `labelKey`，键写在 `i18n.translations` 里；应用名和副标题用 `titleKey`、`subtitleKey`。没有找到译文时显示 `label`。

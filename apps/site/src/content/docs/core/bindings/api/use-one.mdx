@@ -1,0 +1,28 @@
+---
+title: "useOne"
+description: "useOne React hook 的签名、参数和返回值。"
+---
+
+Reads one record through `getOne`; sends nothing while `id` is undefined.
+
+```typescript
+useOne<T = any>(input: UseOneOptions): UseQueryResult<SingleResult<T>, Error>
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `input` | `UseOneOptions` | 是 |  |
+
+`input` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `dataProviderName` | `string \| undefined` | 否 | 多数据源名称；省略时使用 default。 |
+| `enabled` | `boolean \| undefined` | 否 | 是否允许自动执行查询。 |
+| `id` | `ID \| undefined` | 是 | The record to read; nothing is sent while it is undefined. |
+| `liveMode` | `LiveMode \| undefined` | 否 | Defaults to the context's `liveMode`, which is `auto` with a liveProvider. |
+| `meta` | `Meta \| undefined` | 否 | 原样传给 DataProvider 的扩展数据。 |
+| `onLiveEvent` | `((event: LiveEvent) => void) \| undefined` | 否 | Called for each event of the resource, in `auto` and `manual` mode. |
+| `resource` | `string` | 是 | 交给 DataProvider 解释的数据目标，如 `orders`。 |
+
+返回 `UseQueryResult<SingleResult<T>, Error>`。

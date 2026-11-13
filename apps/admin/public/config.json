@@ -1,0 +1,41 @@
+{
+  "data": {
+    "url": "http://127.0.0.1:3002",
+    "live": "/live"
+  },
+  "auth": {
+    "tokenKey": "lumi_admin_token",
+    "endpoints": {
+      "register": "/register",
+      "forgotPassword": "/forgot-password",
+      "updatePassword": "/reset-password"
+    }
+  },
+  "panels": {
+    "login": {
+      "demo": {
+        "username": "admin",
+        "password": "admin"
+      },
+      "help": {
+        "label": "Need help?",
+        "linkLabel": "Contact the administrator",
+        "href": "mailto:admin@lumi.test"
+      }
+    },
+    "auditLog": "audit-logs"
+  },
+  "i18n": {
+    "locale": "en-US",
+    "fallbackLocale": "en-US",
+    "translations": {
+      "zh-CN": "locales/zh-CN.json"
+    },
+    "format": {
+      "currency": "USD",
+      "currencyUnit": "major",
+      "timeZone": "America/New_York",
+      "dateTimeInput": "iso-utc"
+    }
+  }
+}

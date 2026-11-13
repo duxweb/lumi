@@ -1,0 +1,59 @@
+{
+  "fields": {
+    "mode": {
+      "type": "{\"type\":\"string\",\"enum\":[\"light\",\"dark\",\"system\"]}",
+      "description": "",
+      "required": false
+    },
+    "primary": {
+      "type": "{\"type\":\"string\",\"pattern\":\"^#[\\\\da-f]{6}$\"}",
+      "description": "",
+      "required": false
+    },
+    "brand": {
+      "type": "{\"type\":\"string\",\"pattern\":\"^#[\\\\da-f]{6}$\"}",
+      "description": "",
+      "required": false
+    },
+    "radius": {
+      "type": "{\"type\":\"string\",\"enum\":[\"sm\",\"md\",\"lg\"]}",
+      "description": "",
+      "required": false
+    },
+    "fontSize": {
+      "type": "{\"type\":\"string\",\"enum\":[\"sm\",\"md\",\"lg\"]}",
+      "description": "",
+      "required": false
+    },
+    "fontSizes": {
+      "type": "{\"type\":\"object\",\"propertyNames\":{\"type\":\"string\",\"enum\":[\"caption\",\"label\",\"body\",\"title\",\"section\",\"page\",\"metric\"]},\"additionalProperties\":{\"type\":\"number\",\"minimum\":10,\"maximum\":48}}",
+      "description": "",
+      "required": false
+    },
+    "neutral": {
+      "type": "{\"type\":\"string\",\"pattern\":\"^#[\\\\da-f]{6}$\"}",
+      "description": "",
+      "required": false
+    },
+    "success": {
+      "type": "{\"type\":\"string\",\"pattern\":\"^#[\\\\da-f]{6}$\"}",
+      "description": "",
+      "required": false
+    },
+    "warning": {
+      "type": "{\"type\":\"string\",\"pattern\":\"^#[\\\\da-f]{6}$\"}",
+      "description": "",
+      "required": false
+    },
+    "danger": {
+      "type": "{\"type\":\"string\",\"pattern\":\"^#[\\\\da-f]{6}$\"}",
+      "description": "",
+      "required": false
+    },
+    "info": {
+      "type": "{\"type\":\"string\",\"pattern\":\"^#[\\\\da-f]{6}$\"}",
+      "description": "",
+      "required": false
+    }
+  }
+}

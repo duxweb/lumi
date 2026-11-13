@@ -1,0 +1,16 @@
+---
+title: "usePermissions"
+description: "usePermissions React hook 的签名、参数和返回值。"
+---
+
+The raw permission data of `authProvider.getPermissions`. Checks go through `useCan`, which asks the access provider.
+
+```typescript
+usePermissions(params?: any): UseQueryResult<unknown, Error>
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `params` | `any` | 否 |  |
+
+返回 `UseQueryResult<unknown, Error>`。

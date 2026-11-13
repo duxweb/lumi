@@ -1,0 +1,12 @@
+{
+  "name": "@duxweb/lumi-json-api",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node server.ts",
+    "start": "node server.ts",
+    "test": "vitest run --root ../.. apps/json-api/test",
+    "typecheck": "tsc -p tsconfig.json"
+  }
+}

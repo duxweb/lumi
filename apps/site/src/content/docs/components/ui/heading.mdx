@@ -1,0 +1,41 @@
+---
+title: "Heading"
+description: "标题文字（h1-h4）。"
+---
+
+<ComponentPreview name="Heading" />
+
+标题文字（h1-h4）。在 Admin 页面里，页头已经提供 h1，分段通常用 h2 或 h3。
+
+## 示例
+
+```json
+{
+  "root": "stk-h",
+  "elements": {
+    "stk-h": {
+      "type": "Heading",
+      "props": { "text": "Shipping", "level": "h3" },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `text`（必填） | 标题文字。 | `string` |  |
+| `level` | 标题级别，影响字号和文档结构。 | `"h1" \| "h2" \| "h3" \| "h4" \| null` |  |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

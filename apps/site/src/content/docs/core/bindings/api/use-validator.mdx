@@ -1,0 +1,16 @@
+---
+title: "useValidator"
+description: "useValidator React hook 的签名、参数和返回值。"
+---
+
+Returns `validate(values)`, which checks any values against `rules` with the context's Validator and answers the translated issues.
+
+```typescript
+useValidator(rules?: ValidationRules): (values: Record<string, unknown>) => Promise<FormValidationIssue[]>
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `rules` | `unknown` | 否 |  |
+
+返回 `(values: Record<string, unknown>) => Promise<FormValidationIssue[]>`。

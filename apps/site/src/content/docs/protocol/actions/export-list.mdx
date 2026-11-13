@@ -1,0 +1,94 @@
+---
+title: "exportList"
+description: "把符合筛选条件的全部记录导出为 CSV（UTF-8，Excel 可直接打开）或 JSON。"
+---
+
+把符合筛选条件的全部记录导出为 CSV（UTF-8，Excel 可直接打开）或 JSON。通过 getList 逐页读取，最多 `maxItems` 条（默认 10000）。给了 `url` 时改由后端生成文件：把筛选、排序、列和格式发给这个接口，边接收边保存返回的文件流，格式不限。
+
+## 用法
+
+### 在浏览器里导出
+
+不写 `url`：逐页读取列表，在浏览器里生成 CSV 或 JSON。适合几千条以内的数据。
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "导出 CSV" },
+      "on": {
+        // 点击按钮时执行
+        "press": {
+          "action": "exportList",
+          "params": {
+            // 数据资源名，如 orders
+            "resource": "orders",
+            // 只导出当前筛选出来的记录
+            "filters": { "$state": "/filters" },
+            // csv 或 json
+            "format": "csv",
+            // 下载的文件名，不含扩展名；默认是资源名
+            "filename": "orders"
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+### 由后端导出
+
+写上 `url`：筛选、排序、列和格式发给这个接口，后端生成文件并以文件流返回，格式不限（如 Excel）。数据量大时用它。后端要怎么接，见 [后端导出](/guide/backend-files/#后端导出)。
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "导出 Excel" },
+      "on": {
+        // 点击按钮时执行
+        "press": {
+          "action": "exportList",
+          "params": {
+            // 数据资源名，如 orders
+            "resource": "orders",
+            // 后端的导出接口，相对于后端地址
+            "url": "/orders/export",
+            // 后端支持的任何格式
+            "format": "xlsx",
+            // 当前的筛选条件，一起发给后端
+            "filters": { "$state": "/filters" },
+            // 进度写到这里：loaded 是已接收的字节数
+            "progressPath": "/export/progress"
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| `resource`（必填） | 数据资源名，如 `orders`。 | `string` |
+| `dataProviderName` | 使用哪个数据源；省略时用当前范围的数据源，没有就是 default。 | `string` |
+| `meta` | 不写 `url` 时原样传给 DataProvider；写了 `url` 时和筛选条件一起发给导出接口。 | `object` |
+| `filters` | 筛选条件，通常绑定到列表的筛选状态。 | `object[]` |
+| `sorters` | 排序条件。 | `object[]` |
+| `columns` | 导出或导入的列，每个 `{ field, label }`。 | `object[]` |
+| `url` | 后端的导出接口，相对于 DataProvider 的 API 地址。写了它，文件由后端生成并以文件流返回；不写时在浏览器里逐页读取并生成。 | `string` |
+| `method` | 请求导出接口的方法：`POST`（默认）把筛选、排序、列和格式放在请求体里，`GET` 放在查询串里。只在写了 `url` 时有用。 | `"GET" \| "POST"` |
+| `format` | 文件格式：`csv`（默认）或 `json`；给了 `url` 时可以是后端支持的任何格式，如 `xlsx`。 | `string` |
+| `filename` | 下载的文件名，不含扩展名；默认是资源名。 | `string` |
+| `pageSize` | 每次读取的条数，最多 1000。 | `integer` |
+| `maxItems` | 最多导出的条数，默认 10000。 | `integer` |
+| `progressPath` | 把进度写进页面状态的路径，内容是 `{ loading, loaded, total }`。写了 `url` 时 `loaded` 是已接收的字节数。 | `string` |

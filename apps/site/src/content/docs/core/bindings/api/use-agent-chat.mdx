@@ -1,0 +1,57 @@
+---
+title: "useAgentChat"
+description: "useAgentChat React hook 的签名、参数和返回值。"
+---
+
+A conversation with an agent endpoint. The reply streams in as an AI SDK UI
+message stream; requests are signed by the auth provider through the data
+provider's HttpClient, carry the configured agent headers and go through
+the auth provider's error handling like any other Lumi request. One session
+serves the hook and the JSON AgentSession component.
+
+```typescript
+useAgentChat(options?: UseAgentChatOptions): AgentChat
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `options` | `UseAgentChatOptions` | 否 |  |
+
+`options` 的字段：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `body` | `Record<string, unknown> \| undefined` | 否 | Extra fields sent with every request, e.g. the model. |
+| `dataProviderName` | `string \| undefined` | 否 | The data provider whose API root and request client the chat uses. |
+| `endpoint` | `string \| undefined` | 否 | Defaults to the configured `agent.endpoint`, then `/agent/chat`. |
+| `headers` | `AgentHeaders \| undefined` | 否 | Extra request headers; the reader's credentials are added by the request client. |
+| `onData` | `((chunk: AgentChunk) => void) \| undefined` | 否 | Called for each `data-*` chunk of the stream. |
+| `onError` | `((error: Error) => void) \| undefined` | 否 | Called when a reply fails. |
+| `onFinish` | `((event: AgentFinishEvent) => void) \| undefined` | 否 | Called when a reply ends, however it ended. |
+| `prepareBody` | `((request: AgentRequest, body: Record<string, unknown>) => Record<string, unknown>) \| undefined` | 否 | Last change to the request body before it is sent. |
+| `resource` | `string \| undefined` | 否 | A DataProvider resource whose `getOne` returns a conversation's messages; refreshed after each reply. |
+| `sessionId` | `string \| null \| undefined` | 否 | The conversation to open; a change switches to it, empty starts a new one. |
+| `transport` | `AgentTransport \| undefined` | 否 | Replaces the HTTP transport, e.g. for a WebSocket or an in-page agent. |
+| `ui` | `boolean \| undefined` | 否 | Lets the agent see and act on the front end through the Lumi agent bridge: each request carries the UI snapshot (`ui`), the client tools (`clientTools`) and the approval mode (`approvalMode`), and calls to those tools run here. Defaults to true. |
+
+返回 `AgentChat`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `answer` | `(questionId: string, answer: string \| string[]) => Promise<boolean>` | 是 | Answers a question the agent asked. |
+| `approve` | `(approvalId: string, approved: boolean, reason?: string) => Promise<boolean>` | 是 | Answers an approval request, accepting or refusing it. |
+| `edit` | `(messageId: string, text: string) => Promise<boolean>` | 是 | Rewrites a user message and answers from there. |
+| `error` | `string \| null` | 是 | Why the last reply failed. |
+| `id` | `string` | 是 | The conversation's id. |
+| `loading` | `boolean` | 是 | True while the conversation's earlier messages load. |
+| `messages` | `AgentChatMessage[]` | 是 | The conversation so far. |
+| `reset` | `(next?: { id?: string \| null; messages?: AgentChatMessage[]; }) => void` | 是 | Starts a new, empty conversation. |
+| `retry` | `() => Promise<boolean>` | 是 | Asks again for an answer to the last user message. |
+| `send` | `(input: AgentSendInput) => Promise<boolean>` | 是 | Sends a message; ignored while a reply is under way or when it is empty. |
+| `session` | `AgentChatSession` | 是 | The session behind the chat, for calls the hook does not surface. |
+| `skip` | `(questionId: string) => Promise<boolean>` | 是 | Skips a question the agent asked. |
+| `status` | `AgentChatStatus` | 是 | `ready`, `submitted` while a reply is requested, `streaming` while it arrives, or `error`. |
+| `stop` | `() => void` | 是 | Stops the reply under way, keeping what arrived. |
+| `streaming` | `boolean` | 是 | True while a reply is requested or streaming. |

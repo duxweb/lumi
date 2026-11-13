@@ -1,0 +1,57 @@
+---
+title: "RepeaterRow"
+description: "Repeater 的 repeat 里的行模板。"
+---
+
+<ComponentPreview name="RepeaterRow" />
+
+Repeater 的 `repeat` 里的行模板。子元素是可编辑的单元格，每个非计算列一个，按列的顺序排列。
+
+## 示例
+
+```json
+{
+  "root": "repeater-line",
+  "elements": {
+    "repeater-line": {
+      "type": "RepeaterRow",
+      "props": {},
+      "children": [
+        "repeater-line-product",
+        "repeater-line-qty",
+        "repeater-line-price"
+      ]
+    },
+    "repeater-line-product": {
+      "type": "Input",
+      "props": { "ariaLabel": "Product", "value": { "$bindItem": "product" } }
+    },
+    "repeater-line-qty": {
+      "type": "NumberInput",
+      "props": { "ariaLabel": "Qty", "min": 1, "value": { "$bindItem": "qty" } }
+    },
+    "repeater-line-price": {
+      "type": "NumberInput",
+      "props": {
+        "ariaLabel": "Price",
+        "min": 0,
+        "value": { "$bindItem": "price" }
+      }
+    }
+  }
+}
+```
+
+## 参数
+
+没有专属参数，通过 children 使用。
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：`default`

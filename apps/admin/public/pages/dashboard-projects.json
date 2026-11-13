@@ -1,0 +1,664 @@
+{
+  "root": "page",
+  "elements": {
+    "page": {
+      "type": "DashboardPage",
+      "props": {
+        "title": {
+          "$t": "Project overview"
+        },
+        "description": {
+          "$t": "Delivery, budget and team load across 24 projects. Served as a JSON page; the projects table reads live data"
+        },
+        "metrics": [
+          {
+            "key": "active",
+            "label": {
+              "$t": "Active projects"
+            },
+            "icon": "folder-kanban",
+            "value": 14,
+            "description": {
+              "$t": "of 24 in the portfolio"
+            },
+            "change": "+2",
+            "tone": "success",
+            "series": [
+              9,
+              10,
+              11,
+              11,
+              12,
+              13,
+              14
+            ]
+          },
+          {
+            "key": "due",
+            "label": {
+              "$t": "Due this month"
+            },
+            "icon": "calendar",
+            "value": 5,
+            "description": {
+              "$t": "2 at risk of slipping"
+            },
+            "tone": "warning",
+            "change": {
+              "$t": "2 at risk"
+            },
+            "series": [
+              3,
+              4,
+              4,
+              6,
+              5,
+              5,
+              5
+            ]
+          },
+          {
+            "key": "budget",
+            "label": {
+              "$t": "Budget used"
+            },
+            "icon": "wallet",
+            "value": "68",
+            "unit": "%",
+            "description": {
+              "$t": "$412k of $606k"
+            },
+            "series": [
+              22,
+              31,
+              40,
+              48,
+              55,
+              62,
+              68
+            ]
+          },
+          {
+            "key": "hours",
+            "label": {
+              "$t": "Hours logged"
+            },
+            "icon": "clock",
+            "value": "1,284",
+            "description": {
+              "$t": "This month"
+            },
+            "change": "+9%",
+            "tone": "success",
+            "series": [
+              140,
+              166,
+              172,
+              181,
+              190,
+              204,
+              231
+            ]
+          }
+        ]
+      },
+      "children": [
+        "dashboardcard-1",
+        "dashboardcard-3",
+        "dashboardcard-5",
+        "dashboardcard-7",
+        "dashboardcard-8"
+      ],
+      "slots": {
+        "actions": [
+          "new-project"
+        ]
+      }
+    },
+    "projects-query": {
+      "type": "Query",
+      "props": {
+        "resource": "projects",
+        "operation": "list",
+        "pagination": {
+          "page": 1,
+          "pageSize": 6
+        },
+        "resultPath": "/projects"
+      },
+      "children": []
+    },
+    "projects-table": {
+      "type": "Table",
+      "props": {
+        "rowKey": "id",
+        "rows": {
+          "$state": "/projects/data"
+        },
+        "loading": {
+          "$state": "/projects/loading"
+        },
+        "columns": [
+          {
+            "field": "name",
+            "label": {
+              "$t": "Project"
+            },
+            "kind": "entity",
+            "descriptionField": "owner",
+            "initials": true,
+            "truncate": true
+          },
+          {
+            "field": "status",
+            "label": {
+              "$t": "Status"
+            },
+            "kind": "badge",
+            "width": "7rem",
+            "valueMap": {
+              "planned": {
+                "$t": "Planned"
+              },
+              "active": {
+                "$t": "Active"
+              },
+              "review": {
+                "$t": "In review"
+              },
+              "blocked": {
+                "$t": "Blocked"
+              },
+              "done": {
+                "$t": "Done"
+              }
+            },
+            "toneMap": {
+              "planned": "neutral",
+              "active": "info",
+              "review": "warning",
+              "blocked": "danger",
+              "done": "success"
+            }
+          },
+          {
+            "field": "budget",
+            "label": {
+              "$t": "Budget"
+            },
+            "kind": "currency",
+            "currency": "USD",
+            "align": "right",
+            "width": "7rem"
+          },
+          {
+            "field": "dueAt",
+            "label": {
+              "$t": "Due"
+            },
+            "kind": "date",
+            "width": "7rem"
+          }
+        ]
+      },
+      "children": []
+    },
+    "activity-feed": {
+      "type": "ActivityFeed",
+      "props": {
+        "ariaLabel": {
+          "$t": "Recent activity"
+        },
+        "items": [
+          {
+            "key": "a1",
+            "actor": "Mina Manager",
+            "action": {
+              "$t": "approved"
+            },
+            "target": {
+              "$t": "Atlas budget"
+            },
+            "context": {
+              "$t": "Atlas rollout"
+            },
+            "status": {
+              "label": {
+                "$t": "Approved"
+              },
+              "tone": "success"
+            },
+            "timestamp": {
+              "$t": "10 min ago"
+            }
+          },
+          {
+            "key": "a2",
+            "actor": "Sam Support",
+            "action": {
+              "$t": "escalated"
+            },
+            "target": {
+              "$t": "Store 12 outage"
+            },
+            "context": {
+              "$t": "Orion support"
+            },
+            "status": {
+              "label": {
+                "$t": "Urgent"
+              },
+              "tone": "danger"
+            },
+            "timestamp": {
+              "$t": "1 h ago"
+            }
+          },
+          {
+            "key": "a3",
+            "actor": "Yuki Lead",
+            "action": {
+              "$t": "completed"
+            },
+            "target": {
+              "$t": "Pilot with 3 stores"
+            },
+            "context": {
+              "$t": "Atlas rollout"
+            },
+            "timestamp": {
+              "$t": "3 h ago"
+            }
+          },
+          {
+            "key": "a4",
+            "actor": "Theo Ops",
+            "action": {
+              "$t": "commented on"
+            },
+            "target": {
+              "$t": "Access audit"
+            },
+            "context": {
+              "$t": "Keystone access"
+            },
+            "status": {
+              "label": {
+                "$t": "In review"
+              },
+              "tone": "warning"
+            },
+            "timestamp": {
+              "$t": "Yesterday"
+            }
+          },
+          {
+            "key": "a5",
+            "actor": "Ada Admin",
+            "action": {
+              "$t": "opened"
+            },
+            "target": {
+              "$t": "Capacity review"
+            },
+            "context": {
+              "$t": "Summit renewal"
+            },
+            "timestamp": {
+              "$t": "2 days ago"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "projects-all": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "All projects"
+        },
+        "appearance": "outline",
+        "size": "sm",
+        "href": "/projects"
+      },
+      "children": []
+    },
+    "team": {
+      "type": "AvatarGroup",
+      "props": {
+        "label": {
+          "$t": "Team"
+        },
+        "size": "sm",
+        "max": 5,
+        "items": [
+          {
+            "name": "Ada Admin"
+          },
+          {
+            "name": "Mina Manager"
+          },
+          {
+            "name": "Sam Support"
+          },
+          {
+            "name": "Li Wei"
+          },
+          {
+            "name": "Noor Haddad"
+          },
+          {
+            "name": "Jonas Berg"
+          },
+          {
+            "name": "Mia Chen"
+          }
+        ]
+      },
+      "children": []
+    },
+    "dashboardcard-1": {
+      "type": "DashboardCard",
+      "props": {
+        "title": {
+          "$t": "Projects"
+        },
+        "description": {
+          "$t": "Read live from the projects resource"
+        },
+        "span": "full",
+        "flush": true
+      },
+      "children": [
+        "projects-query",
+        "projects-table"
+      ],
+      "slots": {
+        "action": [
+          "projects-all"
+        ]
+      }
+    },
+    "timeline-2": {
+      "type": "Timeline",
+      "props": {
+        "items": [
+          {
+            "key": "kickoff",
+            "title": {
+              "$t": "Kick-off"
+            },
+            "description": {
+              "$t": "Scope and owners agreed"
+            },
+            "timestamp": {
+              "$t": "Jul 08"
+            },
+            "status": "complete"
+          },
+          {
+            "key": "pilot",
+            "title": {
+              "$t": "Pilot with 3 stores"
+            },
+            "description": {
+              "$t": "Feedback collected from 41 staff"
+            },
+            "timestamp": {
+              "$t": "Jul 29"
+            },
+            "status": "complete"
+          },
+          {
+            "key": "review",
+            "title": {
+              "$t": "Finance review"
+            },
+            "description": {
+              "$t": "Budget sign-off pending"
+            },
+            "timestamp": {
+              "$t": "Aug 11"
+            },
+            "status": "current"
+          },
+          {
+            "key": "launch",
+            "title": {
+              "$t": "Launch"
+            },
+            "description": {
+              "$t": "Every store switches over"
+            },
+            "timestamp": {
+              "$t": "Sep 02"
+            },
+            "status": "upcoming"
+          }
+        ]
+      },
+      "children": []
+    },
+    "dashboardcard-3": {
+      "type": "DashboardCard",
+      "props": {
+        "title": {
+          "$t": "Milestones"
+        },
+        "description": {
+          "$t": "Atlas rollout, this quarter"
+        }
+      },
+      "children": [
+        "timeline-2"
+      ]
+    },
+    "recordlist-4": {
+      "type": "RecordList",
+      "props": {
+        "ariaLabel": {
+          "$t": "Open tasks"
+        },
+        "items": [
+          {
+            "key": "t1",
+            "title": {
+              "$t": "Sign off Atlas budget"
+            },
+            "description": {
+              "$t": "Finance"
+            },
+            "checked": false,
+            "status": {
+              "label": {
+                "$t": "Due today"
+              },
+              "tone": "danger"
+            }
+          },
+          {
+            "key": "t2",
+            "title": {
+              "$t": "Migrate store data"
+            },
+            "description": {
+              "$t": "3 of 5 regions done"
+            },
+            "checked": false,
+            "progress": {
+              "value": 60,
+              "tone": "brand"
+            }
+          },
+          {
+            "key": "t3",
+            "title": {
+              "$t": "Write launch notes"
+            },
+            "description": {
+              "$t": "Marketing"
+            },
+            "checked": false,
+            "meta": {
+              "$t": "Fri"
+            }
+          },
+          {
+            "key": "t4",
+            "title": {
+              "$t": "Train support team"
+            },
+            "description": {
+              "$t": "2 sessions booked"
+            },
+            "checked": true,
+            "meta": {
+              "$t": "Done"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "dashboardcard-5": {
+      "type": "DashboardCard",
+      "props": {
+        "title": {
+          "$t": "Open tasks"
+        },
+        "description": {
+          "$t": "Due this week"
+        },
+        "flush": true
+      },
+      "children": [
+        "recordlist-4"
+      ]
+    },
+    "proportionlist-6": {
+      "type": "ProportionList",
+      "props": {
+        "ariaLabel": {
+          "$t": "Open tasks per person"
+        },
+        "valueTone": "muted",
+        "items": [
+          {
+            "key": "mina",
+            "label": {
+              "$t": "Mina Manager"
+            },
+            "value": 9,
+            "display": {
+              "$t": "9 tasks"
+            },
+            "tone": "warning"
+          },
+          {
+            "key": "ada",
+            "label": {
+              "$t": "Ada Admin"
+            },
+            "value": 6,
+            "display": {
+              "$t": "6 tasks"
+            }
+          },
+          {
+            "key": "yuki",
+            "label": {
+              "$t": "Yuki Lead"
+            },
+            "value": 5,
+            "display": {
+              "$t": "5 tasks"
+            }
+          },
+          {
+            "key": "sam",
+            "label": {
+              "$t": "Sam Support"
+            },
+            "value": 4,
+            "display": {
+              "$t": "4 tasks"
+            }
+          },
+          {
+            "key": "theo",
+            "label": {
+              "$t": "Theo Ops"
+            },
+            "value": 3,
+            "display": {
+              "$t": "3 tasks"
+            }
+          },
+          {
+            "key": "li",
+            "label": {
+              "$t": "Li Wei"
+            },
+            "value": 2,
+            "display": {
+              "$t": "2 tasks"
+            }
+          }
+        ]
+      },
+      "children": []
+    },
+    "dashboardcard-7": {
+      "type": "DashboardCard",
+      "props": {
+        "title": {
+          "$t": "Team load"
+        },
+        "description": {
+          "$t": "Open tasks per person"
+        }
+      },
+      "children": [
+        "proportionlist-6"
+      ],
+      "slots": {
+        "action": [
+          "team"
+        ]
+      }
+    },
+    "dashboardcard-8": {
+      "type": "DashboardCard",
+      "props": {
+        "title": {
+          "$t": "Recent activity"
+        },
+        "description": {
+          "$t": "The five latest changes across projects"
+        }
+      },
+      "children": [
+        "activity-feed"
+      ]
+    },
+    "new-project": {
+      "type": "Button",
+      "props": {
+        "label": {
+          "$t": "New project"
+        },
+        "icon": "plus",
+        "href": "/projects/new"
+      },
+      "children": []
+    }
+  },
+  "state": {
+    "projects": {
+      "data": [],
+      "total": 0,
+      "loading": true
+    }
+  }
+}

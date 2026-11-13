@@ -1,0 +1,93 @@
+/* Display and status primitives: skeleton, spinner, tag, inline calendar marks, scroll area. */
+
+/* Placeholders sit on muted; the shimmer is a band of the surface tone sweeping
+   across, so it brightens on light themes and lifts on dark ones. */
+[data-skeleton] {
+  position: relative;
+  overflow: hidden;
+  background: var(--muted);
+  --lumi-skeleton-highlight: color-mix(in oklab, var(--card) 70%, transparent);
+}
+[data-theme="dark"] [data-skeleton] {
+  --lumi-skeleton-highlight: color-mix(in oklab, var(--foreground) 7%, transparent);
+}
+[data-skeleton="shimmer"]::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--lumi-skeleton-highlight), transparent);
+  content: "";
+  transform: translateX(-100%);
+  animation: lumi-skeleton-shimmer 1.6s ease-in-out infinite;
+}
+@keyframes lumi-skeleton-shimmer {
+  to { transform: translateX(100%); }
+}
+
+/* Rotation is the whole signal of a spinner, so reduced motion slows it rather than freezing it. */
+@media (prefers-reduced-motion: reduce) {
+  [data-skeleton="shimmer"]::after { display: none; }
+  [data-spinner-glyph] { animation-duration: 2.4s; }
+}
+
+/* Tags share the badge tone math: the same per-tone chroma and pinned soft
+   lightness. The soft, solid and outline rules themselves live with the badge
+   rules in style.css, so the two cannot drift apart. */
+[data-slot="tag"][data-tone="neutral"] { --lumi-ui-current-tone: var(--lumi-ui-tone-neutral); --lumi-ui-current-tone-foreground: var(--lumi-ui-tone-neutral-foreground); --lumi-ui-tone-surface-c: 0; --lumi-ui-tone-text-c: 0; }
+[data-slot="tag"][data-tone="primary"] { --lumi-ui-current-tone: var(--lumi-ui-tone-primary); --lumi-ui-current-tone-foreground: var(--lumi-ui-tone-primary-foreground); --lumi-ui-tone-surface-c: 0; --lumi-ui-tone-text-c: 0; }
+[data-slot="tag"][data-tone="success"] { --lumi-ui-current-tone: var(--lumi-ui-tone-success); --lumi-ui-current-tone-foreground: var(--lumi-ui-tone-success-foreground); --lumi-ui-tone-surface-c: 0.030; --lumi-ui-tone-text-c: 0.126; }
+[data-slot="tag"][data-tone="warning"] { --lumi-ui-current-tone: var(--lumi-ui-tone-warning); --lumi-ui-current-tone-foreground: var(--lumi-ui-tone-warning-foreground); --lumi-ui-tone-surface-c: 0.026; --lumi-ui-tone-text-c: 0.115; }
+[data-slot="tag"][data-tone="danger"] { --lumi-ui-current-tone: var(--lumi-ui-tone-danger); --lumi-ui-current-tone-foreground: var(--lumi-ui-tone-danger-foreground); --lumi-ui-tone-surface-c: 0.020; --lumi-ui-tone-text-c: 0.160; }
+[data-slot="tag"][data-tone="info"] { --lumi-ui-current-tone: var(--lumi-ui-tone-info); --lumi-ui-current-tone-foreground: var(--lumi-ui-tone-info-foreground); --lumi-ui-tone-surface-c: 0.022; --lumi-ui-tone-text-c: 0.115; }
+[data-slot="tag"][data-tone="brand"] { --lumi-ui-current-tone: var(--lumi-ui-tone-brand); --lumi-ui-current-tone-foreground: var(--lumi-ui-tone-brand-foreground); --lumi-ui-tone-surface-c: 0.030; --lumi-ui-tone-text-c: 0.160; --lumi-ui-tone-text-l: var(--lumi-ui-tone-brand-text-l); }
+
+/* Calendar event dots fill with the status tones; on a selected day they take the day's text colour. */
+[data-slot="calendar-mark"] { background: var(--lumi-ui-tone-brand); }
+[data-slot="calendar-mark"][data-tone="neutral"] { background: var(--muted-foreground); }
+[data-slot="calendar-mark"][data-tone="primary"] { background: var(--primary); }
+[data-slot="calendar-mark"][data-tone="success"] { background: var(--lumi-success); }
+[data-slot="calendar-mark"][data-tone="warning"] { background: var(--lumi-warning); }
+[data-slot="calendar-mark"][data-tone="danger"] { background: var(--lumi-danger); }
+[data-slot="calendar-mark"][data-tone="info"] { background: var(--lumi-info); }
+/* Thumbs read as part of the surface: the line colour at rest, a step stronger under the pointer. */
+[data-slot="scroll-area-thumb"] { background: color-mix(in oklab, var(--muted-foreground) 35%, transparent); }
+[data-slot="scroll-area-scrollbar"]:hover [data-slot="scroll-area-thumb"] { background: color-mix(in oklab, var(--muted-foreground) 60%, transparent); }
+
+/* A neutral outline is an edge, not a second colour: the hairline every
+   surface uses, so it never reads as a grey frame on a grey card. */
+:is([data-slot="badge"], [data-slot="tag"])[data-tone="neutral"][data-appearance="outline"] {
+  border-color: var(--border);
+}
+
+/* A tag with an avatar is a person chip: a pill whose avatar hugs the leading
+   edge, with the name at full strength rather than in the neutral grey. */
+[data-slot="tag"]:has(> :is([data-slot="avatar"], [data-slot="tag-avatar"])) {
+  border-radius: var(--lumi-radius-full);
+  padding-inline-start: 3px;
+}
+
+[data-slot="tag"][data-tone="neutral"][data-appearance]:has(> :is([data-slot="avatar"], [data-slot="tag-avatar"])) {
+  color: var(--foreground);
+}
+
+/* DescriptionList `bordered`: a rounded frame with hairline rows, for an
+   order summary or a record shown inside a card. */
+[data-slot="description-list"][data-bordered] {
+  gap: 0;
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--lumi-radius-control);
+}
+[data-slot="description-list"][data-bordered] > div {
+  display: grid;
+  grid-template-columns: minmax(6rem, auto) minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--lumi-space-3);
+  padding: 0.625rem var(--lumi-space-3);
+  font-size: var(--lumi-fs-body);
+}
+[data-slot="description-list"][data-bordered] > div + div { border-top: 1px solid var(--border); }
+[data-slot="description-list"][data-bordered] dt { color: var(--muted-foreground); }
+[data-slot="description-list"][data-bordered] dd { margin: 0; color: var(--foreground); text-align: end; font-variant-numeric: tabular-nums; }
+[data-slot="description-list"][data-bordered][data-layout="grid"] > div { grid-template-columns: minmax(0, 1fr); }
+[data-slot="description-list"][data-bordered][data-layout="grid"] dd { text-align: start; }

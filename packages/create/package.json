@@ -1,0 +1,48 @@
+{
+  "name": "@duxweb/create-lumi",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Scaffolding CLI for Lumi applications.",
+  "author": "DuxWeb",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duxweb/lumi.git",
+    "directory": "packages/create"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "lumi:source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "create-lumi": "./dist/index.js",
+    "lumi": "./dist/index.js"
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "ai",
+    "dist",
+    "src",
+    "templates"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run --root ../.. packages/create/test/cli.test.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "check:template": "node test/isolated-smoke.mjs",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "catalog:",
+    "commander": "catalog:",
+    "kolorist": "catalog:"
+  }
+}

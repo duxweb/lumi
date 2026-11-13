@@ -1,0 +1,85 @@
+/* Docs: sidebar, article and page outline. */
+.nav--wide { max-width: 1440px; }
+
+.docs { width: 100%; max-width: 1440px; margin-inline: auto; padding-inline: max(24px, env(safe-area-inset-left, 0px)); }
+
+.docs__body { display: grid; grid-template-columns: 232px minmax(0, 1fr) 208px; gap: 56px; }
+/* The columns sit below the header, so they are as tall as the window less whatever of the header is still on screen;
+   the layout's script keeps --docs-top current, and the fallback is the header's full height. */
+.docs__sidebar, .docs__toc { position: sticky; top: 0; align-self: start; max-height: calc(100dvh - var(--docs-top, 82px)); overflow-y: auto; overscroll-behavior: contain; padding-block: 32px 48px; scrollbar-width: thin; }
+.docs__group + .docs__group { margin-top: 24px; }
+.docs__menu { display: none; }
+.docs__footer { max-width: 1440px; }
+.docs__group-label { margin: 0 0 8px; color: var(--site-ink); font-size: 13px; font-weight: 600; }
+.docs__sidebar ul, .docs__toc ul { margin: 0; padding: 0; list-style: none; }
+.docs__sidebar a { display: block; padding: 5px 10px; margin-left: -10px; border-radius: 6px; color: var(--site-muted); font-size: 14px; line-height: 1.5; text-decoration: none; }
+.docs__sidebar a:hover { color: var(--site-ink); }
+.docs__sidebar a[aria-current] { background: var(--site-tint); color: var(--site-ink); font-weight: 500; }
+.docs__toc li a { display: block; padding: 4px 0; color: var(--site-muted); font-size: 13px; line-height: 1.5; text-decoration: none; }
+.docs__toc li[data-depth="3"] a { padding-left: 12px; }
+.docs__toc a:hover { color: var(--site-ink); }
+
+.docs__main { min-width: 0; max-width: 820px; padding-block: 40px 96px; }
+.docs__main--full { grid-column: span 2; max-width: 1000px; }
+.docs__crumb { margin: 0 0 8px; color: var(--site-accent); font-size: 14px; font-weight: 500; }
+.docs__main > h1 { margin: 0 0 24px; font-size: clamp(30px, 3.2vw, 40px); line-height: 1.2; font-weight: 700; letter-spacing: -0.01em; }
+
+.docs__pager { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--site-line); }
+.docs__pager a { display: grid; gap: 2px; padding: 14px 18px; border: 1px solid var(--site-line); border-radius: 12px; font-weight: 600; text-decoration: none; }
+.docs__pager a:hover { border-color: var(--site-ink); }
+.docs__pager small { color: var(--site-muted); font-size: 12.5px; font-weight: 400; }
+.docs__pager-next { grid-column: 2; text-align: right; }
+
+/* Article typography */
+.prose { font-size: 16px; line-height: 1.8; word-break: break-word; }
+.prose > :first-child { margin-top: 0; }
+.prose h2 { margin: 48px 0 16px; font-size: 24px; line-height: 1.35; font-weight: 650; scroll-margin-top: 24px; }
+.prose h3 { margin: 32px 0 12px; font-size: 18.5px; line-height: 1.4; font-weight: 600; scroll-margin-top: 24px; }
+.prose p, .prose ul, .prose ol { margin: 0 0 16px; }
+.prose ul, .prose ol { padding-left: 1.4em; }
+.prose li + li { margin-top: 4px; }
+.prose a { color: var(--site-accent); text-decoration: none; }
+.prose a:hover { text-decoration: underline; }
+.prose blockquote { margin: 0 0 16px; padding: 4px 16px; border-left: 3px solid var(--site-line); color: var(--site-muted); }
+.prose :not(pre) > code { padding: 2px 6px; border-radius: 6px; background: var(--site-tint); font: 0.88em var(--site-mono); }
+.prose pre { margin: 0 0 20px; padding: 16px 18px; border: 1px solid var(--site-line); border-radius: 12px; overflow-x: auto; font: 13.5px/1.65 var(--site-mono); }
+.prose table { width: 100%; margin: 0 0 20px; border-collapse: collapse; font-size: 14.5px; }
+.prose th, .prose td { padding: 10px 12px; border-bottom: 1px solid var(--site-line); text-align: left; vertical-align: top; }
+.prose th { color: var(--site-muted); font-weight: 500; }
+.prose hr { margin: 40px 0; border: 0; border-top: 1px solid var(--site-line); }
+
+/*
+ * Tables fill the column and size each column to its content. A name or
+ * value in code never breaks inside itself, so the first column stays on one
+ * line per name and only wraps between names ("a、b、c"); prose and long code
+ * values in the other columns wrap to the width left over.
+ */
+.prose th { white-space: nowrap; }
+.prose td code { white-space: nowrap; }
+.prose td:not(:first-child) code { white-space: pre-wrap; overflow-wrap: anywhere; }
+.prose td:not(:first-child) { overflow-wrap: anywhere; }
+
+/* The live preview above a component page */
+.ref__demo { margin: 0 0 24px; border: 1px solid var(--site-line); border-radius: 16px; overflow: hidden; }
+.ref__stage { padding: 32px; background: color-mix(in srgb, var(--site-tint) 60%, var(--site-paper)); }
+.ref__open { display: block; padding: 10px 18px; border-top: 1px solid var(--site-line); font-size: 14px; text-align: right; }
+
+@media (max-width: 1180px) {
+  .docs__body { grid-template-columns: 220px minmax(0, 1fr); gap: 40px; }
+  .docs__toc { display: none; }
+  .docs__main--full { grid-column: auto; }
+}
+@media (max-width: 820px) {
+  /* On a phone a wide table scrolls inside the column instead of widening the page. */
+  .prose table { display: block; max-width: 100%; overflow-x: auto; }
+  .docs__body { grid-template-columns: minmax(0, 1fr); }
+  .docs__sidebar { display: none; }
+  .docs__menu { display: block; margin-top: 16px; padding: 12px 16px; border: 1px solid var(--site-line); border-radius: 12px; }
+  .docs__menu summary { font-weight: 600; cursor: pointer; }
+  .docs__menu .docs__group:first-of-type { margin-top: 16px; }
+  .docs__menu a { display: block; padding: 5px 0; color: var(--site-muted); font-size: 14.5px; text-decoration: none; }
+  .docs__menu a[aria-current] { color: var(--site-ink); font-weight: 600; }
+  .docs__menu ul { margin: 0; padding: 0; list-style: none; }
+  .docs__main { padding-top: 24px; }
+  .ref__stage { padding: 16px; }
+}

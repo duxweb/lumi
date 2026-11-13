@@ -1,0 +1,53 @@
+---
+title: "部署"
+description: "Lumi 后台的部署方式：静态文件加后端接口，前端地址回退、子路径、跨域、版本固定和缓存。"
+---
+
+部署的东西只有两类：静态文件（`index.html` 和各个 JSON），以及后端接口。前端脚本来自 CDN，不用构建。
+
+## 地址回退
+
+后台用浏览器地址做路由，刷新 `/orders` 时服务器要返回 `index.html`。不存在的文件都回退到 `index.html` 即可，[快速开始](/guide/getting-started/) 里的 Go 示例就是这样做的。Nginx：
+
+```nginx
+location / {
+  # 文件存在就返回文件，否则返回 index.html，由前端路由处理
+  try_files $uri /index.html;
+}
+```
+
+## 放在子路径下
+
+后台不在域名根目录时，在 `config.json` 里写 `"basename": "/admin"`，JSON 地址也改成相对路径或带上前缀。
+
+## 接口在另一个域名
+
+`data` 的 `url` 写完整地址，如 `https://api.example.com`，后端开启 CORS：
+
+| 设置 | 值 |
+| --- | --- |
+| `Access-Control-Allow-Origin` | 后台所在的域名，如 `https://admin.example.com` |
+| `Access-Control-Allow-Methods` | `GET, POST, PUT, PATCH, DELETE` |
+| `Access-Control-Allow-Headers` | `Authorization`、`Content-Type`、`Accept-Language`（当前语言），用了多租户再加 `X-Tenant`，cookie 模式加 CSRF 请求头（如 `X-XSRF-TOKEN`） |
+
+cookie 模式（`auth.mode: "cookie"`）下请求带 `credentials: 'include'`，后端还要返回 `Access-Control-Allow-Credentials: true`，且 `Allow-Origin` 不能写 `*`；会话 cookie 跨站时要设 `SameSite=None; Secure`。同一个域名下用反向代理把 `/api` 转到后端，就不需要这些设置。
+
+## 改页面不用发版
+
+页面、菜单、主题都是 JSON，后端可以从数据库生成，改完刷新就生效。只有新增自定义组件时才需要改[扩展模块](/guide/extend-components/)。
+
+## 固定版本
+
+CDN 地址里写具体版本号，如 `@duxweb/lumi-admin@0.1.0`，升级时改这一处。也可以把 `dist/base` 目录拷到自己的服务器上，不依赖外部 CDN：
+
+```sh
+# 下载这个版本的包
+npm pack @duxweb/lumi-admin@0.1.0
+# 只解出预构建的脚本和样式：package/dist/base
+tar -xzf duxweb-lumi-admin-0.1.0.tgz package/dist/base
+```
+
+## 上线前
+
+- 去掉 `config.json` 里的 `login.demo`（演示账号提示）。
+- 用 [lumi-check](/ai/checker/) 在 CI 里校验所有页面 JSON。

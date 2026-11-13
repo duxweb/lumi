@@ -1,0 +1,61 @@
+---
+title: "NumberInput"
+description: "数字输入，支持 min、max 和 step。"
+---
+
+<ComponentPreview name="NumberInput" />
+
+数字输入，支持 `min`、`max` 和 `step`。值是数字或 null。
+
+## 示例
+
+```json
+{
+  "root": "numberinput-6",
+  "elements": {
+    "numberinput-6": {
+      "type": "NumberInput",
+      "props": {
+        "value": { "$bindState": "/numberinput-6/value" },
+        "min": 0,
+        "ariaLabel": "NumberInput example"
+      },
+      "children": []
+    }
+  },
+  "state": { "numberinput-6": { "value": 3 } }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `value` | 当前值。写成 `{ "$bindState": "/路径" }` 即与页面状态双向绑定。 | `null \| number` |  |
+| `defaultValue` | 初始值，只在没有绑定 `value` 时生效。 | `null \| number` |  |
+| `min` | 允许的最小值。 | `number` |  |
+| `max` | 允许的最大值。 | `number` |  |
+| `step` | 每次增减的步长。 | `number` |  |
+| `precision` | 保留的小数位数。 | `number` |  |
+| `prefix` | 数字前的固定文字，如 `¥`。 | `string` |  |
+| `suffix` | 数字后的固定文字，如 `件`、`%`。 | `string` |  |
+| `placeholder` | 没有值时显示的提示文字。 | `string` |  |
+| `size` | 尺寸：`sm` 紧凑，`md` 标准，`lg` 宽松。 | `"sm" \| "md" \| "lg"` | `"md"` |
+| `appearance` | 外观：`outline` 描边，`filled` 浅色填充。 | `"outline" \| "filled"` | `"outline"` |
+| `name` | 字段名，表单提交时作为这个值的键。 | `string` |  |
+| `disabled` | 禁用，不可操作。 | `boolean` | `false` |
+| `readonly` | 只读：可以查看和复制，不能修改。 | `boolean` | `false` |
+| `invalid` | 标记为校验未通过，显示错误样式。通常由 FormField 自动设置。 | `boolean` | `false` |
+| `ariaLabel` | 给读屏软件的名称。没有可见标签时必须填写。 | `string` |  |
+
+通用参数：
+
+- `checks`：json-render 原生校验规则，如 `{ "type": "required", "message": "请填写" }`，提交或失焦时执行。
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：`change`
+- 插槽：无

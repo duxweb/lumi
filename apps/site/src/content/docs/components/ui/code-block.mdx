@@ -1,0 +1,54 @@
+---
+title: "CodeBlock"
+description: "只读源码，支持 JSON、JavaScript/TypeScript（JSX/TSX）、CSS、HTML、Bash、Go、YAML、SQL 和 Markdown 的语法高亮；其他语言按纯文本显示。"
+---
+
+<ComponentPreview name="CodeBlock" />
+
+只读源码，支持 JSON、JavaScript/TypeScript（JSX/TSX）、CSS、HTML、Bash、Go、YAML、SQL 和 Markdown 的语法高亮；其他语言按纯文本显示。先渲染纯文本，高亮随后填入，布局不会跳动。`title` 加标题栏，`files` 用页签显示多个文件，复制按钮复制当前文件。`showLineNumbers`、`highlightLines`、`wrap` 和 `maxHeight` 调整代码区域，区域内可滚动且能用键盘到达；`collapsible` 把它折叠在标题后面。
+
+## 示例
+
+```json
+{
+  "root": "code-1",
+  "elements": {
+    "code-1": {
+      "type": "CodeBlock",
+      "props": {
+        "title": "Request",
+        "language": "bash",
+        "code": "curl 'https://api.example.com/orders?status=paid&page=1' \\\n  -H \"Authorization: Bearer $TOKEN\""
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `code` | 要显示的代码。使用 `files` 时不填。 | `string` |  |
+| `language` | 语法高亮的语言：`json`、`javascript`、`typescript`、`jsx`、`tsx`、`css`、`html`、`bash`、`go`、`yaml`、`sql`、`markdown`；也认 `ts`、`sh`、`yml`、`md` 等别名。其他值按纯文本显示。高亮按需加载，先显示同样排版的纯文本。 | `string` | `纯文本` |
+| `title` | 头部条显示的文件名或说明；有标题时复制按钮放在头部。 | `string` |  |
+| `files` | 多个文件，以标签页切换，每项 `{ title, language?, code }`；复制按钮复制当前文件。适合并排展示页面 Spec 与后端处理函数。 字段：`title`、`language?`、`code` | `object[]` |  |
+| `showLineNumbers` | 显示行号；横向滚动时行号固定在左侧。 | `boolean` | `false` |
+| `highlightLines` | 要标记的行号（从 1 开始），如 `[2, 5]`，用品牌色浅底突出。 | `integer[]` |  |
+| `wrap` | 长行在代码块内折行，而不是横向滚动。 | `boolean` | `false` |
+| `maxHeight` | 代码区最大高度（像素），超出后在内部滚动。 | `integer` | `400` |
+| `copyable` | 显示复制按钮，复制后短暂显示“已复制”。 | `boolean` | `true` |
+| `collapsible` | 可以折叠，折叠时只显示标题。 | `boolean` | `false` |
+| `defaultOpen` | 可折叠时初始是否展开。 | `boolean` | `false` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

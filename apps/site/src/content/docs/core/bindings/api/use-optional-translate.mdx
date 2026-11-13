@@ -1,0 +1,12 @@
+---
+title: "useOptionalTranslate"
+description: "useOptionalTranslate React hook 的签名、参数和返回值。"
+---
+
+Like `useTranslate`, for components that may render outside a Lumi provider: there it returns the default message, else the key.
+
+```typescript
+useOptionalTranslate(): (key: string, params?: Record<string, unknown>, defaultMessage?: string) => string
+```
+
+返回 `(key: string, params?: Record<string, unknown>, defaultMessage?: string) => string`。

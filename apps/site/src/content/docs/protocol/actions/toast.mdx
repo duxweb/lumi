@@ -1,0 +1,42 @@
+---
+title: "toast"
+description: "显示一行轻提示（Admin 里在顶部居中），约 3 秒后关闭；duration 为 0 时一直显示，同一个 key 会原地更新。"
+---
+
+显示一行轻提示（Admin 里在顶部居中），约 3 秒后关闭；`duration` 为 0 时一直显示，同一个 `key` 会原地更新。
+
+## 用法
+
+```jsonc
+{
+  "root": "button",
+  "elements": {
+    "button": {
+      "type": "Button",
+      "props": { "label": "保存" },
+      "on": {
+        // 点击按钮时执行
+        "press": {
+          "action": "toast",
+          "params": {
+            // 语义色：success、warning、danger、info、neutral
+            "tone": "success",
+            // 提示文字
+            "message": "已保存"
+          }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| `key` | 同一个 `key` 的提示会原地更新，不会再叠一条。 | `string` |
+| `tone` | 语义色：`success`、`warning`、`danger`、`info`、`neutral`。 | `"neutral" \| "success" \| "info" \| "warning" \| "danger"` |
+| `message`（必填） | 提示文字。 | `string` |
+| `duration` | 显示毫秒数；0 表示一直显示。 | `integer` |

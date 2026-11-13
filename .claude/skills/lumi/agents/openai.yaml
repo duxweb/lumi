@@ -1,0 +1,4 @@
+interface:
+  display_name: Lumi
+  short_description: 编写与校验原生 json-render 页面，组合 Lumi 数据服务、React UI 和 Admin（Node 校验只用 /catalog）
+  default_prompt: Use $lumi to build a native json-render React page with Lumi services and UI, and validate it against the /catalog definitions.

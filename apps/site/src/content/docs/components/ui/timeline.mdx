@@ -1,0 +1,54 @@
+---
+title: "Timeline"
+description: "按顺序排在一条连续竖线上的事件，每项有时间、状态和标题下方的可选详情。"
+---
+
+<ComponentPreview name="Timeline" />
+
+按顺序排在一条连续竖线上的事件，每项有时间、状态和标题下方的可选详情。时间放在标题那一行的末尾（`datePlacement: "below"` 时放在标题下方）。状态标记：complete 是成功色圆点，current 是品牌色圆环，upcoming 是空心圆环。`marker: "dot"` 画成动态流：每项一个对应色调的圆点。
+
+## 示例
+
+```json
+{
+  "root": "timeline-30",
+  "elements": {
+    "timeline-30": {
+      "type": "Timeline",
+      "props": {
+        "items": [
+          {
+            "key": "created",
+            "title": "Created",
+            "description": "The record was created.",
+            "status": "complete"
+          },
+          { "key": "review", "title": "Review", "status": "current" }
+        ]
+      },
+      "children": []
+    }
+  }
+}
+```
+
+## 参数
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `items`（必填） | 事件列表，每项 `{ key, title, timestamp?, description?, status?, tone? }`。`status`：`complete` 成功色实心点，`current` 品牌色圆环加光晕，`upcoming` 空心灰环。 字段：`key`、`title`、`description?`、`timestamp?`、`tone?`、`status?` | `object[]` |  |
+| `loading` | 为 true 时显示加载状态，并暂停交互。 | `boolean` | `false` |
+| `empty` | 没有数据时显示的文字。 | `string` |  |
+| `marker` | `status` 用状态图标标记每项；`dot` 用小圆点，适合动态流。 | `"status" \| "dot"` | `"status"` |
+| `datePlacement` | 时间的位置：`end` 放在标题同一行的最右侧（长标题在自己的列里换行，时间不会掉行）；`below` 放在标题下一行，适合详情页侧栏等窄列。 | `"end" \| "below"` | `"end"` |
+
+通用参数：
+
+- `className`：附加的 CSS 类名，只在宿主自定义样式时使用。
+- `data-testid`：测试定位用的标识，不影响显示。
+- `aria-label`：原生 aria-label，等同于 `ariaLabel`。
+
+## 事件与插槽
+
+- 事件：无
+- 插槽：无

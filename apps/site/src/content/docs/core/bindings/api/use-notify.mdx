@@ -1,0 +1,19 @@
+---
+title: "useNotify"
+description: "useNotify React hook 的签名、参数和返回值。"
+---
+
+Opens notification cards through the configured NotificationProvider, like the `notify` action.
+
+```typescript
+useNotify(): FeedbackHandle<NotificationParams>
+```
+
+返回 `FeedbackHandle<NotificationParams>`。
+
+返回结构：
+
+| 名称 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `close` | `(key: string) => void` | 是 | Closes the entry with this key. |
+| `open` | `(params: NotificationParams) => string \| undefined` | 是 | Returns the key of the open entry, or `undefined` without a provider. |

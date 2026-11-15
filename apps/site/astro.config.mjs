@@ -34,6 +34,15 @@ const demoIndex = {
   },
 }
 
+// Astro has separate client, server and prerender environments. Each must
+// resolve workspace exports from source on a fresh checkout without dist.
+const workspaceSource = {
+  name: 'lumi-site-workspace-source',
+  configEnvironment(_name, config) {
+    return { resolve: { conditions: ['lumi:source', ...config.resolve.conditions] } }
+  },
+}
+
 export default defineConfig({
   site: process.env.LUMI_SITE_URL,
   base,
@@ -46,9 +55,6 @@ export default defineConfig({
     shikiConfig: { themes: { light: 'github-light', dark: 'github-dark' } },
   },
   vite: {
-    plugins: [demoIndex],
-    resolve: {
-      conditions: ['lumi:source', 'module', 'browser', 'import', 'default'],
-    },
+    plugins: [demoIndex, workspaceSource],
   },
 })

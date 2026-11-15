@@ -45,6 +45,8 @@ pnpm --dir apps/admin dev    # Admin demo on 5176 (admin / admin)
 | `pnpm e2e` | One key browser path per app; `pnpm e2e:full` runs everything |
 | `pnpm verify:ci` | Everything CI runs except the browser tests |
 
+CI reports Lint/source checks, TypeScript, unit tests, build/package checks and E2E as separate parallel jobs. E2E runs Admin separately from the site and other examples, using the same pinned Playwright image as the Linux visual baselines. Pull requests run this shared workflow directly; pushes to `main` call it from `CI & Release`, and Changesets runs only after every job passes. Pages publishes the unified site independently. Node/pnpm setup and locked installation share one action in `.github/actions/setup`.
+
 Reference docs under `apps/site` are generated from the Catalog definitions: after changing a definition or a public export, run `pnpm -F @duxweb/lumi-site generate` and `pnpm gen:llms`. Versioning and release go through Changesets (`pnpm changeset`).
 
 ## License

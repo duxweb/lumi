@@ -34,3 +34,5 @@ pnpm e2e                    # one key browser path per app
 - Source comments are in English.
 
 `pnpm verify:ci` runs everything CI runs except the browser tests.
+
+GitHub reports Lint/source checks, TypeScript, unit tests, build/package checks and E2E separately. The same reusable workflow runs for pull requests and gates Changesets on `main`; do not add a second push verification pass. E2E uses the pinned Playwright image in `ci.yml` and `visual-baselines.yml`. To add or update Linux screenshots, run the manual Visual baselines workflow, inspect its artifact and commit the complete `*-linux.png` set; ordinary CI compares committed baselines.

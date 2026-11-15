@@ -1,7 +1,7 @@
 // Enforces the release shape: publishing happens only through the Changesets
 // action calling `pnpm run release` (= `changeset publish`), in a job that
-// `needs:` the single verification job running `pnpm verify:ci` and the full
-// e2e suite (`pnpm e2e:full`). The publish job builds packages but never re-runs verification.
+// `needs:` the shared CI workflow. Its parallel jobs cover verify:ci and every
+// full E2E project; publishing builds packages but never repeats verification.
 import { readdir, readFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import process from 'node:process'
@@ -22,10 +22,19 @@ const listBrackets = /[[\]]/gu
 const runLine = /^\s*(?:-\s+)?run:[ \t]*(\S.*)$/u
 const publishLine = /^\s*publish:[ \t]*(\S.*)$/u
 const releaseRun = /\bpnpm\s+(?:run\s+)?release\b/u
-const verifyCiRun = /\bpnpm\s+(?:run\s+)?verify:ci\b/u
 const publishKey = /^\s*publish:/u
 const buildPackagesRun = /run:\s*pnpm\s+(?:run\s+)?build:packages\b/u
 const releasePublishValue = /^\s*publish: pnpm run release$/mu
+const workflowUses = /^ {4}uses: (.+)$/mu
+const optionalExecution = /^\s*(?:if|continue-on-error):/mu
+const e2eProjectsLine = /^ {12}projects: (.+)$/gmu
+const projectPrefix = '--project='
+const ciWorkflow = './.github/workflows/ci.yml'
+const workflowCallEvent = /^ {2}workflow_call:/mu
+const pushEvent = /^ {2}push:/mu
+const fullE2ERun = /^pnpm e2e:full \$\{\{ matrix.projects \}\}$/u
+const requiredJobs = ['lint', 'types', 'unit', 'build', 'e2e']
+const requiredProjects = ['base-admin', 'foundation-admin', 'react-admin', 'react-demo', 'site']
 
 /** Splits a workflow into its top-level jobs (two-space indented keys under `jobs:`). */
 function workflowJobs(source) {
@@ -48,6 +57,8 @@ function workflowJobs(source) {
     }
   }
   for (const job of jobs.values()) {
+    job.source = job.lines.join('\n')
+    job.uses = workflowUses.exec(job.source)?.[1]
     const needs = job.lines.map(line => needsLine.exec(line)?.[1]).find(Boolean) ?? ''
     job.needs = needs.replace(listBrackets, '').split(',').map(value => value.trim()).filter(Boolean)
     job.runs = job.lines.map(line => runLine.exec(line)?.[1]?.trim()).filter(Boolean)
@@ -83,12 +94,34 @@ function verifyConfiguration(candidateManifest, workflows) {
     throw new Error(`The only workflow publish value must be pnpm run release: ${JSON.stringify(publishers.map(({ path, job, value }) => [path, job.name, value]))}`)
 
   const [{ path, job, jobs }] = publishers
-  const verifiers = job.needs.map(name => jobs.get(name)).filter(Boolean)
-  const verifier = verifiers.find(candidate => candidate.runs.some(run => verifyCiRun.test(run)) && candidate.runs.some(run => e2ePattern.test(run)))
-  if (!verifier)
-    throw new Error(`${path}#${job.name} must need a job that runs pnpm verify:ci and pnpm e2e:full`)
-  if (verifier.needs.length > 0 || verifier.publish.length > 0)
-    throw new Error(`${path}#${verifier.name} must be a standalone verification job`)
+  const verifier = jobs.get('verification')
+  if (job.needs.join(',') !== 'verification' || verifier?.uses !== ciWorkflow)
+    throw new Error(`${path}#${job.name} must need the shared ${ciWorkflow} verification job`)
+  if (verifier.needs.length > 0 || verifier.runs.length > 0 || optionalExecution.test(verifier.source) || optionalExecution.test(job.source))
+    throw new Error(`${path} must not skip verification or publish after failed checks`)
+
+  const ciSource = workflows.find(([path]) => path === 'ci.yml')?.[1] ?? ''
+  if (!workflowCallEvent.test(ciSource) || pushEvent.test(ciSource))
+    throw new Error('ci.yml must be reusable and must not duplicate the main push checks')
+  const ciJobs = workflowJobs(ciSource)
+  if (ciJobs.size !== requiredJobs.length || requiredJobs.some(name => !ciJobs.has(name)))
+    throw new Error(`ci.yml must define the parallel jobs: ${requiredJobs.join(', ')}`)
+  for (const check of ciJobs.values()) {
+    // Failure-only artifact uploads are outside the checked execution steps.
+    const execution = check.source.split('uses: actions/upload-artifact')[0]
+    if (check.needs.length > 0 || optionalExecution.test(execution))
+      throw new Error(`ci.yml#${check.name} must run independently without optional checks`)
+  }
+  const commands = [...ciJobs.values()].filter(check => check.name !== 'e2e').flatMap(check => check.runs)
+  const expected = candidateManifest.scripts['verify:ci'].split(' && ')
+  if (commands.length !== expected.length || expected.some(command => commands.filter(actual => actual === command).length !== 1))
+    throw new Error('Parallel CI jobs must cover every verify:ci command exactly once')
+  const e2e = ciJobs.get('e2e')
+  if (!e2e.runs.some(run => fullE2ERun.test(run)))
+    throw new Error('ci.yml#e2e must run the full E2E suite for each project group')
+  const args = [...e2e.source.matchAll(e2eProjectsLine)].flatMap(match => match[1].split(' '))
+  if (args.some(arg => !arg.startsWith(projectPrefix)) || args.map(arg => arg.slice(projectPrefix.length)).sort().join(',') !== requiredProjects.join(','))
+    throw new Error('E2E groups must cover all five projects once without filtering tests')
   if (job.runs.some(run => verificationPattern.test(run) || e2ePattern.test(run)))
     throw new Error(`${path}#${job.name} must not repeat verification; it already needs ${verifier.name}`)
   const publishLine = job.lines.findIndex(line => publishKey.test(line))
@@ -115,6 +148,7 @@ function expectConfigurationFailure(label, candidateManifest, candidateWorkflows
 
 const releasePath = workflows.find(([, source]) => releasePublishValue.test(source))?.[0]
 const replaceRelease = (from, to) => workflows.map(([path, source]) => [path, path === releasePath ? source.replace(from, to) : source])
+const replaceCi = (from, to) => workflows.map(([path, source]) => [path, path === 'ci.yml' ? source.replace(from, to) : source])
 
 expectConfigurationFailure('root script', {
   ...manifest,
@@ -133,10 +167,16 @@ expectConfigurationFailure('workflow release step', manifest, [
   ['unsafe.yml', 'jobs:\n  unsafe:\n    steps:\n      - run: pnpm run release\n'],
 ])
 expectConfigurationFailure('missing needs', manifest, replaceRelease(/^ {4}needs:.*\n/mu, ''))
-expectConfigurationFailure('verification without e2e', manifest, replaceRelease(/^.*run: CI=1 pnpm e2e:full\n/mu, ''))
-expectConfigurationFailure('verification with the smoke tests only', manifest, replaceRelease(/pnpm e2e:full/u, 'pnpm e2e'))
-expectConfigurationFailure('verification without verify:ci', manifest, replaceRelease(/run: pnpm verify:ci/u, 'run: pnpm lint'))
+expectConfigurationFailure('missing shared workflow', manifest, replaceRelease(ciWorkflow, './.github/workflows/other.yml'))
+expectConfigurationFailure('optional verification', manifest, replaceRelease('  verification:\n', '  verification:\n    if: false\n'))
+expectConfigurationFailure('verification without e2e', manifest, replaceCi(/^.*run: pnpm e2e:full.*\n/mu, ''))
+expectConfigurationFailure('verification with the smoke tests only', manifest, replaceCi(/pnpm e2e:full/u, 'pnpm e2e'))
+expectConfigurationFailure('missing E2E project', manifest, replaceCi(' --project=site', ''))
+expectConfigurationFailure('filtered E2E tests', manifest, replaceCi('--project=react-admin', '--project=react-admin --grep=@smoke'))
+expectConfigurationFailure('verification without lint', manifest, replaceCi('run: pnpm lint', 'run: pnpm typecheck'))
+expectConfigurationFailure('optional check', manifest, replaceCi('  unit:\n', '  unit:\n    if: false\n'))
+expectConfigurationFailure('duplicate main checks', manifest, replaceCi('  workflow_call:', '  push:\n    branches: [main]\n  workflow_call:'))
 expectConfigurationFailure('publish without build', manifest, replaceRelease(/run: pnpm build:packages/u, 'run: pnpm lint'))
 expectConfigurationFailure('repeated verification', manifest, replaceRelease(/run: pnpm build:packages/u, 'run: pnpm build:packages && pnpm verify:ci'))
 
-process.stdout.write(`Verified release guard: ${releasePath} publishes only after its verification job (verify:ci + e2e:full), without repeating it.\n`)
+process.stdout.write(`Verified release guard: ${releasePath} needs shared parallel CI (lint, types, unit, build and all five E2E projects), without repeating checks.\n`)

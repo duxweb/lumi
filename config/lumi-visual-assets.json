@@ -2,6 +2,6 @@
   "formatVersion": 2,
   "snapshotDirectory": "e2e/react-admin.spec.ts-snapshots",
   "knownPlatforms": ["darwin", "linux"],
-  "requiredPlatforms": ["darwin"],
+  "requiredPlatforms": ["darwin", "linux"],
   "ownedImages": ["apps/site/public/home/sky.webp"]
 }

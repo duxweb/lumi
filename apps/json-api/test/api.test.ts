@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { spawn } from 'node:child_process'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
-import { afterAll, beforeAll, it } from 'vitest'
+import { afterAll, beforeAll, it, vi } from 'vitest'
 
 /** The fields these assertions read from any resource row. */
 interface Row {
@@ -32,17 +32,14 @@ let token: string | undefined
 const api = (path: string, options: RequestInit = {}) => fetch(`http://127.0.0.1:${port}${path}`, { ...options, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}), ...(options.headers ?? {}) } })
 
 beforeAll(async () => {
-  server = spawn(process.execPath, ['server.ts'], { cwd: fileURLToPath(new URL('..', import.meta.url)), env: { ...process.env, PORT: String(port) } })
-  for (let attempt = 0; attempt < 30; attempt++) {
-    try {
-      if ((await fetch(`http://127.0.0.1:${port}/health`)).ok)
-        return
-    }
-    catch {}
-    await new Promise(resolve => setTimeout(resolve, 50))
-  }
-  throw new Error('API did not start')
-})
+  server = spawn(process.execPath, ['--import', 'tsx', 'server.ts'], { cwd: fileURLToPath(new URL('..', import.meta.url)), env: { ...process.env, PORT: String(port) } })
+  let errors = ''
+  server.stderr?.on('data', chunk => errors += String(chunk))
+  await vi.waitFor(async () => {
+    assert.equal(server?.exitCode, null, errors)
+    assert.ok((await fetch(`http://127.0.0.1:${port}/health`)).ok)
+  }, { timeout: 10_000, interval: 50 })
+}, 15_000)
 afterAll(() => {
   server?.kill()
 })

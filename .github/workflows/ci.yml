@@ -1,54 +1,98 @@
 name: CI
 
-# Pushes to main are verified once by release.yml, which gates publishing.
+# Pull requests run this directly; main calls it from release.yml once.
 on:
   pull_request:
   workflow_dispatch:
+  workflow_call:
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
-  verification:
+  lint:
+    name: Lint & source checks
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9.15.4
+      - run: pnpm lint
+      - run: pnpm verify:release-guard
+      - run: pnpm verify:upstream
+      - run: pnpm verify:assets
+      - run: pnpm verify:generated
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22.12.x
-          cache: pnpm
+  types:
+    name: TypeScript
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm typecheck
 
-      - run: pnpm install --frozen-lockfile
+  unit:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm test
 
-      - name: Upstream, generated, quality, build, size, package, and isolation gates
-        run: pnpm verify:ci
+  build:
+    name: Build & packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - run: pnpm check:schema
+      - run: pnpm verify:docs-examples
+      - run: pnpm build:packages
+      - run: pnpm --dir apps/admin exec vite build
+      - run: pnpm verify:pack
+      - run: pnpm verify:size
+      - run: pnpm verify:isolation
 
   e2e:
+    name: E2E / ${{ matrix.name }}
     runs-on: ubuntu-latest
+    timeout-minutes: 25
+    # Match visual-baselines.yml: fonts and browser binaries affect screenshots.
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-noble
+      options: --ipc=host
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Admin
+            projects: --project=react-admin
+          - name: Site & examples
+            projects: --project=react-demo --project=foundation-admin --project=site --project=base-admin
+    env:
+      CI: '1'
+      PLAYWRIGHT_VERSION: 1.61.1
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9.15.4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22.12.x
-          cache: pnpm
-
-      - run: pnpm install --frozen-lockfile
-
-      - run: pnpm exec playwright install --with-deps chromium
+      - name: Check browser image version
+        run: test "$(node -p "require('@playwright/test/package.json').version")" = "$PLAYWRIGHT_VERSION"
 
       - name: E2E
-        run: pnpm e2e:full
+        run: pnpm e2e:full ${{ matrix.projects }}
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-${{ matrix.name }}
+          path: test-results/
+          retention-days: 7

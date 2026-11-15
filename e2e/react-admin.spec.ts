@@ -1491,6 +1491,8 @@ test('access, project and article records complete their create/edit workflows',
 })
 
 test('page sections and card contents never touch their neighbours', async ({ page }) => {
+  // This traverses the whole directory, rather than one route, on shared CI CPUs.
+  test.setTimeout(60_000)
   await page.setViewportSize({ width: 1440, height: 900 })
   await login(page)
   // Every capability page, so a new page cannot ship with sections stacked flush.

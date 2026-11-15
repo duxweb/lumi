@@ -1,26 +1,23 @@
 import { spawn } from 'node:child_process'
-import { afterAll, beforeAll, expect, it } from 'vitest'
+import { afterAll, beforeAll, expect, it, vi } from 'vitest'
 
 const port = 39002
 const base = `http://127.0.0.1:${port}`
 let server: ReturnType<typeof spawn> | undefined
 
 beforeAll(async () => {
-  server = spawn(process.execPath, ['mock/server.ts'], {
+  server = spawn(process.execPath, ['--import', 'tsx', 'mock/server.ts'], {
     cwd: new URL('..', import.meta.url),
     env: { ...process.env, PORT: String(port), MOCK_AGENT_STEP_MS: '0' },
-    stdio: 'ignore',
+    stdio: ['ignore', 'ignore', 'pipe'],
   })
-  for (let attempt = 0; attempt < 50; attempt += 1) {
-    try {
-      if ((await fetch(`${base}/health`)).ok)
-        return
-    }
-    catch {}
-    await new Promise(resolve => setTimeout(resolve, 20))
-  }
-  throw new Error('mock server did not start')
-})
+  let errors = ''
+  server.stderr?.on('data', chunk => errors += String(chunk))
+  await vi.waitFor(async () => {
+    expect(server?.exitCode, errors).toBeNull()
+    expect((await fetch(`${base}/health`)).ok).toBe(true)
+  }, { timeout: 10_000, interval: 50 })
+}, 15_000)
 
 afterAll(() => server?.kill())
 

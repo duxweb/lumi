@@ -97,7 +97,7 @@ describe('native Catalog checker', () => {
     expect(unknown.stderr).toContain('Unknown component: Missing')
     expect(lookup(['describe']).status).toBe(2)
     expect(lookup(['--help']).stdout).toContain('lumi-check describe <Component>')
-  })
+  }, 20_000)
 })
 
 it('invalid static built-in params and missing update id must fail catalog validation', () => {

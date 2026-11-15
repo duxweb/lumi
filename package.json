@@ -22,7 +22,7 @@
     "e2e:site": "playwright test --project=site",
     "e2e:react-admin": "playwright test --project=react-admin",
     "typecheck": "pnpm -r typecheck",
-    "test": "vitest run",
+    "test": "pnpm -F @duxweb/lumi-ui -F @duxweb/lumi-admin build:css && vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

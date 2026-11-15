@@ -1,5 +1,15 @@
 # @duxweb/lumi-admin
 
+## 0.1.1
+
+### Patch Changes
+
+- e0e8013: Share session identity across derived contexts and guard writes, imports, optimistic rollback, placeholder rows and remote page caches across account or tenant changes. Prevent signed HTTP redirects from forwarding custom credentials and reject nested mutating agent UI actions.
+
+  Unify CRUD parameter mapping, preserve JSON delete values, validate native action parameters and required record IDs, and reuse provider URL resolution for agent requests. Keep list and aggregate refreshes consistent and reset pagination when filters change.
+
+  Separate Admin document loading and Avatar primitives, and reduce redundant test loading, fixed waits and duplicate accessibility scans while preserving integration and visual coverage.
+
 ## 0.1.0
 
 ### Minor Changes
@@ -38,6 +48,7 @@
   `createSimpleDataProvider` takes `http` instead of `getToken`, `tokenHeader`, `getLocale`, `getTenant` and `fetcher`, and exposes it as `DataProvider.http`; uploads, the agent and `createSseLiveProvider({ http })` sign through the same client, so `upload.headers` and `agent.headers` are only for extra headers and `agent.credentials` is gone. `createLumi` takes and exposes `http` (built from `authProvider`, `i18nProvider` and `tenantProvider` when not given). `createSimpleAuthProvider` runs its own sign-in requests through an HttpClient (`http` option) and gains `mode: 'cookie'` with `csrf: { cookie, header }`, and `endpoints.refresh`; `SimpleAuth.getToken` is removed. `dataProviderAuth`, `withSourceAuth` and `DataProviderAuth` are removed.
 
   In Admin, an `auth` entry takes `mode`, `csrf` and `endpoints.refresh`, and each `data` entry takes `auth: false`. Extension options are flat: `authProviders`, `accessProviders`, `i18nProvider`, `tenantProvider`, `liveProvider`, `auditLogProvider`, `toastProvider`, `notificationProvider`, `validator`, `upload`, `agent` and `env` sit beside `dataProviders` instead of under `providers`, and a module's `dataProviders.default` replaces the panel's provider. Extension module functions receive `{ config, panel, http }`, `http` being the app's signed client at the panel's backend. `getToken` is removed from the extension options and from `MountedAdmin`, which exposes `http`. The demo mock answers cookie sessions as well.
+
 - Menu items without a `group` or `module` share a default one whose label is translated (`lumi.admin.workspace`, 工作台 in Chinese) instead of always reading "Workspace".
 - Account pages beyond sign-in. `AuthProvider` gains optional `register`, `forgotPassword` and `updatePassword`, with the `useRegister`, `useForgotPassword` and `useUpdatePassword` hooks; registering goes through the same session queue as `login`, so a provider that signs the new account in resets cached session data the same way. `createSimpleAuthProvider` offers each one only when its endpoint is set (`endpoints.register`, `forgotPassword`, `updatePassword`), and the base config takes them under an `auth` entry's `endpoints`.
 

@@ -1,7 +1,7 @@
 {
   "name": "@duxweb/lumi",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Native json-render integration and data services.",
   "author": "DuxWeb",
   "license": "MIT",

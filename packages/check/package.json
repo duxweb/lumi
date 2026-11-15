@@ -1,7 +1,7 @@
 {
   "name": "@duxweb/lumi-check",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Native json-render Catalog validation CLI.",
   "author": "DuxWeb",
   "license": "MIT",

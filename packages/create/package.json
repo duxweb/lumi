@@ -1,7 +1,7 @@
 {
   "name": "@duxweb/create-lumi",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Scaffolding CLI for Lumi applications.",
   "author": "DuxWeb",
   "license": "MIT",

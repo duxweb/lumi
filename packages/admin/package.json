@@ -1,7 +1,7 @@
 {
   "name": "@duxweb/lumi-admin",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Native json-render Admin configuration and React application shell.",
   "author": "DuxWeb",
   "license": "MIT",

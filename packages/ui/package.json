@@ -1,7 +1,7 @@
 {
   "name": "@duxweb/lumi-ui",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Native json-render integration and shadcn-style React components.",
   "author": "DuxWeb",
   "license": "MIT",

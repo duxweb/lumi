@@ -6,7 +6,9 @@ import { QueryClient } from '@tanstack/react-query'
 import { act, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTenantProvider } from '../../src/core/providers/tenant.js'
 import { LumiProvider, useClient, useCreate, useCustom, useCustomMutation, useDelete, useFormatCurrency, useFormatDateTime, useInvalidate, useList, useLocale, useOne, useTable } from '../../src/react/index'
+import { useImport } from '../../src/react/transfer.js'
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
@@ -316,36 +318,48 @@ describe('react data services', () => {
     await act(async () => root.unmount())
   })
 
-  it('refetches list and aggregate queries through one resource invalidation', async () => {
-    const getList = vi.fn(async () => ({ data: [], total: 2 }))
-    const custom = vi.fn(async () => ({ data: { active: 2 } }))
-    const context = createLumi({
-      dataProvider: {
-        getList,
-        custom,
-        getOne: async () => ({ data: {} }),
-        create: async () => ({ data: {} }),
-        update: async () => ({ data: {} }),
-        deleteOne: async () => ({ data: {} }),
-      },
-    })
-    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
-    let invalidate!: ReturnType<typeof useInvalidate>
-    function Probe(): null {
-      useTable({ resource: 'products', aggregate: { url: '/products/aggregate' } })
-      invalidate = useInvalidate()
+  it('list and aggregate must keep one snapshot during an invalidation refetch', async () => {
+    let rev = 1
+    let finish!: (v: { data: { revision: number } }) => void
+    const context = createLumi({ dataProvider: {
+      getList: async () => ({ data: [{ id: 1, revision: rev }], total: 1 }),
+      custom: () => rev === 1
+        ? Promise.resolve({ data: { revision: 1 } })
+        : new Promise((resolve) => {
+            finish = resolve
+          }),
+    } as never })
+    const client = new QueryClient()
+    let table!: ReturnType<typeof useTable>
+    function Probe() {
+      table = useTable({ resource: 'orders', aggregate: { url: '/orders/stats' } })
       return null
     }
     const root = createRoot(document.createElement('div'))
-    await act(async () => root.render(<LumiProvider context={context} registry={{}} queryClient={queryClient}><Probe /></LumiProvider>))
-    await expect.poll(() => getList).toHaveBeenCalledTimes(1)
-    await expect.poll(() => custom).toHaveBeenCalledTimes(1)
-
-    await act(async () => invalidate({ resource: 'products' }))
-
-    await expect.poll(() => getList).toHaveBeenCalledTimes(2)
-    await expect.poll(() => custom).toHaveBeenCalledTimes(2)
-    await act(async () => root.unmount())
+    try {
+      await act(async () => root.render(<LumiProvider context={context} queryClient={client} registry={{}}><Probe /></LumiProvider>))
+      await act(async () => {
+        await vi.waitFor(() => expect(table.aggregate?.revision).toBe(1))
+      })
+      rev = 2
+      let refreshing!: Promise<void>
+      await act(async () => {
+        refreshing = client.invalidateQueries({ queryKey: ['lumi'] })
+      })
+      await act(async () => {
+        await vi.waitFor(() => expect(table.query.data?.data[0].revision).toBe(2))
+      })
+      const shown = [table.rows[0].revision, table.aggregate?.revision]
+      finish({ data: { revision: 2 } })
+      await act(async () => {
+        await refreshing
+      })
+      expect(shown[0]).toBe(shown[1])
+    }
+    finally {
+      await act(async () => root.unmount())
+      client.clear()
+    }
   })
 
   it('scopes broad invalidation to Lumi and the selected provider', async () => {
@@ -453,7 +467,9 @@ describe('react data services', () => {
     const onError = vi.fn(async () => ({ logout: true, redirectTo: '/login' }))
     const go = vi.fn()
     const dataProvider: DataProvider = {
-      getList: vi.fn(async () => { throw failure }),
+      getList: vi.fn(async () => {
+        throw failure
+      }),
       getOne: vi.fn(async () => ({ data: {} })),
       create: vi.fn(async () => ({ data: {} })),
       update: vi.fn(async () => ({ data: {} })),
@@ -515,4 +531,54 @@ describe('react data services', () => {
     expect(onSuccess).toHaveBeenCalledTimes(1)
     await act(async () => root.unmount())
   })
+})
+
+it('changed filters must return useTable to page one', async () => {
+  const context = createLumi({ dataProvider: { getList: async () => ({ data: [], total: 100 }) } as never })
+  const client = new QueryClient()
+  let table!: ReturnType<typeof useTable>
+  function Probe({ status }: { status: string }) {
+    table = useTable({ resource: 'orders', filters: [{ field: 'status', operator: 'eq', value: status }] })
+    return null
+  }
+  const root = createRoot(document.createElement('div'))
+  const render = (status: string) => root.render(<LumiProvider context={context} queryClient={client} registry={{}}><Probe status={status} /></LumiProvider>)
+  try {
+    await act(async () => render('all'))
+    await act(async () => table.setPage(3))
+    await act(async () => render('active'))
+    expect(table.page).toBe(1)
+  }
+  finally {
+    await act(async () => root.unmount())
+    client.clear()
+  }
+})
+
+it('does not start an import when the tenant changes while choosing the file', async () => {
+  const tenantProvider = createTenantProvider({ initial: 'A' })
+  const create = vi.fn()
+  const context = createLumi({ tenantProvider, dataProvider: { getList: vi.fn(), getOne: vi.fn(), update: vi.fn(), deleteOne: vi.fn(), create } })
+  let choose!: (file: { name: string, content: string }) => void
+  const pick = () => new Promise<{ name: string, content: string }>((resolve) => {
+    choose = resolve
+  })
+  let importer!: ReturnType<typeof useImport>
+  function Probe() {
+    importer = useImport({ resource: 'orders', pick })
+    return null
+  }
+  const root = createRoot(document.createElement('div'))
+  try {
+    await act(async () => root.render(<LumiProvider context={context} registry={{}}><Probe /></LumiProvider>))
+    const pending = importer.trigger()
+    const refused = expect(pending).rejects.toThrow('session changed')
+    await act(async () => tenantProvider.set('B'))
+    choose({ name: 'rows.json', content: '[{"name":"A-only"}]' })
+    await refused
+    expect(create).not.toHaveBeenCalled()
+  }
+  finally {
+    await act(async () => root.unmount())
+  }
 })

@@ -2,7 +2,7 @@
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, describe, expect, it } from 'vitest'
-import { embeddableUrl, LumiEmbedProvider, LumiIframe } from '../src/index.js'
+import { embeddableUrl, LumiEmbedProvider, LumiIframe } from '../src/components/iframe.js'
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 

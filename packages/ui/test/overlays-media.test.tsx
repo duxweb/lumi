@@ -8,8 +8,14 @@ import { JSONUIProvider, Renderer } from '@json-render/react'
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { uiComponentDefinitions } from '../src/catalog/index.js'
-import { LumiBreadcrumb, LumiButton, LumiCarousel, LumiImage, LumiImageGrid, LumiLightbox, LumiPopconfirm, LumiPopover, uiRegistry } from '../src/react/index.js'
+import { uiComponentDefinitions } from '../src/catalog/definitions.js'
+import { LumiButton } from '../src/components/base.js'
+import { LumiBreadcrumb } from '../src/components/breadcrumb.js'
+import { LumiCarousel } from '../src/components/carousel.js'
+import { LumiImage, LumiLightbox } from '../src/components/media.js'
+import { LumiPopconfirm, LumiPopover } from '../src/components/popover.js'
+import { LumiImageGrid } from '../src/components/upload.js'
+import { uiRegistry } from '../src/react/index.js'
 
 const roots: Array<{ root: ReturnType<typeof createRoot>, host: HTMLElement }> = []
 

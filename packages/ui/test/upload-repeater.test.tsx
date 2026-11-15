@@ -7,8 +7,10 @@ import { JSONUIProvider, Renderer } from '@json-render/react'
 import { act, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { formatFileSize, matchesAccept } from '../src/components/upload.js'
-import { computeCell, LumiFormField, LumiRepeater, LumiRepeaterRow, LumiUpload, moveRow, remapRowErrors, summarize, uiRegistry } from '../src/react/index.js'
+import { LumiFormField } from '../src/components/form.js'
+import { computeCell, LumiRepeater, LumiRepeaterRow, moveRow, remapRowErrors, summarize } from '../src/components/repeater.js'
+import { formatFileSize, LumiUpload, matchesAccept } from '../src/components/upload.js'
+import { uiRegistry } from '../src/react/index.js'
 
 const roots: Array<{ root: ReturnType<typeof createRoot>, host: HTMLElement }> = []
 

@@ -1,8 +1,11 @@
-import type { SimpleDataProviderOptions } from '@duxweb/lumi'
-import { createHttpClient, createSimpleDataProvider as createProvider } from '@duxweb/lumi'
+import type { SimpleDataProviderOptions } from '../../src/core/data/simpleDataProvider.js'
 import { QueryClient } from '@tanstack/query-core'
-import { describe, expect, it } from 'vitest'
-import { createLumi, executeRequest } from '../../src/index.js'
+import { describe, expect, it, vi } from 'vitest'
+import { createLumi } from '../../src/core/context.js'
+import { createSimpleDataProvider as createProvider } from '../../src/core/data/simpleDataProvider.js'
+import { createHttpClient } from '../../src/core/http.js'
+import { readMany } from '../../src/core/providers/data.js'
+import { executeRequest } from '../../src/core/services.js'
 
 // A mock fetch that asserts the Lumi REST wire conventions and returns matching responses.
 const fetcher = (async (input: any, init?: any) => {
@@ -333,5 +336,14 @@ describe('record ids', () => {
     const { sent, provider } = recording()
     await expect(provider.getMany!({ resource: 'orders', ids: [] })).resolves.toEqual({ data: [] })
     expect(sent).toEqual([])
+  })
+})
+
+describe('reading several records', () => {
+  it('falls back to one getOne per id when the provider has no getMany', async () => {
+    const getOne = vi.fn(async ({ id }: { id: number }) => ({ data: { id } }))
+    const result = await readMany({ getOne } as never, { resource: 'orders', ids: [1, 2] })
+    expect(result).toEqual({ data: [{ id: 1 }, { id: 2 }] })
+    expect(getOne).toHaveBeenCalledTimes(2)
   })
 })

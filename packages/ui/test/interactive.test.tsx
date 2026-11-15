@@ -5,7 +5,11 @@ import { resolve } from 'node:path'
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { createNotifier, createToaster, LumiAccordion, LumiMenu, LumiNotifierViewport, LumiSegmentBar, LumiTable, LumiToasterViewport, LumiTooltip } from '../src/react/index.js'
+import { LumiTable } from '../src/components/display.js'
+import { LumiAccordion, LumiMenu, LumiTooltip } from '../src/components/interactive.js'
+import { createNotifier, LumiNotifierViewport } from '../src/components/notice.js'
+import { LumiSegmentBar } from '../src/components/segments.js'
+import { createToaster, LumiToasterViewport } from '../src/components/toast.js'
 
 const roots: Array<{ root: ReturnType<typeof createRoot>, host: HTMLElement }> = []
 

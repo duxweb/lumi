@@ -1,5 +1,6 @@
-import { createI18nProvider, extendI18nProvider, formatIssues } from '@duxweb/lumi'
 import { describe, expect, it, vi } from 'vitest'
+import { createI18nProvider, extendI18nProvider } from '../../src/core/providers/i18n.js'
+import { formatIssues } from '../../src/core/validation.js'
 
 describe('createI18nProvider', () => {
   it('translates flat and nested messages with interpolation', () => {

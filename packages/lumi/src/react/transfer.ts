@@ -1,7 +1,7 @@
 import type { ImportProgress, ImportResult, RunExportOptions, RunImportOptions, TransferDownload, TransferFile, TransferHost } from '../core/index.js'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useRef, useState } from 'react'
-import { DEFAULT_IMPORT_ACCEPT, runExport, runImport, uploadImport } from '../core/index.js'
+import { DEFAULT_IMPORT_ACCEPT, runExport, runImport, sessionVersion, uploadImport } from '../core/index.js'
 import { browserTransferHost } from './browser-files.js'
 import { useLumi } from './context.js'
 import { useScopedTarget } from './data-scope.js'
@@ -88,6 +88,7 @@ export function useImport(input: UseImportOptions): UseImportReturn {
   const running = useRef<AbortController | undefined>(undefined)
   const [state, setState] = useState<Omit<UseImportReturn, 'trigger' | 'cancel'>>({ isLoading: false })
   const trigger = useCallback<UseImportReturn['trigger']>(async (given) => {
+    const version = sessionVersion(lumi)
     const { accept, pick, pickFile, onFinish, ...params } = latest.current
     const url = params.url
     // The backend reads the file itself, so it is uploaded unread.
@@ -96,21 +97,41 @@ export function useImport(input: UseImportOptions): UseImportReturn {
       : await (pick ?? browserTransferHost.pick)(accept ?? DEFAULT_IMPORT_ACCEPT))
     if (!chosen)
       return undefined
+    if (version !== sessionVersion(lumi))
+      throw new Error('[lumi] The session changed while choosing a file.')
     const upload = url ? (chosen instanceof Blob ? chosen : new File([chosen.content], chosen.name)) : undefined
     running.current?.abort()
     const controller = new AbortController()
     running.current = controller
     setState({ isLoading: true })
     try {
-      const shared = { ...params, signal: controller.signal, onProgress: (progress: ImportProgress) => setState(current => ({ ...current, progress })) }
+      const file = upload ? undefined : chosen instanceof Blob ? { name: chosen.name, content: await chosen.text() } : chosen
+      if (version !== sessionVersion(lumi))
+        throw new Error('[lumi] The session changed while reading the file.')
+      const shared = { ...params, signal: controller.signal, onProgress: (progress: ImportProgress) => {
+        if (version === sessionVersion(lumi) && running.current === controller)
+          setState(current => ({ ...current, progress }))
+      } }
       const result = upload
         ? await uploadImport(lumi, client, upload, { ...shared, url: url! })
-        : await runImport(lumi, client, chosen instanceof Blob ? { name: chosen.name, content: await chosen.text() } : chosen, shared)
+        : await runImport(lumi, client, file!, shared)
+      if (running.current !== controller)
+        return undefined
+      if (version !== sessionVersion(lumi)) {
+        setState({ isLoading: false })
+        return undefined
+      }
       setState(current => ({ ...current, isLoading: false, result }))
       onFinish?.(result)
       return result
     }
     catch (error) {
+      if (running.current !== controller)
+        return undefined
+      if (version !== sessionVersion(lumi)) {
+        setState({ isLoading: false })
+        return undefined
+      }
       setState(current => ({ ...current, isLoading: false, error: error as Error }))
       if (controller.signal.aborted)
         return undefined

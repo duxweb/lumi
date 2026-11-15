@@ -7,11 +7,12 @@ import { JSONUIProvider, Renderer } from '@json-render/react'
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
-import { uiComponentDefinitions } from '../src/catalog/index.js'
+import { uiComponentDefinitions } from '../src/catalog/definitions.js'
 import { codeGrammar, highlightLines, loadCodeGrammar } from '../src/code/highlight.js'
 import { resolveCodeLanguage } from '../src/code/languages.js'
-import { loadCodeHighlighter } from '../src/components/code-block.js'
-import { LumiCodeBlock, LumiCodeEditor, uiRegistry } from '../src/react/index.js'
+import { loadCodeHighlighter, LumiCodeBlock } from '../src/components/code-block.js'
+import { LumiCodeEditor } from '../src/components/code-editor.js'
+import { uiRegistry } from '../src/react/index.js'
 
 const roots: Array<{ root: ReturnType<typeof createRoot>, host: HTMLElement }> = []
 

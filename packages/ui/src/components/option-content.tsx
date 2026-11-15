@@ -1,6 +1,6 @@
 import type { ReactElement, ReactNode } from 'react'
 import type { Option } from '../catalog/types-public.js'
-import { LumiAvatar } from './display.js'
+import { LumiAvatar } from './avatar.js'
 
 /** Wraps every case-insensitive occurrence of `query` in `<mark>`. */
 export function HighlightMatch({ text, query }: { text: string, query?: string }): ReactElement {

@@ -32,9 +32,7 @@ import type { AdminPageModuleLoader } from './modulePage.js'
 import type { AdminDrawerLayer, AdminRoutedDrawerRegistry } from './routedDrawer.js'
 import type { LumiAdminMenuItem } from './types.js'
 import {
-  createJsonLoader,
   createOverlayController,
-  createSpecLoader,
   LumiDataProviderScope,
   LumiOverlayProvider,
   LumiProvider,
@@ -42,10 +40,8 @@ import {
   normalizeResource,
   useLocale,
   useTranslate,
-  validateConfig,
 } from '@duxweb/lumi'
 import { applyLumiTheme, LumiEmbedProvider, LumiIframe, LumiNotifierViewport, LumiToasterViewport, LumiUiTextProvider, notifier, toaster, useUiText } from '@duxweb/lumi-ui'
-import { themeConfigSchema } from '@duxweb/lumi-ui/catalog'
 import { QueryClient } from '@tanstack/react-query'
 import { createContext, useContext, useEffect, useMemo, useState, useSyncExternalStore } from 'react'
 import {
@@ -64,7 +60,6 @@ import {
   assertAdminRoutesAvailable,
   createAdminI18nProvider,
   createAdminMenu,
-  createManifestLoader,
   filterAdminMenuByAccess,
   flattenAdminRoutes,
   resolveAdminSource,
@@ -82,6 +77,7 @@ import {
   LumiAdminShellProvider,
   useShellReloadKey,
 } from './components/ShellContext.js'
+import { createAdminDocuments } from './documents.js'
 import { AdminIncludeProvider } from './include.js'
 import { AdminManifestAssistant } from './manifest-assistant.js'
 import { AdminModulePage, createPageModuleCache, importPageModule } from './modulePage.js'
@@ -105,8 +101,6 @@ function supportedAccountRoutes(provider: AuthProvider): AccountRouteName[] {
 const FALLBACK_ROUTE_NAME = 'lumi-admin-fallback'
 const FALLBACK_ROUTE_PATH = '*'
 const TRAILING_SLASH_RE = /\/$/
-const PAGE_SCHEME = 'lumi-page:'
-const SCHEME_RE = /^[a-z][a-z\d+.-]*:/i
 const URL_SUFFIX_RE = /[?#]/
 const ADMIN_ROUTE_HANDLE = 'lumiAdminRoute'
 const ABORTED = Symbol('aborted')
@@ -229,24 +223,9 @@ export function createAdmin(options: CreateAdminOptions): LumiAdminReact {
   const isQueue = (value: unknown): boolean => typeof (value as Partial<LumiToaster> | undefined)?.subscribe === 'function' && typeof (value as Partial<LumiToaster> | undefined)?.getSnapshot === 'function'
   const toastQueue = isQueue(options.context.toastProvider) ? options.context.toastProvider as LumiToaster : toaster
   const noticeQueue = isQueue(options.context.notificationProvider) ? options.context.notificationProvider as LumiNotifier : notifier
-  // Proxied pages get their own scheme, so the loader caches them by `src` and the fetcher routes them.
   const loadPageModule = createPageModuleCache(options.loadPageModule ?? importPageModule)
-  const pageAddress = (src: string): string => (options.pages && isProxiedPage(src) ? `${PAGE_SCHEME}${src}` : resolveAdminSource(src, options.manifest))
-  const loaderOptions = {
-    baseURL: typeof location === 'undefined' ? undefined : location.href,
-    fetcher: pageFetch(options.context, options.pages, signedLoaderFetch(options.context)),
-    ...(options.packKey ? { packKey: options.packKey } : {}),
-  }
-  const manifestLoader
-    = options.manifestLoader ?? createManifestLoader(catalog, loaderOptions)
-  const specLoader
-    = options.specLoader ?? createSpecLoader(catalog, loaderOptions)
-  const themeLoader
-    = options.themeLoader
-      ?? createJsonLoader<ThemeConfig>(
-        value => validateConfig(value, themeConfigSchema),
-        loaderOptions,
-      )
+  const documents = createAdminDocuments(options, catalog)
+  const { pageAddress, manifestLoader, specLoader, themeLoader } = documents
   const overlays = createOverlayController()
   const queryClient = new QueryClient()
   const listeners = new Set<() => void>()
@@ -255,6 +234,7 @@ export function createAdmin(options: CreateAdminOptions): LumiAdminReact {
   let generation = 0
   let loadController: AbortController | undefined
   let loadPromise: Promise<void> | undefined
+  let loadIdentity = options.context.session.getSnapshot()
   let warnedOpenAccess = false
 
   const routerProxy: RouterProvider = {
@@ -700,7 +680,7 @@ export function createAdmin(options: CreateAdminOptions): LumiAdminReact {
                     onReloadTab={(key, active) => {
                       const source = findAdminRouteMatch(routeSources, key)?.source
                       if (source)
-                        specLoader.invalidate(source, options.cacheKey)
+                        specLoader.invalidate(source, documents.cacheKey())
                       else if (active)
                         void snapshot.router?.revalidate()
                     }}
@@ -740,7 +720,7 @@ export function createAdmin(options: CreateAdminOptions): LumiAdminReact {
   }
 
   const isActiveLoad = (loadGeneration: number, signal: AbortSignal): boolean =>
-    !disposed && loadGeneration === generation && !signal.aborted
+    !disposed && loadGeneration === generation && !signal.aborted && loadIdentity === context.session.getSnapshot()
 
   const routerPath = (router: DataRouter): string => {
     const { pathname, search, hash } = router.state.location
@@ -814,12 +794,10 @@ export function createAdmin(options: CreateAdminOptions): LumiAdminReact {
   const invalidateLoadedState = (signedOut = true): void => {
     // Every page the reader opened, drawers and included pages too: the next
     // reader must not get a page the backend served for this one.
-    specLoader.invalidate()
+    documents.invalidate()
     const shellStorage = options.shellStorageKey ?? (snapshot.manifest ? `lumi:${snapshot.manifest.app.id}:shell` : undefined)
     if (signedOut && shellStorage && typeof window !== 'undefined')
       clearShellTabs(shellStorage)
-    if (typeof options.manifest === 'string')
-      manifestLoader.invalidate(options.manifest, options.cacheKey)
   }
 
   const applyUnauthenticated = async (
@@ -916,7 +894,7 @@ export function createAdmin(options: CreateAdminOptions): LumiAdminReact {
     const theme = options.theme
       ? await raceWithAbort(
           themeLoader.load(options.theme, {
-            cacheKey: options.cacheKey,
+            cacheKey: documents.cacheKey(),
             signal,
           }),
           signal,
@@ -950,6 +928,7 @@ export function createAdmin(options: CreateAdminOptions): LumiAdminReact {
 
   const load = async (reload: boolean): Promise<void> => {
     const loadGeneration = ++generation
+    loadIdentity = context.session.getSnapshot()
     loadController?.abort()
     const controller = new AbortController()
     loadController = controller
@@ -976,7 +955,7 @@ export function createAdmin(options: CreateAdminOptions): LumiAdminReact {
       const manifest = await raceWithAbort(
         manifestLoader.load(options.manifest, {
           cache: reload ? 'reload' : 'default',
-          cacheKey: options.cacheKey,
+          cacheKey: documents.cacheKey(),
           signal: controller.signal,
         }),
         controller.signal,
@@ -991,7 +970,7 @@ export function createAdmin(options: CreateAdminOptions): LumiAdminReact {
       )
     }
     catch (error) {
-      if (!controller.signal.aborted && loadGeneration === generation) {
+      if (isActiveLoad(loadGeneration, controller.signal)) {
         if ((options.manifestAuth ?? 'public') === 'protected') {
           invalidateLoadedState()
           emit({ menu: [], error })
@@ -1203,10 +1182,16 @@ export function createAdmin(options: CreateAdminOptions): LumiAdminReact {
     )
   }
 
+  const unsubscribeIdentity = context.session.subscribe(() => {
+    if (loadController && !disposed)
+      void refresh().catch(() => {})
+  })
+
   const dispose = (): void => {
     if (disposed)
       return
     disposed = true
+    unsubscribeIdentity()
     overlays.dispose()
     queryClient.clear()
     generation += 1
@@ -1217,8 +1202,6 @@ export function createAdmin(options: CreateAdminOptions): LumiAdminReact {
     invalidateLoadedState(false)
     emit({ menu: [], disposed: true })
     listeners.clear()
-    if (typeof options.theme === 'string')
-      themeLoader.invalidate(options.theme, options.cacheKey)
   }
 
   return {
@@ -1244,63 +1227,6 @@ function isAdminRouteHandle(
     && (handle as Record<string, unknown>)[ADMIN_ROUTE_HANDLE] === true
     && typeof (handle as Record<string, unknown>).public === 'boolean'
   )
-}
-
-/**
- * Manifests, pages and themes a backend serves per reader (menus by role,
- * pages by tenant) need the reader's credentials. Requests to the page's own
- * origin or the API's go through the app's signed client; any other origin
- * gets a plain fetch, so a token never reaches a CDN or a third party.
- */
-/** A page `src` the backend serves in proxy mode: anything but a full or protocol-relative URL. */
-function isProxiedPage(src: string): boolean {
-  return !SCHEME_RE.test(src) && !src.startsWith('//')
-}
-
-/**
- * The loader's fetch: a proxied page asks `pages.endpoint` for its `path`
- * through the default data provider and answers with the unwrapped document;
- * everything else goes to `fallback`.
- */
-function pageFetch(context: LumiContext, pages: AdminPagesSource | undefined, fallback: typeof fetch): typeof fetch {
-  if (!pages)
-    return fallback
-  return (async (input: RequestInfo | URL, init?: RequestInit) => {
-    const url = String(input instanceof Request ? input.url : input)
-    if (!url.startsWith(PAGE_SCHEME))
-      return fallback(input, init)
-    const provider = context.getDataProvider()
-    if (!provider.custom)
-      throw new Error('[lumi-admin] `pages` needs a data provider with `custom`')
-    const method = pages.method ?? 'POST'
-    const values = { ...pages.data, path: url.slice(PAGE_SCHEME.length) }
-    const signal = init?.signal ?? undefined
-    try {
-      const result = await provider.custom({ url: pages.endpoint, method, ...(method === 'GET' ? { query: values } : { payload: values }), ...(signal ? { signal } : {}) })
-      return new Response(JSON.stringify(result.data), { headers: { 'Content-Type': 'application/json' } })
-    }
-    catch (error) {
-      const status = (error as { status?: unknown }).status
-      // A refused page reads as the HTTP failure it was, not as a network error.
-      if (!signal?.aborted && typeof status === 'number' && status >= 400 && status < 600)
-        return new Response(null, { status })
-      throw error
-    }
-  }) as typeof fetch
-}
-
-function signedLoaderFetch(context: LumiContext): typeof fetch {
-  return (async (input: RequestInfo | URL, init?: RequestInit) => {
-    const here = typeof location === 'undefined' ? 'http://lumi.invalid/' : location.href
-    const url = new URL(String(input instanceof Request ? input.url : input), here)
-    const page = typeof location === 'undefined' ? undefined : location.origin
-    // A rooted API (`/api`) is this site's: resolved against the page, never
-    // against the address being fetched, or every site would count as the API.
-    const api = context.http.baseUrl ? new URL(context.http.url(''), here).origin : page
-    if (url.origin !== page && url.origin !== api)
-      return globalThis.fetch(input, init)
-    return context.http.fetch(url.href, init)
-  }) as typeof fetch
 }
 
 function useAccess(

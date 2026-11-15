@@ -30,6 +30,7 @@ import {
   toastError,
   validateForm,
 } from '../core/index.js'
+import { sessionVersion } from '../core/services.js'
 import { useLumi } from './context.js'
 import { useScopedTarget } from './data-scope.js'
 
@@ -247,6 +248,7 @@ export function useForm<T extends Record<string, any> = Record<string, any>>(
     selection?: FormValidateOptions,
   ): Promise<FormValidationIssue[]> => {
     initialize()
+    const version = sessionVersion(lumi)
     const revision = ++validationRevision.current
     const snapshot = state.get(valuesPath) ?? initial
     const next = await validateForm(
@@ -259,6 +261,8 @@ export function useForm<T extends Record<string, any> = Record<string, any>>(
       mounted.current
       && state.get(valuesPath) === snapshot
       && validationRevision.current === revision
+      && version === sessionVersion(lumi)
+      && !stale()
     ) {
       const currentStatus = state.get(statusPath) as FormStatus | undefined
       const merged = replaceFieldErrors(
@@ -281,6 +285,7 @@ export function useForm<T extends Record<string, any> = Record<string, any>>(
     if (stale())
       throw new Error('[lumi] The form now edits another record; this save was for the previous one.')
     initialize()
+    const version = sessionVersion(lumi)
     const epoch = baseline.current.epoch
     const snapshot = state.get(valuesPath)
     let result: SingleResult<T>
@@ -300,6 +305,7 @@ export function useForm<T extends Record<string, any> = Record<string, any>>(
     }
     if (
       mounted.current
+      && version === sessionVersion(lumi)
       && baseline.current.epoch === epoch
       && baseline.current.target === target
     ) {

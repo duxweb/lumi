@@ -7,6 +7,7 @@ import { LumiCodeEditor } from '@duxweb/lumi-ui'
 import { Component, useEffect, useMemo, useRef, useState } from 'react'
 import { DocPreview } from '../docs/DocPreview'
 import { focusComponentDemo } from '../docs/focus'
+import { sitePath } from '../paths'
 import { PLAYGROUND_EXAMPLES } from './examples'
 
 const SHARE_PREFIX = '#schema='
@@ -114,7 +115,7 @@ export function Playground({ components = [] }: { components?: PlaygroundCompone
     setSelection({ kind: 'component', type: component.type })
     let page = gallery.current.get(component.page)
     if (!page) {
-      page = fetch(`/component-schemas/${component.page}.json`).then(async (response) => {
+      page = fetch(sitePath(`/component-schemas/${component.page}.json`)).then(async (response) => {
         if (!response.ok)
           throw new Error(`${component.page}.json answered ${response.status}`)
         return await response.json() as Spec

@@ -2109,6 +2109,12 @@
                 "description": "Navigation and the current address."
               },
               {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
+              },
+              {
                 "name": "tenantProvider",
                 "type": "TenantProvider | undefined",
                 "required": false,
@@ -3787,7 +3793,7 @@
         "name": "createHttpClient",
         "importPath": "@duxweb/lumi",
         "kind": "function",
-        "description": "The one request path of Lumi. Data providers, uploads, the agent, the live\nstream and the auth provider's own sign-in requests all go through a client:\nit asks the auth for the request's credentials (`authorizeRequest`), adds\nthe locale and tenant, encodes JSON, refreshes once on a 401 and turns a\nnon-2xx answer into a `DataProviderError`. The data layer passes a signed\nclient's failures to the auth's `onError`; an unsigned one's to the caller.\n\nAll of that is for the client's own backend: `baseUrl`, the page's site and\n`trustedOrigins`. A full URL to anywhere else is sent plain, so a page that\nnames a foreign address never carries the reader's credentials there.",
+        "description": "The one request path of Lumi. Data providers, uploads, the agent, the live\nstream and the auth provider's own sign-in requests all go through a client:\nit asks the auth for the request's credentials (`authorizeRequest`), adds\nthe locale and tenant, encodes JSON, refreshes once on a 401 and turns a\nnon-2xx answer into a `DataProviderError`. The data layer passes a signed\nclient's failures to the auth's `onError`; an unsigned one's to the caller.\n\nAll of that is for the client's own backend: `baseUrl`, the page's site and\n`trustedOrigins`. A full URL to anywhere else is sent plain, so a page that\nnames a foreign address never carries the reader's credentials there.\nOwned requests refuse automatic redirects; use the final API address.\nAn explicit manual redirect is available to loaders that check every hop.",
         "type": "(options?: HttpClientOptions) => HttpClient",
         "signatures": [
           "createHttpClient(options?: HttpClientOptions): HttpClient"
@@ -4696,6 +4702,12 @@
             "description": "Navigation and the current address."
           },
           {
+            "name": "session",
+            "type": "LumiSession",
+            "required": true,
+            "description": "Stable account/tenant identity shared by derived contexts and async work."
+          },
+          {
             "name": "tenantProvider",
             "type": "TenantProvider | undefined",
             "required": false,
@@ -4797,6 +4809,12 @@
                 "type": "RouterProvider | undefined",
                 "required": false,
                 "description": "Navigation and the current address."
+              },
+              {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
               },
               {
                 "name": "tenantProvider",
@@ -6490,6 +6508,12 @@
                 "description": "Navigation and the current address."
               },
               {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
+              },
+              {
                 "name": "tenantProvider",
                 "type": "TenantProvider | undefined",
                 "required": false,
@@ -6671,6 +6695,12 @@
                 "type": "RouterProvider | undefined",
                 "required": false,
                 "description": "Navigation and the current address."
+              },
+              {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
               },
               {
                 "name": "tenantProvider",
@@ -7369,6 +7399,12 @@
                 "description": "Navigation and the current address."
               },
               {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
+              },
+              {
                 "name": "tenantProvider",
                 "type": "TenantProvider | undefined",
                 "required": false,
@@ -7684,6 +7720,12 @@
                 "description": "Navigation and the current address."
               },
               {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
+              },
+              {
                 "name": "tenantProvider",
                 "type": "TenantProvider | undefined",
                 "required": false,
@@ -7824,6 +7866,12 @@
                 "type": "RouterProvider | undefined",
                 "required": false,
                 "description": "Navigation and the current address."
+              },
+              {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
               },
               {
                 "name": "tenantProvider",
@@ -7973,6 +8021,12 @@
                 "type": "RouterProvider | undefined",
                 "required": false,
                 "description": "Navigation and the current address."
+              },
+              {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
               },
               {
                 "name": "tenantProvider",
@@ -8137,6 +8191,12 @@
                 "description": "Navigation and the current address."
               },
               {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
+              },
+              {
                 "name": "tenantProvider",
                 "type": "TenantProvider | undefined",
                 "required": false,
@@ -8260,6 +8320,12 @@
                 "description": "Navigation and the current address."
               },
               {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
+              },
+              {
                 "name": "tenantProvider",
                 "type": "TenantProvider | undefined",
                 "required": false,
@@ -8324,9 +8390,9 @@
               },
               {
                 "name": "request",
-                "type": "() => Promise<T>",
-                "required": true,
-                "description": "Sends the write to the DataProvider."
+                "type": "(() => Promise<T>) | undefined",
+                "required": false,
+                "description": "Overrides the standard DataProvider operation when a host needs a custom write."
               },
               {
                 "name": "resource",
@@ -9211,6 +9277,12 @@
                 "type": "RouterProvider | undefined",
                 "required": false,
                 "description": "Navigation and the current address."
+              },
+              {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
               },
               {
                 "name": "tenantProvider",
@@ -10288,6 +10360,68 @@
         "parameters": [],
         "returns": [
           "string"
+        ],
+        "returnFields": [],
+        "members": []
+      },
+      {
+        "name": "getActionParams",
+        "importPath": "@duxweb/lumi",
+        "kind": "function",
+        "description": "The same action parameters for document validation and author tooling.",
+        "type": "(catalog: Catalog, name: string) => z.ZodType | undefined",
+        "signatures": [
+          "getActionParams(catalog: Catalog, name: string): z.ZodType | undefined"
+        ],
+        "parameters": [
+          {
+            "name": "catalog",
+            "type": "Catalog<SchemaDefinition<SchemaType<string, unknown>, SchemaType<string, unknown>>, unknown>",
+            "required": true,
+            "description": "",
+            "fields": []
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "required": true,
+            "description": "",
+            "fields": []
+          }
+        ],
+        "returns": [
+          "z.ZodType<unknown, unknown, z.core.$ZodTypeInternals<unknown, unknown>> | undefined"
+        ],
+        "returnFields": [],
+        "members": []
+      },
+      {
+        "name": "getActionParams",
+        "importPath": "@duxweb/lumi/catalog",
+        "kind": "function",
+        "description": "The same action parameters for document validation and author tooling.",
+        "type": "(catalog: Catalog, name: string) => z.ZodType | undefined",
+        "signatures": [
+          "getActionParams(catalog: Catalog, name: string): z.ZodType | undefined"
+        ],
+        "parameters": [
+          {
+            "name": "catalog",
+            "type": "Catalog<SchemaDefinition<SchemaType<string, unknown>, SchemaType<string, unknown>>, unknown>",
+            "required": true,
+            "description": "",
+            "fields": []
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "required": true,
+            "description": "",
+            "fields": []
+          }
+        ],
+        "returns": [
+          "z.ZodType<unknown, unknown, z.core.$ZodTypeInternals<unknown, unknown>> | undefined"
         ],
         "returnFields": [],
         "members": []
@@ -11692,6 +11826,12 @@
                 "description": "Navigation and the current address."
               },
               {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
+              },
+              {
                 "name": "tenantProvider",
                 "type": "TenantProvider | undefined",
                 "required": false,
@@ -11999,6 +12139,12 @@
                 "type": "RouterProvider | undefined",
                 "required": false,
                 "description": "Navigation and the current address."
+              },
+              {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
               },
               {
                 "name": "tenantProvider",
@@ -12854,6 +13000,12 @@
             "description": "Navigation and the current address."
           },
           {
+            "name": "session",
+            "type": "LumiSession",
+            "required": true,
+            "description": "Stable account/tenant identity shared by derived contexts and async work."
+          },
+          {
             "name": "tenantProvider",
             "type": "TenantProvider | undefined",
             "required": false,
@@ -12949,6 +13101,12 @@
             "type": "RouterProvider | undefined",
             "required": false,
             "description": "Navigation and the current address."
+          },
+          {
+            "name": "session",
+            "type": "LumiSession",
+            "required": true,
+            "description": "Stable account/tenant identity shared by derived contexts and async work."
           },
           {
             "name": "tenantProvider",
@@ -16227,30 +16385,6 @@
         "members": []
       },
       {
-        "name": "queryResets",
-        "importPath": "@duxweb/lumi",
-        "kind": "function",
-        "description": "How many times this client's Lumi queries were reset for a new tenant; lists drop their kept rows across one.",
-        "type": "(client: QueryClient) => number",
-        "signatures": [
-          "queryResets(client: QueryClient): number"
-        ],
-        "parameters": [
-          {
-            "name": "client",
-            "type": "QueryClient",
-            "required": true,
-            "description": "",
-            "fields": []
-          }
-        ],
-        "returns": [
-          "number"
-        ],
-        "returnFields": [],
-        "members": []
-      },
-      {
         "name": "readMany",
         "importPath": "@duxweb/lumi",
         "kind": "function",
@@ -16517,6 +16651,12 @@
                 "type": "RouterProvider | undefined",
                 "required": false,
                 "description": "Navigation and the current address."
+              },
+              {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
               },
               {
                 "name": "tenantProvider",
@@ -16960,6 +17100,12 @@
                 "description": "Navigation and the current address."
               },
               {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
+              },
+              {
                 "name": "tenantProvider",
                 "type": "TenantProvider | undefined",
                 "required": false,
@@ -17360,6 +17506,12 @@
                 "description": "Navigation and the current address."
               },
               {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
+              },
+              {
                 "name": "tenantProvider",
                 "type": "TenantProvider | undefined",
                 "required": false,
@@ -17672,6 +17824,12 @@
                 "description": "Navigation and the current address."
               },
               {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
+              },
+              {
                 "name": "tenantProvider",
                 "type": "TenantProvider | undefined",
                 "required": false,
@@ -17962,6 +18120,12 @@
                 "description": "Navigation and the current address."
               },
               {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
+              },
+              {
                 "name": "tenantProvider",
                 "type": "TenantProvider | undefined",
                 "required": false,
@@ -18159,6 +18323,12 @@
                 "description": "Navigation and the current address."
               },
               {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
+              },
+              {
                 "name": "tenantProvider",
                 "type": "TenantProvider | undefined",
                 "required": false,
@@ -18307,7 +18477,7 @@
         "name": "sessionVersion",
         "importPath": "@duxweb/lumi",
         "kind": "function",
-        "description": "Counts a context's session changes (sign in, sign out, sign up), so work started under one session can tell it was replaced.",
+        "description": "Counts account and tenant changes, including changes made through derived contexts.",
         "type": "(context: LumiContext) => number",
         "signatures": [
           "sessionVersion(context: LumiContext): number"
@@ -18384,6 +18554,12 @@
                 "type": "RouterProvider | undefined",
                 "required": false,
                 "description": "Navigation and the current address."
+              },
+              {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
               },
               {
                 "name": "tenantProvider",
@@ -20231,6 +20407,12 @@
                 "description": "Navigation and the current address."
               },
               {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
+              },
+              {
                 "name": "tenantProvider",
                 "type": "TenantProvider | undefined",
                 "required": false,
@@ -20439,6 +20621,12 @@
                 "type": "RouterProvider | undefined",
                 "required": false,
                 "description": "Navigation and the current address."
+              },
+              {
+                "name": "session",
+                "type": "LumiSession",
+                "required": true,
+                "description": "Stable account/tenant identity shared by derived contexts and async work."
               },
               {
                 "name": "tenantProvider",
@@ -23245,6 +23433,12 @@
             "type": "RouterProvider | undefined",
             "required": false,
             "description": "Navigation and the current address."
+          },
+          {
+            "name": "session",
+            "type": "LumiSession",
+            "required": true,
+            "description": "Stable account/tenant identity shared by derived contexts and async work."
           },
           {
             "name": "tenantProvider",
@@ -26197,9 +26391,9 @@
           },
           {
             "name": "request",
-            "type": "() => Promise<T>",
-            "required": true,
-            "description": "Sends the write to the DataProvider."
+            "type": "(() => Promise<T>) | undefined",
+            "required": false,
+            "description": "Overrides the standard DataProvider operation when a host needs a custom write."
           },
           {
             "name": "resource",
@@ -26226,7 +26420,7 @@
         "importPath": "@duxweb/lumi/catalog",
         "kind": "type",
         "description": "",
-        "type": "{ resource: string; dataProviderName?: string | undefined; meta?: Record<string, unknown> | undefined; id?: string | number | undefined; values?: Record<string, unknown> | undefined; resultPath?: string | undefined; mutationMode?: \"pessimistic\" | ... 2 more ... | undefined; undoableTimeout?: number | undefined; }",
+        "type": "{ resource: string; id: string | number; dataProviderName?: string | undefined; meta?: Record<string, unknown> | undefined; values?: Record<string, unknown> | undefined; resultPath?: string | undefined; mutationMode?: \"pessimistic\" | ... 2 more ... | undefined; undoableTimeout?: number | undefined; }",
         "signatures": [],
         "parameters": [],
         "returns": [],
@@ -26240,8 +26434,8 @@
           },
           {
             "name": "id",
-            "type": "string | number | undefined",
-            "required": false,
+            "type": "string | number",
+            "required": true,
             "description": ""
           },
           {
@@ -26287,7 +26481,7 @@
         "importPath": "@duxweb/lumi/catalog",
         "kind": "variable",
         "description": "Update and delete also choose when the change shows; forms always wait for the server.",
-        "type": "z.ZodObject<{ resource: z.ZodString; dataProviderName: z.ZodOptional<z.ZodString>; meta: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>; id: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>; values: z.ZodOptional<...>; resultPath: z.ZodOptional<...>; mutationMode: z.ZodOptional<...>; undoableTim...",
+        "type": "z.ZodObject<{ resource: z.ZodString; dataProviderName: z.ZodOptional<z.ZodString>; meta: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>; values: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>; resultPath: z.ZodOptional<...>; id: z.ZodUnion<...>; mutationMode: z.ZodOptional<...>; undoableTimeout: z.ZodO...",
         "signatures": [],
         "parameters": [],
         "returns": [],
@@ -50655,9 +50849,9 @@
         "importPath": "@duxweb/lumi-check",
         "kind": "function",
         "description": "The components and actions of a Catalog, optionally of one kind or one name, as `lumi-check catalog` prints them. An action asked for by name comes with its params as JSON Schema.",
-        "type": "(catalog?: Catalog, options?: { kind?: \"components\" | \"actions\"; name?: string; }) => { components: Array<{ name: string; description: string; slots: readonly string[]; events: readonly string[]; }>; actions: Array<{ name: string; description: string; params?: z.core.JSONSchema.BaseSchema; }>; builtInActions: Catalo...",
+        "type": "(catalog?: Catalog, options?: { kind?: \"components\" | \"actions\"; name?: string; }) => { components: Array<{ name: string; description: string; slots: readonly string[]; events: readonly string[]; }>; actions: Array<{ name: string; description: string; params?: z.core.JSONSchema.BaseSchema; }>; builtInActions: Array<...",
         "signatures": [
-          "getCatalog(catalog?: Catalog, options?: { kind?: \"components\" | \"actions\"; name?: string; }): { components: Array<{ name: string; description: string; slots: readonly string[]; events: readonly string[]; }>; actions: Array<{ name: string; description: string; params?: z.core.JSONSchema.BaseSchema; }>; builtInActions: Catalog[\"schema\"][\"builtInActions\"]; }"
+          "getCatalog(catalog?: Catalog, options?: { kind?: \"components\" | \"actions\"; name?: string; }): { components: Array<{ name: string; description: string; slots: readonly string[]; events: readonly string[]; }>; actions: Array<{ name: string; description: string; params?: z.core.JSONSchema.BaseSchema; }>; builtInActions: Array<{ name: string; description: string; params?: z.core.JSONSchema.BaseSchema; }>; }"
         ],
         "parameters": [
           {
@@ -50689,7 +50883,7 @@
           }
         ],
         "returns": [
-          "{ components: Array<{ name: string; description: string; slots: readonly string[]; events: readonly string[]; }>; actions: Array<{ name: string; description: string; params?: z.core.JSONSchema.BaseSchema; }>; builtInActions: Catalog[\"schema\"][\"builtInActions\"]; }"
+          "{ components: Array<{ name: string; description: string; slots: readonly string[]; events: readonly string[]; }>; actions: Array<{ name: string; description: string; params?: z.core.JSONSchema.BaseSchema; }>; builtInActions: Array<{ name: string; description: string; params?: z.core.JSONSchema.BaseSchema; }>; }"
         ],
         "returnFields": [
           {
@@ -50700,7 +50894,7 @@
           },
           {
             "name": "builtInActions",
-            "type": "BuiltInAction[] | undefined",
+            "type": "{ name: string; description: string; params?: z.core.JSONSchema.BaseSchema; }[]",
             "required": true,
             "description": ""
           },

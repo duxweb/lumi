@@ -332,11 +332,26 @@ function eventActions(spec: AgentPageSpec, element: string, event: string): { na
   const binding = spec.elements[element]?.on?.[event]
   if (!binding)
     return undefined
-  const list = Array.isArray(binding) ? binding : [binding]
-  return {
-    names: list.map(entry => String(record(entry)?.action ?? '')),
-    confirm: list.some(entry => record(entry)?.confirm !== undefined),
+  const result = { names: [] as string[], confirm: false }
+  const seen = new Set<object>()
+  const visit = (value: unknown, depth = 0): void => {
+    const entry = record(value)
+    if (!entry || seen.has(entry) || depth > 64) {
+      result.names.push('')
+      return
+    }
+    seen.add(entry)
+    result.names.push(String(entry.action ?? ''))
+    result.confirm ||= entry.confirm !== undefined
+    for (const name of ['onSuccess', 'onError']) {
+      const branch = record(entry[name])
+      if (branch && 'action' in branch)
+        visit(branch, depth + 1)
+    }
+    seen.delete(entry)
   }
+  for (const entry of Array.isArray(binding) ? binding : [binding]) visit(entry)
+  return result
 }
 
 /** The bridge between pages and the agent: pages register what they show, and it answers the UI snapshot and the client tools the agent acts through. */

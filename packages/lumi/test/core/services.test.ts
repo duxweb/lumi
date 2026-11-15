@@ -1,17 +1,13 @@
-import type { NotificationParams } from '../../src/index.js'
+import type { NotificationParams } from '../../src/core/providers/notification.js'
 import { createStateStore } from '@json-render/core'
 import { QueryClient } from '@tanstack/query-core'
 import { describe, expect, it, vi } from 'vitest'
-import {
-  createLumi,
-  createLumiHandlers,
-  executeAuthAction,
-  executeRequest,
-  FormBusyError,
-  formStatusPath,
-  FormValidationError,
-  toastError,
-} from '../../src/index.js'
+import { createLumiHandlers, formStatusPath } from '../../src/core/actions.js'
+import { createLumi } from '../../src/core/context.js'
+import { FormBusyError, toastError } from '../../src/core/feedback.js'
+import { createTenantProvider } from '../../src/core/providers/tenant.js'
+import { executeAuthAction, executeRequest } from '../../src/core/services.js'
+import { FormValidationError } from '../../src/core/validation.js'
 
 function fixture() {
   const provider = {
@@ -202,4 +198,62 @@ describe('automatic error toasts', () => {
     await expect(handlers.submitForm!({ resource: 'users', valuesPath: '/form' })).rejects.toBeInstanceOf(FormBusyError)
     client.clear()
   })
+})
+
+function deferred<T>() {
+  let resolve!: (v: T) => void
+  let reject!: (e: unknown) => void
+  const promise = new Promise<T>((a, b) => {
+    resolve = a
+    reject = b
+  })
+  return { promise, resolve, reject }
+}
+
+it('submit must stop when tenant changes during async validation', async () => {
+  const tenant = createTenantProvider({ initial: 'A' })
+  const validation = deferred<[]>()
+  const writes: string[] = []
+  const context = createLumi({ tenantProvider: tenant, validator: { validate: () => validation.promise }, dataProvider: { getList: async () => ({ data: [], total: 0 }), create: async () => {
+    writes.push(tenant.get()!)
+    return { data: {} }
+  } } as never })
+  const client = new QueryClient()
+  const handlers = createLumiHandlers(context, client, createStateStore({ form: { name: 'A-only' } }))
+  const pending = handlers.submitForm!({ resource: 'orders', valuesPath: '/form' }).catch(() => {})
+  tenant.set('B')
+  validation.resolve([])
+  await pending
+  client.clear()
+  expect(writes).toEqual([])
+})
+
+it('a translated page context must share the auth session generation', async () => {
+  let logouts = 0
+  const context = createLumi({ authProvider: { login: async () => ({ success: true }), logout: async () => {
+    logouts++
+    return { success: true }
+  }, onError: async () => ({ logout: true }) } as never })
+  const pageContext = { ...context, config: { ...context.config } }
+  const client = new QueryClient()
+  const d = deferred<never>()
+  const pending = executeRequest(pageContext, () => d.promise, client).catch(() => {})
+  await executeAuthAction(context, client, 'login')
+  d.reject(new Error('old page 401'))
+  await pending
+  client.clear()
+  expect(logouts).toBe(0)
+})
+
+it('jSON delete values must reach the provider like the hook variables', async () => {
+  let received: unknown
+  const context = createLumi({ dataProvider: { getList: async () => ({ data: [], total: 0 }), deleteOne: async (params: unknown) => {
+    received = params
+    return { data: {} }
+  } } as never })
+  const client = new QueryClient()
+  const handlers = createLumiHandlers(context, client, createStateStore({}))
+  await handlers.delete!({ resource: 'orders', id: 1, values: { reason: 'duplicate' } })
+  client.clear()
+  expect(received).toMatchObject({ variables: { reason: 'duplicate' } })
 })

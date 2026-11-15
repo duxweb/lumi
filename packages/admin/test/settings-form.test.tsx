@@ -1,13 +1,14 @@
 // @vitest-environment jsdom
 import type { DataProvider, ToastProvider, Validator } from '@duxweb/lumi'
 import type { ReactNode } from 'react'
-import type { LumiSettingsSaveMode } from '../src/react/index.js'
+import type { LumiSettingsSaveMode } from '../src/react/pages/LumiSettingsForm.js'
 import { createLumi, LumiProvider, useForm } from '@duxweb/lumi'
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createMemoryRouter, Link, RouterProvider } from 'react-router'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { LumiSettingsForm, LumiUnsavedChangesProvider } from '../src/react/index.js';
+import { LumiSettingsForm } from '../src/react/pages/LumiSettingsForm.js'
+import { LumiUnsavedChangesProvider } from '../src/react/pages/useUnsavedChangesGuard.js'
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 

@@ -1,8 +1,12 @@
-import type { AuditLogEvent, NotificationParams } from '../../src/core/index.js'
+import type { AuditLogEvent } from '../../src/core/providers/audit.js'
+import type { NotificationParams } from '../../src/core/providers/notification.js'
 import { createStateStore } from '@json-render/core'
 import { QueryClient } from '@tanstack/query-core'
 import { describe, expect, it, vi } from 'vitest'
-import { createDataAuditLogProvider, createLumi, createLumiHandlers, importRecords } from '../../src/core/index.js'
+import { createLumiHandlers } from '../../src/core/actions.js'
+import { createLumi } from '../../src/core/context.js'
+import { createDataAuditLogProvider } from '../../src/core/providers/audit.js'
+import { importRecords } from '../../src/core/transfer.js'
 
 function setup(options: { failLog?: boolean, notices?: NotificationParams[] } = {}) {
   const events: AuditLogEvent[] = []

@@ -4,9 +4,9 @@ import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { describe, expect, it, vi } from 'vitest'
 import { adminManifestSchema } from '../src/config'
-import { composeAdminExtensions, createAssistantContextRegistry, mergeAssistantAdditions, useAssistantContext } from '../src/react/index'
-
-;
+import { mergeAssistantAdditions } from '../src/react/assistant-additions.js'
+import { createAssistantContextRegistry, useAssistantContext } from '../src/react/assistant-context.js'
+import { composeAdminExtensions } from '../src/react/extensions.js'
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 

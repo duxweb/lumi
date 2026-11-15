@@ -1,0 +1,1077 @@
+{
+  "root": "fragment-1",
+  "elements": {
+    "fragment-1": {
+      "type": "Fragment",
+      "props": {
+        "layout": "split",
+        "asideWidth": 320
+      },
+      "children": [
+        "button-2",
+        "input-3",
+        "textarea-4",
+        "richtext-5",
+        "numberinput-6",
+        "select-7",
+        "multiselect-8",
+        "checkbox-9",
+        "checkboxgroup-10",
+        "radiogroup-11",
+        "switch-12",
+        "datepicker-13",
+        "form-14",
+        "table-16",
+        "descriptionlist-17",
+        "pagination-18",
+        "dialog-19-trigger",
+        "dialog-19",
+        "drawer-20-trigger",
+        "drawer-20",
+        "card-21",
+        "tabs-22",
+        "upload-23",
+        "badge-24",
+        "alert-25",
+        "frame-26",
+        "filters-28",
+        "stepper-29",
+        "timeline-30",
+        "activityfeed-49",
+        "skeleton-31",
+        "spinner-32",
+        "loading-33",
+        "empty-50",
+        "kbd-34",
+        "scrollarea-35",
+        "tag-36",
+        "taggroup-37",
+        "calendar-38",
+        "listbox-39",
+        "popover-40",
+        "popconfirm-41",
+        "image-42",
+        "iframe-51",
+        "lightbox-43-trigger",
+        "lightbox-43",
+        "carousel-44",
+        "breadcrumb-45",
+        "autocomplete-46",
+        "mention-47",
+        "transfer-48"
+      ]
+    },
+    "button-2": {
+      "type": "Button",
+      "props": {
+        "label": "Continue",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "input-3": {
+      "type": "Input",
+      "props": {
+        "value": {
+          "$bindState": "/input-3/value"
+        },
+        "placeholder": "Name",
+        "ariaLabel": "Name"
+      },
+      "children": []
+    },
+    "textarea-4": {
+      "type": "Textarea",
+      "props": {
+        "value": {
+          "$bindState": "/textarea-4/value"
+        },
+        "rows": 3,
+        "ariaLabel": "Notes"
+      },
+      "children": []
+    },
+    "richtext-5": {
+      "type": "RichText",
+      "props": {
+        "value": {
+          "$bindState": "/richtext-5/value"
+        },
+        "rows": 6,
+        "ariaLabel": "## Release notes\n\n- Ships **markdown**"
+      },
+      "children": []
+    },
+    "numberinput-6": {
+      "type": "NumberInput",
+      "props": {
+        "value": {
+          "$bindState": "/numberinput-6/value"
+        },
+        "min": 0,
+        "ariaLabel": "NumberInput example"
+      },
+      "children": []
+    },
+    "select-7": {
+      "type": "Select",
+      "props": {
+        "value": {
+          "$bindState": "/select-7/value"
+        },
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ],
+        "ariaLabel": "alpha"
+      },
+      "children": []
+    },
+    "multiselect-8": {
+      "type": "MultiSelect",
+      "props": {
+        "value": {
+          "$bindState": "/multiselect-8/value"
+        },
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ],
+        "ariaLabel": "MultiSelect example"
+      },
+      "children": []
+    },
+    "checkbox-9": {
+      "type": "Checkbox",
+      "props": {
+        "value": {
+          "$bindState": "/checkbox-9/value"
+        },
+        "label": "Enabled"
+      },
+      "children": []
+    },
+    "checkboxgroup-10": {
+      "type": "CheckboxGroup",
+      "props": {
+        "value": {
+          "$bindState": "/checkboxgroup-10/value"
+        },
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ]
+      },
+      "children": []
+    },
+    "radiogroup-11": {
+      "type": "RadioGroup",
+      "props": {
+        "value": {
+          "$bindState": "/radiogroup-11/value"
+        },
+        "options": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ]
+      },
+      "children": []
+    },
+    "switch-12": {
+      "type": "Switch",
+      "props": {
+        "value": {
+          "$bindState": "/switch-12/value"
+        },
+        "label": "Notifications"
+      },
+      "children": []
+    },
+    "datepicker-13": {
+      "type": "DatePicker",
+      "props": {
+        "value": {
+          "$bindState": "/datepicker-13/value"
+        },
+        "ariaLabel": "2026-08-10"
+      },
+      "children": []
+    },
+    "form-14": {
+      "type": "Form",
+      "props": {},
+      "children": [
+        "formfield-15"
+      ]
+    },
+    "formfield-15": {
+      "type": "FormField",
+      "props": {
+        "name": "name",
+        "label": "Name",
+        "fieldType": "string",
+        "value": {
+          "$bindState": "/form-14/name"
+        }
+      },
+      "children": []
+    },
+    "table-16": {
+      "type": "Table",
+      "props": {
+        "columns": [
+          {
+            "field": "name",
+            "label": "Name"
+          }
+        ],
+        "rows": [
+          {
+            "name": "Lumi"
+          }
+        ],
+        "totals": [
+          {
+            "label": "Total",
+            "value": "$12.00",
+            "emphasis": true
+          }
+        ]
+      },
+      "children": []
+    },
+    "descriptionlist-17": {
+      "type": "DescriptionList",
+      "props": {
+        "items": [
+          {
+            "label": "Name",
+            "value": "Lumi"
+          },
+          {
+            "label": "Status",
+            "value": "Ready"
+          }
+        ]
+      },
+      "children": []
+    },
+    "pagination-18": {
+      "type": "Pagination",
+      "props": {
+        "page": {
+          "$bindState": "/pagination-18/page"
+        },
+        "pageSize": {
+          "$bindState": "/pagination-18/pageSize"
+        },
+        "total": 1
+      },
+      "children": []
+    },
+    "dialog-19": {
+      "type": "Dialog",
+      "props": {
+        "open": {
+          "$bindState": "/dialog-19/open"
+        },
+        "title": "Dialog"
+      },
+      "children": [],
+      "on": {
+        "confirm": {
+          "action": "setState",
+          "params": {
+            "statePath": "/dialog-19/open",
+            "value": false
+          }
+        }
+      }
+    },
+    "drawer-20": {
+      "type": "Drawer",
+      "props": {
+        "open": {
+          "$bindState": "/drawer-20/open"
+        },
+        "title": "Drawer",
+        "side": "right"
+      },
+      "children": []
+    },
+    "card-21": {
+      "type": "Card",
+      "props": {
+        "title": "Card",
+        "description": "Content surface"
+      },
+      "children": []
+    },
+    "tabs-22": {
+      "type": "Tabs",
+      "props": {
+        "value": {
+          "$bindState": "/tabs-22/value"
+        },
+        "items": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          }
+        ]
+      },
+      "children": []
+    },
+    "upload-23": {
+      "type": "Upload",
+      "props": {
+        "value": {
+          "$bindState": "/upload-23/value"
+        },
+        "multiple": true,
+        "ariaLabel": "Upload example"
+      },
+      "children": []
+    },
+    "badge-24": {
+      "type": "Badge",
+      "props": {
+        "label": "Ready",
+        "tone": "success"
+      },
+      "children": []
+    },
+    "alert-25": {
+      "type": "Alert",
+      "props": {
+        "title": "Ready",
+        "message": "All standard components are available.",
+        "tone": "info"
+      },
+      "children": []
+    },
+    "frame-26": {
+      "type": "Frame",
+      "props": {
+        "title": "Extension frame",
+        "description": "A neutral framed region."
+      },
+      "children": [
+        "alert-27"
+      ]
+    },
+    "alert-27": {
+      "type": "Alert",
+      "props": {
+        "message": "Frame content",
+        "tone": "info"
+      },
+      "children": []
+    },
+    "filters-28": {
+      "type": "Filters",
+      "props": {
+        "schema": {
+          "fields": [
+            {
+              "field": "status",
+              "label": "Status",
+              "widget": "select",
+              "options": [
+                {
+                  "label": "Alpha",
+                  "value": "alpha"
+                },
+                {
+                  "label": "Beta",
+                  "value": "beta"
+                }
+              ]
+            }
+          ]
+        },
+        "applyMode": "immediate",
+        "value": {
+          "$bindState": "/filters-28/value"
+        }
+      },
+      "children": []
+    },
+    "stepper-29": {
+      "type": "Stepper",
+      "props": {
+        "value": {
+          "$bindState": "/stepper-29/value"
+        },
+        "items": [
+          {
+            "key": "details",
+            "label": "Details",
+            "status": "current"
+          },
+          {
+            "key": "review",
+            "label": "Review",
+            "status": "upcoming"
+          }
+        ]
+      },
+      "children": []
+    },
+    "timeline-30": {
+      "type": "Timeline",
+      "props": {
+        "items": [
+          {
+            "key": "created",
+            "title": "Created",
+            "description": "The record was created.",
+            "status": "complete"
+          },
+          {
+            "key": "review",
+            "title": "Review",
+            "status": "current"
+          }
+        ]
+      },
+      "children": []
+    },
+    "activityfeed-49": {
+      "type": "ActivityFeed",
+      "props": {
+        "ariaLabel": "Recent activity",
+        "items": [
+          {
+            "key": "approve",
+            "actor": "Mina Manager",
+            "action": "approved",
+            "target": "Atlas budget",
+            "context": "Atlas rollout",
+            "status": {
+              "label": "Approved",
+              "tone": "success"
+            },
+            "timestamp": "10 min ago"
+          },
+          {
+            "key": "comment",
+            "actor": "Theo Ops",
+            "action": "commented on",
+            "target": "Access audit",
+            "context": "Keystone access",
+            "timestamp": "Yesterday"
+          }
+        ]
+      },
+      "children": []
+    },
+    "dialog-19-trigger": {
+      "type": "Button",
+      "props": {
+        "label": "Open Dialog",
+        "appearance": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/dialog-19/open",
+            "value": true
+          }
+        }
+      },
+      "children": []
+    },
+    "drawer-20-trigger": {
+      "type": "Button",
+      "props": {
+        "label": "Open Drawer",
+        "appearance": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/drawer-20/open",
+            "value": true
+          }
+        }
+      },
+      "children": []
+    },
+    "skeleton-31": {
+      "type": "Skeleton",
+      "props": {
+        "variant": "list-row",
+        "lines": 2,
+        "label": "Loading members"
+      },
+      "children": []
+    },
+    "spinner-32": {
+      "type": "Spinner",
+      "props": {
+        "label": "Saving",
+        "showLabel": true
+      },
+      "children": []
+    },
+    "loading-33": {
+      "type": "Loading",
+      "props": {
+        "label": "Loading orders",
+        "description": "This usually takes a few seconds.",
+        "minHeight": 160
+      },
+      "children": []
+    },
+    "empty-50": {
+      "type": "Empty",
+      "props": {
+        "title": "No orders yet",
+        "description": "Orders show up here as soon as a customer checks out"
+      },
+      "children": [
+        "empty-50-action"
+      ]
+    },
+    "empty-50-action": {
+      "type": "Button",
+      "props": {
+        "label": "Create order",
+        "appearance": "outline",
+        "size": "sm",
+        "icon": "plus"
+      },
+      "children": []
+    },
+    "kbd-34": {
+      "type": "Kbd",
+      "props": {
+        "keys": [
+          "⌘",
+          "K"
+        ]
+      },
+      "children": []
+    },
+    "scrollarea-35-line-1": {
+      "type": "Text",
+      "props": {
+        "text": "v2.4 adds saved filters to every list."
+      },
+      "children": []
+    },
+    "scrollarea-35-line-2": {
+      "type": "Text",
+      "props": {
+        "text": "v2.3 speeds up exports by 40%."
+      },
+      "children": []
+    },
+    "scrollarea-35-line-3": {
+      "type": "Text",
+      "props": {
+        "text": "v2.2 brings dark mode to reports."
+      },
+      "children": []
+    },
+    "scrollarea-35-line-4": {
+      "type": "Text",
+      "props": {
+        "text": "v2.1 adds bulk tagging."
+      },
+      "children": []
+    },
+    "scrollarea-35-line-5": {
+      "type": "Text",
+      "props": {
+        "text": "v2.0 introduces the new dashboard."
+      },
+      "children": []
+    },
+    "scrollarea-35-line-6": {
+      "type": "Text",
+      "props": {
+        "text": "v1.9 adds two-factor sign-in."
+      },
+      "children": []
+    },
+    "scrollarea-35-line-7": {
+      "type": "Text",
+      "props": {
+        "text": "v1.8 supports CSV import."
+      },
+      "children": []
+    },
+    "scrollarea-35-line-8": {
+      "type": "Text",
+      "props": {
+        "text": "v1.7 adds audit history."
+      },
+      "children": []
+    },
+    "scrollarea-35": {
+      "type": "ScrollArea",
+      "props": {
+        "maxHeight": 120,
+        "ariaLabel": "Release notes"
+      },
+      "children": [
+        "scrollarea-35-line-1",
+        "scrollarea-35-line-2",
+        "scrollarea-35-line-3",
+        "scrollarea-35-line-4",
+        "scrollarea-35-line-5",
+        "scrollarea-35-line-6",
+        "scrollarea-35-line-7",
+        "scrollarea-35-line-8"
+      ]
+    },
+    "tag-36": {
+      "type": "Tag",
+      "props": {
+        "label": "VIP customer",
+        "tone": "brand",
+        "icon": "star",
+        "closable": true
+      },
+      "children": []
+    },
+    "taggroup-37": {
+      "type": "TagGroup",
+      "props": {
+        "value": {
+          "$bindState": "/taggroup-37/value"
+        },
+        "labels": {
+          "design": "Design",
+          "backend": "Backend",
+          "ops": "Operations"
+        },
+        "ariaLabel": "Teams"
+      },
+      "children": []
+    },
+    "calendar-38": {
+      "type": "Calendar",
+      "props": {
+        "mode": "single",
+        "value": {
+          "$bindState": "/calendar-38/value"
+        },
+        "disabledWeekdays": [
+          0,
+          6
+        ],
+        "marks": [
+          {
+            "date": "2026-11-12",
+            "tone": "brand",
+            "label": "Release"
+          },
+          {
+            "date": "2026-11-19",
+            "tone": "warning",
+            "label": "Audit"
+          }
+        ],
+        "ariaLabel": "Delivery date"
+      },
+      "children": []
+    },
+    "listbox-39": {
+      "type": "Listbox",
+      "props": {
+        "value": {
+          "$bindState": "/listbox-39/value"
+        },
+        "options": [
+          {
+            "label": "Standard",
+            "value": "standard",
+            "description": "3–5 business days",
+            "icon": "truck",
+            "group": "Shipping"
+          },
+          {
+            "label": "Express",
+            "value": "express",
+            "description": "Next business day",
+            "icon": "sparkles",
+            "group": "Shipping"
+          },
+          {
+            "label": "Store pickup",
+            "value": "pickup",
+            "description": "Ready in two hours",
+            "icon": "clock",
+            "group": "Pickup"
+          }
+        ],
+        "ariaLabel": "Delivery method"
+      },
+      "children": []
+    },
+    "popover-40": {
+      "type": "Popover",
+      "props": {
+        "label": "Shipping details",
+        "appearance": "outline",
+        "title": "Shipping",
+        "description": "Orders placed before 3 pm ship the same day."
+      },
+      "children": []
+    },
+    "popconfirm-41": {
+      "type": "Popconfirm",
+      "props": {
+        "title": "Delete this order?",
+        "description": "The order and its invoices are removed.",
+        "confirmText": "Delete",
+        "cancelText": "Keep",
+        "label": "Delete order",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "image-42": {
+      "type": "Image",
+      "props": {
+        "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90'><rect width='160' height='90' fill='%230ea5e9'/><circle cx='118' cy='30' r='14' fill='%23e0f2fe'/><path d='M0 90 L52 42 L92 78 L118 58 L160 90 Z' fill='%23e0f2fe' opacity='0.7'/></svg>",
+        "alt": "Lake at dawn",
+        "aspectRatio": "16/9",
+        "width": 320,
+        "caption": "Lake at dawn",
+        "preview": true
+      },
+      "children": []
+    },
+    "lightbox-43-trigger": {
+      "type": "Button",
+      "props": {
+        "label": "Open Lightbox",
+        "appearance": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/lightbox-43/open",
+            "value": true
+          }
+        }
+      },
+      "children": []
+    },
+    "lightbox-43": {
+      "type": "Lightbox",
+      "props": {
+        "items": [
+          {
+            "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90'><rect width='160' height='90' fill='%230ea5e9'/><circle cx='118' cy='30' r='14' fill='%23e0f2fe'/><path d='M0 90 L52 42 L92 78 L118 58 L160 90 Z' fill='%23e0f2fe' opacity='0.7'/></svg>",
+            "alt": "Lake at dawn",
+            "caption": "Lake at dawn"
+          },
+          {
+            "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90'><rect width='160' height='90' fill='%2316a34a'/><circle cx='118' cy='30' r='14' fill='%23dcfce7'/><path d='M0 90 L52 42 L92 78 L118 58 L160 90 Z' fill='%23dcfce7' opacity='0.7'/></svg>",
+            "alt": "Forest trail",
+            "caption": "Forest trail"
+          },
+          {
+            "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90'><rect width='160' height='90' fill='%23d97706'/><circle cx='118' cy='30' r='14' fill='%23fef3c7'/><path d='M0 90 L52 42 L92 78 L118 58 L160 90 Z' fill='%23fef3c7' opacity='0.7'/></svg>",
+            "alt": "Desert dunes",
+            "caption": "Desert dunes"
+          }
+        ],
+        "open": {
+          "$bindState": "/lightbox-43/open"
+        },
+        "index": {
+          "$bindState": "/lightbox-43/index"
+        },
+        "loop": true
+      },
+      "children": []
+    },
+    "carousel-44": {
+      "type": "Carousel",
+      "props": {
+        "items": [
+          {
+            "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90'><rect width='160' height='90' fill='%230ea5e9'/><circle cx='118' cy='30' r='14' fill='%23e0f2fe'/><path d='M0 90 L52 42 L92 78 L118 58 L160 90 Z' fill='%23e0f2fe' opacity='0.7'/></svg>",
+            "alt": "Lake at dawn",
+            "title": "Lake at dawn"
+          },
+          {
+            "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90'><rect width='160' height='90' fill='%2316a34a'/><circle cx='118' cy='30' r='14' fill='%23dcfce7'/><path d='M0 90 L52 42 L92 78 L118 58 L160 90 Z' fill='%23dcfce7' opacity='0.7'/></svg>",
+            "alt": "Forest trail",
+            "title": "Forest trail"
+          },
+          {
+            "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90'><rect width='160' height='90' fill='%23d97706'/><circle cx='118' cy='30' r='14' fill='%23fef3c7'/><path d='M0 90 L52 42 L92 78 L118 58 L160 90 Z' fill='%23fef3c7' opacity='0.7'/></svg>",
+            "alt": "Desert dunes",
+            "title": "Desert dunes"
+          }
+        ],
+        "aspectRatio": "16/9",
+        "loop": true,
+        "aria-label": "Destinations"
+      },
+      "children": []
+    },
+    "breadcrumb-45": {
+      "type": "Breadcrumb",
+      "props": {
+        "items": [
+          {
+            "key": "home",
+            "label": "Home"
+          },
+          {
+            "key": "orders",
+            "label": "Orders"
+          },
+          {
+            "key": "returns",
+            "label": "Returns"
+          },
+          {
+            "key": "detail",
+            "label": "RMA-1042"
+          }
+        ]
+      },
+      "children": []
+    },
+    "autocomplete-46": {
+      "type": "AutoComplete",
+      "props": {
+        "value": {
+          "$bindState": "/autocomplete-46/value"
+        },
+        "options": [
+          {
+            "label": "Amsterdam",
+            "value": "Amsterdam"
+          },
+          {
+            "label": "Barcelona",
+            "value": "Barcelona"
+          },
+          {
+            "label": "Berlin",
+            "value": "Berlin"
+          },
+          {
+            "label": "Lisbon",
+            "value": "Lisbon"
+          },
+          {
+            "label": "London",
+            "value": "London"
+          },
+          {
+            "label": "Paris",
+            "value": "Paris"
+          }
+        ],
+        "placeholder": "City",
+        "ariaLabel": "City"
+      },
+      "children": []
+    },
+    "mention-47": {
+      "type": "Mention",
+      "props": {
+        "value": {
+          "$bindState": "/mention-47/value"
+        },
+        "options": [
+          {
+            "label": "Ada Lovelace",
+            "value": "ada"
+          },
+          {
+            "label": "Alan Turing",
+            "value": "alan"
+          },
+          {
+            "label": "Grace Hopper",
+            "value": "grace"
+          },
+          {
+            "label": "Linus Torvalds",
+            "value": "linus"
+          }
+        ],
+        "rows": 3,
+        "placeholder": "Type @ to mention someone",
+        "ariaLabel": "Comment"
+      },
+      "children": []
+    },
+    "transfer-48": {
+      "type": "Transfer",
+      "props": {
+        "value": {
+          "$bindState": "/transfer-48/value"
+        },
+        "options": [
+          {
+            "label": "Ada Lovelace",
+            "value": "ada"
+          },
+          {
+            "label": "Alan Turing",
+            "value": "alan"
+          },
+          {
+            "label": "Grace Hopper",
+            "value": "grace"
+          },
+          {
+            "label": "Linus Torvalds",
+            "value": "linus"
+          }
+        ],
+        "sourceTitle": "Available",
+        "targetTitle": "Reviewers",
+        "ariaLabel": "Reviewers"
+      },
+      "children": []
+    },
+    "iframe-51": {
+      "type": "Iframe",
+      "props": {
+        "src": "https://example.com",
+        "title": "Example Domain",
+        "height": 240
+      },
+      "children": []
+    }
+  },
+  "state": {
+    "input-3": {
+      "value": "Lumi"
+    },
+    "textarea-4": {
+      "value": "Notes"
+    },
+    "richtext-5": {
+      "value": "## Release notes\n\n- Ships **markdown**"
+    },
+    "numberinput-6": {
+      "value": 3
+    },
+    "select-7": {
+      "value": "alpha"
+    },
+    "multiselect-8": {
+      "value": [
+        "alpha"
+      ]
+    },
+    "checkbox-9": {
+      "value": true
+    },
+    "checkboxgroup-10": {
+      "value": [
+        "alpha"
+      ]
+    },
+    "radiogroup-11": {
+      "value": "alpha"
+    },
+    "switch-12": {
+      "value": true
+    },
+    "datepicker-13": {
+      "value": "2026-08-10"
+    },
+    "form-14": {
+      "name": "Lumi"
+    },
+    "pagination-18": {
+      "page": 1,
+      "pageSize": 10
+    },
+    "tabs-22": {
+      "value": "alpha"
+    },
+    "upload-23": {
+      "value": []
+    },
+    "filters-28": {
+      "value": {
+        "status": "alpha"
+      }
+    },
+    "stepper-29": {
+      "value": "details"
+    },
+    "dialog-19": {
+      "open": false
+    },
+    "drawer-20": {
+      "open": false
+    },
+    "taggroup-37": {
+      "value": [
+        "design",
+        "backend",
+        "ops"
+      ]
+    },
+    "calendar-38": {
+      "value": "2026-11-10"
+    },
+    "listbox-39": {
+      "value": "standard"
+    },
+    "lightbox-43": {
+      "open": false,
+      "index": 0
+    },
+    "autocomplete-46": {
+      "value": ""
+    },
+    "mention-47": {
+      "value": ""
+    },
+    "transfer-48": {
+      "value": [
+        "grace"
+      ]
+    }
+  }
+}

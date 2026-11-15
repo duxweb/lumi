@@ -1,5 +1,6 @@
 ---
 import { GALLERY_PAGES } from '@duxweb/lumi-schema-gallery'
+import { sitePath } from '../paths'
 import { DocPreview } from './DocPreview'
 import { focusComponentDemo } from './focus'
 
@@ -8,7 +9,7 @@ import { focusComponentDemo } from './focus'
 interface Props { name: string }
 const { name } = Astro.props
 const preview = Object.values(GALLERY_PAGES).map(page => focusComponentDemo(page.spec, name)).find(Boolean)
-const playground = preview ? `/playground/#schema=${encodeURIComponent(JSON.stringify(preview))}` : undefined
+const playground = preview ? `${sitePath('/playground/')}#schema=${encodeURIComponent(JSON.stringify(preview))}` : undefined
 ---
 {preview && (
   <section class="ref__demo" aria-label="预览" data-component-preview={name}>

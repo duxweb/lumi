@@ -34,8 +34,8 @@ test.beforeEach(async ({ page, request }) => {
 })
 
 /**
- * The live stream stays open, so the network never goes idle. Pages waiting
- * for idle refuse the stream instead; the client backs off between retries.
+ * Static visual checks do not consume live updates. Refuse the stream so
+ * unrelated notifications cannot change a snapshot during its assertion.
  */
 async function withoutLiveStream(page: Page): Promise<void> {
   await page.route(url => new URL(url).pathname === '/live', route => route.fulfill({ status: 503, body: '' }))
@@ -444,6 +444,12 @@ async function enableDarkMode(page: Page, width: number): Promise<void> {
   await page.getByTestId('admin-theme-dark').click()
 }
 
+async function readyForVisuals(page: Page): Promise<void> {
+  // Component previews deliberately demonstrate perpetual loading states.
+  await expect(page.locator('[aria-busy="true"]:visible:not(.lumi-preview-card *, .lumi-example *)')).toHaveCount(0)
+  await page.evaluate(() => document.fonts.ready)
+}
+
 async function scanA11y(page: Page): Promise<void> {
   const result = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
@@ -814,18 +820,13 @@ test('native Specs bind state, run actions and refresh connected data; states re
 })
 
 for (const [width, mode] of [[390, 'light'], [1440, 'dark']] as const) {
-  test(`the component overview and demo pages are accessible and fit at ${width}px ${mode}`, async ({ page }) => {
+  test(`the additional demo pages are accessible and fit at ${width}px ${mode}`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
     await withoutLiveStream(page)
     await login(page)
     if (mode === 'dark')
       await enableDarkMode(page, width)
     for (const [path, title] of [
-      ['/ui/overview', 'Component overview'],
-      ['/ui/buttons', 'Buttons'],
-      ['/ui/cards', 'Cards'],
-      ['/ui/tables', 'Tables'],
-      ['/forms/elements', 'Form elements'],
       ['/forms/controls-plus', 'More form controls'],
       ['/examples/forms/basic', 'Basic form'],
       ['/examples/states', 'State recovery'],
@@ -833,7 +834,7 @@ for (const [width, mode] of [[390, 'light'], [1440, 'dark']] as const) {
       ['/account/center', 'Account center'],
     ]) {
       await visit(page, path!, title!)
-      await page.waitForLoadState('networkidle')
+      await readyForVisuals(page)
       expect(await page.evaluate(() => document.documentElement.scrollWidth), path).toBe(width)
       await scanA11y(page)
     }
@@ -1318,7 +1319,8 @@ test.describe('React Admin M3 pages', () => {
         // The pointer is still parked where the login button was, which lands
         // on a table row and bakes one hovered row into the baseline.
         await page.mouse.move(0, 0)
-        await page.waitForLoadState('networkidle')
+        await readyForVisuals(page)
+        expect(await page.evaluate(() => document.documentElement.scrollWidth), path).toBe(viewport.width)
         await page.clock.fastForward(1000)
         await scanA11y(page)
         if (capturesVisual(name, viewport.name))

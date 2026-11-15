@@ -2,10 +2,10 @@ import assert from 'node:assert/strict'
 import { access, readdir, readFile } from 'node:fs/promises'
 import { extname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import process from 'node:process'
+import { normalizeBase } from '../apps/site/paths.mjs'
 
 const outputRoot = resolve(process.argv[2] ?? 'dist')
-// The site is served from the domain root.
-const base = '/'
+const base = normalizeBase(process.env.LUMI_SITE_BASE)
 const baseRoot = base === '/' ? '/' : base.slice(0, -1)
 const attributeUrlRe = /\b(?:href|src)=(?:"([^"]*)"|'([^']*)')/gu
 const fetchUrlRe = /\bfetch\(\s*(?:"([^"]*)"|'([^']*)'|`([^`$]*)`)/gu

@@ -6,7 +6,7 @@ import type { LumiJsonLoader, LumiLoadOptions } from '../loader.js'
 import type { LumiProviderProps } from './context.js'
 import { createDirectiveRegistry, createStateStore, resolveActionParam } from '@json-render/core'
 import { Renderer, useActions, useStateStore } from '@json-render/react'
-import { createContext, useContext, useEffect, useId, useMemo, useRef, useState } from 'react'
+import { createContext, useContext, useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import { withPageTranslations } from '../core/providers/i18n.js'
 import { createTranslateDirective } from '../core/translate-directive.js'
 import { createSpecLoader, LumiLoadError } from '../loader.js'
@@ -132,6 +132,11 @@ export function LumiSpecPage({
   initialState,
   ...provider
 }: LumiSpecPageProps): ReactElement | null {
+  const session = provider.context.session
+  const version = useSyncExternalStore(session.subscribe, session.getSnapshot, session.getSnapshot)
+  // Preserve the loader's header-based cache partition when no explicit key is given.
+  const headerKey = loadOptions?.headers ? JSON.stringify([...new Headers(loadOptions.headers).entries()].sort(([a], [b]) => a.localeCompare(b))) : undefined
+  const documentKey = session.cacheKey(cacheKey ?? loadOptions?.cacheKey ?? headerKey)
   const loader = useMemo(
     () =>
       suppliedLoader
@@ -143,6 +148,7 @@ export function LumiSpecPage({
   )
   const [loaded, setLoaded] = useState<{
     source: unknown
+    documentKey: string
     spec?: Spec
     error?: unknown
   }>()
@@ -153,28 +159,28 @@ export function LumiSpecPage({
     const controller = new AbortController()
     const source = src ?? spec
     if (!source) {
-      setLoaded({ source, error: new Error('[lumi] Provide spec or src.') })
+      setLoaded({ source, documentKey, error: new Error('[lumi] Provide spec or src.') })
       return
     }
     void loader
       .load(source, {
         ...loadOptions,
         cache: reloading ? 'reload' : loadOptions?.cache,
-        cacheKey,
+        cacheKey: documentKey,
         signal: controller.signal,
       })
       .then((value) => {
         if (!controller.signal.aborted)
-          setLoaded({ source, spec: value })
+          setLoaded({ source, documentKey, spec: value })
       })
       .catch((error) => {
         if (!controller.signal.aborted)
-          setLoaded({ source, error })
+          setLoaded({ source, documentKey, error })
       })
     return () => controller.abort()
-  }, [src, spec, loader, cacheKey, reloadKey, loadOptions])
+  }, [src, spec, loader, documentKey, reloadKey, loadOptions])
   const source = src ?? spec
-  if (!loaded || loaded.source !== source)
+  if (!loaded || loaded.source !== source || loaded.documentKey !== documentKey)
     return <div role="status">Loading page…</div>
   if (loaded.error) {
     return (
@@ -201,7 +207,7 @@ export function LumiSpecPage({
   }
   if (!loaded.spec)
     return null
-  return <SpecContent {...provider} spec={loaded.spec} agent={agent} agentTitle={agentTitle} initialState={initialState} />
+  return <SpecContent key={version} {...provider} spec={loaded.spec} agent={agent} agentTitle={agentTitle} initialState={initialState} />
 }
 function SpecContent({
   spec,

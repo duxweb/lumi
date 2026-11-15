@@ -1,6 +1,9 @@
-import type { AgentChunk, AgentClientTool, AgentPageHandle, AgentPageSpec, AgentRequest, AgentTransport, AgentUiRoute } from '../../src/core/index.js'
+import type { AgentClientTool, AgentPageHandle, AgentPageSpec, AgentUiRoute } from '../../src/core/agent/bridge.js'
+import type { AgentRequest, AgentTransport } from '../../src/core/agent/session.js'
+import type { AgentChunk } from '../../src/core/agent/stream.js'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { compactAgentState, createAgentBridge, createAgentSession, describeAgentElements } from '../../src/core/index.js'
+import { compactAgentState, createAgentBridge, describeAgentElements } from '../../src/core/agent/bridge.js'
+import { createAgentSession } from '../../src/core/agent/session.js'
 
 const spec: AgentPageSpec = {
   root: 'page',
@@ -318,4 +321,18 @@ describe('agent session client tools', () => {
     expect(page.state.filters).toEqual({ status: 'paid', q: '1042' })
     expect(session.getSnapshot().messages[1]!.parts.some(part => part.type === 'approval')).toBe(false)
   })
+})
+
+it.each(['onSuccess', 'onError'])('refuses nested writes in %s before triggering any part of the event', async (branch) => {
+  const bridge = createAgentBridge()
+  const trigger = vi.fn()
+  const binding = { action: 'toast', [branch]: { action: 'toast', onSuccess: { action: 'delete' } } }
+  const { handle } = mount({
+    trigger,
+    spec: { root: 'b', elements: { b: { type: 'Button', props: { label: 'Remove' }, on: { press: binding } } } },
+  })
+  bridge.registerPage(handle)
+  expect(bridge.snapshot().page?.elements[0]).toMatchObject({ writes: ['press'] })
+  await expect(bridge.tools().ui_trigger!.execute({ element: 'b', event: 'press' })).rejects.toThrow('changes data')
+  expect(trigger).not.toHaveBeenCalled()
 })

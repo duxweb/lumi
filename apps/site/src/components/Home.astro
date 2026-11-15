@@ -2,6 +2,7 @@
 import type { Locale } from '../i18n'
 import { COPY } from '../i18n'
 import Base from '../layouts/Base.astro'
+import { sitePath } from '../paths'
 import { Stage } from './Stage'
 
 interface Props {
@@ -25,8 +26,8 @@ const layers = t.arch.layers.map((layer, index) => ({ ...layer, name: names[inde
         {t.hero.lede}
       </p>
       <div class="hero__actions">
-        <a class="button button--solid" href="/guide/getting-started/">{t.hero.start}</a>
-        <a class="button" href="/playground/">{t.hero.playground}</a>
+        <a class="button button--solid" href={sitePath('/guide/getting-started/')}>{t.hero.start}</a>
+        <a class="button" href={sitePath('/playground/')}>{t.hero.playground}</a>
       </div>
       <button class="command" type="button" data-copy={command} aria-label={t.hero.copy}>
         <code>{command}</code>
@@ -142,8 +143,8 @@ const layers = t.arch.layers.map((layer, index) => ({ ...layer, name: names[inde
     <section class="closing">
       <p class="closing__line">{t.closing.line}</p>
       <div class="hero__actions">
-        <a class="button button--solid" href="/guide/getting-started/">{t.closing.docs}</a>
-        <a class="button" href="/demo/">{t.closing.demo}</a>
+        <a class="button button--solid" href={sitePath('/guide/getting-started/')}>{t.closing.docs}</a>
+        <a class="button" href={sitePath('/demo/')}>{t.closing.demo}</a>
       </div>
     </section>
   </main>

@@ -1,7 +1,11 @@
-import type { NotificationParams } from '../../src/core/index.js'
+import type { NotificationParams } from '../../src/core/providers/notification.js'
 import { QueryClient } from '@tanstack/query-core'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { createLumi, listQueryKey, MutationUndoneError, oneQueryKey, runMutationMode } from '../../src/core/index.js'
+import { createLumi } from '../../src/core/context.js'
+import { MutationUndoneError, runMutationMode } from '../../src/core/optimistic.js'
+import { createTenantProvider } from '../../src/core/providers/tenant.js'
+import { listQueryKey, oneQueryKey } from '../../src/core/query.js'
+import { executeAuthAction } from '../../src/core/services.js'
 
 const rows = [{ id: 1, name: 'Lamp' }, { id: 2, name: 'Shade' }]
 
@@ -125,5 +129,59 @@ describe('mutation modes', () => {
     const request = vi.fn(async () => ({}))
     await runMutationMode(context, client, { mode: 'undoable', target: { resource: 'products' }, change: { kind: 'delete', ids: [1] }, request })
     expect(request).toHaveBeenCalledTimes(1)
+  })
+})
+
+function deferred<T>() {
+  let resolve!: (v: T) => void
+  let reject!: (e: unknown) => void
+  const promise = new Promise<T>((a, b) => {
+    resolve = a
+    reject = b
+  })
+  return { promise, resolve, reject }
+}
+
+it('old optimistic rollback must not overwrite a new session cache', async () => {
+  const client = new QueryClient()
+  const context = createLumi({ dataProvider: { getList: async () => ({ data: [], total: 0 }) } as never, authProvider: { login: async () => ({ success: true }) } as never })
+  const key = listQueryKey('orders', {})
+  client.setQueryData(key, { data: [{ id: 1, owner: 'A' }], total: 1 })
+  const d = deferred<object>()
+  const pending = runMutationMode(context, client, { mode: 'optimistic', target: { resource: 'orders' }, change: { kind: 'delete', ids: [1] }, request: () => d.promise }).catch(() => {})
+  await executeAuthAction(context, client, 'login')
+  client.setQueryData(key, { data: [{ id: 1, owner: 'B' }], total: 1 })
+  d.reject(new Error('old write refused'))
+  await pending
+  const actual = client.getQueryData(key)
+  client.clear()
+  expect(actual).toMatchObject({ data: [{ owner: 'B' }] })
+})
+
+describe('undoable writes', () => {
+  it('drops a write whose tenant changed during the wait instead of sending it to the new tenant', async () => {
+    vi.useFakeTimers()
+    const tenantProvider = createTenantProvider({ initial: 'a' })
+    const context = createLumi({
+      dataProvider: { getList: vi.fn(), getOne: vi.fn(), create: vi.fn(), update: vi.fn(), deleteOne: vi.fn() } as never,
+      tenantProvider,
+      notificationProvider: { open: vi.fn(), close: vi.fn() },
+    })
+    const client = new QueryClient()
+    client.setQueryData(oneQueryKey('orders', 7), { data: { id: 7, name: 'kept' } })
+    const request = vi.fn(async () => ({ data: { id: 7 } }))
+    const pending = runMutationMode(context, client, {
+      mode: 'undoable',
+      undoableTimeout: 1000,
+      target: { resource: 'orders' },
+      change: { kind: 'delete', ids: [7] },
+      request,
+    })
+    const settled = expect(pending).rejects.toBeInstanceOf(MutationUndoneError)
+    tenantProvider.set('b')
+    await vi.advanceTimersByTimeAsync(1000)
+    await settled
+    expect(request).not.toHaveBeenCalled()
+    expect(client.getQueryData(oneQueryKey('orders', 7))).toEqual({ data: { id: 7, name: 'kept' } })
   })
 })

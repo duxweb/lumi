@@ -21,15 +21,12 @@ import {
   createAgentSession,
   createHttpAgentTransport,
   dataProviderHttp,
+  dataProviderPath,
   executeRequest,
   invalidateResourceQueries,
   registerAgentSession,
 } from '../core/index.js'
 import { useLumi } from './context.js'
-
-const ABSOLUTE_URL_RE = /^(?:[a-z][a-z\d+\-.]*:)?\/\//i
-const TRAILING_SLASH_RE = /\/+$/
-const LEADING_SLASH_RE = /^\/+/
 
 export interface UseAgentChatOptions {
   /** Defaults to the configured `agent.endpoint`, then `/agent/chat`. */
@@ -88,10 +85,6 @@ export interface AgentChat extends AgentChatSnapshot {
   reset: AgentChatSession['reset']
 }
 
-function joinUrl(base: string, path: string): string {
-  return `${base.replace(TRAILING_SLASH_RE, '')}/${path.replace(LEADING_SLASH_RE, '')}`
-}
-
 function messagesOf(data: unknown): AgentChatMessage[] {
   if (Array.isArray(data))
     return data as AgentChatMessage[]
@@ -116,16 +109,10 @@ export function useAgentChat(options: UseAgentChatOptions = {}): AgentChat {
       const current = latest.current
       const config = lumi.config.agent ?? {}
       const endpoint = current.endpoint ?? config.endpoint ?? '/agent/chat'
-      let url = endpoint
       // The data provider's client carries its credentials; the app's otherwise.
-      const client = dataProviderHttp(lumi, current.dataProviderName ?? config.dataProviderName)
-      try {
-        const provider = lumi.getDataProvider(current.dataProviderName ?? config.dataProviderName)
-        const apiUrl = provider.getApiUrl?.()
-        if (apiUrl && !ABSOLUTE_URL_RE.test(endpoint))
-          url = joinUrl(apiUrl, endpoint)
-      }
-      catch {}
+      const providerName = current.dataProviderName ?? config.dataProviderName
+      const client = dataProviderHttp(lumi, providerName)
+      const url = dataProviderPath(lumi, providerName, endpoint)
       const headers = current.headers ?? config.headers
       const bridge = current.ui === false ? undefined : lumi.agentBridge
       return createHttpAgentTransport({

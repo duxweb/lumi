@@ -10,7 +10,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { uiComponentDefinitions } from '../../../ui/src/catalog/index.js'
 import { uiRegistry } from '../../../ui/src/react/registry.js'
 import { lumiActionDefinitions, lumiComponentDefinitions } from '../../src/catalog/index.js'
+import { createHttpClient, createSimpleDataProvider } from '../../src/core/index.js'
 import { createLumi, formatAgentStream, validateDocument } from '../../src/index.js'
+import { useAgentChat } from '../../src/react/agent.js'
 import { LumiProvider, lumiRegistry } from '../../src/react/index.js'
 
 const catalog = defineCatalog(schema, {
@@ -26,13 +28,6 @@ afterEach(async () => {
   vi.unstubAllGlobals()
   document.body.replaceChildren()
 })
-
-function settle() {
-  return act(async () => {
-    for (let i = 0; i < 5; i++)
-      await new Promise(resolve => setTimeout(resolve, 60))
-  })
-}
 
 const spec = {
   root: 'session',
@@ -104,13 +99,17 @@ describe('agentSession', () => {
     const store = createStateStore({ current: 's1', input: 'Remind late customers' })
     const view = mount(store, { getList, getOne, create: vi.fn(), update: vi.fn(), deleteOne: vi.fn(), getApiUrl: () => 'http://api.test' })
     await view.render()
-    await settle()
+    await act(async () => {
+      await vi.waitFor(() => expect(store.get('/chat')).toMatchObject({ status: 'ready' }))
+    })
     expect(getOne).toHaveBeenCalledWith(expect.objectContaining({ resource: 'agent-sessions', id: 's1' }))
     expect(store.get('/chat')).toMatchObject({ id: 's1', status: 'ready', streaming: false, messages: [{ id: 'u1' }] })
 
     await view.press('Send')
     expect(store.get('/input')).toBe('')
-    await settle()
+    await act(async () => {
+      await vi.waitFor(() => expect(store.get('/chat')).toMatchObject({ status: 'ready', messages: expect.arrayContaining([expect.objectContaining({ id: 'a2' })]) }))
+    })
     expect(fetch.mock.calls[0]![0]).toBe('http://api.test/agent/chat')
     expect(fetch.mock.calls[0]![1].headers).toMatchObject({ Authorization: 'token' })
     expect(bodies[0]).toMatchObject({ id: 's1', trigger: 'submit-message' })
@@ -121,12 +120,40 @@ describe('agentSession', () => {
 
     // An empty box sends nothing.
     await view.press('Send')
-    await settle()
     expect(fetch).toHaveBeenCalledTimes(1)
 
     await view.press('Approve')
-    await settle()
+    await act(async () => {
+      await vi.waitFor(() => expect(bodies).toHaveLength(2))
+    })
     expect(bodies[1]).toMatchObject({ trigger: 'approval-response', messageId: 'a2' })
     expect((store.get('/chat') as typeof chat).messages.at(-1)!.parts[1]).toMatchObject({ status: 'approved' })
   })
+})
+
+it('agent endpoint should join a relative API root exactly once', async () => {
+  const urls: string[] = []
+  const http = createHttpClient({ fetcher: (async (url: string) => {
+    urls.push(url)
+    return new Response('data: {"type":"finish"}\n\ndata: [DONE]\n\n')
+  }) as typeof fetch })
+  const context = createLumi({ dataProvider: createSimpleDataProvider({ apiUrl: '/api', http }) })
+  const client = new QueryClient()
+  let chat!: ReturnType<typeof useAgentChat>
+  function Probe() {
+    chat = useAgentChat({ ui: false })
+    return null
+  }
+  const root = createRoot(document.createElement('div'))
+  try {
+    await act(async () => root.render(<LumiProvider context={context} queryClient={client} registry={{}}><Probe /></LumiProvider>))
+    await act(async () => {
+      await chat.send({ text: 'Hello' })
+    })
+    expect(urls).toEqual(['/api/agent/chat'])
+  }
+  finally {
+    await act(async () => root.unmount())
+    client.clear()
+  }
 })

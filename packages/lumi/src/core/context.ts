@@ -10,12 +10,14 @@ import type { LiveMode, LiveProvider } from './providers/live'
 import type { NotificationProvider, ToastProvider } from './providers/notification'
 import type { RouterProvider } from './providers/router'
 import type { TenantProvider } from './providers/tenant'
+import type { LumiSession } from './session.js'
 import type { MutationMode } from './types.js'
 import type { UploadOptions } from './upload.js'
 import type { Validator } from './validation'
 import { createAgentBridge } from './agent/bridge.js'
 import { createHttpClient } from './http.js'
 import { isAbsoluteUrl, joinUrl, normalizeResource } from './path.js'
+import { createSession } from './session.js'
 import { defaultValidator } from './validation'
 
 export interface LumiConfig {
@@ -68,6 +70,8 @@ export interface AgentConfig {
 }
 
 export interface LumiContext {
+  /** Stable account/tenant identity shared by derived contexts and async work. */
+  readonly session: LumiSession
   /** The data provider registered under `name`, `default` when left out; throws for a name that is not registered. */
   getDataProvider: (name?: string) => DataProvider
   /** The request client, signed by `authProvider`. */
@@ -129,6 +133,7 @@ export function createLumi(config: LumiConfig = {}): LumiContext {
   })
 
   return {
+    session: createSession(config.tenantProvider),
     getDataProvider,
     http,
     authProvider: config.authProvider,

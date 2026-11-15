@@ -1,6 +1,8 @@
-import type { DataProvider } from '@duxweb/lumi'
-import { createLumi, formatIssues, FormValidationError, handleAuthProviderError, resolveDataTarget, validateForm } from '@duxweb/lumi'
+import type { DataProvider } from '../../src/core/providers/data.js'
 import { describe, expect, it, vi } from 'vitest'
+import { createLumi, resolveDataTarget } from '../../src/core/context.js'
+import { handleAuthProviderError } from '../../src/core/providers/auth.js'
+import { formatIssues, FormValidationError, validateForm } from '../../src/core/validation.js'
 
 const dataProvider: DataProvider = {
   getList: async () => ({ data: [], total: 0 }),

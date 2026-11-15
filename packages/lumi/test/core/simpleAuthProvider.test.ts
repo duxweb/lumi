@@ -1,6 +1,7 @@
-import type { TokenStorage } from '../../src/core'
+import type { TokenStorage } from '../../src/core/data/simpleAuthProvider.js'
 import { describe, expect, it, vi } from 'vitest'
-import { createHttpClient, createSimpleAuthProvider } from '../../src/core'
+import { createSimpleAuthProvider } from '../../src/core/data/simpleAuthProvider.js'
+import { createHttpClient } from '../../src/core/http.js'
 
 function storage(): TokenStorage & { map: Map<string, string> } {
   const map = new Map<string, string>()

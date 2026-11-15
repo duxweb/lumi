@@ -2,8 +2,8 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import { uiComponentDefinitions } from '../src/catalog/index.js'
-import { LumiAvatar, LumiAvatarGroup } from '../src/react/index.js'
+import { uiComponentDefinitions } from '../src/catalog/definitions.js'
+import { LumiAvatar, LumiAvatarGroup } from '../src/components/avatar.js'
 
 const css = readFileSync(resolve(import.meta.dirname, '../src/style.css'), 'utf8')
 function rule(selector: string): string {

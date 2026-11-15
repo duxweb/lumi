@@ -4,7 +4,7 @@ import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { adminBaseConfigSchema, adminCatalogDefinitions, validateAdminManifest } from '@duxweb/lumi-admin/catalog'
 import { themeConfigSchema } from '@duxweb/lumi-ui/catalog'
-import { validateConfig, validateDocument } from '@duxweb/lumi/catalog'
+import { getActionParams, validateConfig, validateDocument } from '@duxweb/lumi/catalog'
 import { defineCatalog } from '@json-render/core'
 import { schema } from '@json-render/react/schema'
 import { z } from 'zod'
@@ -63,7 +63,7 @@ export function getCatalog(
     description: string
     params?: z.core.JSONSchema.BaseSchema
   }>
-  builtInActions: Catalog['schema']['builtInActions']
+  builtInActions: Array<{ name: string, description: string, params?: z.core.JSONSchema.BaseSchema }>
 } {
   const definitions = catalog.data as CatalogDefinitions
   const matches = ([name]: [string, unknown]): boolean => !options.name || name === options.name
@@ -86,7 +86,14 @@ export function getCatalog(
   return {
     components,
     actions,
-    builtInActions: catalog.schema.builtInActions ?? [],
+    builtInActions: options.kind === 'components'
+      ? []
+      : (catalog.schema.builtInActions ?? [])
+          .filter(action => !options.name || action.name === options.name)
+          .map((action) => {
+            const params = options.name && getActionParams(catalog, action.name)
+            return { ...action, ...(params ? { params: z.toJSONSchema(params, { unrepresentable: 'any' }) } : {}) }
+          }),
   }
 }
 

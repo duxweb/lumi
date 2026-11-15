@@ -3,7 +3,8 @@ import type { ReactNode } from 'react'
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { LumiCalendar, LumiDateRangePicker, LumiDateTimePicker } from '../src/react/index.js'
+import { LumiCalendar } from '../src/components/calendar.js'
+import { LumiDateRangePicker, LumiDateTimePicker } from '../src/components/datetime.js'
 
 const roots: Array<{ root: ReturnType<typeof createRoot>, host: HTMLElement }> = []
 

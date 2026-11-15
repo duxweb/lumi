@@ -2,7 +2,7 @@
 import type { CustomParams, DataProvider } from '@duxweb/lumi'
 import type { PropsWithChildren } from 'react'
 import type { AdminManifest, AdminPagesSource } from '../src/catalog.js'
-import { createLumi, packDocument } from '@duxweb/lumi'
+import { createLumi, createTenantProvider, packDocument } from '@duxweb/lumi'
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createMemoryRouter } from 'react-router'
@@ -40,11 +40,21 @@ function backend() {
     return { data: document }
   })
   const dataProvider = {
-    async getList() { return { data: [], total: 0 } },
-    async getOne() { return { data: {} } },
-    async create() { return { data: {} } },
-    async update() { return { data: {} } },
-    async deleteOne() { return { data: {} } },
+    async getList() {
+      return { data: [], total: 0 }
+    },
+    async getOne() {
+      return { data: {} }
+    },
+    async create() {
+      return { data: {} }
+    },
+    async update() {
+      return { data: {} }
+    },
+    async deleteOne() {
+      return { data: {} }
+    },
     custom,
   } as unknown as DataProvider
   return { calls, dataProvider }
@@ -184,4 +194,31 @@ describe('pages in config.json', () => {
     expect(adminBaseConfigSchema.parse({ ...base, packKey: 'pk' }).packKey).toBe('pk')
     expect(adminBaseConfigSchema.safeParse({ ...base, packKey: '' }).success).toBe(false)
   })
+})
+
+it('admin page cache must not reuse tenant A document for tenant B', async () => {
+  const tenant = createTenantProvider({ initial: 'A' })
+  const context = createLumi({ tenantProvider: tenant, dataProvider: { getList: async () => ({ data: [], total: 0 }), custom: async () => ({ data: { root: 'text', elements: { text: { type: 'Text', props: { text: `Document for tenant ${tenant.get()}` } } } } }) } as never })
+  const admin = createAdmin({ context, manifest: { app: { id: 'review', title: 'Review' }, routes: [{ name: 'home', path: '/', page: { src: 'home' } }] }, pages: { endpoint: '/page' }, shell: ({ children }) => <main>{children}</main>, createRouter: routes => createMemoryRouter(routes) })
+  const host = document.createElement('div')
+  document.body.append(host)
+  const root = createRoot(host)
+  try {
+    await admin.ready()
+    await act(async () => root.render(<admin.App />))
+    await act(async () => {
+      await vi.waitFor(() => expect(host.textContent).toContain('Document for tenant A'))
+    })
+    await act(async () => tenant.set('B'))
+    await act(async () => {
+      await vi.waitFor(() => expect(host.textContent).toContain('Document for tenant B'))
+    })
+    await act(async () => admin.refresh())
+    expect(host.textContent).toContain('Document for tenant B')
+  }
+  finally {
+    await act(async () => root.unmount())
+    host.remove()
+    admin.dispose()
+  }
 })

@@ -15,6 +15,7 @@ import { Children, useMemo } from 'react'
 import { uiComponentDefinitions } from '../catalog/index.js'
 import { LumiActivityFeed } from '../components/activity-feed.js'
 import { LumiAutoComplete } from '../components/autocomplete.js'
+import { LumiAvatar, LumiAvatarGroup } from '../components/avatar.js'
 import {
   LumiButton,
   LumiCard,
@@ -53,16 +54,7 @@ import {
   LumiUpload,
 } from '../components/controls.js'
 import { LumiDatePicker, LumiDateRangePicker, LumiDateTimePicker, LumiTimePicker } from '../components/datetime.js'
-import {
-  LumiAlert,
-  LumiAvatar,
-  LumiAvatarGroup,
-  LumiBadge,
-  LumiDescriptionList,
-  LumiPagination,
-  LumiTable,
-  LumiText,
-} from '../components/display.js'
+import { LumiAlert, LumiBadge, LumiDescriptionList, LumiPagination, LumiTable, LumiText } from '../components/display.js'
 import { LumiEmpty } from '../components/empty.js'
 import {
   LumiFilters,

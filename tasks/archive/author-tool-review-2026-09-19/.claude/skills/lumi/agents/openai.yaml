@@ -1,4 +1,0 @@
-interface:
-  display_name: Lumi
-  short_description: 生成、校验和修复 Lumi 页面与 Admin 清单
-  default_prompt: Use $lumi to build and validate a Lumi Schema page from my requirements.

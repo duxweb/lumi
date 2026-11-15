@@ -1,5 +1,5 @@
-import { aggregateQueryKey, createQueryKey, customQueryKey, dataProviderQueryKey, isOneQueryKeyForIds, listQueryKey, lumiQueryKey, normalizeCustomParams, oneQueryKey, resourceQueryKey } from '@duxweb/lumi'
 import { describe, expect, it } from 'vitest'
+import { aggregateQueryKey, createQueryKey, customQueryKey, dataProviderQueryKey, isOneQueryKeyForIds, listQueryKey, lumiQueryKey, normalizeCustomParams, oneQueryKey, resourceQueryKey } from '../../src/core/query.js'
 
 describe('query keys', () => {
   it('creates a resource prefix shared by every resource query shape', () => {

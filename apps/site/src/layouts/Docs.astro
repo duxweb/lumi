@@ -2,6 +2,7 @@
 import type { MarkdownHeading } from 'astro'
 import type { DocsSection } from '../docs/nav'
 import { neighbours } from '../docs/nav'
+import { sitePath } from '../paths'
 import Base from './Base.astro'
 import '../styles/docs.css'
 
@@ -15,7 +16,7 @@ interface Props {
 const { title, description, slug, section, headings } = Astro.props
 const toc = headings.filter(heading => heading.depth === 2 || heading.depth === 3)
 const { prev, next } = neighbours(section, slug)
-const href = (target: string): string => `/${target}/`
+const href = (target: string): string => sitePath(`/${target}/`)
 ---
 
 <Base locale="zh" title={`${title} - Lumi`} description={description ?? title} wide active={section.id}>

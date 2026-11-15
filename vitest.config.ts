@@ -1,3 +1,4 @@
+import { availableParallelism } from 'node:os'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitest/config'
 
@@ -16,6 +17,9 @@ export default defineConfig({
   ssr: { resolve: { conditions } },
   test: {
     environment: 'node',
+    pool: 'threads',
+    // Keep file isolation; more workers only compete to load the UI graphs.
+    maxWorkers: Math.min(12, availableParallelism()),
     setupFiles: [r('./test/setup.ts')],
     include: ['packages/*/test/**/*.test.ts', 'packages/*/test/**/*.test.tsx', 'apps/*/test/**/*.test.ts', 'examples/*/test/**/*.test.ts'],
   },

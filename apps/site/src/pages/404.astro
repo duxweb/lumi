@@ -1,25 +1,28 @@
 ---
 import Base from '../layouts/Base.astro'
+import { sitePath } from '../paths'
+
+const demoBase = sitePath('/demo/')
 ---
 
 <Base locale="zh" title="页面不存在 - Lumi" description="这个地址没有页面。">
-  <script is:inline>
+  <script is:inline define:vars={{ demoBase }}>
     // The demo admin is a single-page app under /demo/: a static host has no
     // file for its inner routes, so hand the path to the app to open itself.
     // `/demo/` itself landing here means the host has no demo to hand over to:
     // sending it there again would reload this page forever.
-    if (location.pathname.startsWith('/demo/') && location.pathname !== '/demo/') {
+    if (location.pathname.startsWith(demoBase) && location.pathname !== demoBase) {
       try {
         sessionStorage.setItem('lumi-admin-redirect', location.pathname + location.search + location.hash)
       }
       catch {}
-      location.replace('/demo/')
+      location.replace(demoBase)
     }
   </script>
   <section class="missing">
     <h1>页面不存在</h1>
     <p>这个地址没有页面，可能已经移动或删除。</p>
-    <p><a href="/guide/">看指南</a> 或 <a href="/">回到首页</a></p>
+    <p><a href={sitePath('/guide/')}>看指南</a> 或 <a href={sitePath('/')}>回到首页</a></p>
   </section>
 </Base>
 

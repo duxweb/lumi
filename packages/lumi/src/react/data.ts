@@ -33,7 +33,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
-import { useCallback, useRef } from 'react'
+import { useCallback, useRef, useSyncExternalStore } from 'react'
 import { toastError } from '../core/feedback.js'
 import {
   dataProviderQueryKey,
@@ -44,6 +44,7 @@ import {
   resolveDataTarget,
 } from '../core/index.js'
 import { readMany } from '../core/providers/data.js'
+import { queryResets, subscribeQueryResets } from '../core/query-reset.js'
 import { useLumi } from './context.js'
 import { useDataProviderName, useScopedTarget } from './data-scope.js'
 import { invalidateResourceQueries } from './invalidation.js'
@@ -55,7 +56,6 @@ import {
   normalizeCustomParams,
   oneQueryKey,
 } from './query.js'
-import { queryResets } from './tenant.js'
 
 export interface BaseDataOptions {
   dataProviderName?: string
@@ -199,8 +199,9 @@ export function useList<T = any>(
     sorters: options.sorters,
     meta: options.meta,
   }
-  // The tenant reset count at which rows last arrived from the server.
-  const loadedAt = useRef(queryResets(queryClient))
+  const subscribe = useCallback((listener: () => void) => subscribeQueryResets(queryClient, listener), [queryClient])
+  const reset = useSyncExternalStore(subscribe, () => queryResets(queryClient), () => queryResets(queryClient))
+  const loadedAt = useRef(reset)
 
   const result = useQuery<GetListResult<T>, Error>({
     meta: live,
@@ -214,7 +215,7 @@ export function useList<T = any>(
     // A new page, filter or sort keeps the current rows on screen until the
     // next ones arrive, instead of blanking the list to its empty state.
     // Never across a tenant switch: those rows belong to the other tenant.
-    placeholderData: (previous: GetListResult<T> | undefined) => (loadedAt.current === queryResets(queryClient) ? previous : undefined),
+    placeholderData: (previous: GetListResult<T> | undefined) => (loadedAt.current === reset ? previous : undefined),
     queryFn: ({ signal }) => {
       const { dp, path } = resolveResource(
         lumi,
@@ -233,7 +234,7 @@ export function useList<T = any>(
     },
   })
   if (result.isSuccess && !result.isPlaceholderData)
-    loadedAt.current = queryResets(queryClient)
+    loadedAt.current = reset
   return result
 }
 
@@ -383,12 +384,6 @@ export function useCustom<T = any>(
 
 function useDataMutation<TData extends object, TVariables>(
   options: MutationOptions<TData, TVariables>,
-  mutationFn: (
-    dp: DataProvider,
-    path: string,
-    variables: TVariables,
-    meta?: Meta,
-  ) => Promise<TData>,
   write: (variables: TVariables) => Pick<WriteOptions<TData>, 'operation' | 'ids' | 'values'>,
 ): UseMutationResult<TData, Error, TVariables> {
   options = useScopedTarget(options)
@@ -405,19 +400,13 @@ function useDataMutation<TData extends object, TVariables>(
     },
     mutationFn: async (variables: TVariables, context) => {
       const target = getMutationTarget(context.meta)
-      const { dp, path } = resolveResource(
-        lumi,
-        target.resource!,
-        target.dataProviderName,
-      )
-      return executeWrite(lumi, queryClient, {
+      return executeWrite<TData>(lumi, queryClient, {
         ...write(variables),
         resource: target.resource!,
         dataProviderName: target.dataProviderName,
         meta: target.meta,
         mutationMode: options.mutationMode,
         undoableTimeout: options.undoableTimeout,
-        request: () => mutationFn(dp, path, variables, target.meta),
       })
     },
     onSuccess: async (data, variables) => {
@@ -436,24 +425,14 @@ function useDataMutation<TData extends object, TVariables>(
 export function useCreate<T = any, V = any>(
   options: MutationOptions<SingleResult<T>, V>,
 ): UseMutationResult<SingleResult<T>, Error, V> {
-  return useDataMutation(options, (dp, path, variables, meta) =>
-    dp.create<T, V>({ resource: path, variables, meta }), variables => ({ operation: 'create', values: variables }))
+  return useDataMutation(options, variables => ({ operation: 'create', values: variables }))
 }
 
 /** Creates several records: one `createMany` call when the provider has it, else one `create` per record. */
 export function useCreateMany<T = any, V = any>(
   options: MutationOptions<ManyResult<T>, V[]>,
 ): UseMutationResult<ManyResult<T>, Error, V[]> {
-  return useDataMutation(options, (dp, path, variables, meta) =>
-    dp.createMany
-      ? dp.createMany<T, V>({ resource: path, variables, meta })
-      : Promise.all(
-          variables.map(item =>
-            dp
-              .create<T, V>({ resource: path, variables: item, meta })
-              .then(result => result.data),
-          ),
-        ).then(data => ({ data })), variables => ({ operation: 'createMany', values: variables }))
+  return useDataMutation(options, variables => ({ operation: 'createMany', values: variables }))
 }
 
 export interface UpdateVariables<V = any> extends Pick<
@@ -465,13 +444,7 @@ export interface UpdateVariables<V = any> extends Pick<
 export function useUpdate<T = any, V = any>(
   options: MutationOptions<SingleResult<T>, UpdateVariables<V>>,
 ): UseMutationResult<SingleResult<T>, Error, UpdateVariables<V>> {
-  return useDataMutation(options, (dp, path, variables, meta) =>
-    dp.update<T, V>({
-      resource: path,
-      id: variables.id,
-      variables: variables.variables,
-      meta,
-    }), variables => ({ operation: 'update', ids: [variables.id], values: variables.variables }))
+  return useDataMutation(options, variables => ({ operation: 'update', ids: [variables.id], values: variables.variables }))
 }
 
 export interface UpdateManyVariables<V = any> extends Pick<
@@ -483,26 +456,7 @@ export interface UpdateManyVariables<V = any> extends Pick<
 export function useUpdateMany<T = any, V = any>(
   options: MutationOptions<ManyResult<T>, UpdateManyVariables<V>>,
 ): UseMutationResult<ManyResult<T>, Error, UpdateManyVariables<V>> {
-  return useDataMutation(options, (dp, path, variables, meta) =>
-    dp.updateMany
-      ? dp.updateMany<T, V>({
-          resource: path,
-          ids: variables.ids,
-          variables: variables.variables,
-          meta,
-        })
-      : Promise.all(
-          variables.ids.map(id =>
-            dp
-              .update<T, V>({
-                resource: path,
-                id,
-                variables: variables.variables,
-                meta,
-              })
-              .then(result => result.data),
-          ),
-        ).then(data => ({ data })), variables => ({ operation: 'updateMany', ids: variables.ids, values: variables.variables }))
+  return useDataMutation(options, variables => ({ operation: 'updateMany', ids: variables.ids, values: variables.variables }))
 }
 
 export type DeleteVariables<V = any> = Pick<
@@ -514,17 +468,7 @@ export type DeleteVariables<V = any> = Pick<
 export function useDelete<T = any, V = any>(
   options: MutationOptions<SingleResult<T>, DeleteVariables<V>>,
 ): UseMutationResult<SingleResult<T>, Error, DeleteVariables<V>> {
-  return useDataMutation(
-    options,
-    (dp, path, variables, meta) =>
-      dp.deleteOne<T, V>({
-        resource: path,
-        id: variables.id,
-        variables: variables.variables,
-        meta,
-      }),
-    variables => ({ operation: 'delete', ids: [variables.id] }),
-  )
+  return useDataMutation(options, variables => ({ operation: 'delete', ids: [variables.id], values: variables.variables }))
 }
 
 export type DeleteManyVariables<V = any> = Pick<
@@ -536,30 +480,7 @@ export type DeleteManyVariables<V = any> = Pick<
 export function useDeleteMany<T = any, V = any>(
   options: MutationOptions<ManyResult<T>, DeleteManyVariables<V>>,
 ): UseMutationResult<ManyResult<T>, Error, DeleteManyVariables<V>> {
-  return useDataMutation(
-    options,
-    (dp, path, variables, meta) =>
-      dp.deleteMany
-        ? dp.deleteMany<T, V>({
-            resource: path,
-            ids: variables.ids,
-            variables: variables.variables,
-            meta,
-          })
-        : Promise.all(
-            variables.ids.map(id =>
-              dp
-                .deleteOne<T, V>({
-                  resource: path,
-                  id,
-                  variables: variables.variables,
-                  meta,
-                })
-                .then(result => result.data),
-            ),
-          ).then(data => ({ data })),
-    variables => ({ operation: 'deleteMany', ids: variables.ids }),
-  )
+  return useDataMutation(options, variables => ({ operation: 'deleteMany', ids: variables.ids, values: variables.variables }))
 }
 
 /** Writes through the provider's `custom`: `build` turns the mutation's variables into the request, and `resource`, when given, is refetched after it succeeds. */

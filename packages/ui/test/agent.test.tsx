@@ -7,25 +7,22 @@ import { JSONUIProvider, Renderer } from '@json-render/react'
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { agentDefinitions, agentMessagePartSchema, agentMessageSchema, uiComponentDefinitions } from '../src/catalog/index.js'
+import { agentDefinitions, agentMessagePartSchema, agentMessageSchema } from '../src/catalog/agent.js'
+import { uiComponentDefinitions } from '../src/catalog/definitions.js'
+import { LumiAgentPlan } from '../src/components/agent/agent-plan.js'
+import { LumiApproval } from '../src/components/agent/approval.js'
+import { LumiChangeDiff } from '../src/components/agent/change-diff.js'
+import { LumiChatMessage, LumiChatThread, LumiMessageActions } from '../src/components/agent/chat.js'
+import { LumiContextChips } from '../src/components/agent/context-chips.js'
 import { collapseDiff, diffLines } from '../src/components/agent/diff.js'
-import {
-  LumiAgentMentionPicker,
-  LumiAgentPlan,
-  LumiAgentQuestion,
-  LumiAgentSessionList,
-  LumiApproval,
-  LumiChangeDiff,
-  LumiChatMessage,
-  LumiChatThread,
-  LumiContextChips,
-  LumiMarkdown,
-  LumiMessageActions,
-  LumiPromptInput,
-  LumiThinking,
-  LumiToolCall,
-  uiRegistry,
-} from '../src/react/index.js'
+import { LumiMarkdown } from '../src/components/agent/markdown.js'
+import { LumiAgentMentionPicker } from '../src/components/agent/mention-picker.js'
+import { LumiPromptInput } from '../src/components/agent/prompt-input.js'
+import { LumiAgentQuestion } from '../src/components/agent/question.js'
+import { LumiAgentSessionList } from '../src/components/agent/session-list.js'
+import { LumiThinking } from '../src/components/agent/thinking.js'
+import { LumiToolCall } from '../src/components/agent/tool-call.js'
+import { uiRegistry } from '../src/react/index.js'
 
 const roots: Array<{ root: ReturnType<typeof createRoot>, host: HTMLElement }> = []
 

@@ -661,7 +661,7 @@ describe('createAdmin React', () => {
       'Fresh',
       'Profile',
     ])
-    expect(loader.invalidate).toHaveBeenCalledWith('/manifest.json', undefined)
+    expect(loader.invalidate).toHaveBeenCalledWith('/manifest.json')
   })
 
   it('swallows a canceled load rejection after clear', async () => {

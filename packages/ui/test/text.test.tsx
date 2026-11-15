@@ -1,7 +1,8 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
+import { LumiPagination } from '../src/components/display.js'
+import { LumiUiTextProvider } from '../src/components/text.js'
 import { Calendar } from '../src/internal/shadcn/calendar.js'
-import { LumiPagination, LumiUiTextProvider } from '../src/react/index.js'
 
 const chinese: Record<string, string> = {
   'lumi.pagination.totalCount': '共 {total} 条',

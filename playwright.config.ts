@@ -1,20 +1,22 @@
 import process from 'node:process'
 import { defineConfig, devices } from '@playwright/test'
+import { normalizeBase } from './apps/site/paths.mjs'
 
-interface WebServer { command: string, url: string, timeout?: number }
+interface WebServer { command: string, url: string, timeout?: number, env?: Record<string, string> }
 interface E2eProject { name: string, spec: RegExp, port: number, servers: WebServer[] }
 
 // Opt-in reuse only: a stale preview silently serving old code is worse than a
 // port-in-use failure. Set LUMI_E2E_REUSE=1 to attach to servers you started.
 const reuseExistingServer = process.env.LUMI_E2E_REUSE === '1'
 const preview = (port: number) => `http://127.0.0.1:${port}`
-const mock: WebServer = { command: 'node apps/admin/mock/server.ts', url: 'http://127.0.0.1:3002/health' }
+const mock: WebServer = { command: 'pnpm exec tsx apps/admin/mock/server.ts', url: 'http://127.0.0.1:3002/health' }
+const siteBase = normalizeBase(process.env.LUMI_SITE_BASE ?? '/lumi/')
 
 const e2eProjects: E2eProject[] = [
   { name: 'react-demo', spec: /react-demo\.spec\.ts/, port: 4177, servers: [{ command: 'pnpm --dir examples/react-demo build && pnpm --dir examples/react-demo exec vite preview --host 127.0.0.1 --port 4177', url: preview(4177) }] },
   { name: 'foundation-admin', spec: /foundation-admin\.spec\.ts/, port: 4178, servers: [{ command: 'pnpm --dir examples/foundation-admin build && pnpm --dir examples/foundation-admin exec vite preview --host 127.0.0.1 --port 4178', url: preview(4178) }] },
   // The official site: homepage, docs, Playground and the in-browser admin demo.
-  { name: 'site', spec: /site\.spec\.ts/, port: 4179, servers: [{ command: 'pnpm -F @duxweb/lumi-site build && pnpm -F @duxweb/lumi-site preview', url: preview(4179), timeout: 600_000 }] },
+  { name: 'site', spec: /site\.spec\.ts/, port: 4179, servers: [{ command: 'pnpm -F @duxweb/lumi-site build && pnpm -F @duxweb/lumi-site preview', url: `${preview(4179)}${siteBase}`, env: { LUMI_SITE_BASE: siteBase }, timeout: 600_000 }] },
   // The prebuilt base served by a plain static server: no bundler touches the app.
   { name: 'base-admin', spec: /base-admin\.spec\.ts/, port: 4182, servers: [mock, { command: 'pnpm -F @duxweb/lumi-admin build:base && PORT=4182 node examples/base-admin/serve.mjs', url: preview(4182) }] },
   { name: 'react-admin', spec: /(?:^|\/)react-admin\.spec\.ts$/, port: 4181, servers: [mock, { command: 'pnpm --dir apps/admin exec vite build && pnpm --dir apps/admin exec vite preview --host 127.0.0.1 --port 4181', url: preview(4181) }] },

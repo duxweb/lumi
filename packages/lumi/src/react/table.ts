@@ -199,7 +199,9 @@ export function useTable<T = any>(input: UseTableOptions): UseTableReturn<T> {
   }, [router, location, names.page, names.pageSize, names.sort])
   // Until the store has its own values the address supplies them, so the
   // first render already asks for the page the link names.
-  const page = (store.get(`${path}/page`) ?? fromLocation.page ?? 1) as number
+  const filterSignature = JSON.stringify(options.filters ?? [])
+  const previousFilters = useRef(filterSignature)
+  const page = previousFilters.current !== filterSignature ? 1 : (store.get(`${path}/page`) ?? fromLocation.page ?? 1) as number
   const pageSize = (store.get(`${path}/pageSize`) ?? fromLocation.pageSize ?? defaultPageSize) as number
   const sorters = (store.get(`${path}/sorters`) ?? fromLocation.sorters ?? []) as Sorter[]
   useLocationSync({ router, store, path, names, fromLocation, location, page, pageSize, sorters, defaultPageSize })
@@ -207,7 +209,12 @@ export function useTable<T = any>(input: UseTableOptions): UseTableReturn<T> {
   const setPage = setter('page', 1)
   const setPageSize = setter('pageSize', defaultPageSize)
   const setSorters = setter<Sorter[]>('sorters', [])
-  const filterSignature = JSON.stringify(options.filters ?? [])
+  useEffect(() => {
+    if (previousFilters.current !== filterSignature) {
+      previousFilters.current = filterSignature
+      store.set(`${path}/page`, 1)
+    }
+  }, [filterSignature, path, store.set])
   const filterSnapshot = useMemo(() => structuredClone(options.filters ?? []), [filterSignature])
   const query = useList<T>({
     resource: options.resource,
@@ -236,8 +243,8 @@ export function useTable<T = any>(input: UseTableOptions): UseTableReturn<T> {
   // An aggregate that failed has answered too: the rows go on without it,
   // rather than staying on the last snapshot for as long as it keeps failing.
   const aggregateFailed = aggregateQuery.isError
-  const settled = query.isSuccess && !query.isPlaceholderData
-    && (!options.aggregate || aggregateFailed || (aggregateQuery.isSuccess && !aggregateQuery.isPlaceholderData))
+  const settled = query.isSuccess && !query.isPlaceholderData && !query.isFetching
+    && (!options.aggregate || (!aggregateQuery.isFetching && (aggregateFailed || (aggregateQuery.isSuccess && !aggregateQuery.isPlaceholderData))))
   const snapshot = useRef<{ rows: T[], total: number, aggregate?: TableAggregate }>(undefined)
   // A reset (tenant switch, sign-out) empties the query; the old snapshot
   // belongs to the previous tenant or session and must not stay on screen.

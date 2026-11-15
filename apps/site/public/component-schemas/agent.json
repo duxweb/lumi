@@ -1,0 +1,531 @@
+{
+  "root": "agent-root",
+  "elements": {
+    "agent-root": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "card-thread",
+        "card-message",
+        "card-actions",
+        "card-prompt",
+        "card-mention",
+        "card-thinking",
+        "card-tool",
+        "card-approval",
+        "card-question",
+        "card-plan",
+        "card-diff",
+        "card-context",
+        "card-sessions"
+      ]
+    },
+    "card-thread": {
+      "type": "Card",
+      "props": {
+        "title": "ChatThread",
+        "description": "A conversation from agent messages: activity folds under one line, answers read as prose with citations, follow-ups sit below"
+      },
+      "children": [
+        "chat-thread"
+      ]
+    },
+    "chat-thread": {
+      "type": "ChatThread",
+      "props": {
+        "messages": {
+          "$bindState": "/thread"
+        },
+        "maxHeight": 448
+      },
+      "children": []
+    },
+    "card-message": {
+      "type": "Card",
+      "props": {
+        "title": "ChatMessage",
+        "description": "One message on its own, here an answer that failed before it finished"
+      },
+      "children": [
+        "chat-message"
+      ]
+    },
+    "chat-message": {
+      "type": "ChatMessage",
+      "props": {
+        "id": "e1",
+        "role": "assistant",
+        "status": "error",
+        "parts": [
+          {
+            "type": "text",
+            "text": "Checking the courier status for ORD-1024"
+          }
+        ],
+        "errorText": "The courier service did not respond"
+      },
+      "children": []
+    },
+    "card-actions": {
+      "type": "Card",
+      "props": {
+        "title": "MessageActions",
+        "description": "Copy, regenerate and rating under an answer"
+      },
+      "children": [
+        "message-actions"
+      ]
+    },
+    "message-actions": {
+      "type": "MessageActions",
+      "props": {
+        "text": "Revenue fell 18%",
+        "feedback": "up"
+      },
+      "children": []
+    },
+    "card-prompt": {
+      "type": "Card",
+      "props": {
+        "title": "PromptInput",
+        "description": "The composer: write, attach, mention, pick a model and send"
+      },
+      "children": [
+        "prompt-input"
+      ]
+    },
+    "prompt-input": {
+      "type": "PromptInput",
+      "props": {
+        "value": {
+          "$bindState": "/prompt"
+        },
+        "placeholder": "Ask about orders, customers or reports",
+        "attachable": true,
+        "mentionable": true,
+        "suggestions": [
+          {
+            "label": "Summarise today"
+          },
+          {
+            "label": "Find late shipments"
+          }
+        ]
+      },
+      "children": []
+    },
+    "card-thinking": {
+      "type": "Card",
+      "props": {
+        "title": "Thinking",
+        "description": "The work behind an answer as one quiet line; steps fold beneath it"
+      },
+      "children": [
+        "thinking"
+      ]
+    },
+    "thinking": {
+      "type": "Thinking",
+      "props": {
+        "state": "done",
+        "duration": 3800,
+        "steps": [
+          {
+            "label": "Read order stats",
+            "detail": "1,284 orders"
+          },
+          {
+            "label": "Compared with last week",
+            "status": "done"
+          }
+        ],
+        "text": "Payments look like the cause, the order count held steady."
+      },
+      "children": []
+    },
+    "card-tool": {
+      "type": "Card",
+      "props": {
+        "title": "ToolCall",
+        "description": "One tool call as a timeline row with its input and output"
+      },
+      "children": [
+        "tool-call"
+      ]
+    },
+    "tool-call": {
+      "type": "ToolCall",
+      "props": {
+        "toolName": "customers.get",
+        "title": "Read customer",
+        "summary": "Avery Chen, 12 orders",
+        "status": "success",
+        "duration": 412,
+        "input": {
+          "id": 7
+        },
+        "output": {
+          "name": "Avery Chen",
+          "orders": 12
+        }
+      },
+      "children": []
+    },
+    "card-approval": {
+      "type": "Card",
+      "props": {
+        "title": "Approval",
+        "description": "A confirmation before an action runs: lines, fields, a total and the decision"
+      },
+      "children": [
+        "approval"
+      ]
+    },
+    "approval": {
+      "type": "Approval",
+      "props": {
+        "title": "Place this order",
+        "description": "Review the items before paying",
+        "action": "orders.create",
+        "status": {
+          "$bindState": "/approval"
+        },
+        "lines": [
+          {
+            "title": "Linen shirt",
+            "description": "Size M x1",
+            "amount": "¥299"
+          },
+          {
+            "title": "Canvas tote",
+            "description": "Natural x2",
+            "amount": "¥158"
+          }
+        ],
+        "fields": [
+          {
+            "label": "Ship to",
+            "value": "Shanghai, Xuhui",
+            "description": "Avery Chen"
+          },
+          {
+            "label": "Shipping",
+            "value": "Free",
+            "tone": "success"
+          }
+        ],
+        "total": {
+          "value": "¥457"
+        },
+        "approveLabel": "Pay ¥457"
+      },
+      "children": []
+    },
+    "card-question": {
+      "type": "Card",
+      "props": {
+        "title": "AgentQuestion",
+        "description": "A question the agent asks before it goes on; answering folds it to one line"
+      },
+      "children": [
+        "agent-question"
+      ]
+    },
+    "agent-question": {
+      "type": "AgentQuestion",
+      "props": {
+        "title": "Which courier should ship it",
+        "status": "pending",
+        "answer": {
+          "$bindState": "/courier"
+        },
+        "skippable": true,
+        "options": [
+          {
+            "value": "sf",
+            "label": "SF Express",
+            "description": "Next day"
+          },
+          {
+            "value": "ems",
+            "label": "EMS",
+            "description": "2 to 3 days"
+          }
+        ]
+      },
+      "children": []
+    },
+    "card-plan": {
+      "type": "Card",
+      "props": {
+        "title": "AgentPlan",
+        "description": "The steps the agent will take and where it is"
+      },
+      "children": [
+        "agent-plan"
+      ]
+    },
+    "agent-plan": {
+      "type": "AgentPlan",
+      "props": {
+        "title": "Refund the failed orders",
+        "steps": [
+          {
+            "id": "a",
+            "label": "Find failed payments",
+            "status": "done"
+          },
+          {
+            "id": "b",
+            "label": "Check stock",
+            "status": "running"
+          },
+          {
+            "id": "c",
+            "label": "Issue refunds",
+            "status": "pending"
+          }
+        ]
+      },
+      "children": []
+    },
+    "card-diff": {
+      "type": "Card",
+      "props": {
+        "title": "ChangeDiff",
+        "description": "What a change will do to a record"
+      },
+      "children": [
+        "change-diff"
+      ]
+    },
+    "change-diff": {
+      "type": "ChangeDiff",
+      "props": {
+        "title": "ORD-1024",
+        "fields": [
+          {
+            "label": "Shipping",
+            "before": "Standard",
+            "after": "Express"
+          },
+          {
+            "label": "Note",
+            "before": null,
+            "after": "Gift wrap"
+          }
+        ]
+      },
+      "children": []
+    },
+    "card-context": {
+      "type": "Card",
+      "props": {
+        "title": "ContextChips",
+        "description": "What the agent can see: the current page and attached records"
+      },
+      "children": [
+        "context-chips"
+      ]
+    },
+    "context-chips": {
+      "type": "ContextChips",
+      "props": {
+        "viewing": "Orders",
+        "shared": true,
+        "items": [
+          {
+            "id": "o1",
+            "label": "ORD-1024",
+            "kind": "record"
+          }
+        ]
+      },
+      "children": []
+    },
+    "card-mention": {
+      "type": "Card",
+      "props": {
+        "title": "AgentMentionPicker",
+        "description": "The @ picker: search, a tab per kind, results with the match highlighted; picks become context chips"
+      },
+      "children": [
+        "agent-mention-picker"
+      ]
+    },
+    "agent-mention-picker": {
+      "type": "AgentMentionPicker",
+      "props": {
+        "types": [
+          {
+            "value": "orders",
+            "label": "Orders",
+            "icon": "shopping-bag-01"
+          },
+          {
+            "value": "articles",
+            "label": "Articles",
+            "icon": "news"
+          },
+          {
+            "value": "customers",
+            "label": "Customers",
+            "icon": "user"
+          }
+        ],
+        "options": [
+          {
+            "value": 17,
+            "label": "ORD-00017",
+            "description": "Blue Pine Retail",
+            "type": "orders"
+          },
+          {
+            "value": 20,
+            "label": "ORD-00020",
+            "description": "Orchid Supply",
+            "type": "orders"
+          },
+          {
+            "value": 3,
+            "label": "Shipping rules for the holidays",
+            "description": "Avery Chen",
+            "type": "articles"
+          },
+          {
+            "value": 1,
+            "label": "Northwind Studio",
+            "description": "ops@northwind.test",
+            "type": "customers"
+          }
+        ],
+        "value": {
+          "$bindState": "/mentions"
+        },
+        "multiple": true
+      },
+      "children": []
+    },
+    "card-sessions": {
+      "type": "Card",
+      "props": {
+        "title": "AgentSessionList",
+        "description": "Past conversations with a status dot slot before every title"
+      },
+      "children": [
+        "agent-session-list"
+      ]
+    },
+    "agent-session-list": {
+      "type": "AgentSessionList",
+      "props": {
+        "sessions": [
+          {
+            "id": "s1",
+            "title": "Unshipped Chengdu orders",
+            "preview": "Approve the reminders to notify the warehouse",
+            "time": "14:20",
+            "status": "waiting",
+            "group": "Today"
+          },
+          {
+            "id": "s2",
+            "title": "Refund spike this week",
+            "preview": "Checking the courier notes",
+            "time": "13:05",
+            "status": "running",
+            "group": "Today"
+          },
+          {
+            "id": "s3",
+            "title": "August sales report",
+            "preview": "Revenue grew 12% on returning customers",
+            "time": "Yesterday",
+            "group": "Earlier"
+          }
+        ],
+        "value": {
+          "$bindState": "/session"
+        },
+        "variant": "detailed",
+        "searchable": true,
+        "creatable": true
+      },
+      "children": []
+    }
+  },
+  "state": {
+    "thread": [
+      {
+        "id": "u1",
+        "role": "user",
+        "parts": [
+          {
+            "type": "text",
+            "text": "Why did revenue drop yesterday"
+          }
+        ]
+      },
+      {
+        "id": "a1",
+        "role": "assistant",
+        "parts": [
+          {
+            "type": "reasoning",
+            "state": "done",
+            "duration": 3800,
+            "steps": [
+              {
+                "label": "Read order stats",
+                "detail": "1,284 orders"
+              },
+              {
+                "label": "Compared with last week"
+              }
+            ]
+          },
+          {
+            "type": "tool-call",
+            "toolCallId": "t1",
+            "toolName": "payments.logs",
+            "title": "Search payment logs",
+            "summary": "41 failed callbacks",
+            "status": "success",
+            "duration": 820,
+            "input": {
+              "date": "2026-08-01"
+            },
+            "output": {
+              "failed": 41
+            }
+          },
+          {
+            "type": "text",
+            "text": "Revenue fell **18%** because 41 payment callbacks failed between 14:00 and 15:00 [1]."
+          },
+          {
+            "type": "source",
+            "sourceId": "log",
+            "title": "Payment log",
+            "snippet": "41 callbacks failed."
+          }
+        ],
+        "suggestions": [
+          {
+            "label": "Retry the failed payments"
+          },
+          {
+            "label": "Notify the affected customers"
+          }
+        ]
+      }
+    ],
+    "prompt": "",
+    "approval": "pending",
+    "courier": null,
+    "mentions": [],
+    "session": "s1"
+  }
+}

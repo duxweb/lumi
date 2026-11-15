@@ -91,8 +91,9 @@ export function createLumiHandlers(
   // Export and import progress at `path`: `{ loading: true, ...progress }`
   // while running, the last progress with `loading: false` once settled.
   const progressReporter = (path: string | undefined): { report: (progress: object) => void, done: () => void } => {
+    const version = sessionVersion(context)
     const write = (value: Record<string, unknown>): void => {
-      if (path && active())
+      if (path && active() && version === sessionVersion(context))
         store.set(path, value)
     }
     return {
@@ -107,25 +108,15 @@ export function createLumiHandlers(
         const version = sessionVersion(context)
         const parsed = (operation === 'create' ? mutationParamsSchema : writeParamsSchema).parse(input) as WriteParams
         const params = { ...parsed, resource: normalizeResource(parsed.resource) }
-        const provider = context.getDataProvider(params.dataProviderName)
         const result = await executeWrite(context, queryClient, {
           operation,
           resource: params.resource,
           dataProviderName: params.dataProviderName,
           ...(params.id === undefined ? {} : { ids: [params.id] }),
-          values: params.values ?? {},
+          values: operation === 'delete' ? params.values : params.values ?? {},
           meta: params.meta,
           mutationMode: params.mutationMode,
           undoableTimeout: params.undoableTimeout,
-          request: async () => {
-            if (operation === 'create')
-              return provider.create({ resource: params.resource, variables: params.values ?? {}, meta: params.meta })
-            if (params.id === undefined)
-              throw new Error(`[lumi] ${operation} requires an id.`)
-            if (operation === 'delete')
-              return provider.deleteOne({ resource: params.resource, id: params.id, meta: params.meta })
-            return provider.update({ resource: params.resource, id: params.id, variables: params.values ?? {}, meta: params.meta })
-          },
         })
         if (
           active()
@@ -227,6 +218,7 @@ export function createLumiHandlers(
       }
     },
     importList: async (input) => {
+      const version = sessionVersion(context)
       const { progressPath, resultPath, accept, ...params } = importListParamsSchema.parse(input)
       if (!lifecycle.files)
         throw new Error('[lumi] importList needs a host that can pick files.')
@@ -237,12 +229,14 @@ export function createLumiHandlers(
       // Closing the picker is not a failure.
       if (!file)
         return undefined
+      if (!active() || version !== sessionVersion(context))
+        throw new Error('[lumi] The session changed while choosing a file.')
       const progress = progressReporter(progressPath)
       try {
         const result = file instanceof Blob
           ? await uploadImport(context, queryClient, file, { ...params, url: params.url!, onProgress: progress.report })
           : await runImport(context, queryClient, file, { ...params, onProgress: progress.report })
-        if (resultPath && active())
+        if (resultPath && active() && version === sessionVersion(context))
           store.set(resultPath, result)
         return result
       }

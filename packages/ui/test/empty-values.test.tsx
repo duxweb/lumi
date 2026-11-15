@@ -4,7 +4,12 @@ import { createRoot } from 'react-dom/client'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { chartPoints, formatChartValue } from '../src/charts/model.js'
-import { LumiCascader, LumiCheckboxGroup, LumiDateRangePicker, LumiDialog, LumiInput, LumiMultiSelect, LumiNumberInput, LumiPagination, LumiTable, LumiTagSelect, LumiTagsInput, LumiTextarea } from '../src/react/index.js'
+import { LumiCascader } from '../src/components/cascader.js'
+import { LumiCheckboxGroup, LumiInput, LumiMultiSelect, LumiNumberInput, LumiTagsInput, LumiTextarea } from '../src/components/controls.js'
+import { LumiDateRangePicker } from '../src/components/datetime.js'
+import { LumiPagination, LumiTable } from '../src/components/display.js'
+import { LumiDialog } from '../src/components/overlays.js'
+import { LumiTagSelect } from '../src/components/tag-select.js'
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 

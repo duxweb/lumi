@@ -3,7 +3,7 @@ title: "@duxweb/lumi API"
 description: "@duxweb/lumi 的全部公开方法、类型、参数和返回值。"
 ---
 
-Native json-render integration and data services. 入口：`@duxweb/lumi`、`@duxweb/lumi/catalog`、`@duxweb/lumi/validation-json-schema`。共 528 个公开符号，由 TypeScript 入口自动生成。
+Native json-render integration and data services. 入口：`@duxweb/lumi`、`@duxweb/lumi/catalog`、`@duxweb/lumi/validation-json-schema`。共 529 个公开符号，由 TypeScript 入口自动生成。
 
 ## 函数
 
@@ -94,6 +94,7 @@ applyOptimisticChange(client: QueryClient, context: LumiContext, target: { resou
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -503,6 +504,8 @@ client's failures to the auth's `onError`; an unsigned one's to the caller.
 All of that is for the client's own backend: `baseUrl`, the page's site and
 `trustedOrigins`. A full URL to anywhere else is sent plain, so a page that
 names a foreign address never carries the reader's credentials there.
+Owned requests refuse automatic redirects; use the final API address.
+An explicit manual redirect is available to loaders that check every hop.
 
 ```typescript
 createHttpClient(options?: HttpClientOptions): HttpClient
@@ -774,6 +777,7 @@ createLumi(config?: LumiConfig): LumiContext
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -808,6 +812,7 @@ createLumiHandlers(context: LumiContext, queryClient: QueryClient, store: Action
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -1229,6 +1234,7 @@ dataProviderHttp(context: LumiContext, dataProviderName?: string): HttpClient
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -1280,6 +1286,7 @@ dataProviderPath(context: LumiContext, dataProviderName: string | undefined, url
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -1355,6 +1362,7 @@ downloadExport(context: LumiContext, client: QueryClient | undefined, input: Run
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -1453,6 +1461,7 @@ executeAccountAction(context: LumiContext, operation: AuthAccountAction, params?
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -1497,6 +1506,7 @@ executeAuthAction(context: LumiContext, client: QueryClient, operation: SessionO
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -1541,6 +1551,7 @@ executeMutation<T extends object>(context: LumiContext, client: QueryClient, req
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -1591,6 +1602,7 @@ executeRequest<T>(context: LumiContext, request: () => Promise<T>, client?: Quer
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -1628,6 +1640,7 @@ executeWrite<T extends object>(context: LumiContext, client: QueryClient, option
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -1641,7 +1654,7 @@ executeWrite<T extends object>(context: LumiContext, client: QueryClient, option
 | `meta` | `Meta \| undefined` | 否 | 原样传给 DataProvider 的扩展数据。 |
 | `mutationMode` | `MutationMode \| undefined` | 否 | Falls back to `config.mutationMode`; only updates and deletes with ids use it. |
 | `operation` | `WriteOperation` | 是 |  |
-| `request` | `() => Promise<T>` | 是 | Sends the write to the DataProvider. |
+| `request` | `(() => Promise<T>) \| undefined` | 否 | Overrides the standard DataProvider operation when a host needs a custom write. |
 | `resource` | `string` | 是 | 交给 DataProvider 解释的数据目标，如 `orders`。 |
 | `undoableTimeout` | `number \| undefined` | 否 |  |
 | `values` | `unknown` | 否 | The values sent, recorded in the audit log and patched into the cache. |
@@ -1834,6 +1847,7 @@ fetchAllRecords<T = Record<string, unknown>>(context: LumiContext, client: Query
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -2093,6 +2107,38 @@ generateAgentId(): string
 
 返回 `string`。
 
+### getActionParams
+
+The same action parameters for document validation and author tooling.
+
+```typescript
+getActionParams(catalog: Catalog, name: string): z.ZodType | undefined
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `catalog` | `Catalog<SchemaDefinition<SchemaType<string, unknown>, SchemaType<string, unknown>>, unknown>` | 是 |  |
+| `name` | `string` | 是 |  |
+
+返回 `z.ZodType<unknown, unknown, z.core.$ZodTypeInternals<unknown, unknown>> | undefined`。
+
+### getActionParams
+
+导入路径：`@duxweb/lumi/catalog`
+
+The same action parameters for document validation and author tooling.
+
+```typescript
+getActionParams(catalog: Catalog, name: string): z.ZodType | undefined
+```
+
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `catalog` | `Catalog<SchemaDefinition<SchemaType<string, unknown>, SchemaType<string, unknown>>, unknown>` | 是 |  |
+| `name` | `string` | 是 |  |
+
+返回 `z.ZodType<unknown, unknown, z.core.$ZodTypeInternals<unknown, unknown>> | undefined`。
+
 ### getLocaleDirection
 
 `rtl` for right-to-left languages such as Arabic and Hebrew, else `ltr`.
@@ -2222,6 +2268,7 @@ importRecords(context: LumiContext, client: QueryClient | undefined, records: re
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -2281,6 +2328,7 @@ invalidateResourceQueries(queryClient: QueryClient, lumi: LumiContext, resource:
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -3007,20 +3055,6 @@ queryKeyAction(queryKey: readonly unknown[]): unknown
 
 返回 `unknown`。
 
-### queryResets
-
-How many times this client's Lumi queries were reset for a new tenant; lists drop their kept rows across one.
-
-```typescript
-queryResets(client: QueryClient): number
-```
-
-| 参数 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| `client` | `QueryClient` | 是 |  |
-
-返回 `number`。
-
 ### readMany
 
 Reads several records: through `getMany` when the provider has it, else one
@@ -3125,6 +3159,7 @@ recordAudit(context: LumiContext, event: AuditLogEvent, client?: QueryClient, da
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -3242,6 +3277,7 @@ resolveDataTarget(context: LumiContext, target: DataTarget): ResolvedDataTarget
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -3373,6 +3409,7 @@ runExport(context: LumiContext, client: QueryClient | undefined, input: RunExpor
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -3429,6 +3466,7 @@ runImport(context: LumiContext, client: QueryClient | undefined, file: Pick<Tran
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -3497,6 +3535,7 @@ runMutationMode<T>(context: LumiContext, client: QueryClient, options: RunMutati
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -3546,6 +3585,7 @@ sendFile(context: LumiContext | undefined, file: File, options: UploadOptions, o
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -3585,7 +3625,7 @@ serverFieldIssues(error: unknown): FormValidationIssue[] | undefined
 
 ### sessionVersion
 
-Counts a context's session changes (sign in, sign out, sign up), so work started under one session can tell it was replaced.
+Counts account and tenant changes, including changes made through derived contexts.
 
 ```typescript
 sessionVersion(context: LumiContext): number
@@ -3610,6 +3650,7 @@ sessionVersion(context: LumiContext): number
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -3758,6 +3799,7 @@ uploadFiles(context: LumiContext | undefined, input: File | File[] | FileList, o
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -3811,6 +3853,7 @@ uploadImport(context: LumiContext, client: QueryClient | undefined, file: File, 
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -4524,6 +4567,7 @@ useLumi(): LumiContext
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -6075,7 +6119,7 @@ const uploadRequestSchema: z.ZodObject<{ sign: z.ZodOptional<z.ZodObject<{ url: 
 Update and delete also choose when the change shows; forms always wait for the server.
 
 ```typescript
-const writeParamsSchema: z.ZodObject<{ resource: z.ZodString; dataProviderName: z.ZodOptional<z.ZodString>; meta: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>; id: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>; values: z.ZodOptional<...>; resultPath: z.ZodOptional<...>; mutationMode: z.ZodOptional<...>; undoableTim...
+const writeParamsSchema: z.ZodObject<{ resource: z.ZodString; dataProviderName: z.ZodOptional<z.ZodString>; meta: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>; values: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>; resultPath: z.ZodOptional<...>; id: z.ZodUnion<...>; mutationMode: z.ZodOptional<...>; undoableTimeout: z.ZodO...
 ```
 
 ### zhCN
@@ -7654,6 +7698,7 @@ interface LumiContext
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -7679,6 +7724,7 @@ interface LumiContext
 | `liveProvider` | `LiveProvider \| undefined` | 否 | Changes pushed by the backend. |
 | `notificationProvider` | `NotificationProvider \| undefined` | 否 | Draws notification cards. |
 | `routerProvider` | `RouterProvider \| undefined` | 否 | Navigation and the current address. |
+| `session` | `LumiSession` | 是 | Stable account/tenant identity shared by derived contexts and async work. |
 | `tenantProvider` | `TenantProvider \| undefined` | 否 | The current tenant. |
 | `toastProvider` | `ToastProvider \| undefined` | 否 | Draws toasts. |
 | `validator` | `Validator` | 是 | Checks form values against `rules`. |
@@ -9070,7 +9116,7 @@ interface WriteOptions
 | `meta` | `Meta \| undefined` | 否 | 原样传给 DataProvider 的扩展数据。 |
 | `mutationMode` | `MutationMode \| undefined` | 否 | Falls back to `config.mutationMode`; only updates and deletes with ids use it. |
 | `operation` | `WriteOperation` | 是 |  |
-| `request` | `() => Promise<T>` | 是 | Sends the write to the DataProvider. |
+| `request` | `(() => Promise<T>) \| undefined` | 否 | Overrides the standard DataProvider operation when a host needs a custom write. |
 | `resource` | `string` | 是 | 交给 DataProvider 解释的数据目标，如 `orders`。 |
 | `undoableTimeout` | `number \| undefined` | 否 |  |
 | `values` | `unknown` | 否 | The values sent, recorded in the audit log and patched into the cache. |
@@ -9777,13 +9823,13 @@ type WriteOperation = WriteOperation
 导入路径：`@duxweb/lumi/catalog`
 
 ```typescript
-type WriteParams = { resource: string; dataProviderName?: string | undefined; meta?: Record<string, unknown> | undefined; id?: string | number | undefined; values?: Record<string, unknown> | undefined; resultPath?: string | undefined; mutationMode?: "pessimistic" | ... 2 more ... | undefined; undoableTimeout?: number | undefined; }
+type WriteParams = { resource: string; id: string | number; dataProviderName?: string | undefined; meta?: Record<string, unknown> | undefined; values?: Record<string, unknown> | undefined; resultPath?: string | undefined; mutationMode?: "pessimistic" | ... 2 more ... | undefined; undoableTimeout?: number | undefined; }
 ```
 
 | 名称 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | `dataProviderName` | `string \| undefined` | 否 | 多数据源名称；省略时使用 default。 |
-| `id` | `string \| number \| undefined` | 否 | 记录主键。 |
+| `id` | `string \| number` | 是 | 记录主键。 |
 | `meta` | `Record<string, unknown> \| undefined` | 否 | 原样传给 DataProvider 的扩展数据。 |
 | `mutationMode` | `"pessimistic" \| "optimistic" \| "undoable" \| undefined` | 否 |  |
 | `resource` | `string` | 是 | 交给 DataProvider 解释的数据目标，如 `orders`。 |

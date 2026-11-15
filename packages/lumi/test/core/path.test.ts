@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { assignOwnProperties, getPathValue, pathContains, pathMatchesFields, setPathValue } from '../../src/core/index'
+import { assignOwnProperties, getPathValue, pathContains, pathMatchesFields, setPathValue } from '../../src/core/path.js'
 
 describe('data paths', () => {
   it('matches nested and array field boundaries without prefix collisions', () => {

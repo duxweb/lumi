@@ -1,9 +1,15 @@
-import type { NotificationParams, TransferFile } from '../../src/core/index.js'
+import type { NotificationParams } from '../../src/core/providers/notification.js'
+import type { TransferFile } from '../../src/core/transfer.js'
 import { createStateStore } from '@json-render/core'
 import { QueryClient } from '@tanstack/query-core'
 import { describe, expect, it, vi } from 'vitest'
 import { exportListParamsSchema } from '../../src/catalog/index.js'
-import { createHttpClient, createLumi, createLumiHandlers, createSimpleDataProvider, downloadExport, exportFile, fetchAllRecords, importRecords, parseCsv, readRecords, runExport, toCsv } from '../../src/core/index.js'
+import { createLumiHandlers } from '../../src/core/actions.js'
+import { createLumi } from '../../src/core/context.js'
+import { createSimpleDataProvider } from '../../src/core/data/simpleDataProvider.js'
+import { createHttpClient } from '../../src/core/http.js'
+import { createTenantProvider } from '../../src/core/providers/tenant.js'
+import { downloadExport, exportFile, fetchAllRecords, importRecords, parseCsv, readRecords, runExport, toCsv } from '../../src/core/transfer.js'
 
 const products = Array.from({ length: 23 }, (_, index) => ({ id: index + 1, name: `Lamp ${index + 1}`, price: index * 10, tags: { color: 'red' } }))
 
@@ -360,4 +366,16 @@ describe('import performed by the backend', () => {
     await expect(setup().handlers.importList!({ resource: 'products', url: '/products/import' })).rejects.toMatchObject({ status: 422, message: 'Not a spreadsheet' })
     vi.unstubAllGlobals()
   })
+})
+
+it('import must not send later rows to another tenant', async () => {
+  const tenant = createTenantProvider({ initial: 'A' })
+  const writes: string[] = []
+  const context = createLumi({ tenantProvider: tenant, dataProvider: { getList: async () => ({ data: [], total: 0 }), create: async () => {
+    writes.push(tenant.get()!)
+    tenant.set('B')
+    return { data: {} }
+  } } as never })
+  await expect(importRecords(context, undefined, [{ id: 1 }, { id: 2 }], { resource: 'orders' })).rejects.toThrow('session changed')
+  expect(writes).toEqual(['A'])
 })

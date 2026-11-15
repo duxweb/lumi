@@ -64,6 +64,7 @@ export const mutationParamsSchema = dataTargetSchema.extend({
 }).strict()
 /** Update and delete also choose when the change shows; forms always wait for the server. */
 export const writeParamsSchema = mutationParamsSchema.extend({
+  id: z.union([z.string(), z.number()]),
   mutationMode: z.enum(['pessimistic', 'optimistic', 'undoable']).optional(),
   undoableTimeout: z.number().int().positive().optional(),
 })

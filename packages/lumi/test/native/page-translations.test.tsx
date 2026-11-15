@@ -7,7 +7,7 @@ import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, describe, expect, it } from 'vitest'
 import { z } from 'zod'
-import { createI18nProvider, createLumi, lumiActionDefinitions, validateDocument, withPageTranslations } from '../../src/index.js'
+import { createI18nProvider, createLumi, createSpecLoader, lumiActionDefinitions, validateDocument, withPageTranslations } from '../../src/index.js'
 import { LumiSpecPage } from '../../src/react/index.js'
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true
@@ -157,4 +157,26 @@ describe('translations in a Spec', () => {
     expect(validateDocument(page({ 'zh-CN': 'locales/zh-CN.json' }), catalog).valid).toBe(false)
     expect(validateDocument({ ...ordersPage, extra: {} }, catalog).valid).toBe(false)
   })
+})
+
+it('partitions remote page translations by request headers within the same session', async () => {
+  const context = createLumi()
+  const loader = createSpecLoader(catalog, {
+    fetcher: async (_input, init) => new Response(JSON.stringify({
+      root: 'text',
+      elements: { text: { type: 'Text', props: { text: new Headers(init?.headers).get('Accept-Language') } } },
+    })),
+  })
+  const host = document.createElement('div')
+  const root = createRoot(host)
+  roots.push(() => act(() => root.unmount()))
+  const show = (locale: string) => act(async () => root.render(
+    <LumiSpecPage context={context} catalog={catalog} registry={registry} src="/page.json" loader={loader} loadOptions={{ headers: { 'Accept-Language': locale } }} agent={false} />,
+  ))
+  await show('en-US')
+  expect(host.textContent).toBe('en-US')
+  await show('zh-CN')
+  expect(host.textContent).toBe('zh-CN')
+  await show('en-US')
+  expect(host.textContent).toBe('en-US')
 })

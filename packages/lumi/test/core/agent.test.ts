@@ -1,14 +1,11 @@
-import type { AgentChatMessage, AgentChunk, AgentRequest, AgentTransport } from '../../src/core/index.js'
+import type { AgentChatMessage } from '../../src/core/agent/merge.js'
+import type { AgentRequest, AgentTransport } from '../../src/core/agent/session.js'
+import type { AgentChunk } from '../../src/core/agent/stream.js'
 import { describe, expect, it, vi } from 'vitest'
-import {
-  AgentRequestError,
-  applyAgentChunk,
-  createAgentMergeState,
-  createAgentSession,
-  createHttpAgentTransport,
-  formatAgentStream,
-  parseAgentStream,
-} from '../../src/core/index.js'
+import { AgentRequestError, createHttpAgentTransport } from '../../src/core/agent/http.js'
+import { applyAgentChunk, createAgentMergeState } from '../../src/core/agent/merge.js'
+import { createAgentSession } from '../../src/core/agent/session.js'
+import { formatAgentStream, parseAgentStream } from '../../src/core/agent/stream.js'
 
 function bytes(...pieces: string[]): ReadableStream<Uint8Array> {
   const encoder = new TextEncoder()

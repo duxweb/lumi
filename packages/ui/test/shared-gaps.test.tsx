@@ -9,9 +9,15 @@ import { act, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { uiComponentDefinitions } from '../src/catalog/index.js'
+import { uiComponentDefinitions } from '../src/catalog/definitions.js'
+import { LumiButton } from '../src/components/base.js'
+import { LumiTagsInput } from '../src/components/controls.js'
+import { LumiBadge } from '../src/components/display.js'
+import { LumiTimeline } from '../src/components/extensions.js'
+import { LumiForm, LumiFormField } from '../src/components/form.js'
+import { LumiImageGrid } from '../src/components/upload.js'
 import { resolveOutlineIcon } from '../src/icons.js'
-import { LumiBadge, LumiButton, LumiForm, LumiFormField, LumiImageGrid, LumiTagsInput, LumiTimeline, uiRegistry } from '../src/react/index.js'
+import { uiRegistry } from '../src/react/index.js'
 
 const roots: Array<{ root: ReturnType<typeof createRoot>, host: HTMLElement }> = []
 

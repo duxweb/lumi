@@ -1,34 +1,13 @@
 import type { QueryClient } from '@tanstack/react-query'
 import type { TenantOption } from '../core/providers/tenant.js'
 import { useCallback, useEffect, useSyncExternalStore } from 'react'
-import { lumiQueryKey } from '../core/query.js'
+import { resetIdentityQueries } from '../core/query-reset.js'
 import { useLumi } from './context.js'
 import { noSubscribe } from './subscribe.js'
 
 // The tenant each query client last fetched for.
 const seen = new WeakMap<QueryClient, string | undefined>()
 const NO_OPTIONS: readonly TenantOption[] = []
-const resets = new WeakMap<QueryClient, number>()
-
-/** How many times this client's Lumi queries were reset for a new tenant; lists drop their kept rows across one. */
-export function queryResets(client: QueryClient): number {
-  return resets.get(client) ?? 0
-}
-
-const LUMI_QUERIES = { queryKey: lumiQueryKey() }
-
-/**
- * Clears every Lumi query in the same call that switched the tenant, before
- * React renders again, so no frame shows the old tenant's rows under the new
- * one; the mounted queries then fetch for the new tenant.
- */
-function resetTenantQueries(client: QueryClient): void {
-  resets.set(client, queryResets(client) + 1)
-  void client.cancelQueries(LUMI_QUERIES)
-  client.removeQueries({ ...LUMI_QUERIES, predicate: query => query.getObserversCount() === 0 })
-  // `resetQueries` returns its state to the initial one synchronously, then refetches.
-  void client.resetQueries(LUMI_QUERIES)
-}
 
 export interface UseTenantResult {
   /** The current tenant's value, undefined before one is chosen. */
@@ -71,7 +50,7 @@ export function useTenantReset(client: QueryClient): void {
       if (next === seen.get(client))
         return
       seen.set(client, next)
-      resetTenantQueries(client)
+      void resetIdentityQueries(client)
       liveProvider?.reconnect?.()
     }
     // A switch made while nothing was listening is caught on mount.

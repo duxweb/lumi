@@ -5,7 +5,9 @@ import { resolve } from 'node:path'
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, describe, expect, it } from 'vitest'
-import { LumiMenu, LumiPopconfirm, LumiPopover, LumiSelect, LumiTooltip } from '../src/react/index.js'
+import { LumiSelect } from '../src/components/controls.js'
+import { LumiMenu, LumiTooltip } from '../src/components/interactive.js'
+import { LumiPopconfirm, LumiPopover } from '../src/components/popover.js'
 
 const roots: Array<{ root: ReturnType<typeof createRoot>, host: HTMLElement }> = []
 

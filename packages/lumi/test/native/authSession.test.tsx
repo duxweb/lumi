@@ -5,6 +5,7 @@ import { notifyManager, QueryClient } from '@tanstack/react-query'
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { executeAuthAction } from '../../src/core/services.js'
 import { LumiProvider, useCan, useCheck, useIdentity, useList, useLogin, useLogout, usePermissions } from '../../src/react/index'
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
@@ -252,7 +253,9 @@ describe('authentication session cache isolation', () => {
     let finish!: (value: string[]) => void
     const pending = session.queryClient.fetchQuery({
       queryKey: slowKey,
-      queryFn: () => new Promise<string[]>((resolve) => { finish = resolve }),
+      queryFn: () => new Promise<string[]>((resolve) => {
+        finish = resolve
+      }),
     }).catch(() => undefined)
 
     await session.change(action)
@@ -282,4 +285,36 @@ describe('authentication session cache isolation', () => {
     expect(session.queryClient.getQueryData(privateAccessKey)).toEqual({ can: true })
     expect(session.queryClient.getQueryData(hostKey)).toEqual({ density: 'compact' })
   })
+})
+
+it('a pending page must not keep previous user rows after a session reset', async () => {
+  let current = 'A'
+  const context = createLumi({ authProvider: { login: async () => {
+    current = 'B'
+    return { success: true }
+  } } as never, dataProvider: { getList: async ({ pagination }: { pagination: { page: number } }) => pagination.page === 1 ? { data: [{ id: 1, user: current }], total: 20 } : new Promise(() => {}) } as never })
+  const client = new QueryClient()
+  let data: ReturnType<typeof useList>['data']
+  function Probe({ page }: { page: number }) {
+    data = useList({ resource: 'orders', pagination: { page, pageSize: 10 } }).data
+    return null
+  }
+  const root = createRoot(document.createElement('div'))
+  const render = (page: number) => root.render(<LumiProvider context={context} queryClient={client} registry={{}}><Probe page={page} /></LumiProvider>)
+  try {
+    await act(async () => render(1))
+    await act(async () => {
+      await vi.waitFor(() => expect(data?.data[0].user).toBe('A'))
+    })
+    await act(async () => render(2))
+    await act(async () => {
+      void executeAuthAction(context, client, 'login')
+      await vi.waitFor(() => expect(context.session.getSnapshot()).toBe(1))
+    })
+    expect(data?.data[0]?.user).not.toBe('A')
+  }
+  finally {
+    await act(async () => root.unmount())
+    client.clear()
+  }
 })

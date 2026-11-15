@@ -1,0 +1,503 @@
+{
+  "root": "fragment-1",
+  "elements": {
+    "fragment-1": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "card-2",
+        "card-19",
+        "card-42"
+      ]
+    },
+    "card-2": {
+      "type": "Card",
+      "props": {
+        "title": "Button",
+        "description": "Six appearances, three sizes, four shapes, plus loading and disabled."
+      },
+      "children": [
+        "fragment-3"
+      ]
+    },
+    "fragment-3": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "fragment-4",
+        "fragment-11"
+      ]
+    },
+    "fragment-4": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "button-5",
+        "button-6",
+        "button-7",
+        "button-8",
+        "button-9",
+        "button-10"
+      ]
+    },
+    "button-5": {
+      "type": "Button",
+      "props": {
+        "label": "Solid",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "button-6": {
+      "type": "Button",
+      "props": {
+        "label": "Soft",
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "button-7": {
+      "type": "Button",
+      "props": {
+        "label": "Outline",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "button-8": {
+      "type": "Button",
+      "props": {
+        "label": "Ghost",
+        "appearance": "ghost"
+      },
+      "children": []
+    },
+    "button-9": {
+      "type": "Button",
+      "props": {
+        "label": "Link",
+        "appearance": "link"
+      },
+      "children": []
+    },
+    "button-10": {
+      "type": "Button",
+      "props": {
+        "label": "Danger",
+        "appearance": "danger"
+      },
+      "children": []
+    },
+    "fragment-11": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "button-12",
+        "button-13",
+        "button-14",
+        "button-15",
+        "button-16",
+        "button-17",
+        "button-18"
+      ]
+    },
+    "button-12": {
+      "type": "Button",
+      "props": {
+        "label": "Small",
+        "size": "sm"
+      },
+      "children": []
+    },
+    "button-13": {
+      "type": "Button",
+      "props": {
+        "label": "Medium",
+        "size": "md"
+      },
+      "children": []
+    },
+    "button-14": {
+      "type": "Button",
+      "props": {
+        "label": "Large",
+        "size": "lg"
+      },
+      "children": []
+    },
+    "button-15": {
+      "type": "Button",
+      "props": {
+        "label": "Pill",
+        "shape": "pill"
+      },
+      "children": []
+    },
+    "button-16": {
+      "type": "Button",
+      "props": {
+        "label": "Saving",
+        "loading": true
+      },
+      "children": []
+    },
+    "button-17": {
+      "type": "Button",
+      "props": {
+        "label": "Disabled",
+        "disabled": true
+      },
+      "children": []
+    },
+    "button-18": {
+      "type": "Button",
+      "props": {
+        "label": "Block",
+        "block": true
+      },
+      "children": []
+    },
+    "card-19": {
+      "type": "Card",
+      "props": {
+        "title": "Badge",
+        "description": "Six tones across three appearances."
+      },
+      "children": [
+        "fragment-20"
+      ]
+    },
+    "fragment-20": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "fragment-21",
+        "fragment-28",
+        "fragment-35"
+      ]
+    },
+    "fragment-21": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "badge-22",
+        "badge-23",
+        "badge-24",
+        "badge-25",
+        "badge-26",
+        "badge-27"
+      ]
+    },
+    "badge-22": {
+      "type": "Badge",
+      "props": {
+        "label": "neutral",
+        "tone": "neutral",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "badge-23": {
+      "type": "Badge",
+      "props": {
+        "label": "primary",
+        "tone": "primary",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "badge-24": {
+      "type": "Badge",
+      "props": {
+        "label": "success",
+        "tone": "success",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "badge-25": {
+      "type": "Badge",
+      "props": {
+        "label": "warning",
+        "tone": "warning",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "badge-26": {
+      "type": "Badge",
+      "props": {
+        "label": "danger",
+        "tone": "danger",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "badge-27": {
+      "type": "Badge",
+      "props": {
+        "label": "info",
+        "tone": "info",
+        "appearance": "solid"
+      },
+      "children": []
+    },
+    "fragment-28": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "badge-29",
+        "badge-30",
+        "badge-31",
+        "badge-32",
+        "badge-33",
+        "badge-34"
+      ]
+    },
+    "badge-29": {
+      "type": "Badge",
+      "props": {
+        "label": "neutral",
+        "tone": "neutral",
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "badge-30": {
+      "type": "Badge",
+      "props": {
+        "label": "primary",
+        "tone": "primary",
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "badge-31": {
+      "type": "Badge",
+      "props": {
+        "label": "success",
+        "tone": "success",
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "badge-32": {
+      "type": "Badge",
+      "props": {
+        "label": "warning",
+        "tone": "warning",
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "badge-33": {
+      "type": "Badge",
+      "props": {
+        "label": "danger",
+        "tone": "danger",
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "badge-34": {
+      "type": "Badge",
+      "props": {
+        "label": "info",
+        "tone": "info",
+        "appearance": "soft"
+      },
+      "children": []
+    },
+    "fragment-35": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm",
+        "wrap": true
+      },
+      "children": [
+        "badge-36",
+        "badge-37",
+        "badge-38",
+        "badge-39",
+        "badge-40",
+        "badge-41"
+      ]
+    },
+    "badge-36": {
+      "type": "Badge",
+      "props": {
+        "label": "neutral",
+        "tone": "neutral",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "badge-37": {
+      "type": "Badge",
+      "props": {
+        "label": "primary",
+        "tone": "primary",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "badge-38": {
+      "type": "Badge",
+      "props": {
+        "label": "success",
+        "tone": "success",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "badge-39": {
+      "type": "Badge",
+      "props": {
+        "label": "warning",
+        "tone": "warning",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "badge-40": {
+      "type": "Badge",
+      "props": {
+        "label": "danger",
+        "tone": "danger",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "badge-41": {
+      "type": "Badge",
+      "props": {
+        "label": "info",
+        "tone": "info",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "card-42": {
+      "type": "Card",
+      "props": {
+        "title": "Alert",
+        "description": "A message about the page, in the tone that matches its weight."
+      },
+      "children": [
+        "fragment-43"
+      ]
+    },
+    "fragment-43": {
+      "type": "Grid",
+      "props": {
+        "columns": 2
+      },
+      "children": [
+        "alert-44",
+        "alert-45",
+        "alert-46",
+        "alert-47",
+        "alert-48",
+        "alert-49",
+        "alert-51",
+        "alert-50"
+      ]
+    },
+    "alert-44": {
+      "type": "Alert",
+      "props": {
+        "tone": "neutral",
+        "title": "neutral",
+        "message": "A neutral message with the next step in it."
+      },
+      "children": []
+    },
+    "alert-45": {
+      "type": "Alert",
+      "props": {
+        "tone": "primary",
+        "title": "primary",
+        "message": "A primary message with the next step in it."
+      },
+      "children": []
+    },
+    "alert-46": {
+      "type": "Alert",
+      "props": {
+        "tone": "success",
+        "title": "success",
+        "message": "A success message with the next step in it."
+      },
+      "children": []
+    },
+    "alert-47": {
+      "type": "Alert",
+      "props": {
+        "tone": "warning",
+        "title": "warning",
+        "message": "A warning message with the next step in it."
+      },
+      "children": []
+    },
+    "alert-48": {
+      "type": "Alert",
+      "props": {
+        "tone": "danger",
+        "title": "danger",
+        "message": "A danger message with the next step in it."
+      },
+      "children": []
+    },
+    "alert-49": {
+      "type": "Alert",
+      "props": {
+        "tone": "info",
+        "title": "info",
+        "message": "An info message with the next step in it."
+      },
+      "children": []
+    },
+    "alert-50": {
+      "type": "Alert",
+      "props": {
+        "tone": "info",
+        "title": "Dismissible",
+        "message": "This one can be closed.",
+        "closable": true
+      },
+      "children": []
+    },
+    "alert-51": {
+      "type": "Alert",
+      "props": {
+        "tone": "warning",
+        "message": "A short notice can drop the title."
+      },
+      "children": []
+    }
+  },
+  "state": {}
+}

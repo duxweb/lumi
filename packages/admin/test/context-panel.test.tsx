@@ -6,7 +6,9 @@ import { act, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { LumiAdminDualShell, LumiAdminShellProvider, ShellContextPanel } from '../src/react/index.js'
+import { LumiAdminDualShell } from '../src/react/components/LumiAdminDualShell.js'
+import { LumiAdminShellProvider } from '../src/react/components/ShellContext.js'
+import { ShellContextPanel } from '../src/react/components/ShellContextPanel.js'
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 

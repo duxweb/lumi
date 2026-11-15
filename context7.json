@@ -4,7 +4,7 @@
   "description": "JSON-driven admin frontend for backends and AI, built on native json-render. Pages, menus and themes are JSON validated against a component Catalog; a prebuilt CDN script renders them as a full React admin with data, forms, auth and an AI assistant.",
   "branch": "main",
   "folders": ["apps/site/src/content/docs"],
-  "excludeFolders": ["tasks", "plan", "packages", "apps/admin", "apps/json-api", "examples", "e2e", "scripts"],
+  "excludeFolders": ["plan", "packages", "apps/admin", "apps/json-api", "examples", "e2e", "scripts"],
   "excludeFiles": ["AGENTS.md", "CLAUDE.md", "CHANGELOG.md"],
   "rules": [
     "Write pages as native json-render Spec JSON: root, elements with type, props and children, and optional state.",

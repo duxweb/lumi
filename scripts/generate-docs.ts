@@ -597,7 +597,7 @@ async function writePackageApi(packageApis: PackageApi[]): Promise<void> {
   const directory = join(contentRoot, 'api', 'packages')
   await replaceDirectory(directory)
   await writeFile(join(contentRoot, 'api', 'index.mdx'), page([
-    frontmatter('公开 API', 'Lumi 六个包的公开入口和符号，由 TypeScript 源码自动生成。'),
+    frontmatter('公开 API', `Lumi ${packageApis.length} 个包的公开入口和符号，由 TypeScript 源码自动生成。`),
     '只用 CDN 时不需要这些 API。用 npm 和 TypeScript 时，每个包一页，列出全部公开函数、类型、参数和返回值。',
     table(['包', '入口', '公开符号'], packageApis.map(pkg => [`[${code(pkg.name)}](/api/packages/${pkg.slug}/)`, pkg.entrypoints.map(code).join('、'), String(pkg.items.length)])),
   ]))

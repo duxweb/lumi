@@ -2,17 +2,18 @@ import type { QueryClient } from '@tanstack/query-core'
 import type { LumiContext } from './context.js'
 import type { AuditLogEvent } from './providers/audit.js'
 import type { AuthAccountAction, AuthActionResponse } from './providers/auth.js'
+import type { LumiSession } from './session.js'
 import type { ID } from './types.js'
 import { isUnsignedFailure } from './http.js'
 import { invalidateResourceQueries } from './invalidation.js'
 import { handleAuthProviderError } from './providers/auth.js'
+import { resetIdentityQueries } from './query-reset.js'
 import { auditLogQueryKey } from './query.js'
 
-const sessionVersions = new WeakMap<LumiContext, number>()
-const sessionQueues = new WeakMap<LumiContext, Promise<unknown>>()
-/** Counts a context's session changes (sign in, sign out, sign up), so work started under one session can tell it was replaced. */
+const sessionQueues = new WeakMap<LumiSession, Promise<unknown>>()
+/** Counts account and tenant changes, including changes made through derived contexts. */
 export function sessionVersion(context: LumiContext): number {
-  return sessionVersions.get(context) ?? 0
+  return context.session.getSnapshot()
 }
 
 /** The auth operations that may change who is signed in; a new account can be signed in on creation. */
@@ -47,7 +48,7 @@ function changeSession(
   params?: unknown,
   expectedVersion?: number,
 ): Promise<AuthActionResponse> {
-  const previous = sessionQueues.get(context) ?? Promise.resolve()
+  const previous = sessionQueues.get(context.session) ?? Promise.resolve()
   const request = previous
     .catch(() => {})
     .then(async () => {
@@ -58,7 +59,7 @@ function changeSession(
         throw new Error(context.authProvider ? `[lumi] authProvider.${operation} is not configured` : '[lumi] authProvider is not configured')
       const result = await action.call(context.authProvider, params)
       if (result.success !== false) {
-        sessionVersions.set(context, sessionVersion(context) + 1)
+        context.session.advance()
         // An open event stream was signed for the previous reader.
         context.liveProvider?.reconnect?.()
       }
@@ -66,10 +67,10 @@ function changeSession(
         await resetSessionQueries(client, result, expectedVersion === undefined)
       return result
     })
-  sessionQueues.set(context, request)
+  sessionQueues.set(context.session, request)
   const clear = (): void => {
-    if (sessionQueues.get(context) === request)
-      sessionQueues.delete(context)
+    if (sessionQueues.get(context.session) === request)
+      sessionQueues.delete(context.session)
   }
   void request.then(clear, clear)
   return request
@@ -92,7 +93,7 @@ export async function executeRequest<T>(
     if (isUnsignedFailure(cause))
       throw error
     // Refetches inside an ongoing session reset must not recursively enqueue logout.
-    if (version === sessionVersion(context) && !sessionQueues.has(context)) {
+    if (version === sessionVersion(context) && !sessionQueues.has(context.session)) {
       await handleAuthProviderError(
         context.authProvider && {
           onError: async (error) => {
@@ -138,11 +139,12 @@ export function recordAudit(context: LumiContext, event: AuditLogEvent, client?:
   if (!create)
     return
   const clean = Object.fromEntries(Object.entries(event).filter(([, value]) => value !== undefined)) as unknown as AuditLogEvent
+  const version = sessionVersion(context)
   void Promise.resolve()
-    .then(() => create(clean))
+    .then(() => version === sessionVersion(context) ? create(clean) : undefined)
     // The resource refetched when the write landed, maybe before the entry
     // existed; its log reads again now.
-    .then(() => client?.invalidateQueries({ queryKey: auditLogQueryKey(event.resource, dataProviderName) }))
+    .then(() => version === sessionVersion(context) ? client?.invalidateQueries({ queryKey: auditLogQueryKey(event.resource, dataProviderName) }) : undefined)
     .catch(error => console.warn('[lumi] The audit log refused an event.', error))
 }
 /** Runs a write, records it in the audit log, then refetches the resource's queries; a failed refetch is reported as `refreshError` on the result, never as a failed write. */
@@ -160,9 +162,11 @@ export async function executeMutation<T extends object>(
 ): Promise<MutationResult<T>> {
   const version = sessionVersion(context)
   const result = await executeRequest(context, request, client)
+  if (version !== sessionVersion(context))
+    return result
   if (target.resource && target.audit)
     recordAudit(context, { ...target.audit, resource: target.resource, ids: target.audit.ids ?? createdIds(result) }, client, target.dataProviderName)
-  if (!target.resource || version !== sessionVersion(context))
+  if (!target.resource)
     return result
   try {
     await invalidateResourceQueries(
@@ -190,18 +194,5 @@ export async function resetSessionQueries(
 ): Promise<void> {
   if (result.success === false)
     return
-  const filters = { queryKey: ['lumi'] }
-  await client.cancelQueries(filters)
-  client.removeQueries({
-    ...filters,
-    predicate: query => query.getObserversCount() === 0,
-  })
-  if (refetch) {
-    await client.resetQueries(filters)
-  }
-  else {
-    // An expired session must erase mounted private data without starting another 401 loop.
-    for (const query of client.getQueryCache().findAll(filters))
-      query.reset()
-  }
+  await resetIdentityQueries(client, refetch)
 }

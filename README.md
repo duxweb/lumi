@@ -4,6 +4,8 @@ Lumi builds admin interfaces from JSON. Pages are native [json-render](https://j
 
 Documentation (Chinese) lives in `apps/site`; run `pnpm site:dev` and open http://127.0.0.1:5179.
 
+GitHub Pages deploys the homepage, docs, Playground and full browser demo together on every push to `main`, through `.github/workflows/pages.yml`. Enable GitHub Actions as the repository's Pages source. The demo lives at `demo/` beneath the site URL and uses browser mock data; it needs no backend server. `LUMI_SITE_BASE` and `LUMI_SITE_URL` configure the deployment path and origin. The site E2E tests use `/lumi/` by default to cover repository Pages hosting; set `LUMI_SITE_BASE=/` to check a root deployment.
+
 ## Packages
 
 | Package | What it is |

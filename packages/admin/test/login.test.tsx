@@ -1,13 +1,14 @@
 // @vitest-environment jsdom
 import type { AuthProvider, ToastParams, ToastProvider } from '@duxweb/lumi'
 import type { ReactElement } from 'react'
-import type { LumiAdminLoginProps } from '../src/react/index.js'
+import type { LumiAdminLoginProps } from '../src/react/components/LumiAdminLogin.js'
 import { createI18nProvider, createLumi, LumiProvider } from '@duxweb/lumi'
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createAdminI18nProvider } from '../src/catalog.js'
-import { AdminColorModeProvider, LumiAdminLogin } from '../src/react/index.js';
+import { AdminColorModeProvider } from '../src/react/colorMode.js'
+import { LumiAdminLogin } from '../src/react/components/LumiAdminLogin.js'
 
 (
   globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }

@@ -1,12 +1,12 @@
 # AGENTS.md — Lumi build guide
 
-Read `plan/README.md` first. It is the sole current architecture and migration plan. `plan/ui-design-spec.md` covers visual requirements. Historical snapshots in `tasks/archive/` are evidence, not instructions.
+Read `plan/README.md` first. It is the sole current architecture and migration plan. `plan/ui-design-spec.md` covers visual requirements.
 
 ## Current status and migration scope
 
 The target uses native json-render with three product layers: Lumi services, Lumi UI, and Lumi Admin. Lumi is React-only (decided 2026-11-05; new project, Go backend over JSON/HTTP): do not add Vue or other framework entrypoints, optional framework peers or isolation for them. The only framework-free layer is each package's `/catalog` subpath (zod definitions and Spec validation), because `lumi-check` and server-side validation run in Node without React.
 
-The source has been cut over to the five packages below. Native migration acceptance is recorded in the plan and task report; do not revive retired packages or the old Vue binding. Preserve the current working tree, including untracked implementations; Git HEAD is not a complete snapshot of this product.
+The source has been cut over to the five packages below. Current architecture and acceptance gates are defined in the plan; do not revive retired packages or the old Vue binding. Preserve the current working tree, including untracked implementations; Git HEAD is not a complete snapshot of this product.
 
 ## Target packages and entrypoints
 

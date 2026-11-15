@@ -1,10 +1,10 @@
-# Lumi / json-render 原生架构方案（当前交付 React，预留框架边界）
+# Lumi / json-render 原生架构方案（React-only）
 
-日期：2026-09-19。视觉方案于 2026-09-21 按用户选择更新为 A 分区卡片，详见 [视觉规范](./ui-design-spec.md)、[落地验收记录](../tasks/admin-design-a-2026-09-21.md) 与 [设置页 A 方案记录](../tasks/settings-design-a-2026-09-21.md)。
+日期：2026-09-19，最近整理：2026-11-14。视觉方案于 2026-09-21 按用户选择更新为 A 分区卡片，当前要求见 [视觉规范](./ui-design-spec.md)。
 
-状态：当前唯一架构与迁移计划。原生架构迁移及当前验收已完成，现为五个公开包（2026-11-12 移除 `lumi-mcp`，见 §7.3），代码已同步至实际仓库；当前证据见 [实施记录](../tasks/native-json-render-2026-09-19.md)，历史验证不能替代当前结果。
+状态：当前唯一架构与迁移计划。原生架构迁移已完成，现为五个公开包（2026-11-12 移除 `lumi-mcp`，见 §7.3），代码已同步至实际仓库。持续验收按 §8 的命令与完成条件执行，历史验证不能替代当前结果。
 
-先读本文。视觉要求见 [ui-design-spec.md](./ui-design-spec.md)，正文已收敛为当前有效规则。旧架构/图示/实施记录已移出 plan，完整快照见 [历史归档](../tasks/archive/pre-json-render-2026-09-19/README.md)。历史测试通过不代表新架构验收通过。
+先读本文。架构要求集中在本文，视觉要求集中在 [ui-design-spec.md](./ui-design-spec.md)。旧方案、任务记录与归档快照已移除，不作为开发依据。
 
 ## 1. 已确认的架构方向
 
@@ -335,11 +335,11 @@ Catalog/schema JSON 与 llms 资料是从定义生成的静态作者产物，不
 
 | 阶段 | 工作与依赖 | 阶段完成标准 | 当前状态 |
 | --- | --- | --- | --- |
-| P0 计划收敛 | 归档旧 plan，确定包/入口/消费者/规则，保留业务和视觉要求 | 唯一计划；6 个目标包；旧文件处置与迁移顺序明确 | 已完成 |
-| P1 原生基础与作者闭环 | 验证上游发布物与版本，lumi core/react、基本 UI definitions/Registry；最小共享校验 + CLI/MCP + 自定义 Catalog；依赖 P0 | 原生 Provider/Renderer + Lumi UI 独立可运行；便捷装配等价；中立/Node 工具与打包入口隔离；原生表达式不误报 | 已完成 |
+| P0 计划收敛 | 收敛 plan，确定包/入口/消费者/规则，保留业务和视觉要求 | 唯一计划；5 个公开包；旧文件处置与迁移顺序明确 | 已完成 |
+| P1 原生基础与作者闭环 | 验证上游发布物与版本，lumi core/react、基本 UI definitions/Registry；最小共享校验 + CLI + 自定义 Catalog；依赖 P0 | 原生 Provider/Renderer + Lumi UI 独立可运行；便捷装配等价；中立/Node 工具与打包入口隔离；原生表达式不误报 | 已完成 |
 | P2 业务纵向链路 | 列表筛选/分页 → 编辑抽屉 → 校验 → 保存 → 关闭 → 刷新；依赖 P1 | 单 StateStore；异步校验拦截、分步/双表单、错误/重复提交/dirty/投影竞态、查询取消与页面隔离通过 | 已完成 |
 | P3 产品迁移 | 全组件、Shell/所有页面、图表/上传/远程选项；依赖 P2 | JSX/JSON 公用组件，功能与视觉回归，所有页面有目标实现 | 已完成 |
-| P4 原子收口 | 全部应用/JSON/工具/文档/脚手架/构建/发布配置切换；依赖 P3 | 旧 5 个独立包删除、UI/Admin 改名、Rust 删除；最终 6 包，无旧运行链 | 已完成 |
+| P4 原子收口 | 全部应用/JSON/工具/文档/脚手架/构建/发布配置切换；依赖 P3 | 旧 5 个独立包删除、UI/Admin 改名、Rust 删除；最终 5 包，无旧运行链 | 已完成 |
 | P5 最终验收 | 全量质量、隔离安装、生成物、体积、浏览器和发布门禁；依赖 P4 | 下述完成定义全部满足；提交可审查的真实结果 | 已完成 |
 
 迁移代码在隔离工作区/迁移分支完成；当前工作区已有大量未提交和未跟踪实现，不能从 Git HEAD 新开 worktree 后假定它包含当前产品。建立工作区时必须基于完整当前文件快照，并保留用户改动。不要 reset/clean/覆盖未提交实现。
@@ -357,16 +357,16 @@ P1 必须先固定可安装的上游版本组合、React/Zod/Query peer 范围�
 | `apps/json-api` | 保留远程 JSON 下发演示；响应、fixtures、测试改原生 Spec 和新的 Admin 配置 |
 | `examples/react-demo` | 保留最小原生 Provider/Renderer + Lumi UI 的互操作示例，并展示可选便捷入口 |
 | `examples/foundation-admin` | 保留后端 JSON + Admin 场景；重写 manifest/pages/自定义组件注册和部署说明 |
-| `examples/schema-gallery` | 保留私有 fixture 包作为共享示例源，内容全部改原生 Spec；它不是第 7 个公开产品/工具包 |
+| `examples/schema-gallery` | 保留私有 fixture 包作为共享示例源，内容全部改原生 Spec；不作为公开发布包 |
 | `packages/create/src/index.ts` 与 `templates/react` | 删除单选 `--adapter`/RendererAdapter；生成最终包/子路径/CSS imports；验证目录外安装运行；不再包含旧 schema/adapter/资源注册 API |
 | 根 `package.json` / `pnpm-workspace.yaml` / lockfile | 添加锁定 json-render 依赖；验证 Zod 版本与上游匹配；移除旧 workspace 依赖、Vue 专用包和 Rust 工具链；不借机升级无关依赖 |
 | Vue 专用直接依赖 | 移除 vue/vue-router/vue-tsc/vue3-sfc-loader、@tanstack/vue-query、@vitejs/plugin-vue、@vitejs/plugin-vue-jsx；第三方工具间接依赖按真实需要保留 |
 | `vitest.config.ts`、`test/setup.ts` | 删除 Vue 插件/别名、旧包 alias；按真实 exports 验证 core/React，不能靠源码 alias 掩盖坏产物 |
-| `config/tsconfig.base.json`、各 tsconfig、tsdown configs | 新子路径与类型产物对应；根入口纯 TS，React 入口独立；移除旧 framework alias/编译路径 |
+| `config/tsconfig.base.json`、各 tsconfig、tsdown configs | 新子路径与类型产物对应；产品包根入口组装 React，`/catalog` 保持框架无关；移除旧 framework alias/编译路径 |
 | `eslint.config.mjs` | 移除 Vue 规则；改导入边界规则为中立入口禁止 React、UI 禁止 Admin、业务依赖按产品层单向 |
 | `scripts/generate-docs.ts`、`gen-llms.ts`、`build-doc-products.mjs` | 删除旧 protocolCatalog 和 React/Vue parity 假设，按最终 Catalog/exports 生成文档 |
 | 文档 Schema/TS 示例检查脚本、generated-output-inventory | 改检查原生 Spec 和新入口，删除旧命令/作用域/节点文档的生成清单 |
-| `verify-package-tarballs.mjs`、`verify-size-budgets.mjs`、`config/lumi-size-budgets.json` | 11 包审计改为最终 6 包与各子路径；按普通 UI、数据页面、Admin、按需图表的实际加载图比较，合包不机械相加旧单包预算，也不借拆 chunk/放宽预算规避检查 |
+| `verify-package-tarballs.mjs`、`verify-size-budgets.mjs`、`config/lumi-size-budgets.json` | 审计最终 5 包与各子路径；按普通 UI、数据页面、Admin、按需图表的实际加载图比较，合包不机械相加旧单包预算，也不借拆 chunk/放宽预算规避检查 |
 | `smoke-ui-shadcn-pack.mjs` | 改为 `smoke-ui-pack.mjs`，同步根 script 与调用者；检查 UI/CSS/原生 Registry 的仓外使用 |
 | `verify-ui-upstream.mjs`、`compare-ui-upstream.mjs`、`ui-license-policy.mjs` | 更新 packages/ui 路径，保留许可/来源/Pro 禁入检查；移动未修改的上游源码不得无故重写哈希 |
 | `verify-visual-assets.mjs` / `config/lumi-visual-assets.json` | 保留 Lumi 自产截图，更新真实路径；架构迁移不默认重置所有基线 |
@@ -392,12 +392,12 @@ P1 必须先固定可安装的上游版本组合、React/Zod/Query peer 范围�
 完成条件：
 
 1. packages 只有表中的 5 个公开包，每个目标入口和 CSS/按需入口在实际 tarball 中可用。
-2. 旧 core/schema/runtime/react/vue 包、旧 UI/Admin 包名及旧 DSL 在活跃源码、配置、模板、文档和发布物中零引用；历史归档明确排除。
+2. 旧 core/schema/runtime/react/vue 包、旧 UI/Admin 包名及旧 DSL 在活跃源码、配置、模板、文档和发布物中零引用。
 3. 当前产品无 Vue 专用源码/测试/入口/直接依赖；各包 `/catalog` 入口无 React/DOM 导入，并在未安装 React 时可导入。
 4. 原生 json-render 示例直接换用 Lumi registry 能运行；原生扩展方式有效；便捷装配不改变上游 state/action 行为。
 5. 同一 Catalog definitions 驱动运行时、CLI、文档，检查未知组件/动作/属性和无效引用；不再有 Rust/WASM 协议副本。
 6. 所有业务行为完成回归；远程生成、表单、数据和 Shell 状态不重复拥有同一份可编辑值。
-7. 全量检查、E2E、a11y、视觉、非根部署、6 包隔离安装及模板 smoke 通过，真实体积在既定目标内。
+7. 全量检查、E2E、a11y、视觉、非根部署、5 包隔离安装及模板 smoke 通过，真实体积在既定目标内。
 8. 文档与实际能力一致，移除所有迁移占位、临时旧路径与测试豁免；没有靠 fallback 保留旧协议。
 9. 内置与自定义 Catalog 在运行时和 CLI 对同一 fixtures 返回一致结果；异步校验失败零提交、保存失败不关闭、保存成功但刷新失败不重复写入；不再依赖旧 MCP 修复/模拟预览。
 
@@ -422,16 +422,3 @@ P1 必须先固定可安装的上游版本组合、React/Zod/Query peer 范围�
 - [核心字段校验实现（同步返回值）](https://github.com/vercel-labs/json-render/blob/3ad381881194e7011ad3ccd6d668033495a06c29/packages/core/src/validation.ts)
 - [上游 Spec 校验](https://github.com/vercel-labs/json-render/blob/3ad381881194e7011ad3ccd6d668033495a06c29/packages/core/src/spec-validator.ts)
 - [上游 MCP Apps 用途](https://github.com/vercel-labs/json-render/blob/3ad381881194e7011ad3ccd6d668033495a06c29/packages/mcp/README.md)
-
-## 11. 旧 plan 文件处置
-
-| 原文件 | 本轮处理 | 理由 |
-| --- | --- | --- |
-| `plan/README.md` | 完整替换为本文 | 旧 M0–M5 已不适用；保留所有有用结果与验收行为，不继续执行旧技术决策 |
-| `plan/architecture.md` | 从 plan 删除，原文归档 | 七项业务要求已并入 §8.2，旧包/协议关系失效 |
-| `plan/diagrams.md` | 从 plan 删除，原文归档 | 旧 descriptor→Rust→双框架图失效；查询一致性/guard 约束已保留 |
-| `plan/implementation.md` | 从 plan 删除，原文归档 | 完成记录仅是历史证据，不能当新迁移进度 |
-| `plan/ui-design-spec.md` | 保留；当前视觉规则直接归正文，移除冲突旧要求 | 视觉、主题、响应式与可访问性要求仍有价值；旧 API 名称不成为兼容要求 |
-| `tasks/react-json-render-plan-2026-09-19.md` | 收敛为指向本文的短链接 | 避免维护两份新计划；完整评估稿原文已归档 |
-
-最终 plan 只保留 README 和视觉规范。旧文件未全部纳入 Git，因此先保存逐字节历史快照和 SHA-256，再移除活跃副本。归档不参与当前架构校验、生成或发布。

@@ -1,0 +1,655 @@
+{
+  "root": "fragment-1",
+  "elements": {
+    "fragment-1": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "card-2",
+        "card-8",
+        "card-14",
+        "card-17",
+        "card-21",
+        "card-interactive"
+      ]
+    },
+    "card-2": {
+      "type": "Card",
+      "props": {
+        "title": "Card",
+        "description": "A content surface with an optional title and description."
+      },
+      "children": [
+        "fragment-3"
+      ]
+    },
+    "fragment-3": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "card-4",
+        "card-6",
+        "card-icon"
+      ]
+    },
+    "card-icon": {
+      "type": "Card",
+      "props": {
+        "title": "Payouts",
+        "description": "An icon and a header-end slot.",
+        "icon": "wallet-01"
+      },
+      "children": [],
+      "slots": {
+        "headerEnd": [
+          "card-icon-badge"
+        ]
+      }
+    },
+    "card-icon-badge": {
+      "type": "Badge",
+      "props": {
+        "label": "Paused",
+        "tone": "warning"
+      },
+      "children": []
+    },
+    "card-4": {
+      "type": "Card",
+      "props": {
+        "title": "Outline card",
+        "description": "The default surface."
+      },
+      "children": [
+        "alert-5"
+      ]
+    },
+    "alert-5": {
+      "type": "Alert",
+      "props": {
+        "message": "Card content",
+        "tone": "neutral"
+      },
+      "children": []
+    },
+    "card-6": {
+      "type": "Card",
+      "props": {
+        "title": "Filled card",
+        "description": "Steps back from the page.",
+        "appearance": "filled"
+      },
+      "children": [
+        "alert-7"
+      ]
+    },
+    "alert-7": {
+      "type": "Alert",
+      "props": {
+        "message": "Card content",
+        "tone": "neutral"
+      },
+      "children": []
+    },
+    "card-8": {
+      "type": "Card",
+      "props": {
+        "title": "Frame",
+        "description": "A well holding a header above a panel — what a list page is built on."
+      },
+      "children": [
+        "fragment-9"
+      ]
+    },
+    "fragment-9": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "frame-10",
+        "frame-12"
+      ]
+    },
+    "frame-10": {
+      "type": "Frame",
+      "props": {
+        "title": "Frame",
+        "description": "A neutral framed region.",
+        "summary": "3 records"
+      },
+      "children": [
+        "alert-11"
+      ]
+    },
+    "alert-11": {
+      "type": "Alert",
+      "props": {
+        "message": "Frame content",
+        "tone": "info"
+      },
+      "children": []
+    },
+    "frame-12": {
+      "type": "Frame",
+      "props": {
+        "title": "Filled frame",
+        "appearance": "filled"
+      },
+      "children": [
+        "alert-13"
+      ]
+    },
+    "alert-13": {
+      "type": "Alert",
+      "props": {
+        "message": "Frame content",
+        "tone": "neutral"
+      },
+      "children": []
+    },
+    "card-14": {
+      "type": "Card",
+      "props": {
+        "title": "Tabs",
+        "description": "Switching between views of the same subject."
+      },
+      "children": [
+        "fragment-15"
+      ]
+    },
+    "fragment-15": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "tabs-16"
+      ]
+    },
+    "tabs-16": {
+      "type": "Tabs",
+      "props": {
+        "value": {
+          "$bindState": "/tabs-16/value"
+        },
+        "items": [
+          {
+            "label": "Alpha",
+            "value": "alpha"
+          },
+          {
+            "label": "Beta",
+            "value": "beta"
+          },
+          {
+            "label": "Locked",
+            "value": "gamma",
+            "disabled": true
+          }
+        ]
+      },
+      "children": [
+        "tab-alpha",
+        "tab-beta"
+      ]
+    },
+    "card-17": {
+      "type": "Card",
+      "props": {
+        "title": "Dialog",
+        "description": "Open a confirmation or a larger content dialog; close with its actions or Escape."
+      },
+      "children": [
+        "fragment-18"
+      ]
+    },
+    "fragment-18": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "dialog-19-trigger",
+        "dialog-19",
+        "dialog-20-trigger",
+        "dialog-20"
+      ]
+    },
+    "dialog-19": {
+      "type": "Dialog",
+      "props": {
+        "title": "Delete product",
+        "description": "This cannot be undone",
+        "tone": "danger",
+        "confirmText": "Delete",
+        "cancelText": "Keep",
+        "open": {
+          "$bindState": "/dialog-19/open"
+        }
+      },
+      "children": [
+        "dialog-19-content"
+      ],
+      "on": {
+        "confirm": {
+          "action": "setState",
+          "params": {
+            "statePath": "/dialog-19/open",
+            "value": false
+          }
+        }
+      }
+    },
+    "dialog-20": {
+      "type": "Dialog",
+      "props": {
+        "open": {
+          "$bindState": "/dialog-20/open"
+        },
+        "title": "Large dialog",
+        "size": "lg"
+      },
+      "children": [
+        "dialog-20-content"
+      ],
+      "on": {
+        "confirm": {
+          "action": "setState",
+          "params": {
+            "statePath": "/dialog-20/open",
+            "value": false
+          }
+        }
+      }
+    },
+    "card-21": {
+      "type": "Card",
+      "props": {
+        "title": "Drawer",
+        "description": "A side panel that keeps the page behind it."
+      },
+      "children": [
+        "fragment-22"
+      ]
+    },
+    "fragment-22": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "drawer-23-trigger",
+        "drawer-23",
+        "drawer-wide-trigger",
+        "drawer-wide",
+        "drawer-left-trigger",
+        "drawer-left",
+        "drawer-24-trigger",
+        "drawer-24"
+      ]
+    },
+    "drawer-wide": {
+      "type": "Drawer",
+      "props": {
+        "title": "Order details",
+        "description": "A wide drawer fits a table of related records",
+        "side": "right",
+        "size": "lg",
+        "open": {
+          "$bindState": "/drawer-wide/open"
+        }
+      },
+      "children": [
+        "drawer-wide-content"
+      ]
+    },
+    "drawer-wide-trigger": {
+      "type": "Button",
+      "props": {
+        "label": "Open wide drawer",
+        "appearance": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/drawer-wide/open",
+            "value": true
+          }
+        }
+      },
+      "children": []
+    },
+    "drawer-wide-content": {
+      "type": "Alert",
+      "props": {
+        "tone": "neutral",
+        "message": "This is an interactive overlay. Close it with the close button or Escape."
+      },
+      "children": []
+    },
+    "drawer-left": {
+      "type": "Drawer",
+      "props": {
+        "title": "Filters",
+        "description": "Filters can slide in from the start edge",
+        "side": "left",
+        "size": "sm",
+        "open": {
+          "$bindState": "/drawer-left/open"
+        }
+      },
+      "children": [
+        "drawer-left-content"
+      ]
+    },
+    "drawer-left-trigger": {
+      "type": "Button",
+      "props": {
+        "label": "Open left drawer",
+        "appearance": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/drawer-left/open",
+            "value": true
+          }
+        }
+      },
+      "children": []
+    },
+    "drawer-left-content": {
+      "type": "Alert",
+      "props": {
+        "tone": "neutral",
+        "message": "This is an interactive overlay. Close it with the close button or Escape."
+      },
+      "children": []
+    },
+    "drawer-23": {
+      "type": "Drawer",
+      "props": {
+        "title": "Edit product",
+        "description": "The list stays behind",
+        "side": "right",
+        "open": {
+          "$bindState": "/drawer-23/open"
+        }
+      },
+      "children": [
+        "drawer-23-content"
+      ]
+    },
+    "drawer-24": {
+      "type": "Drawer",
+      "props": {
+        "open": {
+          "$bindState": "/drawer-24/open"
+        },
+        "title": "Bottom drawer",
+        "side": "bottom",
+        "size": "lg"
+      },
+      "children": [
+        "drawer-24-content"
+      ]
+    },
+    "dialog-19-trigger": {
+      "type": "Button",
+      "props": {
+        "label": "Open confirmation",
+        "appearance": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/dialog-19/open",
+            "value": true
+          }
+        }
+      },
+      "children": []
+    },
+    "dialog-19-content": {
+      "type": "Alert",
+      "props": {
+        "tone": "neutral",
+        "message": "This is an interactive overlay. Close it with the close button or Escape."
+      },
+      "children": []
+    },
+    "dialog-20-trigger": {
+      "type": "Button",
+      "props": {
+        "label": "Open large dialog",
+        "appearance": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/dialog-20/open",
+            "value": true
+          }
+        }
+      },
+      "children": []
+    },
+    "dialog-20-content": {
+      "type": "Alert",
+      "props": {
+        "tone": "neutral",
+        "message": "This is an interactive overlay. Close it with the close button or Escape."
+      },
+      "children": []
+    },
+    "drawer-23-trigger": {
+      "type": "Button",
+      "props": {
+        "label": "Open side drawer",
+        "appearance": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/drawer-23/open",
+            "value": true
+          }
+        }
+      },
+      "children": []
+    },
+    "drawer-23-content": {
+      "type": "Alert",
+      "props": {
+        "tone": "neutral",
+        "message": "This is an interactive overlay. Close it with the close button or Escape."
+      },
+      "children": []
+    },
+    "drawer-24-trigger": {
+      "type": "Button",
+      "props": {
+        "label": "Open bottom drawer",
+        "appearance": "outline"
+      },
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": {
+            "statePath": "/drawer-24/open",
+            "value": true
+          }
+        }
+      },
+      "children": []
+    },
+    "drawer-24-content": {
+      "type": "Alert",
+      "props": {
+        "tone": "neutral",
+        "message": "This is an interactive overlay. Close it with the close button or Escape."
+      },
+      "children": []
+    },
+    "tab-alpha": {
+      "type": "Alert",
+      "props": {
+        "message": "Alpha tab content",
+        "tone": "neutral"
+      },
+      "visible": {
+        "$state": "/tabs-16/value",
+        "eq": "alpha"
+      },
+      "children": []
+    },
+    "tab-beta": {
+      "type": "Alert",
+      "props": {
+        "message": "Beta tab content",
+        "tone": "neutral"
+      },
+      "visible": {
+        "$state": "/tabs-16/value",
+        "eq": "beta"
+      },
+      "children": []
+    },
+    "card-interactive": {
+      "type": "Card",
+      "props": {
+        "title": "Menus and hints",
+        "description": "A command menu, a hint on an icon button and folding sections."
+      },
+      "children": [
+        "fragment-interactive"
+      ]
+    },
+    "fragment-interactive": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "toolbar-interactive",
+        "accordion-1"
+      ]
+    },
+    "toolbar-interactive": {
+      "type": "Stack",
+      "props": {
+        "direction": "horizontal",
+        "gap": "sm"
+      },
+      "children": [
+        "menu-1",
+        "tooltip-1"
+      ]
+    },
+    "menu-1": {
+      "type": "Menu",
+      "props": {
+        "label": "Order actions",
+        "value": {
+          "$bindState": "/menu-1/value"
+        },
+        "items": [
+          {
+            "key": "edit",
+            "label": "Edit",
+            "icon": "pencil"
+          },
+          {
+            "key": "duplicate",
+            "label": "Duplicate",
+            "icon": "copy"
+          },
+          {
+            "key": "delete",
+            "label": "Delete",
+            "icon": "trash-2",
+            "tone": "danger",
+            "separatorBefore": true
+          }
+        ]
+      },
+      "children": []
+    },
+    "tooltip-1": {
+      "type": "Tooltip",
+      "props": {
+        "content": "Download as CSV"
+      },
+      "children": [
+        "tooltip-1-button"
+      ]
+    },
+    "tooltip-1-button": {
+      "type": "Button",
+      "props": {
+        "label": "Export",
+        "icon": "download",
+        "shape": "square",
+        "appearance": "outline"
+      },
+      "children": []
+    },
+    "accordion-1": {
+      "type": "Accordion",
+      "props": {
+        "defaultOpen": [
+          "returns"
+        ],
+        "items": [
+          {
+            "key": "returns",
+            "title": "How do returns work?",
+            "content": "Customers have 14 days to start a return from their order page."
+          },
+          {
+            "key": "invoices",
+            "title": "Where are invoices?",
+            "content": "Every paid order has a PDF invoice under its detail page."
+          }
+        ]
+      },
+      "children": []
+    }
+  },
+  "state": {
+    "tabs-16": {
+      "value": "alpha"
+    },
+    "dialog-19": {
+      "open": false
+    },
+    "dialog-20": {
+      "open": false
+    },
+    "drawer-23": {
+      "open": false
+    },
+    "drawer-24": {
+      "open": false
+    },
+    "drawer-wide": {
+      "open": false
+    },
+    "drawer-left": {
+      "open": false
+    },
+    "menu-1": {
+      "value": ""
+    }
+  }
+}

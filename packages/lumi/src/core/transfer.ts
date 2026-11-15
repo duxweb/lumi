@@ -309,6 +309,8 @@ export async function importRecords(context: LumiContext, client: QueryClient | 
   try {
     for (let start = 0; start < records.length; start += size) {
       options.signal?.throwIfAborted()
+      if (sessionVersion(context) !== session)
+        throw new Error('[lumi] The session changed during import. Remaining rows were not sent.')
       const batch = records.slice(start, start + size)
       try {
         await executeRequest(context, () => bulk
@@ -328,9 +330,9 @@ export async function importRecords(context: LumiContext, client: QueryClient | 
     }
   }
   finally {
-    if (result.processed)
+    if (result.processed && sessionVersion(context) === session)
       recordAudit(context, { action: 'import', resource: options.resource, data: { total: result.total, succeeded: result.succeeded, failed: result.failed }, ...(options.meta ? { meta: options.meta } : {}) }, client, options.dataProviderName)
-    if (client && result.succeeded)
+    if (client && result.succeeded && sessionVersion(context) === session)
       await invalidateResourceQueries(client, context, options.resource, options.dataProviderName).catch(() => {})
   }
   return result
@@ -481,6 +483,7 @@ function reportImport(context: LumiContext, result: ImportResult): void {
  * resource. A backend that answers no counts is taken to have accepted the file.
  */
 export async function uploadImport(context: LumiContext, client: QueryClient | undefined, file: File, input: RunImportOptions & { url: string }): Promise<ImportResult> {
+  const version = sessionVersion(context)
   const resource = normalizeResource(input.resource)
   const progress = (uploaded: number): void => input.onProgress?.({ total: 0, processed: 0, succeeded: 0, failed: 0, uploaded })
   progress(0)
@@ -497,6 +500,8 @@ export async function uploadImport(context: LumiContext, client: QueryClient | u
   const succeeded = count(answer.succeeded) ?? Math.max((count(answer.total) ?? 0) - failed, 0)
   const total = count(answer.total) ?? succeeded + failed
   const result: ImportResult = { total, processed: total, succeeded, failed, errors }
+  if (version !== sessionVersion(context))
+    return result
   input.onProgress?.({ total, processed: total, succeeded, failed, uploaded: 100 })
   recordAudit(context, { action: 'import', resource, data: { total, succeeded, failed }, ...(input.meta ? { meta: input.meta } : {}) }, client, input.dataProviderName)
   // Without counts the backend may still have written records.
@@ -511,9 +516,11 @@ export async function uploadImport(context: LumiContext, client: QueryClient | u
  * success toast, or a warning notice naming the first refused rows.
  */
 export async function runImport(context: LumiContext, client: QueryClient | undefined, file: Pick<TransferFile, 'name' | 'content'>, input: RunImportOptions): Promise<ImportResult> {
+  const version = sessionVersion(context)
   const options = { ...input, resource: normalizeResource(input.resource) }
   const records = readRecords(file, options.columns)
   const result = await importRecords(context, client, records, options)
-  reportImport(context, result)
+  if (version === sessionVersion(context))
+    reportImport(context, result)
   return result
 }

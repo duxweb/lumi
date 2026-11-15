@@ -242,6 +242,8 @@ function parseBody(text: string, ok: boolean): any {
  * All of that is for the client's own backend: `baseUrl`, the page's site and
  * `trustedOrigins`. A full URL to anywhere else is sent plain, so a page that
  * names a foreign address never carries the reader's credentials there.
+ * Owned requests refuse automatic redirects; use the final API address.
+ * An explicit manual redirect is available to loaders that check every hop.
  */
 export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
   const baseUrl = options.baseUrl ?? ''
@@ -331,7 +333,11 @@ export function createHttpClient(options: HttpClientOptions = {}): HttpClient {
       const { credentials, ...ready } = await prepare({ url: target, method, headers: given ?? {}, ...(init.body !== undefined ? { body: init.body } : {}) })
       sent = ready
       const fetcher = options.fetcher ?? globalThis.fetch
-      return fetcher(ready.url, { ...init, method: ready.method, headers: ready.headers, ...(ready.body !== undefined ? { body: ready.body } : {}), ...(credentials && !init.credentials ? { credentials } : {}) })
+      // Fetch strips Authorization on cross-origin redirects, but not custom
+      // credentials (e.g. X-Api-Key). Browser manual redirects are opaque, so
+      // owned requests must refuse automatic redirects before any header leaks.
+      const redirect = trusts(ready.url) && init.redirect !== 'manual' ? 'error' : init.redirect
+      return fetcher(ready.url, { ...init, redirect, method: ready.method, headers: ready.headers, ...(ready.body !== undefined ? { body: ready.body } : {}), ...(credentials && !init.credentials ? { credentials } : {}) })
     }
     let response = await send()
     const provider = response.status === 401 && trusts(target) ? getAuthProvider() : undefined

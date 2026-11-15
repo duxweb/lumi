@@ -3,6 +3,7 @@ import type { LumiContext } from './context.js'
 import type { OptimisticChange } from './optimistic.js'
 import type { MutationResult } from './services.js'
 import type { ID, Meta, MutationMode } from './types.js'
+import { resolveDataTarget } from './context.js'
 import { runMutationMode } from './optimistic.js'
 import { isPlainRecord } from './path.js'
 import { executeMutation } from './services.js'
@@ -21,8 +22,39 @@ export interface WriteOptions<T = unknown> {
   /** Falls back to `config.mutationMode`; only updates and deletes with ids use it. */
   mutationMode?: MutationMode | undefined
   undoableTimeout?: number | undefined
-  /** Sends the write to the DataProvider. */
-  request: () => Promise<T>
+  /** Overrides the standard DataProvider operation when a host needs a custom write. */
+  request?: () => Promise<T>
+}
+
+/** Parameter mapping and bulk fallbacks are shared by hooks and JSON actions. */
+async function dispatchWrite(context: LumiContext, options: WriteOptions): Promise<object> {
+  const { dataProvider: provider, resource } = resolveDataTarget(context, options)
+  const { operation, values: variables, meta } = options
+  const ids = [...(options.ids ?? [])]
+  const common = { resource, variables, meta }
+  if (operation === 'create')
+    return provider.create(common)
+  if (operation === 'createMany') {
+    if (!Array.isArray(variables))
+      throw new Error('[lumi] createMany requires an array of values.')
+    return provider.createMany
+      ? provider.createMany({ ...common, variables })
+      : { data: await Promise.all(variables.map(value => provider.create({ ...common, variables: value }).then(result => result.data))) }
+  }
+  if (operation === 'updateMany') {
+    return provider.updateMany
+      ? provider.updateMany({ ...common, ids })
+      : { data: await Promise.all(ids.map(id => provider.update({ ...common, id }).then(result => result.data))) }
+  }
+  if (operation === 'deleteMany') {
+    return provider.deleteMany
+      ? provider.deleteMany({ ...common, ids })
+      : { data: await Promise.all(ids.map(id => provider.deleteOne({ ...common, id }).then(result => result.data))) }
+  }
+  const id = ids[0]
+  if (id === undefined)
+    throw new Error(`[lumi] ${operation} requires an id.`)
+  return operation === 'delete' ? provider.deleteOne({ ...common, id }) : provider.update({ ...common, id })
 }
 
 /**
@@ -33,7 +65,8 @@ export interface WriteOptions<T = unknown> {
 export function executeWrite<T extends object>(context: LumiContext, client: QueryClient, options: WriteOptions<T>): Promise<MutationResult<T>> {
   const { operation, resource, dataProviderName, ids, values, meta } = options
   const deletes = operation === 'delete' || operation === 'deleteMany'
-  const send = (): Promise<MutationResult<T>> => executeMutation(context, client, options.request, {
+  const request = options.request ?? (() => dispatchWrite(context, options) as Promise<T>)
+  const send = (): Promise<MutationResult<T>> => executeMutation(context, client, request, {
     resource,
     ...(dataProviderName ? { dataProviderName } : {}),
     deletedIds: deletes ? ids : undefined,

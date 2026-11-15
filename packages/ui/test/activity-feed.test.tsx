@@ -4,8 +4,10 @@ import { resolve } from 'node:path'
 import { JSONUIProvider, Renderer } from '@json-render/react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import { uiComponentDefinitions } from '../src/catalog/index.js'
-import { LumiActivityFeed, LumiTimeline, uiRegistry } from '../src/react/index.js'
+import { uiComponentDefinitions } from '../src/catalog/definitions.js'
+import { LumiActivityFeed } from '../src/components/activity-feed.js'
+import { LumiTimeline } from '../src/components/extensions.js'
+import { uiRegistry } from '../src/react/index.js'
 
 const css = readFileSync(resolve(import.meta.dirname, '../src/style.css'), 'utf8')
 function rule(selector: string): string {

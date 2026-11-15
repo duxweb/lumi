@@ -7,9 +7,9 @@ description: "Lumi 的分层、一次操作从按钮到后端的完整链路、�
 
 ## 分层
 
-Lumi 只支持 React。六个包各管一层：
+Lumi 只支持 React，包含五个公开包；`/catalog` 是包内子路径：
 
-| 包 | 负责 |
+| 包 / 子路径 | 负责 |
 | --- | --- |
 | `@duxweb/lumi` | 数据服务：DataProvider、HttpClient、登录、权限、上传、表单保存、JSON 动作和 React hooks。 |
 | `@duxweb/lumi/catalog` | 不依赖 React 的部分：组件和动作的定义（zod）、Spec 的加载和校验。 |

@@ -1100,8 +1100,8 @@ describe('lumi Admin Shell M2', () => {
 
     expect(facade.active.item?.name).toBe('files')
     await act(async () => facade.tabs.reload('/files/a/b'))
-    expect(loader.invalidate).toHaveBeenCalledWith('/files.json', undefined)
-    expect(loader.invalidate).not.toHaveBeenCalledWith('/file.json', undefined)
+    expect(loader.invalidate).toHaveBeenCalledWith('/files.json', mounted.admin.context.session.cacheKey())
+    expect(loader.invalidate).not.toHaveBeenCalledWith('/file.json', mounted.admin.context.session.cacheKey())
     await mounted.cleanup()
   })
 
@@ -1649,7 +1649,7 @@ describe('lumi Admin Shell M2', () => {
     expect(mounts).toBe(1)
 
     await act(async () => facade.tabs.reload('/reports'))
-    expect(loader.invalidate).toHaveBeenCalledWith('/reports.json', undefined)
+    expect(loader.invalidate).toHaveBeenCalledWith('/reports.json', mounted.admin.context.session.cacheKey())
     expect(listCalls).toBe(1)
     await act(async () => facade.tabs.close('/reports'))
     expect(mounts).toBe(1)
@@ -1668,7 +1668,7 @@ describe('lumi Admin Shell M2', () => {
       ),
     )
     await vi.waitFor(() => expect(listCalls).toBe(2))
-    expect(loader.invalidate).toHaveBeenCalledWith('/home.json', undefined)
+    expect(loader.invalidate).toHaveBeenCalledWith('/home.json', mounted.admin.context.session.cacheKey())
     expect(mounts).toBe(1)
     expect(unmounts).toBe(0)
 
@@ -1728,7 +1728,7 @@ describe('lumi Admin Shell M2', () => {
       createRouter: memoryRouter(['/users/42']),
     })
     await act(async () => facade.tabs.reload('/users/42'))
-    expect(loader.invalidate).toHaveBeenCalledWith('/user.json', undefined)
+    expect(loader.invalidate).toHaveBeenCalledWith('/user.json', mounted.admin.context.session.cacheKey())
     await mounted.cleanup()
   })
 

@@ -3,6 +3,7 @@ import type { Locale } from '../i18n'
 import { GithubIcon, LanguageSquareIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { COPY, LOCALES } from '../i18n'
+import { sitePath } from '../paths'
 import '@duxweb/lumi-ui/style.css'
 import '../styles/site.css'
 
@@ -40,7 +41,7 @@ const other = LOCALES[locale === 'zh' ? 'en' : 'zh']
   </head>
   <body class:list={{ night }}>
     <header class:list={['nav', { 'nav--wide': wide, 'nav--full': full }]}>
-      <a class="nav__brand" href={home}>Lumi</a>
+      <a class="nav__brand" href={sitePath(home)}>Lumi</a>
       <nav class="nav__links" aria-label={t.site}>
         {[
           ['guide', '/guide/', t.docs],
@@ -49,10 +50,10 @@ const other = LOCALES[locale === 'zh' ? 'en' : 'zh']
           ['ai', '/ai/', 'Skills'],
           ['playground', '/playground/', t.playground],
           ['demo', '/demo/', t.demo],
-        ].map(([id, href, label]) => <a href={href} aria-current={id === active ? 'page' : undefined}>{label}</a>)}
+        ].map(([id, href, label]) => <a href={sitePath(href!)} aria-current={id === active ? 'page' : undefined}>{label}</a>)}
       </nav>
       <div class="nav__tools">
-        <a class="nav__tool" href={other.home} hreflang={other.lang} lang={other.lang} aria-label={t.language}>
+        <a class="nav__tool" href={sitePath(other.home)} hreflang={other.lang} lang={other.lang} aria-label={t.language}>
           <HugeiconsIcon icon={LanguageSquareIcon} size={18} strokeWidth={1.8} />
           <span>{other.label}</span>
         </a>

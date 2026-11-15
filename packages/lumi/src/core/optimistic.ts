@@ -52,6 +52,7 @@ function applyToData(data: unknown, change: OptimisticChange): unknown {
  * write, a refetch — are not lost under the old copy.
  */
 export function applyOptimisticChange(client: QueryClient, context: LumiContext, target: { resource: string, dataProviderName?: string }, change: OptimisticChange): () => void {
+  const version = sessionVersion(context)
   const resolved = resolveDataTarget(context, target)
   const queryKey = resourceQueryKey(resolved.resource, resolved.dataProviderName)
   // A fetch already under way would land over the change.
@@ -60,6 +61,8 @@ export function applyOptimisticChange(client: QueryClient, context: LumiContext,
   for (const [key, data] of saved)
     client.setQueryData(key, applyToData(data, change))
   return () => {
+    if (version !== sessionVersion(context))
+      return
     for (const [key, data] of saved)
       client.setQueryData(key, data)
     void client.invalidateQueries({ queryKey })
@@ -91,7 +94,6 @@ export async function runMutationMode<T>(context: LumiContext, client: QueryClie
   if (mode === 'undoable' && notices) {
     // The write belongs to the tenant and session it was made in; switching
     // either during the wait drops it rather than send it to the new one.
-    const tenant = context.tenantProvider?.get()
     const session = sessionVersion(context)
     const timeout = options.undoableTimeout ?? DEFAULT_UNDOABLE_TIMEOUT
     const count = options.change.ids.length
@@ -99,7 +101,7 @@ export async function runMutationMode<T>(context: LumiContext, client: QueryClie
     await new Promise<void>((resolve, reject) => {
       const timer = setTimeout(() => {
         notices.close?.(key)
-        if (context.tenantProvider?.get() !== tenant || sessionVersion(context) !== session) {
+        if (sessionVersion(context) !== session) {
           restore()
           reject(new MutationUndoneError())
           return

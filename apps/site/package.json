@@ -20,7 +20,7 @@
     "generate:api": "tsx --conditions=lumi:source ../../scripts/generate-docs.ts --api-only",
     "test": "vitest run --root ../.. apps/site/test",
     "typecheck": "astro sync && astro check",
-    "build:demo": "LUMI_ADMIN_BASE=/demo/ pnpm --dir ../admin build:browser --outDir ../site/public/demo --emptyOutDir"
+    "build:demo": "node scripts/build-demo.mjs"
   },
   "dependencies": {
     "@astrojs/check": "catalog:",

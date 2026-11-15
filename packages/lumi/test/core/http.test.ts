@@ -1,6 +1,10 @@
-import type { AuthProvider } from '../../src/core'
+import type { AuthProvider } from '../../src/core/providers/auth.js'
+import { once } from 'node:events'
+import { createServer } from 'node:http'
 import { describe, expect, it, vi } from 'vitest'
-import { createHttpClient, createLumi, DataProviderError, executeRequest, isUnsignedFailure } from '../../src/core'
+import { createLumi } from '../../src/core/context.js'
+import { createHttpClient, DataProviderError, isUnsignedFailure } from '../../src/core/http.js'
+import { executeRequest } from '../../src/core/services.js'
 
 const json = (status: number, body: unknown): Response => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
 
@@ -275,4 +279,32 @@ describe('request failures and the session', () => {
     expect(provider.onError).not.toHaveBeenCalled()
     expect(provider.logout).not.toHaveBeenCalled()
   })
+})
+
+it('a redirect to a foreign origin must not receive signed custom headers', async () => {
+  let leaked: string | string[] | undefined
+  const foreign = createServer((req, res) => {
+    leaked = req.headers['x-api-key']
+    res.end('{}')
+  })
+  foreign.listen(0, '127.0.0.1')
+  await once(foreign, 'listening')
+  const destination = `http://127.0.0.1:${(foreign.address() as { port: number }).port}`
+  const trusted = createServer((_req, res) => {
+    res.writeHead(302, { Location: destination })
+    res.end()
+  })
+  trusted.listen(0, '127.0.0.1')
+  await once(trusted, 'listening')
+  try {
+    const baseUrl = `http://127.0.0.1:${(trusted.address() as { port: number }).port}`
+    const http = createHttpClient({ baseUrl, authProvider: { authorizeRequest: () => ({ headers: { 'X-Api-Key': 'synthetic-review-token' } }) } })
+    await expect(http.request('/redirect')).rejects.toThrow()
+    expect(leaked).toBeUndefined()
+  }
+  finally {
+    trusted.closeAllConnections()
+    foreign.closeAllConnections()
+    await Promise.all([new Promise<void>(r => trusted.close(() => r())), new Promise<void>(r => foreign.close(() => r()))])
+  }
 })

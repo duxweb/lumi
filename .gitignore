@@ -1,6 +1,5 @@
 node_modules
 dist
-apps/site/public/component-schemas
 # The full admin demo, built in-browser by `pnpm -F @duxweb/lumi-site build:demo`.
 apps/site/public/demo
 target

@@ -46,6 +46,25 @@ export interface CatalogDefinitions {
   actions?: Record<string, ActionDefinition>
 }
 
+// Upstream exposes names and descriptions for these React actions, but no
+// parameter schemas. This single supplement serves validation and CLI lookup;
+// execution stays in the native ActionProvider.
+const statePath = z.string().min(1)
+const nativeActionParams: Record<string, z.ZodType> = {
+  setState: z.strictObject({ statePath, value: z.unknown() }),
+  pushState: z.strictObject({ statePath, value: z.unknown(), clearStatePath: statePath.optional() }),
+  removeState: z.strictObject({ statePath, index: z.number().int().nonnegative() }),
+  validateForm: z.strictObject({ statePath: statePath.optional() }),
+}
+
+/** The same action parameters for document validation and author tooling. */
+export function getActionParams(catalog: Catalog, name: string): z.ZodType | undefined {
+  if (catalog.schema.builtInActions?.some(action => action.name === name) && Object.hasOwn(nativeActionParams, name))
+    return nativeActionParams[name]
+  const definitions = catalog.data as CatalogDefinitions
+  return definitions.actions && Object.hasOwn(definitions.actions, name) ? definitions.actions[name]?.params : undefined
+}
+
 function pointer(path: readonly PropertyKey[]): string {
   return path
     .map(key => `/${String(key).replaceAll('~', '~0').replaceAll('/', '~1')}`)
@@ -340,9 +359,9 @@ export function validateDocument(
           `Unknown action: ${binding.action}`,
         )
       }
-      const action = definitions.actions && Object.hasOwn(definitions.actions, binding.action) ? definitions.actions[binding.action] : undefined
-      if (action)
-        check(action.params, binding.params ?? {}, `${path}/params`)
+      const params = getActionParams(catalog, binding.action)
+      if (params)
+        check(params, binding.params ?? {}, `${path}/params`)
       if (binding.action === 'notify' && object(binding.params) && Array.isArray(binding.params.actions)) {
         for (const [index, item] of binding.params.actions.entries()) {
           if (!object(item))

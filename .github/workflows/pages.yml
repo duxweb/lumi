@@ -1,4 +1,4 @@
-name: Deploy Admin Pages
+name: Deploy Site Pages
 
 on:
   workflow_dispatch:
@@ -29,19 +29,20 @@ jobs:
           node-version: 22.12.x
           cache: pnpm
 
-      - uses: actions/configure-pages@v5
+      - id: pages
+        uses: actions/configure-pages@v5
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Build admin
-        run: pnpm --dir apps/admin build
+      - name: Build homepage, docs, Playground and browser demo
+        run: pnpm -F @duxweb/lumi-site build
         env:
-          LUMI_ADMIN_BASE: /${{ github.event.repository.name }}/
-          VITE_LUMI_ADMIN_API_URL: ${{ vars.LUMI_ADMIN_API_URL }}
+          LUMI_SITE_BASE: ${{ steps.pages.outputs.base_path }}/
+          LUMI_SITE_URL: ${{ steps.pages.outputs.origin }}
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: apps/admin/dist
+          path: apps/site/dist
 
   deploy:
     needs: build

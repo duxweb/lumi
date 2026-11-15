@@ -7,7 +7,7 @@
 
 本规范只规定视觉和交互结果；架构与包处置以 [README.md](./README.md) 为准。UI 位于 `packages/ui`，Admin 位于 `packages/admin`。源码路径、来源记录和视觉测试已随原生架构迁移；继续维护这一套主题。
 
-组件、事件、图表与 slots 按原生 Catalog/Registry 实现；旧 Schema/UI 实现 API 名称不构成兼容要求。JSON 可以使用原生 named slots，React 专属 callback/ReactNode 不进入 JSON。历史视觉稿和被替代规则见 tasks/archive；以下正文是当前有效要求，不再依靠互相冲突的补充条款。
+组件、事件、图表与 slots 按原生 Catalog/Registry 实现；旧 Schema/UI 实现 API 名称不构成兼容要求。JSON 可以使用原生 named slots，React 专属 callback/ReactNode 不进入 JSON。以下正文是当前有效要求，替代历史视觉稿和旧规则。
 
 ## 1. 设计简报
 
@@ -471,7 +471,7 @@ Workbench 聚焦当前工作：顶部是四张全宽快捷操作卡（muted 图�
 
 输入变体在卡片内自适应排列，用轻量可见标签区分 Default、Searchable、Loading、Disabled、Horizontal、Vertical 等状态，不把全部短输入纵向拉满整页。标签沿用 font-caption / muted-foreground，控件具有唯一、明确的可访问名称；变体继续使用已有 Catalog 组件和原生状态绑定。
 
-示例菜单同时提供可搜索的工作流目录与组件目录。表单按基础、分步、发布、页签区分；列表与详情提供清晰的类型入口。覆盖层必须有打开/关闭入口，页签必须有切换内容，不以不可见的组件定义冒充演示。当前覆盖与同类产品差距见 [示例完整性评估](../tasks/demo-completeness-2026-09-21.md)。
+示例菜单同时提供可搜索的工作流目录与组件目录。表单按基础、分步、发布、页签区分；列表与详情提供清晰的类型入口。覆盖层必须有打开/关闭入口，页签必须有切换内容，不以不可见的组件定义冒充演示。入口与运行边界见 [Admin 示例说明](../apps/admin/README.md)；新增能力先交付组件、Catalog 与服务契约，再添加可操作的示例入口。
 
 ## 10. 覆盖层
 

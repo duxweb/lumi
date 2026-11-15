@@ -99,3 +99,21 @@ describe('native Catalog checker', () => {
     expect(lookup(['--help']).stdout).toContain('lumi-check describe <Component>')
   })
 })
+
+it('invalid static built-in params and missing update id must fail catalog validation', () => {
+  const validate = (action: string, params: object) => checkDocument({ root: 'b', elements: { b: { type: 'Button', props: { label: 'Save' }, on: { press: { action, params } } } } })
+  for (const [action, params] of [
+    ['setState', { statePath: 42 }],
+    ['pushState', { statePath: '/rows', clearStatePath: 42 }],
+    ['removeState', { statePath: '/rows', index: 'first' }],
+    ['validateForm', { statePath: 42 }],
+    ['update', { resource: 'orders', values: { name: 'x' } }],
+    ['delete', { resource: 'orders' }],
+  ] as const)
+    expect(validate(action, params).valid, action).toBe(false)
+  expect(validate('setState', { statePath: '/value', value: { $state: '/input' } }).valid).toBe(true)
+  expect(validate('update', { resource: 'orders', id: { $state: '/record/id' } }).valid).toBe(true)
+  expect(getCatalog(defaultCatalog, { kind: 'actions', name: 'setState' }).builtInActions).toEqual([
+    expect.objectContaining({ name: 'setState', params: expect.objectContaining({ properties: expect.objectContaining({ statePath: { type: 'string', minLength: 1 } }) }) }),
+  ])
+})

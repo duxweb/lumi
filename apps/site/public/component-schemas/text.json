@@ -1,0 +1,1804 @@
+{
+  "root": "fragment-1",
+  "elements": {
+    "fragment-1": {
+      "type": "Fragment",
+      "props": {
+        "layout": "stack"
+      },
+      "children": [
+        "card-2",
+        "card-11",
+        "card-16",
+        "card-19",
+        "card-24",
+        "card-timepicker",
+        "card-datetimepicker",
+        "card-daterangepicker",
+        "card-cascader",
+        "card-tree",
+        "card-tags",
+        "card-images",
+        "card-inputotp",
+        "card-signaturepad",
+        "card-codeeditor"
+      ]
+    },
+    "card-2": {
+      "type": "Card",
+      "props": {
+        "title": "Input",
+        "description": "Single-line text in both appearances and all three sizes, with an optional input mask."
+      },
+      "children": [
+        "fragment-3"
+      ]
+    },
+    "fragment-3": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-input-4",
+        "variant-input-5",
+        "variant-input-6",
+        "variant-input-7",
+        "variant-input-8",
+        "variant-input-9",
+        "variant-input-10",
+        "variant-inputmask-1"
+      ]
+    },
+    "input-4": {
+      "type": "Input",
+      "props": {
+        "value": {
+          "$bindState": "/input-4/value"
+        },
+        "placeholder": "Name",
+        "ariaLabel": "Default input"
+      },
+      "children": []
+    },
+    "input-5": {
+      "type": "Input",
+      "props": {
+        "placeholder": "Outline, small",
+        "size": "sm",
+        "ariaLabel": "Small input"
+      },
+      "children": []
+    },
+    "input-6": {
+      "type": "Input",
+      "props": {
+        "placeholder": "Filled, large",
+        "size": "lg",
+        "appearance": "filled",
+        "ariaLabel": "Filled large input"
+      },
+      "children": []
+    },
+    "input-7": {
+      "type": "Input",
+      "props": {
+        "value": {
+          "$bindState": "/input-7/value"
+        },
+        "clearable": true,
+        "ariaLabel": "Clearable input"
+      },
+      "children": []
+    },
+    "input-8": {
+      "type": "Input",
+      "props": {
+        "value": {
+          "$bindState": "/input-8/value"
+        },
+        "invalid": true,
+        "ariaLabel": "Invalid input"
+      },
+      "children": []
+    },
+    "input-9": {
+      "type": "Input",
+      "props": {
+        "value": {
+          "$bindState": "/input-9/value"
+        },
+        "disabled": true,
+        "ariaLabel": "Disabled input"
+      },
+      "children": []
+    },
+    "input-10": {
+      "type": "Input",
+      "props": {
+        "value": {
+          "$bindState": "/input-10/value"
+        },
+        "readonly": true,
+        "ariaLabel": "Read only input"
+      },
+      "children": []
+    },
+    "card-11": {
+      "type": "Card",
+      "props": {
+        "title": "Textarea",
+        "description": "Multi-line text. `rows` sets the resting height."
+      },
+      "children": [
+        "fragment-12"
+      ]
+    },
+    "fragment-12": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-textarea-13",
+        "variant-textarea-14",
+        "variant-textarea-16",
+        "variant-textarea-17",
+        "variant-textarea-15",
+        "variant-textarea-18"
+      ]
+    },
+    "textarea-13": {
+      "type": "Textarea",
+      "props": {
+        "value": {
+          "$bindState": "/textarea-13/value"
+        },
+        "rows": 3,
+        "ariaLabel": "Default textarea"
+      },
+      "children": []
+    },
+    "textarea-14": {
+      "type": "Textarea",
+      "props": {
+        "value": {
+          "$bindState": "/textarea-14/value"
+        },
+        "placeholder": "Auto-resizing",
+        "rows": 2,
+        "autoResize": true,
+        "ariaLabel": "Auto-resizing textarea"
+      },
+      "children": []
+    },
+    "textarea-15": {
+      "type": "Textarea",
+      "props": {
+        "value": {
+          "$bindState": "/textarea-15/value"
+        },
+        "rows": 2,
+        "disabled": true,
+        "ariaLabel": "Disabled textarea"
+      },
+      "children": []
+    },
+    "card-16": {
+      "type": "Card",
+      "props": {
+        "title": "RichText",
+        "description": "Markdown source with a preview toggle."
+      },
+      "children": [
+        "fragment-17"
+      ]
+    },
+    "fragment-17": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "richtext-18"
+      ]
+    },
+    "richtext-18": {
+      "type": "RichText",
+      "props": {
+        "value": {
+          "$bindState": "/richtext-18/value"
+        },
+        "rows": 6,
+        "ariaLabel": "Release notes"
+      },
+      "children": []
+    },
+    "card-19": {
+      "type": "Card",
+      "props": {
+        "title": "NumberInput",
+        "description": "Numeric entry with bounds, step and precision."
+      },
+      "children": [
+        "fragment-20"
+      ]
+    },
+    "fragment-20": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-numberinput-21",
+        "variant-numberinput-22",
+        "variant-numberinput-24",
+        "variant-numberinput-23"
+      ]
+    },
+    "numberinput-21": {
+      "type": "NumberInput",
+      "props": {
+        "value": {
+          "$bindState": "/numberinput-21/value"
+        },
+        "min": 0,
+        "ariaLabel": "Default number input"
+      },
+      "children": []
+    },
+    "numberinput-22": {
+      "type": "NumberInput",
+      "props": {
+        "value": {
+          "$bindState": "/numberinput-22/value"
+        },
+        "min": 0,
+        "max": 100,
+        "step": 0.5,
+        "precision": 1,
+        "ariaLabel": "Half-step number input"
+      },
+      "children": []
+    },
+    "numberinput-23": {
+      "type": "NumberInput",
+      "props": {
+        "value": {
+          "$bindState": "/numberinput-23/value"
+        },
+        "disabled": true,
+        "ariaLabel": "Disabled number input"
+      },
+      "children": []
+    },
+    "card-24": {
+      "type": "Card",
+      "props": {
+        "title": "DatePicker",
+        "description": "A single ISO date, optionally bounded."
+      },
+      "children": [
+        "fragment-25"
+      ]
+    },
+    "fragment-25": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-datepicker-26",
+        "variant-datepicker-27",
+        "variant-datepicker-29",
+        "variant-datepicker-28"
+      ]
+    },
+    "datepicker-26": {
+      "type": "DatePicker",
+      "props": {
+        "value": {
+          "$bindState": "/datepicker-26/value"
+        },
+        "ariaLabel": "Default date picker"
+      },
+      "children": []
+    },
+    "datepicker-27": {
+      "type": "DatePicker",
+      "props": {
+        "value": {
+          "$bindState": "/datepicker-27/value"
+        },
+        "min": "2026-08-01",
+        "max": "2026-08-31",
+        "ariaLabel": "Bounded date picker"
+      },
+      "children": []
+    },
+    "datepicker-28": {
+      "type": "DatePicker",
+      "props": {
+        "value": {
+          "$bindState": "/datepicker-28/value"
+        },
+        "disabled": true,
+        "ariaLabel": "Disabled date picker"
+      },
+      "children": []
+    },
+    "variant-input-4": {
+      "type": "FormField",
+      "props": {
+        "name": "input-4",
+        "label": "Default"
+      },
+      "children": [
+        "input-4"
+      ]
+    },
+    "variant-input-5": {
+      "type": "FormField",
+      "props": {
+        "name": "input-5",
+        "label": "Small"
+      },
+      "children": [
+        "input-5"
+      ]
+    },
+    "variant-input-6": {
+      "type": "FormField",
+      "props": {
+        "name": "input-6",
+        "label": "Filled · large"
+      },
+      "children": [
+        "input-6"
+      ]
+    },
+    "variant-input-7": {
+      "type": "FormField",
+      "props": {
+        "name": "input-7",
+        "label": "Clearable"
+      },
+      "children": [
+        "input-7"
+      ]
+    },
+    "variant-input-8": {
+      "type": "FormField",
+      "props": {
+        "name": "input-8",
+        "label": "Invalid"
+      },
+      "children": [
+        "input-8"
+      ]
+    },
+    "variant-input-9": {
+      "type": "FormField",
+      "props": {
+        "name": "input-9",
+        "label": "Disabled"
+      },
+      "children": [
+        "input-9"
+      ]
+    },
+    "variant-input-10": {
+      "type": "FormField",
+      "props": {
+        "name": "input-10",
+        "label": "Read only"
+      },
+      "children": [
+        "input-10"
+      ]
+    },
+    "variant-textarea-13": {
+      "type": "FormField",
+      "props": {
+        "name": "textarea-13",
+        "label": "Default"
+      },
+      "children": [
+        "textarea-13"
+      ]
+    },
+    "variant-textarea-14": {
+      "type": "FormField",
+      "props": {
+        "name": "textarea-14",
+        "label": "Auto-resizing"
+      },
+      "children": [
+        "textarea-14"
+      ]
+    },
+    "variant-textarea-15": {
+      "type": "FormField",
+      "props": {
+        "name": "textarea-15",
+        "label": "Disabled"
+      },
+      "children": [
+        "textarea-15"
+      ]
+    },
+    "variant-numberinput-21": {
+      "type": "FormField",
+      "props": {
+        "name": "numberinput-21",
+        "label": "Default"
+      },
+      "children": [
+        "numberinput-21"
+      ]
+    },
+    "variant-numberinput-22": {
+      "type": "FormField",
+      "props": {
+        "name": "numberinput-22",
+        "label": "Step · 0.5"
+      },
+      "children": [
+        "numberinput-22"
+      ]
+    },
+    "variant-numberinput-23": {
+      "type": "FormField",
+      "props": {
+        "name": "numberinput-23",
+        "label": "Disabled"
+      },
+      "children": [
+        "numberinput-23"
+      ]
+    },
+    "variant-datepicker-26": {
+      "type": "FormField",
+      "props": {
+        "name": "datepicker-26",
+        "label": "Default"
+      },
+      "children": [
+        "datepicker-26"
+      ]
+    },
+    "variant-datepicker-27": {
+      "type": "FormField",
+      "props": {
+        "name": "datepicker-27",
+        "label": "Bounded · August"
+      },
+      "children": [
+        "datepicker-27"
+      ]
+    },
+    "variant-datepicker-28": {
+      "type": "FormField",
+      "props": {
+        "name": "datepicker-28",
+        "label": "Disabled"
+      },
+      "children": [
+        "datepicker-28"
+      ]
+    },
+    "card-tags": {
+      "type": "Card",
+      "props": {
+        "title": "TagsInput",
+        "description": "Free-text tags as removable chips; Enter adds, Backspace removes the last."
+      },
+      "children": [
+        "fragment-tags"
+      ]
+    },
+    "fragment-tags": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-tagsinput-1",
+        "variant-tagsinput-2",
+        "variant-tagsinput-3",
+        "variant-tagsinput-4"
+      ]
+    },
+    "variant-tagsinput-1": {
+      "type": "FormField",
+      "props": {
+        "name": "tagsinput-1",
+        "label": "Default"
+      },
+      "children": [
+        "tagsinput-1"
+      ]
+    },
+    "tagsinput-1": {
+      "type": "TagsInput",
+      "props": {
+        "value": {
+          "$bindState": "/tagsinput-1/value"
+        },
+        "placeholder": "Type and press Enter",
+        "ariaLabel": "Default tags input"
+      },
+      "children": []
+    },
+    "variant-tagsinput-2": {
+      "type": "FormField",
+      "props": {
+        "name": "tagsinput-2",
+        "label": "Limited to 3"
+      },
+      "children": [
+        "tagsinput-2"
+      ]
+    },
+    "tagsinput-2": {
+      "type": "TagsInput",
+      "props": {
+        "value": {
+          "$bindState": "/tagsinput-2/value"
+        },
+        "max": 3,
+        "ariaLabel": "Limited tags input"
+      },
+      "children": []
+    },
+    "card-images": {
+      "type": "Card",
+      "props": {
+        "title": "ImageGrid",
+        "description": "Pick or drop images and drag tiles to reorder; the first is the cover. Without an upload service the picked files stay local previews."
+      },
+      "children": [
+        "variant-imagegrid-1"
+      ]
+    },
+    "variant-imagegrid-1": {
+      "type": "FormField",
+      "props": {
+        "name": "imagegrid-1",
+        "label": "Product images"
+      },
+      "children": [
+        "imagegrid-1"
+      ]
+    },
+    "imagegrid-1": {
+      "type": "ImageGrid",
+      "props": {
+        "value": {
+          "$bindState": "/imagegrid-1/value"
+        },
+        "max": 4,
+        "maxSize": 5242880,
+        "coverLabel": "Cover",
+        "addLabel": "Upload image",
+        "ariaLabel": "Product images"
+      },
+      "children": []
+    },
+    "card-timepicker": {
+      "type": "Card",
+      "props": {
+        "title": "TimePicker",
+        "description": "A time of day as HH:mm; minutes step, optional seconds and bounds."
+      },
+      "children": [
+        "card-timepicker-body"
+      ]
+    },
+    "variant-timepicker-1": {
+      "type": "FormField",
+      "props": {
+        "name": "timepicker-1",
+        "label": "Default"
+      },
+      "children": [
+        "timepicker-1"
+      ]
+    },
+    "timepicker-1": {
+      "type": "TimePicker",
+      "props": {
+        "value": {
+          "$bindState": "/timepicker-1/value"
+        },
+        "ariaLabel": "Default time picker"
+      },
+      "children": []
+    },
+    "variant-timepicker-2": {
+      "type": "FormField",
+      "props": {
+        "name": "timepicker-2",
+        "label": "Office hours · 15 min"
+      },
+      "children": [
+        "timepicker-2"
+      ]
+    },
+    "timepicker-2": {
+      "type": "TimePicker",
+      "props": {
+        "value": {
+          "$bindState": "/timepicker-2/value"
+        },
+        "step": 15,
+        "min": "09:00",
+        "max": "18:00",
+        "ariaLabel": "Office hours time picker"
+      },
+      "children": []
+    },
+    "variant-timepicker-3": {
+      "type": "FormField",
+      "props": {
+        "name": "timepicker-3",
+        "label": "With seconds"
+      },
+      "children": [
+        "timepicker-3"
+      ]
+    },
+    "timepicker-3": {
+      "type": "TimePicker",
+      "props": {
+        "value": {
+          "$bindState": "/timepicker-3/value"
+        },
+        "seconds": true,
+        "ariaLabel": "Time picker with seconds"
+      },
+      "children": []
+    },
+    "card-timepicker-body": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-timepicker-1",
+        "variant-timepicker-2",
+        "variant-timepicker-3",
+        "variant-timepicker-4"
+      ]
+    },
+    "card-datetimepicker": {
+      "type": "Card",
+      "props": {
+        "title": "DateTimePicker",
+        "description": "A local date and time, the datetime-local format."
+      },
+      "children": [
+        "card-datetimepicker-body"
+      ]
+    },
+    "variant-datetimepicker-1": {
+      "type": "FormField",
+      "props": {
+        "name": "datetimepicker-1",
+        "label": "Default"
+      },
+      "children": [
+        "datetimepicker-1"
+      ]
+    },
+    "datetimepicker-1": {
+      "type": "DateTimePicker",
+      "props": {
+        "value": {
+          "$bindState": "/datetimepicker-1/value"
+        },
+        "ariaLabel": "Default date and time picker"
+      },
+      "children": []
+    },
+    "variant-datetimepicker-2": {
+      "type": "FormField",
+      "props": {
+        "name": "datetimepicker-2",
+        "label": "Bounded · August"
+      },
+      "children": [
+        "datetimepicker-2"
+      ]
+    },
+    "datetimepicker-2": {
+      "type": "DateTimePicker",
+      "props": {
+        "value": {
+          "$bindState": "/datetimepicker-2/value"
+        },
+        "min": "2026-08-01",
+        "max": "2026-08-31",
+        "step": 15,
+        "ariaLabel": "Bounded date and time picker"
+      },
+      "children": []
+    },
+    "card-datetimepicker-body": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-datetimepicker-1",
+        "variant-datetimepicker-2"
+      ]
+    },
+    "card-daterangepicker": {
+      "type": "Card",
+      "props": {
+        "title": "DateRangePicker",
+        "description": "A [start, end] pair, two months side by side, with presets."
+      },
+      "children": [
+        "card-daterangepicker-body"
+      ]
+    },
+    "variant-daterangepicker-1": {
+      "type": "FormField",
+      "props": {
+        "name": "daterangepicker-1",
+        "label": "Default"
+      },
+      "children": [
+        "daterangepicker-1"
+      ]
+    },
+    "daterangepicker-1": {
+      "type": "DateRangePicker",
+      "props": {
+        "value": {
+          "$bindState": "/daterangepicker-1/value"
+        },
+        "ariaLabel": "Default date range picker"
+      },
+      "children": []
+    },
+    "variant-daterangepicker-2": {
+      "type": "FormField",
+      "props": {
+        "name": "daterangepicker-2",
+        "label": "With presets"
+      },
+      "children": [
+        "daterangepicker-2"
+      ]
+    },
+    "daterangepicker-2": {
+      "type": "DateRangePicker",
+      "props": {
+        "value": {
+          "$bindState": "/daterangepicker-2/value"
+        },
+        "ariaLabel": "Date range picker with presets",
+        "presets": [
+          {
+            "label": "First week",
+            "value": [
+              "2026-08-01",
+              "2026-08-07"
+            ]
+          },
+          {
+            "label": "Whole month",
+            "value": [
+              "2026-08-01",
+              "2026-08-31"
+            ]
+          }
+        ]
+      },
+      "children": []
+    },
+    "card-daterangepicker-body": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-daterangepicker-1",
+        "variant-daterangepicker-2"
+      ]
+    },
+    "card-cascader": {
+      "type": "Card",
+      "props": {
+        "title": "Cascader, CascaderPanel",
+        "description": "A path through a tree, one column per level: in a select, or as columns in place."
+      },
+      "children": [
+        "card-cascader-body",
+        "variant-cascaderpanel-1"
+      ]
+    },
+    "variant-cascader-1": {
+      "type": "FormField",
+      "props": {
+        "name": "cascader-1",
+        "label": "Region"
+      },
+      "children": [
+        "cascader-1"
+      ]
+    },
+    "cascader-1": {
+      "type": "Cascader",
+      "props": {
+        "value": {
+          "$bindState": "/cascader-1/value"
+        },
+        "options": [
+          {
+            "label": "Zhejiang",
+            "value": "zj",
+            "children": [
+              {
+                "label": "Hangzhou",
+                "value": "hz",
+                "children": [
+                  {
+                    "label": "West Lake",
+                    "value": "xh"
+                  },
+                  {
+                    "label": "Binjiang",
+                    "value": "bj"
+                  }
+                ]
+              },
+              {
+                "label": "Ningbo",
+                "value": "nb"
+              }
+            ]
+          },
+          {
+            "label": "Guangdong",
+            "value": "gd",
+            "children": [
+              {
+                "label": "Shenzhen",
+                "value": "sz",
+                "children": [
+                  {
+                    "label": "Nanshan",
+                    "value": "ns"
+                  },
+                  {
+                    "label": "Futian",
+                    "value": "ft"
+                  }
+                ]
+              },
+              {
+                "label": "Guangzhou",
+                "value": "gz"
+              }
+            ]
+          },
+          {
+            "label": "Sichuan",
+            "value": "sc",
+            "disabled": true,
+            "children": [
+              {
+                "label": "Chengdu",
+                "value": "cd"
+              }
+            ]
+          }
+        ],
+        "ariaLabel": "Region",
+        "placeholder": "Choose a district"
+      },
+      "children": []
+    },
+    "variant-cascader-2": {
+      "type": "FormField",
+      "props": {
+        "name": "cascader-2",
+        "label": "Any level · searchable"
+      },
+      "children": [
+        "cascader-2"
+      ]
+    },
+    "cascader-2": {
+      "type": "Cascader",
+      "props": {
+        "value": {
+          "$bindState": "/cascader-2/value"
+        },
+        "options": [
+          {
+            "label": "Zhejiang",
+            "value": "zj",
+            "children": [
+              {
+                "label": "Hangzhou",
+                "value": "hz",
+                "children": [
+                  {
+                    "label": "West Lake",
+                    "value": "xh"
+                  },
+                  {
+                    "label": "Binjiang",
+                    "value": "bj"
+                  }
+                ]
+              },
+              {
+                "label": "Ningbo",
+                "value": "nb"
+              }
+            ]
+          },
+          {
+            "label": "Guangdong",
+            "value": "gd",
+            "children": [
+              {
+                "label": "Shenzhen",
+                "value": "sz",
+                "children": [
+                  {
+                    "label": "Nanshan",
+                    "value": "ns"
+                  },
+                  {
+                    "label": "Futian",
+                    "value": "ft"
+                  }
+                ]
+              },
+              {
+                "label": "Guangzhou",
+                "value": "gz"
+              }
+            ]
+          },
+          {
+            "label": "Sichuan",
+            "value": "sc",
+            "disabled": true,
+            "children": [
+              {
+                "label": "Chengdu",
+                "value": "cd"
+              }
+            ]
+          }
+        ],
+        "changeOnSelect": true,
+        "searchable": true,
+        "clearable": true,
+        "ariaLabel": "Region at any level"
+      },
+      "children": []
+    },
+    "card-cascader-body": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 190
+      },
+      "children": [
+        "variant-cascader-1",
+        "variant-cascader-2"
+      ]
+    },
+    "card-tree": {
+      "type": "Card",
+      "props": {
+        "title": "Tree, TreeSelect",
+        "description": "Nested nodes: an inline tree with checkboxes, and a tree in a searchable select panel."
+      },
+      "children": [
+        "card-tree-body"
+      ]
+    },
+    "card-tree-body": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 220
+      },
+      "children": [
+        "variant-tree-1",
+        "variant-treeselect-1"
+      ]
+    },
+    "tree-1": {
+      "type": "Tree",
+      "props": {
+        "items": [
+          {
+            "label": "Design",
+            "value": "design",
+            "children": [
+              {
+                "label": "Brand",
+                "value": "brand"
+              },
+              {
+                "label": "Icons",
+                "value": "icons"
+              }
+            ]
+          },
+          {
+            "label": "Engineering",
+            "value": "eng",
+            "children": [
+              {
+                "label": "Frontend",
+                "value": "web"
+              },
+              {
+                "label": "API",
+                "value": "api"
+              }
+            ]
+          }
+        ],
+        "checkable": true,
+        "checkStrategy": "leaf",
+        "defaultExpandAll": true,
+        "value": {
+          "$bindState": "/tree-1/value"
+        },
+        "ariaLabel": "Teams"
+      },
+      "children": []
+    },
+    "variant-treeselect-1": {
+      "type": "FormField",
+      "props": {
+        "name": "treeselect-1",
+        "label": "Team"
+      },
+      "children": [
+        "treeselect-1"
+      ]
+    },
+    "treeselect-1": {
+      "type": "TreeSelect",
+      "props": {
+        "items": [
+          {
+            "label": "Design",
+            "value": "design",
+            "children": [
+              {
+                "label": "Brand",
+                "value": "brand"
+              },
+              {
+                "label": "Icons",
+                "value": "icons"
+              }
+            ]
+          },
+          {
+            "label": "Engineering",
+            "value": "eng",
+            "children": [
+              {
+                "label": "Frontend",
+                "value": "web"
+              },
+              {
+                "label": "API",
+                "value": "api"
+              }
+            ]
+          }
+        ],
+        "searchable": true,
+        "clearable": true,
+        "showPath": true,
+        "value": {
+          "$bindState": "/treeselect-1/value"
+        },
+        "ariaLabel": "Team",
+        "placeholder": "Choose a team"
+      },
+      "children": []
+    },
+    "cascaderpanel-1": {
+      "type": "CascaderPanel",
+      "props": {
+        "options": [
+          {
+            "label": "Zhejiang",
+            "value": "zj",
+            "children": [
+              {
+                "label": "Hangzhou",
+                "value": "hz"
+              },
+              {
+                "label": "Ningbo",
+                "value": "nb"
+              }
+            ]
+          },
+          {
+            "label": "Guangdong",
+            "value": "gd",
+            "children": [
+              {
+                "label": "Shenzhen",
+                "value": "sz"
+              }
+            ]
+          },
+          {
+            "label": "Jiangsu",
+            "value": "js",
+            "children": [
+              {
+                "label": "Nanjing",
+                "value": "nj"
+              },
+              {
+                "label": "Suzhou",
+                "value": "su"
+              }
+            ]
+          }
+        ],
+        "value": {
+          "$bindState": "/cascaderpanel-1/value"
+        },
+        "ariaLabel": "Region"
+      },
+      "children": []
+    },
+    "inputotp-1": {
+      "type": "InputOTP",
+      "props": {
+        "length": 6,
+        "group": 3,
+        "ariaLabel": "Verification code",
+        "value": {
+          "$bindState": "/inputotp-1/value"
+        }
+      },
+      "children": []
+    },
+    "variant-inputotp-1": {
+      "type": "FormField",
+      "props": {
+        "name": "inputotp-1",
+        "label": "Default"
+      },
+      "children": [
+        "inputotp-1"
+      ]
+    },
+    "inputotp-2": {
+      "type": "InputOTP",
+      "props": {
+        "length": 4,
+        "mask": true,
+        "ariaLabel": "PIN",
+        "value": {
+          "$bindState": "/inputotp-2/value"
+        }
+      },
+      "children": []
+    },
+    "variant-inputotp-2": {
+      "type": "FormField",
+      "props": {
+        "name": "inputotp-2",
+        "label": "Masked"
+      },
+      "children": [
+        "inputotp-2"
+      ]
+    },
+    "inputotp-3": {
+      "type": "InputOTP",
+      "props": {
+        "length": 6,
+        "type": "alphanumeric",
+        "size": "sm",
+        "ariaLabel": "Invite code",
+        "value": {
+          "$bindState": "/inputotp-3/value"
+        }
+      },
+      "children": []
+    },
+    "variant-inputotp-3": {
+      "type": "FormField",
+      "props": {
+        "name": "inputotp-3",
+        "label": "Letters and digits"
+      },
+      "children": [
+        "inputotp-3"
+      ]
+    },
+    "inputotp-4": {
+      "type": "InputOTP",
+      "props": {
+        "defaultValue": "1234",
+        "length": 4,
+        "disabled": true,
+        "ariaLabel": "Disabled code"
+      },
+      "children": []
+    },
+    "variant-inputotp-4": {
+      "type": "FormField",
+      "props": {
+        "name": "inputotp-4",
+        "label": "Disabled"
+      },
+      "children": [
+        "inputotp-4"
+      ]
+    },
+    "fragment-inputotp": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 260
+      },
+      "children": [
+        "variant-inputotp-1",
+        "variant-inputotp-2",
+        "variant-inputotp-3",
+        "variant-inputotp-5",
+        "variant-inputotp-4"
+      ]
+    },
+    "card-inputotp": {
+      "type": "Card",
+      "props": {
+        "title": "InputOTP",
+        "description": "A one-time code in separate boxes, with paste and keyboard navigation."
+      },
+      "children": [
+        "fragment-inputotp"
+      ]
+    },
+    "signaturepad-1": {
+      "type": "SignaturePad",
+      "props": {
+        "ariaLabel": "Signature",
+        "value": {
+          "$bindState": "/signaturepad-1/value"
+        }
+      },
+      "children": []
+    },
+    "variant-signaturepad-1": {
+      "type": "FormField",
+      "props": {
+        "name": "signaturepad-1",
+        "label": "Default"
+      },
+      "children": [
+        "signaturepad-1"
+      ]
+    },
+    "signaturepad-2": {
+      "type": "SignaturePad",
+      "props": {
+        "height": 96,
+        "disabled": true,
+        "ariaLabel": "Disabled signature"
+      },
+      "children": []
+    },
+    "variant-signaturepad-2": {
+      "type": "FormField",
+      "props": {
+        "name": "signaturepad-2",
+        "label": "Disabled"
+      },
+      "children": [
+        "signaturepad-2"
+      ]
+    },
+    "fragment-signaturepad": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 320
+      },
+      "children": [
+        "variant-signaturepad-1",
+        "variant-signaturepad-2"
+      ]
+    },
+    "card-signaturepad": {
+      "type": "Card",
+      "props": {
+        "title": "SignaturePad",
+        "description": "Draws a signature and keeps it as a PNG data URL."
+      },
+      "children": [
+        "fragment-signaturepad"
+      ]
+    },
+    "inputmask-1": {
+      "type": "Input",
+      "props": {
+        "mask": "999 9999 9999",
+        "ariaLabel": "Phone",
+        "value": {
+          "$bindState": "/inputmask-1/value"
+        },
+        "placeholder": "138 0000 0000"
+      },
+      "children": []
+    },
+    "variant-inputmask-1": {
+      "type": "FormField",
+      "props": {
+        "name": "inputmask-1",
+        "label": "Masked · phone"
+      },
+      "children": [
+        "inputmask-1"
+      ]
+    },
+    "variant-textarea-16": {
+      "type": "FormField",
+      "props": {
+        "name": "textarea-16",
+        "label": "Filled · small"
+      },
+      "children": [
+        "textarea-16"
+      ]
+    },
+    "textarea-16": {
+      "type": "Textarea",
+      "props": {
+        "placeholder": "Filled, small",
+        "rows": 2,
+        "size": "sm",
+        "appearance": "filled",
+        "ariaLabel": "Filled small textarea"
+      },
+      "children": []
+    },
+    "variant-textarea-17": {
+      "type": "FormField",
+      "props": {
+        "name": "textarea-17",
+        "label": "Invalid"
+      },
+      "children": [
+        "textarea-17"
+      ]
+    },
+    "textarea-17": {
+      "type": "Textarea",
+      "props": {
+        "value": {
+          "$bindState": "/textarea-17/value"
+        },
+        "rows": 2,
+        "invalid": true,
+        "ariaLabel": "Invalid textarea"
+      },
+      "children": []
+    },
+    "variant-textarea-18": {
+      "type": "FormField",
+      "props": {
+        "name": "textarea-18",
+        "label": "Read only"
+      },
+      "children": [
+        "textarea-18"
+      ]
+    },
+    "textarea-18": {
+      "type": "Textarea",
+      "props": {
+        "value": {
+          "$bindState": "/textarea-18/value"
+        },
+        "rows": 2,
+        "readonly": true,
+        "ariaLabel": "Read only textarea"
+      },
+      "children": []
+    },
+    "variant-numberinput-24": {
+      "type": "FormField",
+      "props": {
+        "name": "numberinput-24",
+        "label": "Prefix · 2 decimals"
+      },
+      "children": [
+        "numberinput-24"
+      ]
+    },
+    "numberinput-24": {
+      "type": "NumberInput",
+      "props": {
+        "value": {
+          "$bindState": "/numberinput-24/value"
+        },
+        "min": 0,
+        "precision": 2,
+        "prefix": "$",
+        "ariaLabel": "Price number input"
+      },
+      "children": []
+    },
+    "variant-datepicker-29": {
+      "type": "FormField",
+      "props": {
+        "name": "datepicker-29",
+        "label": "Filled"
+      },
+      "children": [
+        "datepicker-29"
+      ]
+    },
+    "datepicker-29": {
+      "type": "DatePicker",
+      "props": {
+        "value": {
+          "$bindState": "/datepicker-29/value"
+        },
+        "appearance": "filled",
+        "ariaLabel": "Filled date picker"
+      },
+      "children": []
+    },
+    "variant-timepicker-4": {
+      "type": "FormField",
+      "props": {
+        "name": "timepicker-4",
+        "label": "Disabled"
+      },
+      "children": [
+        "timepicker-4"
+      ]
+    },
+    "timepicker-4": {
+      "type": "TimePicker",
+      "props": {
+        "value": {
+          "$bindState": "/timepicker-4/value"
+        },
+        "disabled": true,
+        "ariaLabel": "Disabled time picker"
+      },
+      "children": []
+    },
+    "variant-cascaderpanel-1": {
+      "type": "FormField",
+      "props": {
+        "name": "cascaderpanel-1",
+        "label": "Columns in place"
+      },
+      "children": [
+        "cascaderpanel-1"
+      ]
+    },
+    "variant-tree-1": {
+      "type": "FormField",
+      "props": {
+        "name": "tree-1",
+        "label": "Checkable"
+      },
+      "children": [
+        "tree-1"
+      ]
+    },
+    "variant-tagsinput-3": {
+      "type": "FormField",
+      "props": {
+        "name": "tagsinput-3",
+        "label": "Disabled"
+      },
+      "children": [
+        "tagsinput-3"
+      ]
+    },
+    "tagsinput-3": {
+      "type": "TagsInput",
+      "props": {
+        "value": {
+          "$bindState": "/tagsinput-3/value"
+        },
+        "disabled": true,
+        "ariaLabel": "Disabled tags input"
+      },
+      "children": []
+    },
+    "variant-tagsinput-4": {
+      "type": "FormField",
+      "props": {
+        "name": "tagsinput-4",
+        "label": "Invalid"
+      },
+      "children": [
+        "tagsinput-4"
+      ]
+    },
+    "tagsinput-4": {
+      "type": "TagsInput",
+      "props": {
+        "value": {
+          "$bindState": "/tagsinput-4/value"
+        },
+        "invalid": true,
+        "placeholder": "Add at least one tag",
+        "ariaLabel": "Invalid tags input"
+      },
+      "children": []
+    },
+    "variant-inputotp-5": {
+      "type": "FormField",
+      "props": {
+        "name": "inputotp-5",
+        "label": "Invalid"
+      },
+      "children": [
+        "inputotp-5"
+      ]
+    },
+    "inputotp-5": {
+      "type": "InputOTP",
+      "props": {
+        "value": {
+          "$bindState": "/inputotp-5/value"
+        },
+        "length": 6,
+        "group": 3,
+        "invalid": true,
+        "ariaLabel": "Invalid code"
+      },
+      "children": []
+    },
+    "card-codeeditor": {
+      "type": "Card",
+      "props": {
+        "title": "CodeEditor",
+        "description": "Edits source with the same highlighting as CodeBlock; JSON syntax errors show under the field."
+      },
+      "children": [
+        "fragment-codeeditor"
+      ]
+    },
+    "fragment-codeeditor": {
+      "type": "Grid",
+      "props": {
+        "minColumnWidth": 320
+      },
+      "children": [
+        "variant-codeeditor-1",
+        "variant-codeeditor-2"
+      ]
+    },
+    "variant-codeeditor-1": {
+      "type": "FormField",
+      "props": {
+        "name": "codeeditor-1",
+        "label": "JSON"
+      },
+      "children": [
+        "codeeditor-1"
+      ]
+    },
+    "codeeditor-1": {
+      "type": "CodeEditor",
+      "props": {
+        "value": {
+          "$bindState": "/codeeditor-1/value"
+        },
+        "language": "json",
+        "checkSyntax": true,
+        "minHeight": 120,
+        "ariaLabel": "JSON"
+      },
+      "children": []
+    },
+    "variant-codeeditor-2": {
+      "type": "FormField",
+      "props": {
+        "name": "codeeditor-2",
+        "label": "Read only"
+      },
+      "children": [
+        "codeeditor-2"
+      ]
+    },
+    "codeeditor-2": {
+      "type": "CodeEditor",
+      "props": {
+        "defaultValue": "SELECT id, total\nFROM orders\nWHERE status = 'paid';",
+        "language": "sql",
+        "readonly": true,
+        "minHeight": 120,
+        "ariaLabel": "Read only SQL"
+      },
+      "children": []
+    }
+  },
+  "state": {
+    "input-4": {
+      "value": "Lumi"
+    },
+    "input-7": {
+      "value": "Clearable"
+    },
+    "input-8": {
+      "value": "Invalid"
+    },
+    "input-9": {
+      "value": "Disabled"
+    },
+    "input-10": {
+      "value": "Read only"
+    },
+    "textarea-13": {
+      "value": "Notes"
+    },
+    "textarea-14": {
+      "value": "Grows with its content:\nadd a line and it gets taller,\nremove one and it shrinks."
+    },
+    "textarea-15": {
+      "value": "Disabled"
+    },
+    "richtext-18": {
+      "value": "## Release notes\n\n- Ships **markdown**\n- And `code`"
+    },
+    "numberinput-21": {
+      "value": 3
+    },
+    "numberinput-22": {
+      "value": 12.5
+    },
+    "numberinput-23": {
+      "value": 7
+    },
+    "datepicker-26": {
+      "value": "2026-08-10"
+    },
+    "datepicker-27": {
+      "value": "2026-08-10"
+    },
+    "datepicker-28": {
+      "value": "2026-08-10"
+    },
+    "tagsinput-1": {
+      "value": [
+        "Autumn",
+        "Wool",
+        "Gift"
+      ]
+    },
+    "tagsinput-2": {
+      "value": [
+        "Bestseller"
+      ]
+    },
+    "imagegrid-1": {
+      "value": [
+        {
+          "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><rect width='8' height='8' fill='%23cfc4b5'/></svg>",
+          "alt": "Grey"
+        },
+        {
+          "url": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><rect width='8' height='8' fill='%23e2d7b8'/></svg>",
+          "alt": "Oat"
+        }
+      ]
+    },
+    "timepicker-1": {
+      "value": "09:30"
+    },
+    "timepicker-2": {
+      "value": "14:15"
+    },
+    "timepicker-3": {
+      "value": "08:05:30"
+    },
+    "datetimepicker-1": {
+      "value": "2026-08-10T09:30"
+    },
+    "datetimepicker-2": {
+      "value": ""
+    },
+    "daterangepicker-1": {
+      "value": [
+        "2026-08-03",
+        "2026-08-10"
+      ]
+    },
+    "daterangepicker-2": {
+      "value": []
+    },
+    "cascader-1": {
+      "value": [
+        "zj",
+        "hz",
+        "xh"
+      ]
+    },
+    "cascader-2": {
+      "value": [
+        "gd"
+      ]
+    },
+    "tree-1": {
+      "value": [
+        "brand"
+      ]
+    },
+    "treeselect-1": {
+      "value": "api"
+    },
+    "cascaderpanel-1": {
+      "value": [
+        "zj",
+        "hz"
+      ]
+    },
+    "inputotp-1": {
+      "value": ""
+    },
+    "inputotp-2": {
+      "value": "12"
+    },
+    "inputotp-3": {
+      "value": "AB12"
+    },
+    "signaturepad-1": {
+      "value": ""
+    },
+    "inputmask-1": {
+      "value": ""
+    },
+    "textarea-17": {
+      "value": "Invalid"
+    },
+    "textarea-18": {
+      "value": "Read only"
+    },
+    "numberinput-24": {
+      "value": 19.9
+    },
+    "datepicker-29": {
+      "value": "2026-08-24"
+    },
+    "timepicker-4": {
+      "value": "18:00"
+    },
+    "tagsinput-3": {
+      "value": [
+        "Archived"
+      ]
+    },
+    "tagsinput-4": {
+      "value": []
+    },
+    "inputotp-5": {
+      "value": "482913"
+    },
+    "codeeditor-1": {
+      "value": "{\n  \"resource\": \"orders\",\n  \"pageSize\": 20\n}"
+    }
+  }
+}

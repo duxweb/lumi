@@ -6,18 +6,14 @@ import { act, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createMemoryRouter, Link, Outlet, RouterProvider } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
-import {
-  LumiDataGrid,
-  LumiFilterBar,
-  LumiFormPage,
-  LumiListPage,
-  LumiPage,
-  LumiPageFrame,
-  LumiPageHeader,
-  LumiSettingsPage,
-  LumiSettingsRow,
-  LumiUnsavedChangesProvider,
-} from '../src/react/index.js';
+import { LumiDataGrid } from '../src/react/pages/LumiDataGrid.js'
+import { LumiFilterBar } from '../src/react/pages/LumiFilterBar.js'
+import { LumiFormPage } from '../src/react/pages/LumiFormPage.js'
+import { LumiListPage } from '../src/react/pages/LumiListPage.js'
+import { LumiPage, LumiPageHeader } from '../src/react/pages/LumiPage.js'
+import { LumiPageFrame } from '../src/react/pages/LumiPageFrame.js'
+import { LumiSettingsPage, LumiSettingsRow } from '../src/react/pages/LumiSettingsPage.js'
+import { LumiUnsavedChangesProvider } from '../src/react/pages/useUnsavedChangesGuard.js'
 
 (
   globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }

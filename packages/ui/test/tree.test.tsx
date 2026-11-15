@@ -4,8 +4,11 @@ import type { CascaderOption, OptionValue } from '../src/catalog/types-public.js
 import { act, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { LumiCascaderPanel } from '../src/components/cascader-panel.js'
+import { LumiCascader } from '../src/components/cascader.js'
+import { LumiTreeSelect } from '../src/components/tree-select.js'
 import { checkedLeafKeys, checkedValues, filterTree, treeCheckStates, treeGuides } from '../src/components/tree-utils.js'
-import { LumiCascader, LumiCascaderPanel, LumiTree, LumiTreeSelect } from '../src/react/index.js'
+import { LumiTree } from '../src/components/tree.js'
 
 const roots: Array<{ root: ReturnType<typeof createRoot>, host: HTMLElement }> = []
 

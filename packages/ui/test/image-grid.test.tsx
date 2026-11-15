@@ -4,7 +4,7 @@ import type { ImageGridItem, UploadFileContext } from '../src/catalog/index.js'
 import { act, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { LumiImageGrid } from '../src/react/index.js'
+import { LumiImageGrid } from '../src/components/upload.js'
 
 const roots: Array<{ root: ReturnType<typeof createRoot>, host: HTMLElement }> = []
 

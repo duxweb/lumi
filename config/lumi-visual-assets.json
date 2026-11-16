@@ -3,5 +3,11 @@
   "snapshotDirectory": "e2e/react-admin.spec.ts-snapshots",
   "knownPlatforms": ["darwin", "linux"],
   "requiredPlatforms": ["darwin", "linux"],
-  "ownedImages": ["apps/site/public/home/sky.webp"]
+  "ownedImages": [
+    "apps/site/public/home/sky.webp",
+    ".github/assets/readme/dashboard-en-light.png",
+    ".github/assets/readme/dashboard-en-dark.png",
+    ".github/assets/readme/dashboard-zh-CN-light.png",
+    ".github/assets/readme/dashboard-zh-CN-dark.png"
+  ]
 }

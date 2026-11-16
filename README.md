@@ -1,56 +1,164 @@
-# Lumi
+<h1 align="center">Lumi</h1>
 
-Lumi builds admin interfaces from JSON. Pages are native [json-render](https://json-render.dev) Specs; Lumi adds the data, request, auth and upload services they need, a React UI library, and a complete Admin shell. A backend in any language can serve the pages, menus and data over JSON/HTTP, and a deployment needs no frontend build.
+<p align="center"><strong>JSON-driven admin apps. Built for AI.</strong></p>
 
-Documentation (Chinese) lives in `apps/site`; run `pnpm site:dev` and open http://127.0.0.1:5179.
+<p align="center">
+  <a href="https://www.npmjs.com/package/@duxweb/lumi"><img src="https://img.shields.io/npm/v/%40duxweb%2Flumi?color=18181b" alt="npm version" /></a>
+  <a href="https://github.com/duxweb/lumi/actions/workflows/ci.yml"><img src="https://github.com/duxweb/lumi/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI" /></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-18181b" alt="MIT license" /></a>
+</p>
 
-GitHub Pages deploys the homepage, docs, Playground and full browser demo together on every push to `main`, through `.github/workflows/pages.yml`. Enable GitHub Actions as the repository's Pages source. The demo lives at `demo/` beneath the site URL and uses browser mock data; it needs no backend server. `LUMI_SITE_BASE` and `LUMI_SITE_URL` configure the deployment path and origin. The site E2E tests use `/lumi/` by default to cover repository Pages hosting; set `LUMI_SITE_BASE=/` to check a root deployment.
+<p align="center">
+  <a href="https://duxweb.github.io/lumi/en/">Website</a> ·
+  <a href="https://duxweb.github.io/lumi/guide/">Docs (中文)</a> ·
+  <a href="https://duxweb.github.io/lumi/demo/">Live demo</a> ·
+  <a href="https://duxweb.github.io/lumi/playground/">Playground</a>
+</p>
+
+<p align="center"><strong>English</strong> · <a href="./README.zh-CN.md">简体中文</a></p>
+
+Lumi is a React framework for admin apps built on native [json-render](https://json-render.dev). Your backend serves pages, menus and data over JSON/HTTP; Lumi supplies the components, application services and Admin shell. Developers and AI agents work with the same component Catalog and validation rules.
+
+Use the prebuilt Admin base to serve JSON pages without a frontend build, or import the packages into your own React application.
+
+<a href="https://duxweb.github.io/lumi/demo/">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./.github/assets/readme/dashboard-en-dark.png" />
+    <img src="./.github/assets/readme/dashboard-en-light.png" alt="Lumi Admin operations dashboard with navigation, metrics, charts and order status" width="1440" />
+  </picture>
+</a>
+
+<p align="center">A real Lumi Admin, in light and dark themes. <a href="https://duxweb.github.io/lumi/demo/">Try it in your browser</a> — demo data runs locally, with no sign-in required.</p>
+
+## What Lumi provides
+
+- **Pages from JSON.** Native Spec, Catalog, Registry and StateStore, with bindings and registered actions. Connect any backend that speaks JSON/HTTP, including Go, PHP and Node.js.
+- **A complete Admin shell.** Sign-in, permissions, menus, tabs, workspaces, routed drawers, responsive layouts and theme switching, with dashboard, list, form, detail and settings pages.
+- **One UI for JSON and JSX.** React components with shared design tokens, forms, tables, filters, uploads and optional charts. Use Lumi UI on its own or as part of Admin.
+- **Shared application services.** Hooks and JSON actions use the same data providers, query cache, authentication and upload lifecycle. Forms support async validation, field errors, drafts and unsaved-change guards.
+- **Tools for AI authors.** A project-local Lumi skill and `lumi-check` let coding agents discover components, inspect props and validate pages against the application's Catalog.
+- **An assistant inside the app.** Connect your chat endpoint for page context, record mentions, commands, approval cards and change previews. Your backend supplies the model integration.
+
+## Get started
+
+### Serve the prebuilt Admin
+
+Load the bundled script and stylesheet from your backend's HTML page:
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@duxweb/lumi-admin@0.1.0/dist/base/lumi-admin.css"
+/>
+<div id="app"></div>
+<script
+  type="module"
+  src="https://cdn.jsdelivr.net/npm/@duxweb/lumi-admin@0.1.0/dist/base/lumi-admin.js"
+  data-config="/config.json"
+></script>
+```
+
+`config.json` connects the backend and manifest. The manifest defines menus and routes; routes load page Specs from JSON files or endpoints. The base includes React and the Lumi packages, so this path needs no Node.js installation or frontend build.
+
+Follow the [complete quick start](https://duxweb.github.io/lumi/guide/getting-started/) for the four files and login endpoints. See the [backend contract](https://duxweb.github.io/lumi/guide/backend/) to connect your data API, and the [base example](./examples/base-admin/) for extension modules.
+
+### Create a React project
+
+With Node.js 22.12+ and pnpm:
+
+```sh
+pnpm create @duxweb/lumi my-app --pm pnpm
+cd my-app
+pnpm dev
+```
+
+The starter includes Lumi services, Lumi UI, a native Spec, a shared Catalog and the Lumi skill. It starts as a minimal page; add `@duxweb/lumi-admin` when you need the full Admin shell. Existing React applications can follow the [integration guide](https://duxweb.github.io/lumi/guide/advanced/react/).
+
+## A page is a JSON Spec
+
+Save this as `page.json`. The card reads its title from state; clicking the button updates it through the native `setState` action:
+
+```json
+{
+  "state": { "title": "Hello, Lumi" },
+  "root": "home",
+  "elements": {
+    "home": {
+      "type": "Card",
+      "props": { "title": { "$state": "/title" } },
+      "children": ["button"]
+    },
+    "button": {
+      "type": "Button",
+      "props": { "label": "Update title" },
+      "on": {
+        "press": {
+          "action": "setState",
+          "params": { "statePath": "/title", "value": "Updated from JSON" }
+        }
+      },
+      "children": []
+    }
+  }
+}
+```
+
+Open the [Playground](https://duxweb.github.io/lumi/playground/) to validate and render it. Add `Query` and Lumi's request or CRUD actions to connect pages to your backend. See [page Specs](https://duxweb.github.io/lumi/guide/pages/) and [data interactions](https://duxweb.github.io/lumi/guide/data/) for complete examples.
+
+## Author with AI
+
+Look up the available components, inspect their props, then validate the page:
+
+```sh
+pnpm dlx @duxweb/lumi-check catalog
+pnpm dlx @duxweb/lumi-check describe Card
+pnpm dlx @duxweb/lumi-check page.json
+```
+
+The CLI uses the Admin Catalog by default. For custom components and actions, pass `--catalog ./catalog.mjs` to use your application's Catalog. The runtime and CLI validate against the same definitions.
+
+The scaffold includes the [Lumi skill](./.claude/skills/lumi/SKILL.md) for coding agents. See the [AI authoring guide](https://duxweb.github.io/lumi/ai/) for the workflow, and [in-app assistants](https://duxweb.github.io/lumi/guide/assistant/) to connect an assistant to your backend.
 
 ## Packages
 
-| Package | What it is |
+Choose the layer your application needs:
+
+| Package | Role |
 | --- | --- |
-| `@duxweb/lumi` | React providers and hooks, data/request/auth/upload services and JSON action handlers. `/catalog` holds the framework-free definitions and Spec validation. |
-| `@duxweb/lumi-ui` | The React UI components and their json-render registry, with compiled CSS. |
-| `@duxweb/lumi-admin` | The Admin shell, routing and pages, and the prebuilt no-build base (`dist/base`). |
-| `@duxweb/lumi-check` | `lumi-check`, a CLI that looks up the Catalog (components, actions, one component's props) and validates Specs, manifests, themes and `config.json` against it. |
-| `@duxweb/create-lumi` | `pnpm create @duxweb/lumi my-app`, a React scaffold. |
+| [`@duxweb/lumi`](https://www.npmjs.com/package/@duxweb/lumi) | Services, React hooks and providers, request/CRUD handlers, Spec loading and validation. |
+| [`@duxweb/lumi-ui`](https://www.npmjs.com/package/@duxweb/lumi-ui) | React components, the native UI registry, compiled CSS and optional charts. |
+| [`@duxweb/lumi-admin`](https://www.npmjs.com/package/@duxweb/lumi-admin) | Admin shell, routing, page components and the prebuilt base. |
+| [`@duxweb/lumi-check`](https://www.npmjs.com/package/@duxweb/lumi-check) | Catalog lookup, component descriptions and document validation from the CLI. |
+| [`@duxweb/create-lumi`](https://www.npmjs.com/package/@duxweb/create-lumi) | React project scaffolding with a shared Catalog and the Lumi skill. |
 
-Lumi is React-only. Only the `/catalog` subpaths import without React, for Node tools and server-side validation.
+Lumi's UI and application runtime use React. The framework-free `/catalog` subpaths support Node.js tools and server-side validation without React.
 
-## Repository layout
+## Explore
 
-- `packages/`: the five published packages above.
-- `apps/admin`: the Admin demo and its mock API. `apps/site`: the website, docs and playground. `apps/json-api`: a demo backend serving pages as JSON.
-- `examples/`: `base-admin` (static HTML and JSON, no build), `foundation-admin`, `react-demo`, and the shared `schema-gallery` fixtures.
-- `plan/README.md`: the architecture. `AGENTS.md`: rules for contributors and coding agents. `CONTRIBUTING.md`: how to send a change.
+| Resource | What to find |
+| --- | --- |
+| [Documentation](https://duxweb.github.io/lumi/guide/) | Setup, backend APIs, configuration and deployment. The guide is currently in Simplified Chinese. |
+| [Components](https://duxweb.github.io/lumi/components/) | Component props, events, slots and live previews. |
+| [Playground](https://duxweb.github.io/lumi/playground/) | Edit, validate, render and share native Specs. |
+| [Live demo](https://duxweb.github.io/lumi/demo/) | The full Admin with data stored in your browser. |
+| [Examples](./examples/) | Prebuilt base, native React integration and backend-driven Admin. |
+| [Releases](https://github.com/duxweb/lumi/releases) | Published versions and release notes. |
 
-## Development
+## Contributing
 
-Node 22.12 or later and pnpm 9.
+Use Node.js 22.12+ and pnpm 9.15.4 to work on the monorepo:
 
 ```sh
+git clone https://github.com/duxweb/lumi.git
+cd lumi
 pnpm install
-pnpm --dir apps/admin mock   # mock API on 3002
-pnpm --dir apps/admin dev    # Admin demo on 5176 (admin / admin)
+pnpm site:dev
 ```
 
-| Command | What it checks |
-| --- | --- |
-| `pnpm typecheck` | TypeScript in every package and app |
-| `pnpm lint` | ESLint, including the package boundary rules |
-| `pnpm test` | Unit and component tests (Vitest) |
-| `pnpm check:schema` | Every JSON page in the repository against the Catalog |
-| `pnpm build` | All packages and apps |
-| `pnpm e2e` | One key browser path per app; `pnpm e2e:full` runs everything |
-| `pnpm verify:ci` | Everything CI runs except the browser tests |
+The local site opens at <http://127.0.0.1:5179>. For the Admin demo, package boundaries and checks, see [CONTRIBUTING.md](./CONTRIBUTING.md) and the [architecture plan](./plan/README.md).
 
-CI reports Lint/source checks, TypeScript, unit tests, build/package checks and E2E as separate parallel jobs. E2E runs Admin separately from the site and other examples, using the same pinned Playwright image as the Linux visual baselines. Pull requests and `main` run this workflow directly. Pages publishes the unified site independently. Node/pnpm setup and locked installation share one action in `.github/actions/setup`.
-
-Reference docs under `apps/site` are generated from the Catalog definitions: after changing a definition or a public export, run `pnpm -F @duxweb/lumi-site generate` and `pnpm gen:llms`. Versioning and release go through Changesets (`pnpm changeset`).
-
-To prepare later releases, run `pnpm run version`, review and commit the version/changelog changes, and push them to `main`. Pushing a stable tag such as `v0.1.0` triggers `Publish`: all five packages must match the tag and have no pending changesets; the tagged commit must belong to `main`. After full CI passes, `pnpm run release` publishes to the npm registry through Changesets, with provenance, and the workflow creates the matching GitHub Release. Branch pushes and prerelease tags cannot publish. Each package trusts `duxweb/lumi`'s `release.yml` workflow through npm OIDC; no npm token secret is required. The release job uses a current npm client for the registry uploads delegated by pnpm 9.
+Versions are managed with Changesets. Stable version tags trigger full CI, npm trusted publishing and a matching GitHub Release; pushes to `main` update the website, docs, Playground and demo together.
 
 ## License
 
-MIT
+[MIT](./LICENSE) · DuxWeb

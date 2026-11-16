@@ -8,7 +8,7 @@
 
 ## 1. 已确认的架构方向
 
-采用此方向。Lumi 核心直接使用 `@json-render/core`，渲染使用 `@json-render/react`。页面使用上游原生 Spec，Lumi 提供可直接组合的数据、交互、UI 和 Admin 能力。当前产品尚未发布，可以直接修改生产者和消费者，不建设旧协议兼容器。
+采用此方向。Lumi 核心直接使用 `@json-render/core`，渲染使用 `@json-render/react`。页面使用上游原生 Spec，Lumi 提供可直接组合的数据、交互、UI 和 Admin 能力。公开 API 的后续变更通过 Changesets 管理语义版本；不建设旧私有页面协议的兼容器。
 
 **2026-11-05 决策：只做 React。** Lumi 是没有历史包袱的新项目，后端将使用 Go，只通过 JSON/HTTP 对接；不再为 `@json-render/vue` 或其他框架预留入口、可选 peer 或隔离门禁。唯一保留的框架无关层是各包的 `/catalog` 子路径（组件/动作 zod 定义与 Spec 校验），因为 `lumi-check` 和服务端校验在 Node 中运行，不应依赖 React。删除自研页面协议和 RendererContract，由上游 Catalog/Registry 承担描述与注册；Admin 直接组合 Lumi UI 的公开 React 组件。
 
@@ -184,9 +184,9 @@ P2 必须验收：首次自动加载、筛选驱动列表、跨组件选中联�
 - **编译型宿主**：同一 `mountAdmin(config, extensions)` 供需要打包的宿主使用；`createAdmin` 保持为底层 API。
 - **验收**：`examples/base-admin`（纯静态 HTML + JSON + 纯 JS 扩展，Node 静态服务器）与 e2e 项目 `base-admin`。
 
-## 6. packages 逐包处置（11 → 6）
+## 6. packages 逐包处置（11 → 5）
 
-以 2026-09-19 磁盘上实际存在的 11 个 package.json 为准。最终为 3 个产品包 + 3 个工具包；子路径用于框架边界，不再额外发布 core/schema/runtime/react 等实现拆分包。
+以 2026-09-19 磁盘上实际存在的 11 个 package.json 为准。最终为 3 个产品包 + 2 个工具包；子路径用于框架边界，不再额外发布 core/schema/runtime/react 等实现拆分包。
 
 | 当前目录 / 包 | 最终目录 / 包 | 处置 | 可删除旧目录的阶段 |
 | --- | --- | --- | --- |

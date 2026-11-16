@@ -10,7 +10,7 @@ const root = resolve(import.meta.dirname, '..')
 const manifest = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
 const releaseCommand = 'changeset publish'
 const directPublishPattern = /\b(?:(?:pnpm|yarn)\s+(?:exec\s+)?|(?:npx|bunx)\s+)?(?:changeset|@changesets\/cli)\s+publish\b|\b(?:npm|pnpm|yarn)\s+publish\b/u
-const verificationPattern = /\bpnpm\s+(?:run\s+)?verify:(?:ci|release)\b/u
+const verificationPattern = /\bpnpm\s+(?:run\s+)?verify:(?:ci|release)(?![\w:-])/u
 // The whole suite: `pnpm e2e` alone runs only the smoke tests.
 const e2ePattern = /\bpnpm\s+(?:run\s+)?e2e:full\b/u
 const workflowFilePattern = /\.ya?ml$/u
@@ -31,7 +31,9 @@ const e2eProjectsLine = /^ {12}projects: (.+)$/gmu
 const projectPrefix = '--project='
 const ciWorkflow = './.github/workflows/ci.yml'
 const workflowCallEvent = /^ {2}workflow_call:/mu
-const pushEvent = /^ {2}push:/mu
+const mainPushEvent = /^ {2}push:\n {4}branches: \[main\]$/mu
+const versionGuardRun = /^\s+pnpm verify:release-version$/mu
+const mainAncestryRun = /^\s+git merge-base --is-ancestor HEAD origin\/main$/mu
 const fullE2ERun = /^pnpm e2e:full \$\{\{ matrix.projects \}\}$/u
 const requiredJobs = ['lint', 'types', 'unit', 'build', 'e2e']
 const requiredProjects = ['base-admin', 'foundation-admin', 'react-admin', 'react-demo', 'site']
@@ -94,6 +96,10 @@ function verifyConfiguration(candidateManifest, workflows) {
     throw new Error(`The only workflow publish value must be pnpm run release: ${JSON.stringify(publishers.map(({ path, job, value }) => [path, job.name, value]))}`)
 
   const [{ path, job, jobs }] = publishers
+  const releaseSource = workflows.find(([name]) => name === path)[1]
+  const releaseEvents = releaseSource.split('\non:\n')[1]?.split('\npermissions:')[0]?.trim()
+  if (releaseEvents !== 'push:\n    tags: [\'v*\']')
+    throw new Error(`${path} must publish only from version tags, never from ordinary branch pushes`)
   const verifier = jobs.get('verification')
   if (job.needs.join(',') !== 'verification' || verifier?.uses !== ciWorkflow)
     throw new Error(`${path}#${job.name} must need the shared ${ciWorkflow} verification job`)
@@ -101,8 +107,8 @@ function verifyConfiguration(candidateManifest, workflows) {
     throw new Error(`${path} must not skip verification or publish after failed checks`)
 
   const ciSource = workflows.find(([path]) => path === 'ci.yml')?.[1] ?? ''
-  if (!workflowCallEvent.test(ciSource) || pushEvent.test(ciSource))
-    throw new Error('ci.yml must be reusable and must not duplicate the main push checks')
+  if (!workflowCallEvent.test(ciSource) || !mainPushEvent.test(ciSource))
+    throw new Error('ci.yml must verify main directly and be reusable by the tag publisher')
   const ciJobs = workflowJobs(ciSource)
   if (ciJobs.size !== requiredJobs.length || requiredJobs.some(name => !ciJobs.has(name)))
     throw new Error(`ci.yml must define the parallel jobs: ${requiredJobs.join(', ')}`)
@@ -124,6 +130,8 @@ function verifyConfiguration(candidateManifest, workflows) {
     throw new Error('E2E groups must cover all five projects once without filtering tests')
   if (job.runs.some(run => verificationPattern.test(run) || e2ePattern.test(run)))
     throw new Error(`${path}#${job.name} must not repeat verification; it already needs ${verifier.name}`)
+  if (!versionGuardRun.test(job.source) || !mainAncestryRun.test(job.source))
+    throw new Error(`${path}#${job.name} must validate stable package versions and main ancestry`)
   const publishLine = job.lines.findIndex(line => publishKey.test(line))
   const buildLine = job.lines.findIndex(line => buildPackagesRun.test(line))
   if (buildLine < 0 || buildLine > publishLine)
@@ -175,8 +183,11 @@ expectConfigurationFailure('missing E2E project', manifest, replaceCi(' --projec
 expectConfigurationFailure('filtered E2E tests', manifest, replaceCi('--project=react-admin', '--project=react-admin --grep=@smoke'))
 expectConfigurationFailure('verification without lint', manifest, replaceCi('run: pnpm lint', 'run: pnpm typecheck'))
 expectConfigurationFailure('optional check', manifest, replaceCi('  unit:\n', '  unit:\n    if: false\n'))
-expectConfigurationFailure('duplicate main checks', manifest, replaceCi('  workflow_call:', '  push:\n    branches: [main]\n  workflow_call:'))
+expectConfigurationFailure('publishing on main', manifest, replaceRelease('tags: [\'v*\']', 'branches: [main]'))
+expectConfigurationFailure('missing main checks', manifest, replaceCi('  push:\n    branches: [main]\n', ''))
+expectConfigurationFailure('missing version guard', manifest, replaceRelease('pnpm verify:release-version', 'pnpm --version'))
+expectConfigurationFailure('missing main ancestry guard', manifest, replaceRelease('git merge-base --is-ancestor HEAD origin/main', 'git status'))
 expectConfigurationFailure('publish without build', manifest, replaceRelease(/run: pnpm build:packages/u, 'run: pnpm lint'))
 expectConfigurationFailure('repeated verification', manifest, replaceRelease(/run: pnpm build:packages/u, 'run: pnpm build:packages && pnpm verify:ci'))
 
-process.stdout.write(`Verified release guard: ${releasePath} needs shared parallel CI (lint, types, unit, build and all five E2E projects), without repeating checks.\n`)
+process.stdout.write(`Verified release guard: stable tags from main publish through Changesets only after shared full CI; main pushes cannot publish.\n`)

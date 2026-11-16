@@ -4,6 +4,7 @@
 
 ### Minor Changes
 
+- Isolate remote document caches and editable page state across account and tenant changes, and share document loading, signing and invalidation helpers.
 - `ListPage` has a `toolbar` slot between its header and the results, where a JSON page puts a `FilterBar`; the list's `filters` read the value the bar binds.
 - A JSON page on a route with path params reads them from page state at `/route/params` (`/orders/:id` gives `/route/params/id`), as the `Include` and `Iframe` descriptions already said; opening another record starts the page over. A page's own `state.route` gives way to it.
 - A colour mode chosen on the sign-in page of a protected manifest follows the reader into the app.

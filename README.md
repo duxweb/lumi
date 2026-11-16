@@ -45,9 +45,11 @@ pnpm --dir apps/admin dev    # Admin demo on 5176 (admin / admin)
 | `pnpm e2e` | One key browser path per app; `pnpm e2e:full` runs everything |
 | `pnpm verify:ci` | Everything CI runs except the browser tests |
 
-CI reports Lint/source checks, TypeScript, unit tests, build/package checks and E2E as separate parallel jobs. E2E runs Admin separately from the site and other examples, using the same pinned Playwright image as the Linux visual baselines. Pull requests run this shared workflow directly; pushes to `main` call it from `CI & Release`, and Changesets runs only after every job passes. Pages publishes the unified site independently. Node/pnpm setup and locked installation share one action in `.github/actions/setup`.
+CI reports Lint/source checks, TypeScript, unit tests, build/package checks and E2E as separate parallel jobs. E2E runs Admin separately from the site and other examples, using the same pinned Playwright image as the Linux visual baselines. Pull requests and `main` run this workflow directly. Pages publishes the unified site independently. Node/pnpm setup and locked installation share one action in `.github/actions/setup`.
 
 Reference docs under `apps/site` are generated from the Catalog definitions: after changing a definition or a public export, run `pnpm -F @duxweb/lumi-site generate` and `pnpm gen:llms`. Versioning and release go through Changesets (`pnpm changeset`).
+
+To prepare later releases, run `pnpm run version`, review and commit the version/changelog changes, and push them to `main`. Pushing a stable tag such as `v0.1.0` triggers `Publish`: all five packages must match the tag and have no pending changesets; the tagged commit must belong to `main`. After full CI passes, `pnpm run release` publishes to the npm registry through Changesets, with provenance, and the workflow creates the matching GitHub Release. Branch pushes and prerelease tags cannot publish. Registry credentials are supplied by the encrypted `NPM_TOKEN` repository secret.
 
 ## License
 

@@ -4,6 +4,8 @@
 
 ### Minor Changes
 
+- Guard account and tenant changes across async validation, writes, imports, optimistic rollback, placeholder rows and remote page caches. Reject signed redirects that could forward credentials, and check nested Agent actions before executing them.
+- Share CRUD parameter mapping between hooks and JSON actions, preserve delete variables, require record IDs, keep list/aggregate refreshes consistent and reset pagination when filters change.
 - The default REST convention writes filter operators in brackets and sorting as one parameter: `total[gte]=100`, `status[in][]=paid`, `sort=-createdAt,name` (was `total__gte=100`, `status__in[]=paid`, `sort[]=createdAt:desc`). `eq` stays the plain field, and paging is unchanged.
 - While the front end runs an agent reply's tool calls the session stays `streaming`: another message is refused until they answer, a call that answers after the conversation was switched or stopped changes nothing, and a decision taken meanwhile never runs a call twice. `stop()` ends running client calls with the reply.
 - `useForm` callbacks kept from before the record changed (an upload finishing, a save going on after an await) no longer pull the form back: a late `setValues` is ignored and a late `submit` is refused.

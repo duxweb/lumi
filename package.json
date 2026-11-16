@@ -35,6 +35,7 @@
     "verify:generated": "pnpm -F @duxweb/lumi-site generate:check && tsx --conditions=lumi:source scripts/gen-llms.ts --check",
     "verify:assets": "tsx scripts/verify-visual-assets.mjs",
     "verify:release-guard": "node scripts/verify-release-guard.mjs",
+    "verify:release-version": "node scripts/verify-release-version.mjs",
     "verify:size": "node scripts/verify-size-budgets.mjs",
     "verify:pack": "pnpm pack:packages && node scripts/verify-package-tarballs.mjs",
     "verify:isolation": "pnpm smoke:ui-pack && pnpm -F @duxweb/create-lumi check:template && node scripts/lint-tarballs.mjs publint attw",

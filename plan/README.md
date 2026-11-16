@@ -389,7 +389,7 @@ P1 必须先固定可安装的上游版本组合、React/Zod/Query peer 范围�
 
 保留用户熟悉的 `pnpm typecheck / lint / test / build / check:schema / e2e`。`check:schema` 改为原生 Spec + Catalog 的 TS CLI 验证；`verify:generated`、`verify:pack`、`verify:size`、`verify:isolation`、`verify:docs-base`、`verify:release` 按最终结构实现。命令名保留不代表继续运行旧 checker。
 
-CI 将 Lint/来源与生成物、类型、单测、构建与包检查分为独立并行任务；完整 E2E 按 Admin 与其余应用分组，覆盖全部项目。PR 直接运行共享 CI，main 的发布流程复用同一工作流并等待所有任务通过，再由 Changesets 发布，不重复执行验证。Pages 独立构建并发布官网、文档、Playground 和浏览器演示。Linux 截图基线与 E2E 使用同一固定 Playwright 镜像，常规 CI 只比较已提交的基线；更新通过手动工作流生成并检查后提交。
+CI 将 Lint/来源与生成物、类型、单测、构建与包检查分为独立并行任务；完整 E2E 按 Admin 与其余应用分组，覆盖全部项目。PR 和 main 直接运行共享 CI，日常推送不发布包。版本由 `pnpm run version`（Changesets）准备并提交到 main；推送 `v0.1.0` 这样的正式版本标签后，Publish 复用完整 CI，并检查五包版本一致、无待消费 changeset、标签提交属于 main，再由 Changesets 发布 npm 包并生成同名 GitHub Release。发布步骤不重复执行验证。Pages 独立构建并发布官网、文档、Playground 和浏览器演示。Linux 截图基线与 E2E 使用同一固定 Playwright 镜像，常规 CI 只比较已提交的基线；更新通过手动工作流生成并检查后提交。
 
 完成条件：
 

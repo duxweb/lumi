@@ -989,6 +989,8 @@ test('form elements is a JSON page served from public/pages', async ({ page }) =
 })
 
 test('interface pages are JSON files: every variant renders and overlays open from page state', async ({ page }) => {
+  // The shared CI runner visits multiple pages and exercises every variant.
+  test.setTimeout(90_000)
   await page.setViewportSize({ width: 1440, height: 900 })
   const pageErrors: string[] = []
   page.on('pageerror', error => pageErrors.push(error.message))

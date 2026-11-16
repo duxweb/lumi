@@ -4,6 +4,7 @@
 
 ### Minor Changes
 
+- Validate native action parameters and required update/delete IDs with the same definitions used by runtime and Catalog lookup.
 - `lumi-check catalog` lists the Catalog's components and actions as JSON (`--kind components|actions`, `--name` for one, an action then with its params), and `lumi-check describe <Component>` prints one component's props schema, slots and events; the library exports them as `getCatalog` and `describeComponent`. They replace `@duxweb/lumi-mcp`, which is removed: its three tools were these two lookups and this package's validation.
 - `--kind config` checks the prebuilt base's `config.json`, the pages of an inline manifest with it; `checkDocument` takes the same kind and `DOCUMENT_KINDS` lists them.
 - Validation no longer skips props or action params that contain a key such as `$state`, and reports a component or action named like an inherited object member as unknown instead of crashing (see `/lumi`).

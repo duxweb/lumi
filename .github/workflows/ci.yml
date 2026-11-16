@@ -1,7 +1,9 @@
 name: CI
 
-# Pull requests run this directly; main calls it from release.yml once.
+# Pull requests and main run this directly; release tags reuse the same checks.
 on:
+  push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
   workflow_call:

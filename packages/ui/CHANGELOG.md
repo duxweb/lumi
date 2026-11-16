@@ -4,6 +4,7 @@
 
 ### Minor Changes
 
+- Separate the Avatar primitive to remove the display/control dependency cycle, preserving public JSX and native Registry behavior.
 - The root no longer exports `Badge`, the internal primitive that had slipped through beside `LumiBadge`.
 - IconPicker shows no icons when its icon set fails to load, instead of loading forever; a Repeater column's `precision` outside 0–20 no longer fails the render.
 - Cascader, CascaderPanel, Tree, TreeSelect, Repeater columns, ColorSwatches and Lightbox render empty when their list is `null`, as it is while a bound Query loads, instead of failing. A Tree node whose children fail to load closes without closing nodes opened meanwhile.

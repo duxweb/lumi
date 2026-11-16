@@ -28,7 +28,11 @@ jobs:
 
       - uses: ./.github/actions/setup
         with:
-          registry-url: https://registry.npmjs.org
+          node-version: 22.22.1
+
+      # pnpm 9 delegates registry uploads to npm. OIDC needs npm >=11.5.1.
+      - name: Install trusted publishing client
+        run: pnpm add --global npm@11.21.2
 
       - name: Validate release tag and main ancestry
         run: |
@@ -47,8 +51,7 @@ jobs:
           createGithubReleases: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          npm_config_npm_path: ${{ env.PNPM_HOME }}/npm
           NPM_CONFIG_PROVENANCE: true
 
       - name: Create GitHub release

@@ -49,7 +49,7 @@ CI reports Lint/source checks, TypeScript, unit tests, build/package checks and 
 
 Reference docs under `apps/site` are generated from the Catalog definitions: after changing a definition or a public export, run `pnpm -F @duxweb/lumi-site generate` and `pnpm gen:llms`. Versioning and release go through Changesets (`pnpm changeset`).
 
-To prepare later releases, run `pnpm run version`, review and commit the version/changelog changes, and push them to `main`. Pushing a stable tag such as `v0.1.0` triggers `Publish`: all five packages must match the tag and have no pending changesets; the tagged commit must belong to `main`. After full CI passes, `pnpm run release` publishes to the npm registry through Changesets, with provenance, and the workflow creates the matching GitHub Release. Branch pushes and prerelease tags cannot publish. Registry credentials are supplied by the encrypted `NPM_TOKEN` repository secret.
+To prepare later releases, run `pnpm run version`, review and commit the version/changelog changes, and push them to `main`. Pushing a stable tag such as `v0.1.0` triggers `Publish`: all five packages must match the tag and have no pending changesets; the tagged commit must belong to `main`. After full CI passes, `pnpm run release` publishes to the npm registry through Changesets, with provenance, and the workflow creates the matching GitHub Release. Branch pushes and prerelease tags cannot publish. Each package trusts `duxweb/lumi`'s `release.yml` workflow through npm OIDC; no npm token secret is required. The release job uses a current npm client for the registry uploads delegated by pnpm 9.
 
 ## License
 
